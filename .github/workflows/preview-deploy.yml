@@ -45,6 +45,7 @@ jobs:
           enable-pull-request-comment: false # PR 코멘트 비활성화
           enable-commit-comment: false # 커밋 코멘트 비활성화
           overwrites-pull-request-comment: false
+          auto-clean-up: true # 배포 이후 빌드 파일 삭제
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
