@@ -2,6 +2,7 @@ name: 🐞 Bug
 description: 버그가 발생했나요?
 title: '[fix] '
 labels: ['🐞 BugFix']
+projects: ['FC-DEV-FinalProject/11']
 body:
   - type: textarea
     id: bug-description

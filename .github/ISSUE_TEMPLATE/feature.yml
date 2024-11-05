@@ -2,6 +2,7 @@ name: ✨ Feature
 description: 새로운 기능이나 명세가 있나요?
 title: '[feat] '
 labels: ['✨ Feature']
+projects: ['FC-DEV-FinalProject/11']
 body:
   - type: textarea
     id: feature-description

@@ -2,6 +2,7 @@ name: 📃 Docs
 description: 문서 추가/수정/삭제가 필요한가요?
 title: '[docs] '
 labels: ['📃 Docs']
+projects: ['FC-DEV-FinalProject/11']
 body:
   - type: textarea
     id: docs-description

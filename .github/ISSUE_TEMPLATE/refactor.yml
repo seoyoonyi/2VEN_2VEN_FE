@@ -2,6 +2,7 @@ name: 🔨 Refactor
 description: 리팩토링이 필요한가요?
 title: '[refactor] '
 labels: ['🔨 Refactor']
+projects: ['FC-DEV-FinalProject/11']
 body:
   - type: textarea
     id: refactor-description
