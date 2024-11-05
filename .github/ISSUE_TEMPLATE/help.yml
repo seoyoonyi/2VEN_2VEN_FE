@@ -2,7 +2,7 @@ name: 🙋🏻‍♀️ Help Wanted
 description: 도움이 필요하신가요?
 title: '[Help wanted] '
 labels: ['🆘 help wanted']
-projects: ['Dev-FE-1/26']
+projects: ['FC-DEV-FinalProject/11']
 body:
   - type: textarea
     id: help-description
