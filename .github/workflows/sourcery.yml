@@ -1,0 +1,36 @@
+name: Sourcery-Review-PR
+
+on:
+  pull_request:
+
+jobs:
+  review-with-sourcery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Sourcery
+        run: pip install sourcery-cli
+
+      - name: Sourcery Check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SOURCERY_TOKEN: ${{ secrets.SOURCERY_TOKEN }}
+        run: |
+          sourcery review \
+            --summary \
+            --comments=true \
+            --pr-provider=github \
+            --pr-url=${{ github.event.pull_request.html_url }} \
+            . || true
+        continue-on-error: true
+
+      - name: Always succeed
+        run: echo "Workflow completed successfully"
