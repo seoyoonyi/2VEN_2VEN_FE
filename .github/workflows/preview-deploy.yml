@@ -1,0 +1,51 @@
+# PR이 생성되거나 업데이트될 때 프리뷰 배포
+# develop과 main 브랜치로의 PR에서 동작
+# Netlify 코멘트 비활성화 설정 포함
+
+name: Preview Deploy to Netlify
+
+# 워크플로우가 실행될 조건 설정
+on:
+  pull_request:
+    # PR이 열리거나(opened), 업데이트되거나(synchronize), 다시 열릴 때(reopened) 실행
+    types: [opened, synchronize, reopened]
+    # develop 또는 main 브랜치로의 PR일 때만 실행
+    branches:
+      - develop
+      - main
+
+jobs:
+  deploy:
+    name: 'Preview Deploy'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      # Netlify에 배포
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v2.0
+        with:
+          publish-dir: './dist' # 배포할 디렉토리
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Preview Deploy from GitHub Actions'
+          enable-pull-request-comment: false # PR 코멘트 비활성화
+          enable-commit-comment: false # 커밋 코멘트 비활성화
+          overwrites-pull-request-comment: false
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 1

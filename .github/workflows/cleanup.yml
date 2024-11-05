@@ -1,0 +1,26 @@
+# PR이 닫힐 때 관련된 프리뷰 배포를 정리
+# 불필요한 배포 제거
+
+name: Cleanup Netlify Deployments
+
+on:
+  pull_request:
+    # PR이 닫힐 때만 실행
+    types: [closed]
+
+jobs:
+  cleanup:
+    name: 'Cleanup Deploy'
+    runs-on: ubuntu-latest
+
+    steps:
+      # Netlify의 프리뷰 배포를 삭제
+      - name: Cleanup Netlify Deploy
+        uses: nwtgck/actions-netlify@v2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          action: delete # 삭제 액션 실행
+          delete-preview: true # 프리뷰 배포 삭제
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
