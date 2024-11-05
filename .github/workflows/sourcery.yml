@@ -2,14 +2,22 @@ name: Sourcery-Review-PR
 
 on:
   pull_request:
+    types: [opened, synchronize] # PR 생성 및 업데이트시 실행
+    paths:
+      - '**/*.ts'
+      - '**/*.tsx' # TypeScript/React 파일 변경시에만 실행
 
 jobs:
   review-with-sourcery:
     runs-on: ubuntu-latest
+    permissions: # GitHub 토큰 권한 명시적 설정
+      contents: read
+      pull-requests: write # PR에 코멘트를 달기 위한 권한
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }} # PR의 최신 커밋 참조
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -29,6 +37,8 @@ jobs:
             --comments=true \
             --pr-provider=github \
             --pr-url=${{ github.event.pull_request.html_url }} \
+            --only "**/*.{ts,tsx}" \  # TypeScript/React 파일만 검사
+            --respect-gitignore \
             . || true
         continue-on-error: true
 
