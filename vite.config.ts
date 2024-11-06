@@ -12,4 +12,7 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
+  server: {
+    port: 3000, // 어떤 포트로 서버를 열지
+  },
 });
