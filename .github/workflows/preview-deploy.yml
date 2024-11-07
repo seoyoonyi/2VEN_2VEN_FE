@@ -42,7 +42,7 @@ jobs:
           publish-dir: './dist' # 배포할 디렉토리
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: 'Preview Deploy from GitHub Actions'
-          enable-pull-request-comment: false # PR 코멘트 비활성화
+          enable-pull-request-comment: true # PR 코멘트 활성화 > PR에 배포 URL 코멘트 확인 가능
           enable-commit-comment: false # 커밋 코멘트 비활성화
           overwrites-pull-request-comment: false
           auto-clean-up: true # 배포 이후 빌드 파일 삭제
