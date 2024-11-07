@@ -47,10 +47,10 @@ export const authHandlers = [
     });
   }),
 
-  http.post('/api/login', async ({ request }) => {
-    // 로그인 핸들러 로직
-  }),
-  http.post('/api/logout', () => {
-    // 로그아웃 핸들러 로직
-  }),
+  // http.post('/api/login', async ({ request }) => {
+  //   // 로그인 핸들러 로직
+  // }),
+  // http.post('/api/logout', () => {
+  //   // 로그아웃 핸들러 로직
+  // }),
 ];

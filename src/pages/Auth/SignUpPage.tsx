@@ -17,7 +17,7 @@ const SignUpPage: React.FC = () => {
     e.preventDefault();
 
     try {
-      const result = await signUp.mutateAsync(formData);
+      // const result = await signUp.mutateAsync(formData);
       alert('회원가입이 완료되었습니다.');
       navigate('/login');
     } catch (error) {
