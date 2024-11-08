@@ -72,15 +72,6 @@ const layout = {
     content: '1140px', // PC 콘텐츠 영역
     column: '270px',
   },
-  // 임의로 정의한 높이(추후 수정 필요) ✅
-  height: {
-    header: '60px',
-    button: {
-      sm: '32px',
-      md: '40px',
-      lg: '48px',
-    },
-  },
   spacing: {
     gutter: '20px', // 컨텐츠 영역 사이의 간격
   },
@@ -190,6 +181,12 @@ const buttons = {
       lineHeight: typography.lineHeights.sm, // 130%
       fontSize: '18px',
     },
+  },
+  // 버튼 높이 (디자인 가이드에 따라 수정 필요) ✅
+  height: {
+    sm: '32px',
+    md: '40px',
+    lg: '48px',
   },
 };
 
