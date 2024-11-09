@@ -1,8 +1,13 @@
 import { StrictMode } from 'react';
 
+import { ThemeProvider } from '@emotion/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot } from 'react-dom/client';
 
 import App from './App.tsx';
+
+import GlobalStyle from '@/styles/GlobalStyle';
+import theme from '@/styles/theme';
 
 const initMocks = async (): Promise<void> => {
   if (process.env.NODE_ENV === 'development') {
@@ -23,7 +28,10 @@ const root = createRoot(rootElement);
 initMocks().then(() => {
   root.render(
     <StrictMode>
-      <App />
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <App />
+      </ThemeProvider>
     </StrictMode>
   );
 });
