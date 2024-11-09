@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useSignUp } from '@/api/auth';
 
-const SignUpPage: React.FC = () => {
+const SignUpFormPage: React.FC = () => {
   const navigate = useNavigate();
   const signUp = useSignUp();
   const [formData, setFormData] = React.useState({
@@ -82,4 +82,4 @@ const SignUpPage: React.FC = () => {
   );
 };
 
-export default SignUpPage;
+export default SignUpFormPage;
