@@ -1,3 +1,4 @@
+import { R } from 'node_modules/msw/lib/core/HttpResponse-Cgbkdkje';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/routes';
@@ -38,7 +39,7 @@ import TraderListPage from '@/pages/trader/TraderListPage';
 
 export const router = createBrowserRouter([
   {
-    path: '/',
+    path: ROUTES.HOME.PATH,
     element: <RootLayout />,
     errorElement: <NotFoundPage />,
     children: [
