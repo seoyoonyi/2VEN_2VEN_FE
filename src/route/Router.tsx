@@ -1,4 +1,3 @@
-import { R } from 'node_modules/msw/lib/core/HttpResponse-Cgbkdkje';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/routes';
@@ -12,7 +11,7 @@ import FindEmailPage from '@/pages/auth/find/FindEmailPage';
 import FindPasswordPage from '@/pages/auth/find/FindPasswordPage';
 import PasswordResetSuccessPage from '@/pages/auth/find/PasswordResetSuccessPage';
 import ResetPasswordPage from '@/pages/auth/find/ResetPasswordPage';
-import LogInPage from '@/pages/auth/LogInPage';
+import SignInPage from '@/pages/auth/SignInPage';
 import SignUpFormPage from '@/pages/auth/signup/SignUpFormPage';
 import SignUpSelectTypePage from '@/pages/auth/signup/SignUpSelectTypePage';
 import SignUpSuccessPage from '@/pages/auth/signup/SignUpSuccessPage';
@@ -50,7 +49,7 @@ export const router = createBrowserRouter([
       // -------------------------------------- 인증
       {
         path: ROUTES.AUTH.LOGIN,
-        element: <LogInPage />, // 로그인 페이지
+        element: <SignInPage />, // 로그인 페이지
       },
       {
         path: ROUTES.AUTH.SIGNUP.SELECT_TYPE,
