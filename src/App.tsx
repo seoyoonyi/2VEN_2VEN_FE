@@ -1,7 +1,13 @@
-const App: React.FC = () => (
-  <div>
-    <h1>Hello world</h1>
-  </div>
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RouterProvider } from 'react-router-dom';
+
+import router from '@/route/Router';
+
+const queryClient = new QueryClient();
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <RouterProvider router={router} />
+  </QueryClientProvider>
 );
 
 export default App;
