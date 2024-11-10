@@ -1,10 +1,17 @@
 import { css } from '@emotion/react';
+import { Link } from 'react-router-dom';
+
+import { ROUTES } from '@/constants/routes';
 
 const GlobalNav = () => (
   <nav css={navStyle}>
     <ul>
-      <li>전략</li>
-      <li>트레이더</li>
+      <li>
+        <Link to={ROUTES.STRATEGY.LIST}>전략</Link>
+      </li>
+      <li>
+        <Link to={ROUTES.TRADER.LIST}>트레이더</Link>
+      </li>
     </ul>
   </nav>
 );

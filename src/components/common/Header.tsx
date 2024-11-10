@@ -1,6 +1,8 @@
 import { css } from '@emotion/react';
+import { Link } from 'react-router-dom';
 
 import GlobalNav from '@/components/navigation/GlobalNav';
+import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
 
 const Header = () => {
@@ -10,7 +12,9 @@ const Header = () => {
       <div css={containerStyle}>
         <div css={logoNavContainerStyle}>
           <h1>
-            <img src='/logo.svg' alt={LOGO} />
+            <Link to={ROUTES.HOME.PATH}>
+              <img src='/logo.svg' alt={LOGO} />
+            </Link>
           </h1>
           <GlobalNav />
         </div>
