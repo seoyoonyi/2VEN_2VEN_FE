@@ -1,0 +1,256 @@
+import React, { useEffect, useState } from 'react';
+
+import { css, SerializedStyles } from '@emotion/react';
+import { FiSearch } from 'react-icons/fi'; // 검색 아이콘
+import { GrMailOption } from 'react-icons/gr'; // 메일 아이콘
+import { IoMdKey, IoIosCloseCircle, IoMdEye, IoMdEyeOff } from 'react-icons/io'; // 키, 눈, 닫기 아이콘
+
+import theme from '@/styles/theme';
+
+export type InputSize = 'sm' | 'md' | 'lg'; // input 높이 사이즈
+export type InputStatus = 'default' | 'error' | 'success';
+export type IconPosition = 'left' | 'right';
+
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  inputSize?: InputSize;
+  width?: string;
+  status?: InputStatus;
+  leftIcon?: 'mail' | 'key' | 'search';
+  rightIcon?: 'eye' | 'clear';
+  showClearButton?: boolean;
+  isDisabled?: boolean;
+  customStyle?: SerializedStyles; // 사용되는 페이지에서 추가적인 스타일을 적용할 때 사용
+  validate?: (value: string) => { isValid: boolean; message: string };
+  onInputValidation?: (isValid: boolean) => void;
+}
+
+const Input = ({
+  inputSize = 'md',
+  width = '444px',
+  status = 'default',
+  leftIcon,
+  rightIcon,
+  showClearButton = false,
+  isDisabled = false,
+  customStyle,
+  validate, // 입력값 검증 함수
+  onInputValidation, // 입력값 검증 결과 콜백 함수
+  ...props
+}: InputProps) => {
+  const [inputValue, setInputValue] = useState<string>('');
+  const [inputStatus, setInputStatus] = useState<InputStatus>(status);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  // 아이콘에 따른 아이콘 컴포넌트 반환
+  const getIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'mail':
+        return <GrMailOption />;
+      case 'key':
+        return <IoMdKey />;
+      case 'eye':
+        return showPassword ? <IoMdEyeOff /> : <IoMdEye />;
+      case 'clear':
+        return <IoIosCloseCircle />;
+      case 'search':
+        return <FiSearch />;
+      default:
+        return null;
+    }
+  };
+
+  useEffect(() => {
+    // validate 함수가 존재하고 inputValue가 존재할 때 validation 체크
+    if (validate && inputValue) {
+      const validationResult = validate(inputValue);
+      setInputStatus(validationResult.isValid ? 'success' : 'error');
+      onInputValidation?.(validationResult.isValid);
+    }
+  }, [inputValue, validate, onInputValidation]);
+
+  // input 값이 변경될 때
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    props.onChange?.(e); // 부모 컴포넌트로 이벤트 전달
+  };
+
+  // input clear 버튼 클릭 시
+  const handleClear = () => {
+    setInputValue('');
+    setInputStatus('default');
+    const event = {
+      target: { value: '' }, // input value 초기화
+    } as React.ChangeEvent<HTMLInputElement>;
+    props.onChange?.(event); // 부모 컴포넌트로 이벤트 전달
+  };
+
+  // input type이 password일 때, 눈 아이콘 클릭 시(토글)
+  const handleTogglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  // input 상태에 따른 스타일 적용
+  const currentInputStyles = [
+    baseInputStyles, // 기본 input 스타일
+    inputSizeStyles[inputSize], // input 사이즈에 따른 스타일
+    inputStatusStyles[inputStatus], // input 상태에 따른 스타일
+    leftIcon && paddingLeftStyles, // leftIcon이 있을 때 padding 적용
+    (rightIcon === 'eye' || (showClearButton && inputValue)) && paddingRightStyles, // rightIcon이 'eye'일 때 padding 적용
+    customStyle,
+  ];
+
+  return (
+    <div css={containerStyles}>
+      <div css={[wrapperStyles, iconSpacingStyles[inputSize]]}>
+        {leftIcon && <div css={leftIconStyles}>{getIcon(leftIcon)}</div>}
+
+        <input
+          {...props}
+          type={props.type === 'password' ? (showPassword ? 'text' : 'password') : props.type}
+          value={inputValue}
+          disabled={isDisabled}
+          css={currentInputStyles}
+          onChange={handleInputChange}
+        />
+
+        {showClearButton && inputValue && inputStatus !== 'success' && (
+          <button type='button' onClick={handleClear} css={rightIconStyles}>
+            {getIcon('clear')}
+          </button>
+        )}
+
+        {rightIcon === 'eye' && (
+          <button type='button' onClick={handleTogglePassword} css={rightIconStyles}>
+            {getIcon('eye')}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const containerStyles = css`
+  display: inline-block;
+  position: relative;
+`;
+
+const wrapperStyles = css`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
+const baseInputStyles = css`
+  width: 100%;
+  border: 1px solid ${theme.colors.gray[300]};
+  background-color: ${theme.colors.main.white};
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: 'Pretendard', sans-serif;
+  line-height: 150%;
+
+  &::placeholder {
+    color: ${theme.colors.gray[700]};
+  }
+
+  &:hover:not(:disabled) {
+    border-color: ${theme.colors.main.primary};
+  }
+
+  &:focus:not(:disabled) {
+    border-color: ${theme.colors.main.primary};
+  }
+
+  &:disabled {
+    background-color: ${theme.colors.gray[100]};
+    cursor: not-allowed;
+  }
+`;
+
+const inputSizeStyles = {
+  sm: css`
+    height: ${theme.input.height.sm};
+    padding: ${theme.input.padding.sm};
+    font-size: ${theme.input.fontSize.sm};
+  `,
+  md: css`
+    height: ${theme.input.height.md};
+    padding: ${theme.input.padding.md};
+    font-size: ${theme.input.fontSize.md};
+  `,
+  lg: css`
+    height: ${theme.input.height.lg};
+    padding: ${theme.input.padding.lg};
+    font-size: ${theme.input.fontSize.lg};
+  `,
+};
+
+const iconSpacingStyles = {
+  sm: css`
+    svg {
+      color: ${theme.colors.gray[400]}; //#a1a1aa
+      width: 20px;
+      height: 20px;
+    }
+  `,
+  md: css`
+    svg {
+      color: ${theme.colors.gray[400]};
+      width: 24px;
+      height: 24px;
+    }
+  `,
+  lg: css`
+    svg {
+      color: ${theme.colors.gray[400]};
+      width: 24px;
+      height: 24px;
+    }
+  `,
+};
+
+const inputStatusStyles = {
+  default: css``,
+  error: css`
+    border-color: ${theme.colors.main.alert} !important;
+  `,
+  success: css`
+    border-color: ${theme.colors.gray[400]};
+  `,
+};
+
+const iconButtonStyles = css`
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: ${theme.colors.gray[500]};
+
+  &:hover {
+    color: ${theme.colors.gray[700]};
+  }
+`;
+
+const leftIconStyles = css`
+  ${iconButtonStyles}
+  left: 12px;
+`;
+
+const rightIconStyles = css`
+  ${iconButtonStyles}
+  right: 12px;
+`;
+
+const paddingLeftStyles = css`
+  padding-left: 36px;
+`;
+
+const paddingRightStyles = css`
+  padding-right: 36px;
+`;
+
+export default Input;
