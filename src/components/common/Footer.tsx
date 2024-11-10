@@ -25,7 +25,6 @@ const containerStyle = css`
   flex-direction: column;
   gap: 24px;
   max-width: ${theme.layout.width.content};
-  height: 100%;
   padding: 55px 20px;
   margin: 0 auto;
 `;
