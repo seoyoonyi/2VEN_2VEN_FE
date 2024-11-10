@@ -143,19 +143,16 @@ const baseStyles = css`
     -webkit-overflow-scrolling: touch;*/
   }
   body {
-    font-family: 'Pretendard', sans-serif;
-    font-weight: ${theme.typography.fontWeight.regular}; /* 400 */
-    line-height: 1;
-    font-size: ${theme.typography.fontSizes.body}; /* 16px */
     color: ${theme.colors.main.black};
-    letter-spacing: -0.14px;
+    font-family: 'Pretendard', sans-serif;
+    ${theme.textStyle.body.body2}
   }
 
   input,
   textarea {
-    font-family: 'Pretendard', sans-serif;
-    letter-spacing: -0.14px;
     color: ${theme.colors.main.black};
+    font-family: 'Pretendard', sans-serif;
+    ${theme.textStyle.body.body2}
 
     &::placeholder {
       color: ${theme.colors.gray[50]}; /* 임시값 */
