@@ -1,4 +1,7 @@
+import { css } from '@emotion/react';
+
 import { withOpacity } from '../utils/color';
+
 const colors = {
   // 기본 브랜드 컬러
   main: {
@@ -62,6 +65,77 @@ const typography = {
     medium: 500,
     semibold: 600,
     bold: 700,
+  },
+} as const;
+
+const textStyle = {
+  headings: {
+    h1: css`
+      font-size: ${typography.fontSizes.heading.h1};
+      line-height: ${typography.lineHeights.sm};
+      font-weight: ${typography.fontWeight.bold};
+    `,
+    h2: css`
+      font-size: ${typography.fontSizes.heading.h2};
+      line-height: ${typography.lineHeights.md};
+      font-weight: ${typography.fontWeight.bold};
+    `,
+    h3: css`
+      font-size: ${typography.fontSizes.heading.h3};
+      line-height: ${typography.lineHeights.md};
+      font-weight: ${typography.fontWeight.bold};
+    `,
+  },
+  subtitles: {
+    subtitle1: css`
+      font-size: ${typography.fontSizes.subtitle.lg};
+      line-height: ${typography.lineHeights.md};
+      font-weight: ${typography.fontWeight.bold};
+    `,
+    subtitle2: css`
+      font-size: ${typography.fontSizes.subtitle.lg};
+      line-height: ${typography.lineHeights.md};
+      font-weight: ${typography.fontWeight.medium};
+    `,
+    subtitle3: css`
+      font-size: ${typography.fontSizes.subtitle.md};
+      line-height: ${typography.lineHeights.md};
+      font-weight: ${typography.fontWeight.bold};
+    `,
+    subtitle4: css`
+      font-size: ${typography.fontSizes.subtitle.md};
+      line-height: ${typography.lineHeights.md};
+      font-weight: ${typography.fontWeight.medium};
+    `,
+  },
+  body: {
+    body1: css`
+      font-size: ${typography.fontSizes.body};
+      line-height: ${typography.lineHeights.lg};
+      font-weight: ${typography.fontWeight.bold};
+    `,
+    body2: css`
+      font-size: ${typography.fontSizes.body};
+      line-height: ${typography.lineHeights.lg};
+      font-weight: ${typography.fontWeight.medium};
+    `,
+    body3: css`
+      font-size: ${typography.fontSizes.body};
+      line-height: ${typography.lineHeights.lg};
+      font-weight: ${typography.fontWeight.regular};
+    `,
+  },
+  captions: {
+    caption1: css`
+      font-size: ${typography.fontSizes.caption};
+      line-height: ${typography.lineHeights.lg};
+      font-weight: ${typography.fontWeight.medium};
+    `,
+    caption2: css`
+      font-size: ${typography.fontSizes.caption};
+      line-height: ${typography.lineHeights.lg};
+      font-weight: ${typography.fontWeight.regular};
+    `,
   },
 } as const;
 
@@ -195,6 +269,7 @@ export type TypographyTypes = typeof typography;
 export type LayoutTypes = typeof layout;
 export type BreakpointsTypes = typeof breakpoints;
 export type ButtonsTypes = typeof buttons;
+export type TextStyleTypes = typeof textStyle;
 
 interface Theme {
   colors: ColorsTypes;
@@ -202,6 +277,7 @@ interface Theme {
   layout: LayoutTypes;
   breakpoints: BreakpointsTypes;
   buttons: ButtonsTypes;
+  textStyle: TextStyleTypes;
 }
 
 // ThemeProvider 적용하기 위해 Theme 타입을 정의
@@ -211,6 +287,7 @@ const theme: Theme = {
   layout,
   breakpoints,
   buttons,
+  textStyle,
 };
 
 export default theme;
