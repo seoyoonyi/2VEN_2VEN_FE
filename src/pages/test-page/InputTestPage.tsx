@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { css } from '@emotion/react';
 
@@ -8,7 +8,6 @@ const InputTestPage = () => {
   const [emailValue, setEmailValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
   const [searchValue, setSearchValue] = useState('');
-  const [textValue, setTextValue] = useState('');
 
   // 비밀번호 유효성 검사
   const validatePassword = (value: string) => ({
