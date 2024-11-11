@@ -264,12 +264,30 @@ const buttons = {
   },
 };
 
+const input = {
+  height: {
+    sm: '36px',
+    md: '48px',
+    lg: '56px',
+  },
+  padding: {
+    sm: '12px 8px',
+    md: '12px',
+    lg: '14px',
+  },
+  fontSize: {
+    sm: '14px',
+    md: '16px',
+    lg: '18px',
+  },
+};
 export type ColorsTypes = typeof colors;
 export type TypographyTypes = typeof typography;
 export type LayoutTypes = typeof layout;
 export type BreakpointsTypes = typeof breakpoints;
 export type ButtonsTypes = typeof buttons;
 export type TextStyleTypes = typeof textStyle;
+export type InputTypes = typeof input;
 
 interface Theme {
   colors: ColorsTypes;
@@ -278,6 +296,7 @@ interface Theme {
   breakpoints: BreakpointsTypes;
   buttons: ButtonsTypes;
   textStyle: TextStyleTypes;
+  input: InputTypes;
 }
 
 // ThemeProvider 적용하기 위해 Theme 타입을 정의
@@ -288,6 +307,7 @@ const theme: Theme = {
   breakpoints,
   buttons,
   textStyle,
+  input,
 };
 
 export default theme;
