@@ -49,7 +49,9 @@ const baseButtonStyle = css`
   align-items: center;
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
 
   &:disabled {
     cursor: not-allowed;
@@ -192,8 +194,9 @@ const buttonVariantStyles = {
     }
 
     &:disabled {
-        background-color: ${theme.buttons.accent.bg.disabled};
-        color: ${theme.buttons.accent.text.disabled};
+      background-color: ${theme.buttons.accent.bg.disabled};
+      color: ${theme.buttons.accent.text.disabled};
+    }
   `,
 };
 export default Button;
