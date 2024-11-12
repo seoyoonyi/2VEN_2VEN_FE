@@ -12,7 +12,7 @@ interface ToastProps {
   isVisible: boolean;
 }
 
-const Toast: React.FC<ToastProps> = ({ message, onClose, duration = 3000, isVisible }) => {
+const Toast = ({ message, onClose, duration = 3000, isVisible }: ToastProps) => {
   useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(onClose, duration);

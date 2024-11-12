@@ -1,5 +1,3 @@
-// import { useState } from 'react';
-
 import { css } from '@emotion/react';
 
 import Toast from '@/components/common/Toast';
