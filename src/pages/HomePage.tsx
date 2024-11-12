@@ -1,10 +1,10 @@
-import ButtonTestPage from '@/pages/test-page/ButtonTestPage';
+import ToastTestPage from '@/pages/test-page/ToastTestPage';
 
 const HomePage = () => (
   <div>
     <h1>메인페이지</h1>
     <div>
-      <ButtonTestPage />
+      <ToastTestPage />
     </div>
   </div>
 );
