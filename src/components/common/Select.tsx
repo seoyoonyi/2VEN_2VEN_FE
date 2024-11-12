@@ -23,7 +23,7 @@ interface SelectBoxProps {
 
 const defaultOption = { label: '선택', value: '' };
 
-const SelectBox = ({
+const Select = ({
   options,
   type = 'md',
   onSelect,
@@ -154,4 +154,4 @@ const selectOptionStyle = (type: SelectType) => css`
   }
 `;
 
-export default SelectBox;
+export default Select;

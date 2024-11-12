@@ -1,4 +1,4 @@
-import SelectBox from '@/components/common/SelectBox';
+import Select from '@/components/common/Select';
 
 const operations = [
   { label: '자동', value: 'auto' },
@@ -38,16 +38,16 @@ const SelectTestPage = () => {
   return (
     <>
       <div style={{ display: 'flex', width: '100vh', gap: '20px', marginBottom: '20px' }}>
-        <SelectBox options={operations} onSelect={handleSelect} />
-        <SelectBox options={cycles} onSelect={handleSelect} />
-        <SelectBox options={investmentFunds} onSelect={handleSelect} width='300px' />
-        <SelectBox options={isPublic} onSelect={handleSelect} disabled={true} />
+        <Select options={operations} onSelect={handleSelect} />
+        <Select options={cycles} onSelect={handleSelect} />
+        <Select options={investmentFunds} onSelect={handleSelect} width='300px' />
+        <Select options={isPublic} onSelect={handleSelect} disabled={true} />
       </div>
       <div style={{ display: 'flex', width: '100vh', gap: '20px', height: '100vh' }}>
-        <SelectBox options={operations} onSelect={handleSelect} type='sm' width='100px' />
-        <SelectBox options={cycles} onSelect={handleSelect} type='sm' disabled={true} />
-        <SelectBox options={investmentFunds} onSelect={handleSelect} type='sm' />
-        <SelectBox options={isPublic} onSelect={handleSelect} type='sm' width='80px' />
+        <Select options={operations} onSelect={handleSelect} type='sm' width='100px' />
+        <Select options={cycles} onSelect={handleSelect} type='sm' disabled={true} />
+        <Select options={investmentFunds} onSelect={handleSelect} type='sm' />
+        <Select options={isPublic} onSelect={handleSelect} type='sm' width='80px' />
       </div>
     </>
   );
