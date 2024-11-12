@@ -87,7 +87,7 @@ const selectButtonStyle = (
   line-height: ${theme.typography.lineHeights.md};
   background-color: ${open ? theme.colors.gray[50] : theme.colors.main.white};
   border: 1px solid ${selected.value === '' ? theme.colors.gray[300] : theme.colors.gray[400]};
-  padding: ${type === 'sm' ? '10px 7.5px' : '12px 16px'};
+  padding: ${type === 'sm' ? '8px 10px' : '12px 16px'};
   opacity: ${disabled ? 0.4 : 1};
   cursor: ${disabled ? 'not-allowed' : 'pointer'};
 
@@ -141,7 +141,7 @@ const selectOptionsStyle = (type: SelectType) => css`
 const selectOptionStyle = (type: SelectType) => css`
   cursor: pointer;
   display: block;
-  padding: ${type === 'sm' ? '10px 7.5px' : '12px 16px'};
+  padding: ${type === 'sm' ? '8px 10px' : '12px 16px'};
   &:hover {
     background-color: ${theme.colors.teal[50]};
     color: ${theme.colors.teal[600]};
