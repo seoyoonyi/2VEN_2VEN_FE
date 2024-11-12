@@ -52,11 +52,13 @@ const SelectBox = ({
             </ListboxButton>
 
             <ListboxOptions css={selectOptionsStyle(type)}>
-              {options.map((option) => (
-                <ListboxOption key={option.value} value={option} css={selectOptionStyle(type)}>
-                  <span>{option.label}</span>
-                </ListboxOption>
-              ))}
+              <div css={selectOptionsWrapperStyle}>
+                {options.map((option) => (
+                  <ListboxOption key={option.value} value={option} css={selectOptionStyle(type)}>
+                    <span>{option.label}</span>
+                  </ListboxOption>
+                ))}
+              </div>
             </ListboxOptions>
           </>
         )}
@@ -81,22 +83,14 @@ const selectButtonStyle = (
   justify-content: space-between;
   width: 100%;
   height: ${type === 'sm' ? theme.input.height.sm : theme.input.height.md};
-  color: ${disabled
-    ? theme.colors.gray[400]
-    : selected.value !== ''
-      ? theme.colors.gray[700]
-      : theme.colors.gray[500]};
+  color: ${selected.value !== '' ? theme.colors.gray[700] : theme.colors.gray[500]};
   font-size: ${type === 'sm' ? theme.input.fontSize.sm : theme.input.fontSize.md};
   font-weight: ${theme.typography.fontWeight.regular};
   line-height: ${theme.typography.lineHeights.md};
-  background-color: ${disabled
-    ? theme.colors.gray[100]
-    : open
-      ? theme.colors.gray[50]
-      : theme.colors.main.white};
+  background-color: ${open ? theme.colors.gray[50] : theme.colors.main.white};
   border: 1px solid ${selected.value === '' ? theme.colors.gray[300] : theme.colors.gray[400]};
   padding: ${type === 'sm' ? '10px 7.5px' : '12px 16px'};
-  min-width: 80%;
+  opacity: ${disabled ? 0.4 : 1};
   cursor: ${disabled ? 'not-allowed' : 'pointer'};
 
   &:hover {
@@ -122,7 +116,6 @@ const iconStyle = (type: SelectType) => css`
 const selectOptionsStyle = (type: SelectType) => css`
   position: absolute;
   width: 100%;
-  max-height: 144px;
   font-size: ${type === 'sm'
     ? theme.typography.fontSizes.caption
     : theme.typography.fontSizes.body};
@@ -134,26 +127,27 @@ const selectOptionsStyle = (type: SelectType) => css`
   margin-top: 8px;
   z-index: 10;
   box-shadow: 0px 0px 6px 0px rgba(75, 85, 99, 0.1);
-  overflow-y: scroll;
+`;
+
+const selectOptionsWrapperStyle = css`
+  margin: 0 8px;
+  max-height: 144px;
+  overflow: auto;
 
   &::-webkit-scrollbar {
     width: 4px;
-    height: 40px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: ${theme.colors.gray[200]};
+    height: 40px;
+    background-color: #d9d9d9;
   }
 `;
 
 const selectOptionStyle = (type: SelectType) => css`
   cursor: pointer;
   display: block;
-  padding: ${type === 'sm' ? '10px 7.5px' : '12px 16px'};
+  padding: ${type === 'sm' ? '10px 0' : '12px 8px'};
   &:hover {
     background-color: ${theme.colors.teal[50]};
     color: ${theme.colors.teal[600]};
