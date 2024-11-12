@@ -38,16 +38,16 @@ const SelectTestPage = () => {
   return (
     <>
       <div style={{ display: 'flex', width: '100vh', gap: '20px', marginBottom: '20px' }}>
-        <Select options={operations} onSelect={handleSelect} />
-        <Select options={cycles} onSelect={handleSelect} />
-        <Select options={investmentFunds} onSelect={handleSelect} width='300px' />
-        <Select options={isPublic} onSelect={handleSelect} disabled={true} />
+        <Select options={operations} onChange={handleSelect} />
+        <Select options={cycles} onChange={handleSelect} />
+        <Select options={investmentFunds} onChange={handleSelect} width='300px' />
+        <Select options={isPublic} onChange={handleSelect} disabled={true} />
       </div>
       <div style={{ display: 'flex', width: '100vh', gap: '20px', height: '100vh' }}>
-        <Select options={operations} onSelect={handleSelect} type='sm' width='100px' />
-        <Select options={cycles} onSelect={handleSelect} type='sm' disabled={true} />
-        <Select options={investmentFunds} onSelect={handleSelect} type='sm' />
-        <Select options={isPublic} onSelect={handleSelect} type='sm' width='80px' />
+        <Select options={operations} onChange={handleSelect} type='sm' width='100px' />
+        <Select options={cycles} onChange={handleSelect} type='sm' disabled={true} />
+        <Select options={investmentFunds} onChange={handleSelect} type='sm' />
+        <Select options={isPublic} onChange={handleSelect} type='sm' width='80px' />
       </div>
     </>
   );

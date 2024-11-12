@@ -16,7 +16,7 @@ interface Option {
 interface SelectBoxProps {
   options: Option[];
   type?: SelectType;
-  onSelect?: (option: Option) => void;
+  onChange: (option: Option) => void;
   width?: string;
   disabled?: boolean;
 }
@@ -26,7 +26,7 @@ const defaultOption = { label: '선택', value: '' };
 const Select = ({
   options,
   type = 'md',
-  onSelect,
+  onChange,
   width = '200px',
   disabled = false,
 }: SelectBoxProps) => {
@@ -34,7 +34,7 @@ const Select = ({
 
   const handleSelect = (option: Option) => {
     setSelected(option);
-    if (onSelect) onSelect(option);
+    onChange(option);
   };
 
   return (
@@ -52,13 +52,11 @@ const Select = ({
             </ListboxButton>
 
             <ListboxOptions css={selectOptionsStyle(type)}>
-              <div css={selectOptionsWrapperStyle}>
-                {options.map((option) => (
-                  <ListboxOption key={option.value} value={option} css={selectOptionStyle(type)}>
-                    <span>{option.label}</span>
-                  </ListboxOption>
-                ))}
-              </div>
+              {options.map((option) => (
+                <ListboxOption key={option.value} value={option} css={selectOptionStyle(type)}>
+                  <span>{option.label}</span>
+                </ListboxOption>
+              ))}
             </ListboxOptions>
           </>
         )}
@@ -116,6 +114,7 @@ const iconStyle = (type: SelectType) => css`
 const selectOptionsStyle = (type: SelectType) => css`
   position: absolute;
   width: 100%;
+  max-height: 144px;
   font-size: ${type === 'sm'
     ? theme.typography.fontSizes.caption
     : theme.typography.fontSizes.body};
@@ -127,11 +126,6 @@ const selectOptionsStyle = (type: SelectType) => css`
   margin-top: 8px;
   z-index: 10;
   box-shadow: 0px 0px 6px 0px rgba(75, 85, 99, 0.1);
-`;
-
-const selectOptionsWrapperStyle = css`
-  margin: 0 8px;
-  max-height: 144px;
   overflow: auto;
 
   &::-webkit-scrollbar {
@@ -147,7 +141,7 @@ const selectOptionsWrapperStyle = css`
 const selectOptionStyle = (type: SelectType) => css`
   cursor: pointer;
   display: block;
-  padding: ${type === 'sm' ? '10px 0' : '12px 8px'};
+  padding: ${type === 'sm' ? '10px 7.5px' : '12px 16px'};
   &:hover {
     background-color: ${theme.colors.teal[50]};
     color: ${theme.colors.teal[600]};
