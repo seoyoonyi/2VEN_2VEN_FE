@@ -3,7 +3,7 @@ import React from 'react';
 import { css } from '@emotion/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useSignUp } from '@/api/auth';
+// import { useSignUp } from '@/api/auth';
 import theme from '@/styles/theme';
 import { HomeRouteState } from '@/types/route';
 
@@ -11,33 +11,33 @@ const SignUpFormPage: React.FC = () => {
   const location = useLocation();
   const { userRole } = (location.state as HomeRouteState) || {};
 
-  const navigate = useNavigate();
-  const signUp = useSignUp();
-  const [formData, setFormData] = React.useState({
-    email: '',
-    password: '',
-    username: '',
-  });
+  // const navigate = useNavigate();
+  // const signUp = useSignUp();
+  // const [formData, setFormData] = React.useState({
+  //   email: '',
+  //   password: '',
+  //   username: '',
+  // });
 
-  const handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void> = async (e) => {
-    e.preventDefault();
+  // const handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void> = async (e) => {
+  //   e.preventDefault();
 
-    try {
-      // const result = await signUp.mutateAsync(formData);
-      alert('회원가입이 완료되었습니다.');
-      navigate('/login');
-    } catch (error) {
-      alert(error instanceof Error ? error.message : '회원가입 실패');
-    }
-  };
+  //   try {
+  //     // const result = await signUp.mutateAsync(formData);
+  //     alert('회원가입이 완료되었습니다.');
+  //     navigate('/login');
+  //   } catch (error) {
+  //     alert(error instanceof Error ? error.message : '회원가입 실패');
+  //   }
+  // };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
 
   return (
     <div>

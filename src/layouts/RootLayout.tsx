@@ -14,8 +14,8 @@ const RootLayout = () => (
   </div>
 );
 
-export default RootLayout;
-
 const wrapperStyle = css`
   min-height: 100vh;
 `;
+
+export default RootLayout;
