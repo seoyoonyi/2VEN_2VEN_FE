@@ -57,11 +57,12 @@ const modalStyle = css`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 500px;
-  height: 300px;
+  width: 380px;
+  height: 200px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  padding: 36.5px 70px;
   background-color: ${theme.colors.main.white};
   border-radius: 10px;
 `;
@@ -79,8 +80,8 @@ const descStyle = css`
   font-size: ${theme.typography.fontSizes.caption};
   font-weight: ${theme.typography.fontWeight.medium};
   line-height: ${theme.typography.lineHeights.lg};
-  margin-bottom: 50px;
   color: ${theme.colors.gray[500]};
+  margin-bottom: 24px;
 `;
 
 const baseButtonStyle = css`

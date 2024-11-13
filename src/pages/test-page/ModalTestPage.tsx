@@ -8,7 +8,7 @@ const ModalTestPage = () => {
     openModal({
       type: 'confirm',
       title: '전략 등록',
-      desc: '등록된 전략은 마이페이지에서 확인 가능합니다.',
+      desc: '등록된 전략은 마이페이지에서 \n 확인 가능합니다.',
       onAction: () => console.log('등록됨'),
     });
   };
@@ -17,7 +17,7 @@ const ModalTestPage = () => {
     openModal({
       type: 'confirm',
       title: '전략 수정',
-      desc: `수정된 전략은 전략 상세페이지에서 확인 가능합니다.`,
+      desc: `수정된 전략은 전략 상세페이지에서 \n 확인 가능합니다.`,
       actionButton: '수정',
       onAction: () => console.log('수정됨'),
     });
@@ -27,7 +27,7 @@ const ModalTestPage = () => {
     openModal({
       type: 'warning',
       title: '전략 삭제',
-      desc: `등록한 전략은 3일간 매매 일지 입력을 완료한 후 \n 전략승인 요청 할 수 있습니다`,
+      desc: `등록한 전략은 3일간 매매 일지 입력을 \n 완료한 후 전략승인 요청 할 수 있습니다.`,
       onAction: () => console.log('삭제됨'),
     });
   };
