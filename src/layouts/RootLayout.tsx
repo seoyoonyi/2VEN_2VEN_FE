@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { Outlet } from 'react-router-dom';
 
 import Footer from '@/components/common/Footer';
@@ -13,10 +14,8 @@ const RootLayout = () => (
   </div>
 );
 
-
 const wrapperStyle = css`
   min-height: 100vh;
 `;
-
 
 export default RootLayout;
