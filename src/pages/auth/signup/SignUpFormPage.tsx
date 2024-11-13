@@ -1,10 +1,16 @@
 import React from 'react';
 
-import { useNavigate } from 'react-router-dom';
+import { css } from '@emotion/react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useSignUp } from '@/api/auth';
+import theme from '@/styles/theme';
+import { HomeRouteState } from '@/types/route';
 
 const SignUpFormPage: React.FC = () => {
+  const location = useLocation();
+  const { userRole } = (location.state as HomeRouteState) || {};
+
   const navigate = useNavigate();
   const signUp = useSignUp();
   const [formData, setFormData] = React.useState({
@@ -35,10 +41,12 @@ const SignUpFormPage: React.FC = () => {
 
   return (
     <div>
-      <div>
-        <h2>회원가입</h2>
+      <div css={containerStyle}>
+        <h1 css={pageHeadingStyle}>회원정보 입력</h1>
+        <div css={formContainerStyle}></div>
+        <p>받아온 Role: {userRole}</p>
       </div>
-      <form onSubmit={handleSubmit}>
+      {/* <form onSubmit={handleSubmit}>
         <div>
           <div>
             <input
@@ -77,9 +85,28 @@ const SignUpFormPage: React.FC = () => {
             {signUp.isPending ? '처리중...' : '가입하기'}
           </button>
         </div>
-      </form>
+      </form> */}
     </div>
   );
 };
+const containerStyle = css`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 76px 0 83px;
+`;
 
+const pageHeadingStyle = css`
+  font-size: ${theme.typography.fontSizes.heading.h2};
+  line-height: ${theme.typography.lineHeights.md};
+  font-weight: ${theme.typography.fontWeight.bold};
+  margin-bottom: 40px;
+`;
+
+const formContainerStyle = css`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.layout.spacing.gutter};
+`;
 export default SignUpFormPage;
