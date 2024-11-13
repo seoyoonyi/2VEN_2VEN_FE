@@ -12,7 +12,7 @@ import FindPasswordPage from '@/pages/auth/find/FindPasswordPage';
 import PasswordResetSuccessPage from '@/pages/auth/find/PasswordResetSuccessPage';
 import ResetPasswordPage from '@/pages/auth/find/ResetPasswordPage';
 import SignInPage from '@/pages/auth/SignInPage';
-import SignUpFormPage from '@/pages/auth/signup/SignUpFormPage';
+import SignUpFormPage from '@/pages/auth/signup/SignUpPage';
 import SignUpSelectTypePage from '@/pages/auth/signup/SignUpSelectTypePage';
 import SignUpSuccessPage from '@/pages/auth/signup/SignUpSuccessPage';
 import WithdrawalSuccessPage from '@/pages/auth/WithdrawalSuccessPage';
