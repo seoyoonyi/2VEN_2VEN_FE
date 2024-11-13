@@ -4,7 +4,6 @@ import {
   MdKeyboardArrowRight,
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
-  MdMoreHoriz,
 } from 'react-icons/md';
 
 import theme from '@/styles/theme';
@@ -58,11 +57,6 @@ const Pagination = ({ totalPage, limit, page, setPage }: paginationProps) => {
           {pageNum}
         </button>
       ))}
-      {endPage < totalPage && (
-        <div css={NumberBtn} aria-disabled='true'>
-          <MdMoreHoriz size={12} /> <button css={NumberBtn}>{totalPage}</button>
-        </div>
-      )}
       <button css={ArrowBtn} onClick={handleNext} disabled={page === totalPage}>
         <MdKeyboardArrowRight size={24} />
       </button>
@@ -86,7 +80,7 @@ const PaginationWrapper = css`
     font-weight: ${theme.typography.fontWeight.regular};
     line-height: ${theme.typography.lineHeights.lg};
     background-color: inherit;
-    border-radius: 8px;
+    border-radius: 4px;
     color: ${theme.colors.gray[400]};
     width: 24px;
     height: 24px;
@@ -111,12 +105,6 @@ const NumberBtn = css`
   &:hover {
     background-color: ${theme.colors.gray[50]};
     color: ${theme.colors.gray[400]};
-  }
-
-  &[aria-disabled='true'] {
-    color: ${theme.colors.gray[400]};
-    cursor: not-allowed;
-    pointer-events: none;
   }
 
   &:disabled {
