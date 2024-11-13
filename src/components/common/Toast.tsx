@@ -12,7 +12,13 @@ interface ToastProps {
   isVisible: boolean;
 }
 
-const Toast = ({ message, onClose, duration = 3000, isVisible }: ToastProps) => {
+const Toast: React.FC<ToastProps> = ({
+  message,
+  onClose,
+  duration = 3000,
+  isVisible,
+  ...props
+}) => {
   useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(onClose, duration);
@@ -21,30 +27,28 @@ const Toast = ({ message, onClose, duration = 3000, isVisible }: ToastProps) => 
   }, [duration, onClose, isVisible]);
 
   return isVisible ? (
-    <div css={toastStyles(isVisible)}>
+    <div css={toastStyles(isVisible)} {...props}>
       <BiCheck css={iconStyle} />
-      <span>{message}</span>
+      {message}
     </div>
   ) : null;
 };
 
-const fadeIn = keyframes`
-  from {
+const fadeInOut = keyframes`
+  0% {
     opacity: 0;
   }
-  to {
+  10% {
     opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 `;
 
-const fadeOut = keyframes`
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-`;
 const toastStyles = (isVisible: boolean) => css`
   position: fixed;
   top: 120px;
@@ -58,8 +62,9 @@ const toastStyles = (isVisible: boolean) => css`
   padding: 0 18px;
   background-color: ${theme.colors.gray[800]};
   color: ${theme.colors.main.white};
-  animation: ${isVisible ? fadeIn : fadeOut} 0.5s ease;
+  animation: ${fadeInOut} 3s ease forwards;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  opacity: ${isVisible ? 1 : 0};
 `;
 
 const iconStyle = css`
