@@ -61,13 +61,13 @@ const PaginationContainer = css`
 
 const TableStyle = css`
   width: 100%;
-  border-collapse: collpse;
+  border-collapse: collapse;
   margin-bottom: 20px;
 
   td,
   tr {
     border: 1px solid black;
-    padding: 12x;
+    padding: 12px;
     text-align: center;
   }
 

@@ -1,10 +1,10 @@
-import ToastTestPage from '@/pages/test-page/ToastTestPage';
+import PaginationTestPage from './test-page/PaginationTestPage';
 
 const HomePage = () => (
   <div>
     <h1>메인페이지</h1>
     <div>
-      <ToastTestPage />
+      <PaginationTestPage />
     </div>
   </div>
 );
