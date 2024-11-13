@@ -44,6 +44,7 @@ const containerStyle = css`
   justify-content: center;
   align-items: center;
   padding: 76px 0 83px;
+  background-color: ${theme.colors.gray[50]};
 `;
 
 const pageHeadingStyle = css`
@@ -56,6 +57,7 @@ const cardContainerStyle = css`
   display: flex;
   justify-content: center;
   gap: ${theme.layout.spacing.gutter};
+  background-color: ${theme.colors.main.white};
 `;
 
 export default SignUpSelectTypePage;
