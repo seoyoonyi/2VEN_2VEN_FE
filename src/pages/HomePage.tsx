@@ -1,10 +1,9 @@
-import PaginationTestPage from './test-page/PaginationTestPage';
+import SignUpSelectTypePage from '@/pages/auth/signup/SignUpSelectTypePage';
 
 const HomePage = () => (
   <div>
-    <h1>메인페이지</h1>
     <div>
-      <PaginationTestPage />
+      <SignUpSelectTypePage />
     </div>
   </div>
 );
