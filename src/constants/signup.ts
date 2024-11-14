@@ -15,3 +15,11 @@ export const USER_TYPE_TEXT: UserTypeText = {
     alt: '트레이더카드 이미지',
   },
 };
+
+export const TERMS_CHECKBOX_TITLE = {
+  PRIVACY_REQUIRED: '[필수] 개인정보 처리방침',
+  INVESTOR_TERMS_REQUIRED: '[필수] 일반회원(투자자) 이용약관',
+  TRADER_TERMS_REQUIRED: '[필수] 트레이더 회원 이용약관',
+  PROMOTION_OPTIONAL: '[선택] 관심 전략과 정보를 수신 동의합니다.',
+  MARKETING_OPTIONAL: '[선택] 정보성 마케팅 정보 알림에 수신 동의합니다.',
+};

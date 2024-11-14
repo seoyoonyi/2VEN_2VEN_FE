@@ -150,7 +150,8 @@ const baseInputStyles = css`
   line-height: 150%;
 
   &::placeholder {
-    color: ${theme.colors.gray[700]};
+    color: ${theme.colors.gray[700] + '4a'};
+    font-weight: ${theme.typography.fontWeight.regular};
   }
 
   &:hover:not(:disabled) {

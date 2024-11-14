@@ -136,7 +136,7 @@ const baseStyles = css`
     &::-webkit-scrollbar {
       display: none;
     }
-    scrollbar-width: none; /*Firefox*/
+    scrollbar-width: 4px; /*Firefox*/
     -ms-overflow-style: none; /*IE and Edge*/
 
     /*(추가) 터치 기기에서의 스크롤 동작 개선, 네이티브와 같이 동작
