@@ -71,7 +71,6 @@ const selectedTab = css`
     right: 0;
     height: 2px;
     background-color: ${theme.colors.main.primary};
-    transition: 0.3s ease;
   }
 `;
 export default StrategyTab;
