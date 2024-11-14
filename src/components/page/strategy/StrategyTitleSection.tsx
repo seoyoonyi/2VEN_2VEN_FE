@@ -43,7 +43,7 @@ const StrategyTitleSection = ({ title, author, date, followers }: TitleProps) =>
 
         <div css={followerAreaStyle}>
           <div css={followerTextStyle}>팔로워</div>
-          <div>{followers}</div>
+          <div css={followerTextStyle}>{followers}</div>
           <div css={editDeleteStyle}>
             <span css={editStyle}>수정</span>
             <span css={deleteStyle}>삭제</span>
@@ -134,18 +134,16 @@ const followerAreaStyle = css`
   flex-direction: column;
   width: 100px;
   align-items: center;
-  margin-top: 3px;
+  gap: 8px;
   ${theme.textStyle.subtitles.subtitle2};
 `;
 
 const followerTextStyle = css`
-  font-size: ${theme.buttons.label.md.fontSize};
-  font-weight: ${theme.buttons.label.sm.fontWeight};
+  height: 34px;
 `;
 
 const editDeleteStyle = css`
   display: flex;
-  margin-top: 15px;
   gap: 13px;
 `;
 

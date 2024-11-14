@@ -10,7 +10,7 @@ const StrategyContent = ({ content }: { content: string }) => (
 
 const contentWrapper = css`
   width: 100%;
-  height: 468px;
+  min-height: 100px;
   background-color: ${theme.colors.gray[50]};
   display: flex;
   padding: 16px 24px 20px 24px;
@@ -24,7 +24,6 @@ const contentStyle = css`
   display: flex;
   flex-direction: column;
   white-space: pre-wrap;
-  justify-content: center;
   flex: 1 0 0;
   ${theme.textStyle.body.body3.styles};
 `;

@@ -10,7 +10,7 @@ const strategyDummy = [
     title: '전략 이름이 들어가는 자리입니다.',
     author: {
       traderId: 'investKing',
-      traderName: '나는야 투자왕',
+      traderName: '나는야투자왕',
       imgUrl: '/logo.svg',
     },
     date: '2024.11.13(수) 23:25',
