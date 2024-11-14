@@ -17,10 +17,9 @@ const StrategyCreatePage = () => (
 );
 
 const createContainerStyle = css`
-  max-width: ${theme.layout.width.content};
-  width: 1000px;
+  width: ${theme.layout.width.content};
   margin: 0 auto;
-  padding: 60px 0;
+  padding: 60px 70px;
 `;
 
 export default StrategyCreatePage;
