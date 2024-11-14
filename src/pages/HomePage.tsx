@@ -1,9 +1,9 @@
-import SignUpSelectTypePage from '@/pages/auth/signup/SignUpSelectTypePage';
+import SignUpSuccessPage from '@/pages/auth/signup/SignUpSuccessPage';
 
 const HomePage = () => (
   <div>
     <div>
-      <SignUpSelectTypePage />
+      <SignUpSuccessPage />
     </div>
   </div>
 );
