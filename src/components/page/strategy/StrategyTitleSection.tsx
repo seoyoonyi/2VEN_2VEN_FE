@@ -73,9 +73,7 @@ const tagStyle = css`
   height: 21px;
   align-items: center;
   justify-content: center;
-  font-size: ${theme.buttons.label.sm.fontSize};
-  font-weight: ${theme.buttons.label.lg.fontWeight};
-  line-height: ${theme.buttons.label.lg.lineHeight};
+  ${theme.textStyle.captions.caption2};
   background-color: ${theme.colors.teal[100]};
 `;
 
