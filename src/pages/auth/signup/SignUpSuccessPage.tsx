@@ -36,19 +36,19 @@ const containerStyle = css`
     line-height: ${theme.typography.lineHeights.md};
     font-weight: ${theme.typography.fontWeight.bold};
     order: 2;
-    margin-bottom: 10px;s
+    margin-bottom: 10px;
   }
-  p{
+  p {
     color: ${theme.colors.gray[700]};
     font-size: ${theme.typography.fontSizes.body};
     line-height: ${theme.typography.lineHeights.lg};
     font-weight: ${theme.typography.fontWeight.medium};
-    order:3;
+    order: 3;
     margin-bottom: 40px;
   }
-  img{
-    width:228px;
-    order:1;
+  img {
+    width: 228px;
+    order: 1;
     margin-bottom: 32px;
   }
   button {
