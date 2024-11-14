@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { FiSearch } from 'react-icons/fi';
@@ -7,29 +7,36 @@ import Input from '@/components/common/Input';
 import theme from '@/styles/theme';
 
 interface SearchInputProps {
-  onSearch?: (value: string) => void;
+  onSearchSubmit?: (value: string) => void;
 }
 
-const SearchInput = ({ onSearch, ...props }: SearchInputProps) => {
+const SearchInput = ({ onSearchSubmit, ...props }: SearchInputProps) => {
   const [searchValue, setSearchValue] = useState('');
 
-  const handleSearch = () => {
-    if (onSearch) onSearch(searchValue);
+  const handleSearchButtonClick = () => {
+    if (onSearchSubmit) onSearchSubmit(searchValue);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value);
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
+  };
+
+  const handleInputEnterPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSearchButtonClick();
+    }
   };
 
   return (
     <div css={searchContainerStyles}>
-      <button type='button' onClick={handleSearch} css={searchIconStyles}>
+      <button type='button' onClick={handleSearchButtonClick} css={searchIconStyles}>
         <FiSearch size={24} />
       </button>
       <Input
         placeholder='내용을 입력해주세요'
         value={searchValue}
-        onChange={handleChange}
+        onChange={handleSearchChange}
+        onKeyPress={handleInputEnterPress}
         showClearButton
         customStyle={css`
           width: 300px;

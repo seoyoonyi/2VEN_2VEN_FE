@@ -26,7 +26,7 @@ const Header = () => {
           <GlobalNav />
         </div>
         <div css={searchAndMyPageContainer}>
-          <SearchInput onSearch={handleButtonClick} />
+          <SearchInput onSearchSubmit={handleButtonClick} />
           <Link to={ROUTES.MYPAGE.TRADER.STRATEGIES.LIST} css={myPageStyle}>
             <BsPerson size={24} />
           </Link>
