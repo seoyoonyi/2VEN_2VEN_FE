@@ -13,22 +13,18 @@ const ProductType = ({ products, selectedProducts, onProductChange }: ProductTyp
   <section css={flexStyle}>
     <div css={labelStyle}>상품유형</div>
     <div css={checkboxContainerStyle}>
-      {products.map((product, index) => {
-        const checkboxId = `product-${index}`;
-
-        return (
-          <div key={product} style={{ display: 'flex' }}>
-            <Checkbox
-              id={checkboxId}
-              checked={selectedProducts.includes(product)}
-              onChange={() => onProductChange(product)}
-            />
-            <label htmlFor={checkboxId} css={checkTextStyle(selectedProducts.includes(product))}>
-              {product}
-            </label>
-          </div>
-        );
-      })}
+      {products.map((product) => (
+        <div key={product} style={{ display: 'flex' }}>
+          <Checkbox
+            id={product}
+            checked={selectedProducts.includes(product)}
+            onChange={() => onProductChange(product)}
+          />
+          <label htmlFor={product} css={checkTextStyle(selectedProducts.includes(product))}>
+            {product}
+          </label>
+        </div>
+      ))}
     </div>
   </section>
 );
