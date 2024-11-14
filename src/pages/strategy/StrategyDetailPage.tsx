@@ -53,7 +53,6 @@ const StrategyDetailPage = () => (
 
 const containerStyle = css`
   display: flex;
-  width: ${theme.layout.width.max};
   background-color: ${theme.colors.gray[100]};
   justify-content: center;
   flex-shrink: 0;
