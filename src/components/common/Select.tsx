@@ -14,6 +14,7 @@ interface Option {
 }
 
 interface SelectBoxProps {
+  id?: string;
   options: Option[];
   type?: SelectType;
   onChange: (option: Option) => void;
@@ -24,6 +25,7 @@ interface SelectBoxProps {
 const defaultOption = { label: '선택', value: '' };
 
 const Select = ({
+  id,
   options,
   type = 'md',
   onChange,
@@ -42,7 +44,7 @@ const Select = ({
       <Listbox value={selected} onChange={handleSelect} disabled={disabled}>
         {({ open }) => (
           <>
-            <ListboxButton css={selectButtonStyle(type, open, disabled, selected)}>
+            <ListboxButton id={id} css={selectButtonStyle(type, open, disabled, selected)}>
               <span css={textEllipsisStyle}>{selected.label}</span>
               {open ? (
                 <FaChevronUp css={iconStyle(type)} />
