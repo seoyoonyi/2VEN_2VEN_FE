@@ -89,6 +89,7 @@ const StrategyCreateForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('서버로 요청!');
+    console.log(file);
     navigate('/strategies/1');
   };
 
