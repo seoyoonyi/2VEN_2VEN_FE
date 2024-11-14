@@ -1,25 +1,17 @@
-import { useState } from 'react';
-
 import { css } from '@emotion/react';
 import { BsPerson } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
-import SearchInput from '@/components/common/SearchInput';
 import GlobalNav from '@/components/navigation/GlobalNav';
+import SearchInput from '@/components/page/search/SearchInput';
 import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
 
 const Header = () => {
   const LOGO = 'SYSMETIC';
 
-  const [searchValue, setSearchValue] = useState('');
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value);
-  };
-
-  const handleButtonClick = () => {
-    console.log(searchValue);
+  const handleButtonClick = (value: string) => {
+    console.log(value);
   };
 
   return (
@@ -34,7 +26,7 @@ const Header = () => {
           <GlobalNav />
         </div>
         <div css={searchAndMyPageContainer}>
-          <SearchInput onChange={handleSearch} onSearch={handleButtonClick} />
+          <SearchInput onSearch={handleButtonClick} />
           <Link to={ROUTES.MYPAGE.TRADER.STRATEGIES.LIST} css={myPageStyle}>
             <BsPerson size={24} />
           </Link>

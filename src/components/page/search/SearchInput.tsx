@@ -1,17 +1,24 @@
+import { useState } from 'react';
+
 import { css } from '@emotion/react';
 import { FiSearch } from 'react-icons/fi';
 
-import Input, { InputProps } from './Input';
-
+import Input from '@/components/common/Input';
 import theme from '@/styles/theme';
 
-interface SearchInputProps extends InputProps {
-  onSearch?: () => void;
+interface SearchInputProps {
+  onSearch?: (value: string) => void;
 }
 
 const SearchInput = ({ onSearch, ...props }: SearchInputProps) => {
+  const [searchValue, setSearchValue] = useState('');
+
   const handleSearch = () => {
-    if (onSearch) onSearch();
+    if (onSearch) onSearch(searchValue);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
   };
 
   return (
@@ -21,13 +28,15 @@ const SearchInput = ({ onSearch, ...props }: SearchInputProps) => {
       </button>
       <Input
         placeholder='내용을 입력해주세요'
-        {...props}
+        value={searchValue}
+        onChange={handleChange}
         showClearButton
         customStyle={css`
           width: 300px;
           text-indent: 10px;
           padding-left: 36px;
         `}
+        {...props}
       />
     </div>
   );
