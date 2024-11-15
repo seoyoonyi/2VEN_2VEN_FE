@@ -1,9 +1,9 @@
-import SignUpSuccessPage from '@/pages/auth/signup/SignUpSuccessPage';
+import StrategyListTestPage from '@/pages/test-page/StrategyListTestPage';
 
 const HomePage = () => (
   <div>
     <div>
-      <SignUpSuccessPage />
+      <StrategyListTestPage />
     </div>
   </div>
 );
