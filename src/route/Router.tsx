@@ -48,7 +48,7 @@ export const router = createBrowserRouter([
       },
       // -------------------------------------- 인증
       {
-        path: ROUTES.AUTH.LOGIN,
+        path: ROUTES.AUTH.SIGNIN,
         element: <SignInPage />, // 로그인 페이지
       },
       {
