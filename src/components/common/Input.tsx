@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { css, SerializedStyles } from '@emotion/react';
 import { FiSearch } from 'react-icons/fi'; // 검색 아이콘
 import { GrMailOption } from 'react-icons/gr'; // 메일 아이콘
-import { IoMdKey, IoIosCloseCircle, IoMdEye, IoMdEyeOff } from 'react-icons/io'; // 키, 눈, 닫기 아이콘
+import { IoIosCloseCircle, IoMdEye, IoMdEyeOff } from 'react-icons/io'; // 키, 눈, 닫기 아이콘
+import { RiKeyFill } from 'react-icons/ri';
 
 import theme from '@/styles/theme';
 
@@ -47,7 +48,7 @@ const Input = ({
       case 'mail':
         return <GrMailOption />;
       case 'key':
-        return <IoMdKey />;
+        return <RiKeyFill />;
       case 'eye':
         return showPassword ? <IoMdEyeOff /> : <IoMdEye />;
       case 'clear':
