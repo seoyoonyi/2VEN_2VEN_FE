@@ -11,12 +11,12 @@ const SignInPage: React.FC = () => (
     <h3 css={pageHeadingStyle}>로그인</h3>
     <form css={formStyle}>
       <div>
-        <Input type='email' inputSize='md' leftIcon='mail' placeholder='이메일' showClearButton />
+        <Input type='email' inputSize='lg' leftIcon='mail' placeholder='이메일' showClearButton />
       </div>
       <div>
         <Input
           type='password'
-          inputSize='md'
+          inputSize='lg'
           leftIcon='key'
           rightIcon='eye'
           placeholder='비밀번호'
