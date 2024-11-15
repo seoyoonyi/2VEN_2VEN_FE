@@ -10,7 +10,7 @@ const FindEmailPage = () => (
     <h3 css={pageHeadingStyle}>이메일 찾기</h3>
     <form css={formStyle}>
       <div>
-        <Input type='email' inputSize='md' placeholder='이메일' showClearButton />
+        <Input type='email' inputSize='lg' placeholder='이메일' showClearButton />
       </div>
       <Button width={400} css={buttonStyle} disabled>
         로그인
