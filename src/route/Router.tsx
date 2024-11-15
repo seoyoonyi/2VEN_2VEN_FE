@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/routes';
+import AdminLayout from '@/layouts/AdminLayout';
 import RootLayout from '@/layouts/RootLayout';
 import StockTypeListPage from '@/pages/admin/stock-type/StockTypeListPage';
 import StrategyApprovalListPage from '@/pages/admin/strategy/StrategyApprovalListPage';
@@ -165,8 +166,14 @@ export const router = createBrowserRouter([
         path: ROUTES.SEARCH.STRATEGY.WITH_KEYWORD(':keyword'),
         element: <SearchResultsInStrategy />, // 전략 내 검색결과 페이지
       },
+    ],
+  },
+  {
+    path: ROUTES.HOME.PATH,
+    element: <AdminLayout />,
+    errorElement: <NotFoundPage />,
+    children: [
       // -------------------------------------- 관리자
-
       {
         path: ROUTES.ADMIN.STOCK_TYPE.LIST,
         element: <StockTypeListPage />, // 상품유형 관리 페이지(현재 대시보드 페이지)
