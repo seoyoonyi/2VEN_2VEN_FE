@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { css } from '@emotion/react';
 import { MdKeyboardArrowRight, MdArrowForward } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
@@ -76,7 +74,7 @@ const HomePage = () => {
             </div>
             <div css={rankingItemStyle}>
               <div css={rankWithIconStyle}>
-                <h3 css={rankTextStyle}>2st</h3>
+                <h3 css={rankTextStyle}>2nd</h3>
                 <MdKeyboardArrowRight css={arrowIconStyle} />
               </div>
               <div css={userInfoStyle}>
@@ -87,7 +85,7 @@ const HomePage = () => {
             </div>
             <div css={rankingItemStyle}>
               <div css={rankWithIconStyle}>
-                <h3 css={rankTextStyle}>3st</h3>
+                <h3 css={rankTextStyle}>3rd</h3>
                 <MdKeyboardArrowRight css={arrowIconStyle} />
               </div>
               <div css={userInfoStyle}>
