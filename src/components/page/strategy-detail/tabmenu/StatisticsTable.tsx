@@ -67,13 +67,11 @@ const StatisticsTable = ({ data }: statisticsProps) => {
   const sectionsRight = splitData(data.slice(data.length / 2), pattern);
 
   const Section = ({ data }: { data: DataRowProps[] }) => (
-    <div css={tableWrapperStyle}>
-      <tbody css={sectionStyle}>
-        {data.map((row, index) => (
-          <DataRow key={index} label={row.label} value={row.value} />
-        ))}
-      </tbody>
-    </div>
+    <tbody css={sectionStyle}>
+      {data.map((row, index) => (
+        <DataRow key={index} label={row.label} value={row.value} />
+      ))}
+    </tbody>
   );
 
   return (
@@ -108,10 +106,6 @@ const tableStyle = css`
 const sectionStyle = css`
   display: flex;
   flex-direction: column;
-`;
-
-const tableWrapperStyle = css`
-  width: 100%;
   margin-bottom: 10px;
   border: 1px solid ${theme.colors.gray[100]};
 `;
