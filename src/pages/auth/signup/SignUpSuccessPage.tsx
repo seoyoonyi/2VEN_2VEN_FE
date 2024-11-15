@@ -9,7 +9,7 @@ import theme from '@/styles/theme';
 const SignUpSuccessPage = () => {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate(ROUTES.AUTH.LOGIN);
+    navigate(ROUTES.AUTH.SIGNIN);
   };
   return (
     <div css={containerStyle}>
