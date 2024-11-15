@@ -54,7 +54,7 @@ const StrategyList = ({
                 .slice(0, 2)}
               <div css={countStyle}>
                 {strategy.investmentAssetClassesIcon.length > 1
-                  ? `+${strategy.investmentAssetClassesIcon.length - 1}`
+                  ? `+${strategy.investmentAssetClassesIcon.length - 2}`
                   : ''}
               </div>
             </div>
