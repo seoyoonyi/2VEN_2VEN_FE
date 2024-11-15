@@ -30,6 +30,27 @@ const getColorByValue = (value: string) => {
   }
 };
 
+const DataRow = ({ label, value, colSpan = 1 }: DataRowProps) => {
+  const { backgroundColor, color } = getColorByValue(value);
+  return (
+    <tr css={rowStyle}>
+      <td css={labelStyle} colSpan={colSpan}>
+        {label}
+      </td>
+      <td
+        css={css`
+          ${valueStyle};
+          background-color: ${backgroundColor};
+          color: ${color};
+        `}
+        colSpan={colSpan}
+      >
+        {value}
+      </td>
+    </tr>
+  );
+};
+
 const StatisticsTable = ({ data }: statisticsProps) => {
   const chunkSize = 3;
 
@@ -41,27 +62,6 @@ const StatisticsTable = ({ data }: statisticsProps) => {
     { length: Math.ceil((data.length - 15) / chunkSize) },
     (_, index) => data.slice(15 + index * chunkSize, 15 + (index + 1) * chunkSize)
   );
-
-  const DataRow = ({ label, value, colSpan = 1 }: DataRowProps) => {
-    const { backgroundColor, color } = getColorByValue(value);
-    return (
-      <tr css={rowStyle}>
-        <td css={labelStyle} colSpan={colSpan}>
-          {label}
-        </td>
-        <td
-          css={css`
-            ${valueStyle};
-            background-color: ${backgroundColor};
-            color: ${color};
-          `}
-          colSpan={colSpan}
-        >
-          {value}
-        </td>
-      </tr>
-    );
-  };
 
   const Section = ({ data }: { data: { label: string; value: string }[] }) => (
     <div css={tableWrapperStyle}>

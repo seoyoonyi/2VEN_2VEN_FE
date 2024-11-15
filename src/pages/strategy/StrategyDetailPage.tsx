@@ -1,13 +1,13 @@
 import { css } from '@emotion/react';
 
-import StrategyContent from '@/components/page/strategy/StrategyContent';
-import StrategyIndicator from '@/components/page/strategy/StrategyIndicator';
-import StrategyTab from '@/components/page/strategy/StrategyTab';
-import StrategyTitleSection from '@/components/page/strategy/StrategyTitleSection';
-import AccountVerify from '@/components/page/strategy/tabmenu/AccountVerify';
-import DailyAnalysis from '@/components/page/strategy/tabmenu/DailyAnalysis';
-import MonthlyAnalysis from '@/components/page/strategy/tabmenu/MonthlyAnalysis';
-import StatisticsTable from '@/components/page/strategy/tabmenu/StatisticsTable';
+import StrategyContent from '@/components/page/strategy-detail/StrategyContent';
+import StrategyIndicator from '@/components/page/strategy-detail/StrategyIndicator';
+import StrategyTab from '@/components/page/strategy-detail/StrategyTab';
+import StrategyTitleSection from '@/components/page/strategy-detail/StrategyTitleSection';
+import AccountVerify from '@/components/page/strategy-detail/tabmenu/AccountVerify';
+import DailyAnalysis from '@/components/page/strategy-detail/tabmenu/DailyAnalysis';
+import MonthlyAnalysis from '@/components/page/strategy-detail/tabmenu/MonthlyAnalysis';
+import StatisticsTable from '@/components/page/strategy-detail/tabmenu/StatisticsTable';
 import theme from '@/styles/theme';
 
 const strategyDummy = [
