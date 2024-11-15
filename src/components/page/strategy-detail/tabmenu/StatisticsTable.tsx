@@ -52,18 +52,21 @@ const DataRow = ({ label, value, colSpan = 1 }: DataRowProps) => {
 };
 
 const StatisticsTable = ({ data }: statisticsProps) => {
-  const chunkSize = 3;
+  const pattern = [3, 2, 2, 3, 3, 2];
 
-  const sectionsLeft = Array.from({ length: Math.ceil(15 / chunkSize) }, (_, index) =>
-    data.slice(index * chunkSize, (index + 1) * chunkSize)
-  );
+  const splitData = (data: DataRowProps[], pattern: number[]) => {
+    let idx = 0;
+    return pattern.map((sliceSize) => {
+      const sliced = data.slice(idx, idx + sliceSize);
+      idx += sliceSize;
+      return sliced;
+    });
+  };
 
-  const sectionsRight = Array.from(
-    { length: Math.ceil((data.length - 15) / chunkSize) },
-    (_, index) => data.slice(15 + index * chunkSize, 15 + (index + 1) * chunkSize)
-  );
+  const sectionsLeft = splitData(data.slice(0, data.length / 2), pattern);
+  const sectionsRight = splitData(data.slice(data.length / 2), pattern);
 
-  const Section = ({ data }: { data: { label: string; value: string }[] }) => (
+  const Section = ({ data }: { data: DataRowProps[] }) => (
     <div css={tableWrapperStyle}>
       <tbody css={sectionStyle}>
         {data.map((row, index) => (
@@ -112,6 +115,7 @@ const tableWrapperStyle = css`
   margin-bottom: 10px;
   border: 1px solid ${theme.colors.gray[100]};
 `;
+
 const rowStyle = css`
   td {
     border: none;
