@@ -42,7 +42,7 @@ const tabGroupStyle = css`
 const tabListStyle = css`
   display: flex;
   align-items: center;
-  margin: 20px 0px;
+  margin: 40px 0px;
   button {
     background-color: inherit;
   }

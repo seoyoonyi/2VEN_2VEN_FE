@@ -112,10 +112,7 @@ const AccountVerify = () => {
           ))}
         </div>
       ) : (
-        <div css={noneUploaded}>
-          업로드된 데이터가 없습니다. 데이터를 업로드해주세요.라는 느낌의 알림 디자인이 나오면 그 때
-          바로 교체해두도록 하겠습니다.
-        </div>
+        <div css={noneUploaded}>업로드된 데이터가 없습니다.</div>
       )}
 
       <Pagination
@@ -140,6 +137,7 @@ const headingStyle = css`
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  margin-bottom: 10px;
 `;
 const textStyle = css`
   ${theme.textStyle.captions.caption2};
