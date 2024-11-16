@@ -94,7 +94,7 @@ const StatisticsTable = ({ data }: statisticsProps) => {
 const containerStyle = css`
   width: 100%;
   display: flex;
-  gap: 20px;
+  gap: 10px;
 `;
 
 const tableStyle = css`
@@ -123,13 +123,13 @@ const rowStyle = css`
 
 const labelStyle = css`
   ${theme.textStyle.body.body2};
-  width: 230px;
+  width: 227px;
   background-color: ${theme.colors.gray[100]};
 `;
 
 const valueStyle = css`
   ${theme.textStyle.body.body3};
-  width: 230px;
+  width: 227px;
   box-sizing: border-box;
 `;
 

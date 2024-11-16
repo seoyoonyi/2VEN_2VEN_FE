@@ -75,6 +75,6 @@ const selectedTab = css`
 `;
 
 const tabPanelStyle = css`
-  max-width: 940px;
+  width: 100%;
 `;
 export default StrategyTab;

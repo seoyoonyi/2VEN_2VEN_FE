@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
+import { MdCheck } from 'react-icons/md';
 
 import ImgSection from '../ImgSection';
 
@@ -52,7 +53,7 @@ const AccountVerify = () => {
         setFileNames((prevImgs) => [...prevImgs, ...newImgs]);
         e.target.value = '';
       } else {
-        showToast('파일 이름은 날짜 형식이어야 하며, 올바른 이미지 형식이어야 합니다.');
+        showToast('올바른 이미지를 등록해주세요.');
       }
     }
   };
@@ -79,15 +80,18 @@ const AccountVerify = () => {
     <div css={accountWrapper}>
       <div css={headingStyle}>
         <div css={textStyle}>
-          파일 이름은 YYYY.MM.DD 형식(예: 2024.11.15)으로 일간분석 테이블에 입력한 날짜와 동일하게
-          변경해주세요.
+          <MdCheck css={iconStyle} size={24} />
+          <div>
+            파일명은 YYYY.MM.DD 형식(예: 2024.11.15)으로 일간분석 테이블에 입력한 날짜와 동일하게
+            변경해주세요.
+          </div>
         </div>
         <div css={buttonArea}>
-          <Button variant='accent' size='sm' width={89} onClick={handleUploadClick}>
-            추가
+          <Button variant='secondary' size='xs' width={89} onClick={handleUploadClick}>
             <BiPlus />
+            추가
           </Button>
-          <Button variant='neutral' size='sm' width={89} onClick={handleDeleteImg}>
+          <Button variant='neutral' size='xs' width={89} onClick={handleDeleteImg}>
             삭제
           </Button>
           <input
@@ -128,7 +132,7 @@ const AccountVerify = () => {
 };
 
 const accountWrapper = css`
-  width: 940px;
+  width: 100%;
   display: flex;
   flex-direction: column;
 `;
@@ -136,14 +140,18 @@ const accountWrapper = css`
 const headingStyle = css`
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 10px;
+  align-items: center;
+  margin-bottom: 24px;
 `;
+
 const textStyle = css`
+  display: flex;
+  gap: 4px;
+  align-items: center;
   ${theme.textStyle.captions.caption2};
   color: ${theme.colors.gray[500]};
-  flex-grow: 1;
 `;
+
 const buttonArea = css`
   display: flex;
   gap: 10px;
@@ -157,11 +165,17 @@ const imagesGrid = css`
 `;
 
 const noneUploaded = css`
-  background-color: ${theme.colors.teal[50]};
+  background-color: ${theme.colors.gray[100]};
+  color: ${theme.colors.gray[400]};
+  ${theme.textStyle.subtitles.subtitle4};
   display: flex;
   align-items: center;
   justify-content: center;
   height: 200px;
 `;
 
+const iconStyle = css`
+  display: flex;
+  color: ${theme.colors.main.primary};
+`;
 export default AccountVerify;
