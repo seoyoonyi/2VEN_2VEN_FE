@@ -84,7 +84,7 @@ const StrategyList = ({
               '-'
             )}
           </div>
-          <div css={mddStyle(strategy.mdd)}>
+          <div css={mddStyle(strategy.mdd ?? 0)}>
             {strategy.mdd !== undefined
               ? strategy.mdd > 0
                 ? `+${strategy.mdd.toLocaleString()}`
@@ -176,7 +176,7 @@ const yieldStyle = css`
   }
 `;
 
-const mddStyle = (mdd: number) => css`
+const mddStyle = (mdd: number = 0) => css`
   color: ${mdd < 0 ? theme.colors.main.blue : theme.colors.main.red};
 `;
 
