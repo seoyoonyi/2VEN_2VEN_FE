@@ -6,14 +6,15 @@ import theme from '@/styles/theme';
 interface PageHeaderProps {
   title: string;
   desc: string;
+  icon?: boolean;
 }
 
-const PageHeader = ({ title, desc }: PageHeaderProps) => (
+const PageHeader = ({ title, desc, icon }: PageHeaderProps) => (
   <section css={headerStyle}>
     <div css={containerStyle}>
       <h1 css={titleStyle}>{title}</h1>
       <div css={descWrapperStyle}>
-        <MdCheck css={iconStyle} />
+        {icon && <MdCheck css={iconStyle} />}
         <div css={descStyle}>{desc}</div>
       </div>
     </div>
@@ -43,6 +44,7 @@ const titleStyle = css`
 
 const descWrapperStyle = css`
   display: flex;
+  text-align: center;
   gap: 4px;
 `;
 

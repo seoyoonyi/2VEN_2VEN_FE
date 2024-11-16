@@ -6,20 +6,21 @@ import theme from '@/styles/theme';
 interface StrategyData {
   strategyId: number;
   strategyTitle: string;
-  analytics_graph: string;
+  analytics_graph?: string;
   tradingTypeIcon: string;
   cycleIcon: string;
   investmentAssetClassesIcon: string[];
-  cumulativeReturn: number;
-  oneYearReturn: number;
-  mdd: number;
-  smscore: number;
-  followers_count: number;
+  cumulativeReturn?: number;
+  oneYearReturn?: number;
+  mdd?: number;
+  smscore?: number;
+  followers_count?: number;
 }
 
 interface StrategyListProps {
   strategies: StrategyData[];
   showRank?: boolean;
+  startRank?: number;
   containerWidth?: string;
   gridTemplate?: string;
 }
@@ -27,6 +28,7 @@ interface StrategyListProps {
 const StrategyList = ({
   strategies,
   showRank = false,
+  startRank = 1,
   containerWidth = theme.layout.width.content,
   gridTemplate = '64px 278px 278px 160px 160px 100px 100px',
 }: StrategyListProps) => (
@@ -43,40 +45,54 @@ const StrategyList = ({
     {strategies.map((strategy, idx) => (
       <Link to={`/strategies/${strategy.strategyId}`} key={strategy.strategyId}>
         <div css={rowStyle(gridTemplate)}>
-          {showRank && <div css={rankStyle}>{idx + 1}</div>}
+          {showRank && <div css={rankStyle}>{startRank + idx}</div>}
           <div css={strategyTitleContainerStyle}>
             <div css={strategyTitleStyle}>{strategy.strategyTitle}</div>
             <div css={iconStyle}>
               <img src={strategy.tradingTypeIcon} alt='매매유형' width={18} height={18} />
               <img src={strategy.cycleIcon} alt='주기' width={18} height={18} />
               {strategy.investmentAssetClassesIcon
-                .map((icon) => <img key={icon} src={icon} alt={icon} height={18} />)
-                .slice(0, 2)}
+                ?.slice(0, 2)
+                .map((icon) => <img key={icon} src={icon} alt={icon} height={18} />)}
               <div css={countStyle}>
-                {strategy.investmentAssetClassesIcon.length > 1
-                  ? `+${strategy.investmentAssetClassesIcon.length - 2}`
-                  : ''}
+                {strategy.investmentAssetClassesIcon.length > 2 && (
+                  <div css={countStyle}>+{strategy.investmentAssetClassesIcon.length - 2}</div>
+                )}
               </div>
             </div>
           </div>
           <div css={graphStyle}>
-            <img src={strategy.analytics_graph} alt='분석 그래프' />
+            {strategy.analytics_graph ? (
+              <img src={strategy.analytics_graph} alt='분석 그래프' />
+            ) : (
+              '-'
+            )}
           </div>
           <div css={yieldStyle}>
-            <div>
-              <span>누적</span>
-              {strategy.cumulativeReturn}%
-            </div>
-            <div>
-              <span>최근 1년</span>
-              {strategy.oneYearReturn}%
-            </div>
+            {strategy.cumulativeReturn !== undefined ? (
+              <>
+                <div>
+                  <span>누적</span>
+                  {strategy.cumulativeReturn}%
+                </div>
+                <div>
+                  <span>최근 1년</span>
+                  {strategy.oneYearReturn}%
+                </div>
+              </>
+            ) : (
+              '-'
+            )}
           </div>
-          <div css={mddStyle(strategy.mdd)}>
-            {strategy.mdd > 0 ? `+${strategy.mdd.toLocaleString()}` : strategy.mdd.toLocaleString()}
+          <div css={mddStyle(strategy.mdd ?? 0)}>
+            {strategy.mdd !== undefined
+              ? strategy.mdd > 0
+                ? `+${strategy.mdd.toLocaleString()}`
+                : strategy.mdd.toLocaleString()
+              : '-'}
           </div>
-          <div>{strategy.smscore}</div>
-          <div>{strategy.followers_count}</div>
+          <div>{strategy.smscore !== undefined ? strategy.smscore : '-'}</div>
+          <div>{strategy.followers_count !== undefined ? strategy.followers_count : '0'}</div>
         </div>
       </Link>
     ))}
@@ -160,8 +176,12 @@ const yieldStyle = css`
   }
 `;
 
-const mddStyle = (mdd: number) => css`
-  color: ${mdd < 0 ? theme.colors.main.blue : theme.colors.main.red};
+const mddStyle = (mdd: string | number | undefined) => css`
+  color: ${(mdd as number) === 0 || mdd === '-' || mdd === undefined
+    ? theme.colors.gray[900]
+    : (mdd as number) < 0
+      ? theme.colors.main.blue
+      : theme.colors.main.red};
 `;
 
 export default StrategyList;

@@ -11,16 +11,10 @@ const strategies = [
   {
     strategyId: 1,
     strategyTitle: '지수 선물 상품을 활용한 전략',
-    analytics_graph: AnalyticsGraph,
     tradingTypeIcon: TradeTypeHIcon,
     cycleIcon: TradeTypePIcon,
     investmentAssetClassesIcon: [futureIcon, StockIcon],
     writerId: 1,
-    cumulativeReturn: 15.75,
-    oneYearReturn: 12.5,
-    mdd: 20580856,
-    smscore: 60.36,
-    followers_count: 23,
   },
   {
     strategyId: 2,
