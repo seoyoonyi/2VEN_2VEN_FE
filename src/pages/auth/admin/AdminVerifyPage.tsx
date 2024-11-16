@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
+import tickImage from '@/assets/images/tick.svg';
 import Button from '@/components/common/Button';
 import VerificationInput from '@/components/page/signup/VerificationInput';
 import { ROUTES } from '@/constants/routes';
@@ -85,6 +86,16 @@ const AdminVerifyPage = () => {
   return (
     <div css={containerStyle}>
       <h3 css={pageHeadingStyle}>관리자 전용</h3>
+      <div css={infoStyle}>
+        <p>
+          <img src={tickImage} alt='tick' />
+          <span>관리자 전용으로 이동하기 위해서는 인증이 필요합니다</span>
+        </p>
+        <p>
+          <img src={tickImage} alt='tick' />
+          <span>가입하신 이메일로 인증번호가 전송되었습니다</span>
+        </p>
+      </div>
       <form onSubmit={handleSubmit}>
         <div css={emailVerifyContainer}>
           <VerificationInput
@@ -130,6 +141,23 @@ const pageHeadingStyle = css`
   line-height: ${theme.typography.lineHeights.md};
   font-weight: ${theme.typography.fontWeight.bold};
   margin-bottom: 32px;
+`;
+
+const infoStyle = css`
+  margin-bottom: 16px;
+  p {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+  }
+
+  span {
+    color: ${theme.colors.gray[600]};
+    font-size: ${theme.typography.fontSizes.caption};
+    line-height: ${theme.typography.lineHeights.lg};
+    font-weight: ${theme.typography.fontWeight.medium};
+  }
 `;
 
 const emailVerifyContainer = css`
