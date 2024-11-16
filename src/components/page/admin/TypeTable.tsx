@@ -47,7 +47,7 @@ const TypeTable = ({ attributes, data }: dataProps) => {
               <Checkbox checked={selectAll} onChange={handleAllChecked} />
             </th>
             {attributes.map((row, idx) => (
-              <th key={idx} css={tableHeadStyle} colSpan={idx === 0 ? 4 : 1}>
+              <th key={idx} css={tableHeadStyle} colSpan={idx === 0 ? 4 : 2}>
                 {row.item}
               </th>
             ))}
@@ -62,8 +62,10 @@ const TypeTable = ({ attributes, data }: dataProps) => {
               <td css={tableCellStyle} colSpan={4}>
                 <img src={row.icon} alt={row.title} css={tableImgStyle} />
               </td>
-              <td css={tableCellStyle}>{row.title}</td>
-              <td css={tableCellStyle}>
+              <td css={tableCellStyle} colSpan={2}>
+                {row.title}
+              </td>
+              <td css={tableCellStyle} colSpan={2}>
                 <Button variant='accent' size='xs' width={72}>
                   수정
                 </Button>
@@ -101,6 +103,10 @@ const tableCellStyle = css`
   text-align: center;
   vertical-align: middle;
   padding: 16px;
+
+  button {
+    margin: 0 auto;
+  }
 `;
 
 const tableImgStyle = css`
