@@ -68,12 +68,18 @@ const AdminVerifyPage = () => {
 
     // 1. 유효성 검사 통과 여부
     // 2. 서버에서 받은 인증번호와 일치 여부
-    if (validationResult.isValid && verificationCode === serverVerificationCode) {
-      navigate(ROUTES.ADMIN.STRATEGY.APPROVAL);
-    } else if (!validationResult.isValid) {
-      setErrorMessage(validationResult.message);
+    // 조건을 단계별로 체크
+    if (validationResult.isValid) {
+      // 6자리 숫자 형식은 맞지만, 서버의 인증번호와 다른 경우
+      if (verificationCode !== serverVerificationCode) {
+        setErrorMessage('올바른 인증번호가 아닙니다.');
+      } else {
+        // 모든 조건 충족
+        navigate(ROUTES.ADMIN.STRATEGY.APPROVAL);
+      }
     } else {
-      setErrorMessage('올바른 인증번호가 아닙니다.');
+      // 6자리 숫자 형식이 아닌 경우
+      setErrorMessage(validationResult.message);
     }
   };
   return (
