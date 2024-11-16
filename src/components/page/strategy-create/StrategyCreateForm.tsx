@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
+import fetchStrategyRegistration from '@/api/strategyCreate';
 import Button from '@/components/common/Button';
 import Select from '@/components/common/Select';
 import FileUpload from '@/components/page/strategy-create/form-content/FileUpload';
@@ -11,17 +12,6 @@ import StrategyIntro from '@/components/page/strategy-create/form-content/Strate
 import StrategyName from '@/components/page/strategy-create/form-content/StrategyName';
 import useCreateFormValidation from '@/hooks/useCreateFormValidation';
 import theme from '@/styles/theme';
-
-const operations = [
-  { label: '자동', value: 'auto' },
-  { label: '반자동(하이브리드)', value: 'hybrid' },
-  { label: '수동(매뉴얼)', value: 'manual' },
-];
-
-const cycles = [
-  { label: '데이', value: 'day' },
-  { label: '포지션', value: 'position' },
-];
 
 const investmentFunds = [
   { label: '1만원 ~ 500만원', value: '1-500' },
@@ -42,21 +32,13 @@ const isPublic = [
   { label: '비공개', value: 'private' },
 ];
 
-const products = [
-  '국내주식',
-  '국내지수 옵션',
-  '국내 ETF',
-  '국내지수 선물',
-  '국내상품 선물',
-  'F/X',
-  '해외주식',
-  '해외주식 옵션',
-  '해외 ETF',
-  '해외지수 선물',
-  '해외상품 선물',
-];
+type Option = { label: string; value: string };
 
 const StrategyCreateForm = () => {
+  const [cycles, setCycles] = useState<{ label: string; value: string }[]>([]);
+  const [operations, setOperations] = useState<{ label: string; value: string }[]>([]);
+  const [products, setProducts] = useState<string[]>([]);
+
   const [strategy, setStrategy] = useState('');
   const [text, setText] = useState('');
   const [operation, setOperation] = useState('');
@@ -67,6 +49,33 @@ const StrategyCreateForm = () => {
   const [file, setFile] = useState<File | null>(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await fetchStrategyRegistration();
+      setCycles(mapToOptions(result.data.tradingCycleRegistrationDtoList));
+      setOperations(mapToOptions(result.data.tradingTypeRegistrationDtoList));
+      setProducts(
+        result.data.investmentAssetClassesRegistrationDtoList.map(
+          (item: { investmentAssetClassesName: string }) => item.investmentAssetClassesName
+        )
+      );
+    };
+
+    fetchData();
+  }, []);
+
+  const mapToOptions = (
+    data: Array<{
+      tradingCycleName?: string;
+      tradingTypeName?: string;
+      investmentAssetClassesName?: string;
+    }>
+  ): Option[] =>
+    data.map((item) => ({
+      label: item.tradingCycleName || item.tradingTypeName || item.investmentAssetClassesName || '',
+      value: item.tradingCycleName || item.tradingTypeName || item.investmentAssetClassesName || '',
+    }));
 
   const formState = { strategy, text, operation, cycle, fund, publicStatus, selectedProducts };
   const isFormValid = useCreateFormValidation(formState);

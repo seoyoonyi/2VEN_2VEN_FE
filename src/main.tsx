@@ -11,7 +11,7 @@ import theme from '@/styles/theme';
 const initMocks = async (): Promise<void> => {
   if (process.env.NODE_ENV === 'development') {
     const { worker } = await import('./mocks/browser');
-    worker.start({
+    await worker.start({
       onUnhandledRequest: 'bypass',
     });
   }

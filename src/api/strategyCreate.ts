@@ -8,7 +8,7 @@ const fetchStrategyRegistration = async () => {
         Auth: 'trader',
       },
     });
-    console.log('strategy Register Data =====>', res.data);
+
     return res.data;
   } catch (error) {
     console.error('failed to fetch strategyRegistrateData', error);
