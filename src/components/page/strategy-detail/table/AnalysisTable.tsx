@@ -28,9 +28,10 @@ export interface AnalysisDataProps {
 export interface AnalysisProps {
   attributes: AnalysisAttribuesProps[];
   data: AnalysisDataProps[];
+  mode: 'write' | 'read';
 }
 
-const AnalysisTable = ({ attributes, data }: AnalysisProps) => {
+const AnalysisTable = ({ attributes, data, mode }: AnalysisProps) => {
   const [selected, setSelected] = useState<boolean[]>(new Array(data.length).fill(false));
   const [selectAll, setSelectAll] = useState(false);
   const [tableData, setTableData] = useState<InputTableProps[]>([]);
@@ -57,8 +58,8 @@ const AnalysisTable = ({ attributes, data }: AnalysisProps) => {
 
   const handleUpdateModal = (data: InputTableProps, idx: number) => {
     openTableModal({
-      type: 'insert',
-      title: '일간분석 데이터 직접 입력',
+      type: 'update',
+      title: '일간분석 데이터 수정',
       data: <InputTable data={[data]} onSave={() => handleUpdateData(data, idx)} />,
       onAction: () => {},
     });
@@ -78,11 +79,11 @@ const AnalysisTable = ({ attributes, data }: AnalysisProps) => {
         <thead>
           <tr css={tableRowStyle}>
             <th css={tableHeadStyle}>
-              <Checkbox checked={selectAll} onChange={handleAllChecked} />
+              {mode === 'write' && <Checkbox checked={selectAll} onChange={handleAllChecked} />}
             </th>
             {attributes.map((item, idx) => (
               <th key={idx} css={tableHeadStyle}>
-                {item.title}
+                {mode === 'write' || item.title !== '수정' ? item.title : null}
               </th>
             ))}
           </tr>
@@ -92,7 +93,7 @@ const AnalysisTable = ({ attributes, data }: AnalysisProps) => {
             data.map((row, idx) => (
               <tr key={idx} css={tableRowStyle}>
                 <td css={tableCellStyle}>
-                  <Checkbox checked={selected[idx]} onChange={() => handleSelected(idx)} />
+                  {mode === 'write' && <Checkbox checked={selectAll} onChange={handleAllChecked} />}
                 </td>
                 <td css={tableCellStyle}>{row.date}</td>
                 <td css={tableCellStyle}>{row.original}</td>
@@ -112,16 +113,18 @@ const AnalysisTable = ({ attributes, data }: AnalysisProps) => {
                 <td css={tableCellStyle}>{row.daily}</td>
                 <td css={tableCellStyle}>{row.addMoney}</td>
                 <td css={tableCellStyle}>{row.addRate}</td>
-                <td css={tableCellStyle}>
-                  <Button
-                    variant='secondaryGray'
-                    size='xs'
-                    width={65}
-                    onClick={() => handleUpdateModal(row, idx)}
-                  >
-                    수정
-                  </Button>
-                </td>
+                {mode === 'write' && (
+                  <td css={tableCellStyle}>
+                    <Button
+                      variant='secondaryGray'
+                      size='xs'
+                      width={65}
+                      onClick={() => handleUpdateModal(row, idx)}
+                    >
+                      수정
+                    </Button>
+                  </td>
+                )}
               </tr>
             ))
           ) : (

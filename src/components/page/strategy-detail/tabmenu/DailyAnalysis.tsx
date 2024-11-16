@@ -50,7 +50,7 @@ const DailyAnalysis = ({ attributes, data }: AnalysisProps) => {
           </Button>
         </div>
       )}
-      <AnalysisTable attributes={attributes} data={data} />
+      <AnalysisTable attributes={attributes} data={data} mode={'write'} />
       <TableModal />
     </div>
   );

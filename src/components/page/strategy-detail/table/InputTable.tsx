@@ -26,10 +26,6 @@ const InputTable = ({ data, onSave }: InputAnalysisProps) => {
     setInputData(updatedData);
   };
 
-  useEffect(() => {
-    onSave(inputData);
-  }, [inputData, onSave]);
-
   return (
     <div css={tableStyle}>
       <table css={tableVars}>
