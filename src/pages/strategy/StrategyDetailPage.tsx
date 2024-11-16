@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 
+import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
 import StrategyContent from '@/components/page/strategy-detail/StrategyContent';
 import StrategyIndicator from '@/components/page/strategy-detail/StrategyIndicator';
 import StrategyTab from '@/components/page/strategy-detail/StrategyTab';
@@ -12,7 +13,8 @@ import theme from '@/styles/theme';
 
 const strategyDummy = [
   {
-    title: '전략 이름이 들어가는 자리입니다.',
+    title:
+      '전략 이름이 들어가는 자리입니다. 내용이 길어지면 이렇게 될 것 같아여 누가 제목을 이렇게 길게 쓸까 하지만 쓰다보면 길어질지도 몰라~~',
     author: {
       traderId: 'investKing',
       traderName: '나는야투자왕',
@@ -27,6 +29,9 @@ const strategyDummy = [
       avgProfit: 5.69,
       profitFactor: '1.54 : 1',
       winRate: 60.36,
+    },
+    file: {
+      url: `/file.txt`,
     },
   },
 ];
@@ -94,6 +99,7 @@ const StrategyDetailPage = () => (
             followers={strategy.followers}
           />
           <StrategyContent content={strategy.content} />
+          <FileDownSection fileUrl={strategy.file.url} />
           <StrategyIndicator
             cumulativeRate={strategy.indicator.cumulativeRate}
             maximumRate={strategy.indicator.maximumRate}
@@ -121,7 +127,7 @@ const contentStyle = css`
   flex-direction: column;
   margin-top: 95px;
   ${theme.layout.width.content};
-  padding: 80px 80px 100px 80px;
+  padding: 40px;
   box-sizing: border-box;
   align-items: center;
   background-color: ${theme.colors.main.white};
