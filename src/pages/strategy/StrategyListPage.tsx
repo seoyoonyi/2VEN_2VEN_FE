@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
@@ -84,6 +84,10 @@ const StrategyListPage = () => {
   const startRank = (page - 1) * limit + 1;
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [page]);
 
   return (
     <div>
