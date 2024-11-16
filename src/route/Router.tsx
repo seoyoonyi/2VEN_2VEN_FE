@@ -36,6 +36,7 @@ import StrategyListPage from '@/pages/strategy/StrategyListPage';
 import TraderDetailPage from '@/pages/trader/TraderDetailPage';
 import TraderListPage from '@/pages/trader/TraderListPage';
 
+
 export const router = createBrowserRouter([
   {
     path: ROUTES.HOME.PATH,
@@ -167,30 +168,40 @@ export const router = createBrowserRouter([
       },
       // -------------------------------------- 관리자
 
-      {
-        path: ROUTES.ADMIN.STOCK_TYPE.LIST,
-        element: <StockTypeListPage />, // 상품유형 관리 페이지(현재 대시보드 페이지)
-      },
-      {
-        path: ROUTES.ADMIN.TRADING_TYPE.LIST,
-        element: <TradingTypeListPage />, // 매매유형 관리 페이지
-      },
-      {
-        path: ROUTES.ADMIN.STRATEGY.APPROVAL,
-        element: <StrategyApprovalListPage />, // 전략 승인 관리 페이지
-      },
-    ],
-  },
+        {
+          path: ROUTES.ADMIN.STOCK_TYPE.LIST,
+          element: <StockTypeListPage />, // 상품유형 관리 페이지(현재 대시보드 페이지)
+        },
+        {
+          path: ROUTES.ADMIN.TRADING_TYPE.LIST,
+          element: <TradingTypeListPage />, // 매매유형 관리 페이지
+        },
+        {
+          path: ROUTES.ADMIN.STRATEGY.APPROVAL,
+          element: <StrategyApprovalListPage />, // 전략 승인 관리 페이지
+        },
+      ],
+    },
+    {
+      // 404 및 기타 리다이렉트 처리
+      path: ROUTES.ERROR.NOT_FOUND,
+      element: <NotFoundPage />, // 404 Not Found 페이지
+    },
+    {
+      // 유효하지 않은 경로로 접근했을 때 404 페이지로 리다이렉트
+      path: '*',
+      element: <Navigate to={ROUTES.ERROR.NOT_FOUND} replace />,
+    },
+  ],
   {
-    // 404 및 기타 리다이렉트 처리
-    path: ROUTES.ERROR.NOT_FOUND,
-    element: <NotFoundPage />, // 404 Not Found 페이지
-  },
-  {
-    // 유효하지 않은 경로로 접근했을 때 404 페이지로 리다이렉트
-    path: '*',
-    element: <Navigate to={ROUTES.ERROR.NOT_FOUND} replace />,
-  },
-]);
+    future: {
+      v7_relativeSplatPath: true,
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_skipActionErrorRevalidation: true,
+    },
+  }
+);
 
 export default router;
