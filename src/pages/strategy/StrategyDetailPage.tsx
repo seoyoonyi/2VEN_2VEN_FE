@@ -149,6 +149,88 @@ const dailyAnalysisData = [
     addRate: '0.30%',
   },
 ];
+const monthlyAttribues = [
+  {
+    title: '월',
+  },
+  {
+    title: '월평균 원금',
+  },
+  {
+    title: '입출금',
+  },
+  {
+    title: '월 손익',
+  },
+  {
+    title: '월 수익률',
+  },
+  {
+    title: '누적손익',
+  },
+  {
+    title: '누적수익률',
+  },
+  {
+    title: '수정',
+  },
+];
+const monthlyAnalysisData = [
+  {
+    date: '2026.04',
+    original: '100,000,000',
+    trade: '0',
+    day: '+332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2026.04',
+    original: '100,000,000',
+    trade: '0',
+    day: '+332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2026.04',
+    original: '100,000,000',
+    trade: '0',
+    day: '332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2026.04',
+    original: '100,000,000',
+    trade: '0',
+    day: '332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2026.04',
+    original: '100,000,000',
+    trade: '0',
+    day: '-332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2026.04',
+    original: '100,000,000',
+    trade: '0',
+    day: '-332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+];
 
 const tabMenu = [
   {
@@ -165,7 +247,7 @@ const tabMenu = [
   },
   {
     title: '월간분석',
-    component: <MonthlyAnalysis />,
+    component: <MonthlyAnalysis attributes={monthlyAttribues} data={monthlyAnalysisData} />,
   },
 ];
 
