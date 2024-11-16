@@ -52,12 +52,12 @@ const StrategyList = ({
               <img src={strategy.tradingTypeIcon} alt='매매유형' width={18} height={18} />
               <img src={strategy.cycleIcon} alt='주기' width={18} height={18} />
               {strategy.investmentAssetClassesIcon
-                .map((icon) => <img key={icon} src={icon} alt={icon} height={18} />)
-                .slice(0, 2)}
+                ?.slice(0, 2)
+                .map((icon) => <img key={icon} src={icon} alt={icon} height={18} />)}
               <div css={countStyle}>
-                {strategy.investmentAssetClassesIcon.length > 2
-                  ? `+${strategy.investmentAssetClassesIcon.length - 2}`
-                  : ''}
+                {strategy.investmentAssetClassesIcon.length > 2 && (
+                  <div css={countStyle}>+{strategy.investmentAssetClassesIcon.length - 2}</div>
+                )}
               </div>
             </div>
           </div>

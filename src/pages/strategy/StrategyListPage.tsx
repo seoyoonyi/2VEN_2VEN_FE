@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { css } from '@emotion/react';
+import { useNavigate } from 'react-router-dom';
 
 import AnalyticsGraph from '@/assets/images/analytics_graph.png';
 import futureIcon from '@/assets/images/producttype_futures.png';
@@ -80,6 +81,9 @@ const StrategyListPage = () => {
   const limit = 30;
   const totalPages = Math.ceil(strategies.length / limit);
   const currentPageData = strategies.slice((page - 1) * limit, page * limit);
+  const startRank = (page - 1) * limit + 1;
+
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -90,21 +94,34 @@ const StrategyListPage = () => {
             Total <span>{strategies.length}</span>
           </div>
           <div css={optionContainerStyle}>
-            <Select options={products} onChange={() => {}} type='sm' width='160px' />
-            <Select options={cycles} onChange={() => {}} type='sm' width='160px' />
+            <Select
+              options={products}
+              onChange={() => {}}
+              defaultLabel='상품유형'
+              type='sm'
+              width='160px'
+            />
+            <Select
+              options={cycles}
+              onChange={() => {}}
+              defaultLabel='투자주기'
+              type='sm'
+              width='160px'
+            />
             <Button
               variant='primary'
               size='xs'
               customStyle={css`
                 padding: 20px 32px;
               `}
+              onClick={() => navigate('/mypage/trader/strategies/create')}
             >
               전략등록
             </Button>
           </div>
         </div>
         <div css={listContainerStyle}>
-          <StrategyList strategies={currentPageData} showRank />
+          <StrategyList strategies={currentPageData} showRank startRank={startRank} />
           <Pagination totalPage={totalPages} limit={limit} page={page} setPage={setPage} />
         </div>
       </div>
@@ -131,12 +148,12 @@ const optionContainerStyle = css`
 `;
 
 const totalStyle = css`
-  color: #3f3f46;
-  font-weight: 400;
-  line-height: 150%;
+  color: ${theme.colors.gray[700]};
+  font-weight: ${theme.typography.fontWeight.regular};
+  line-height: ${theme.typography.lineHeights.lg};
 
   span {
-    color: #0d9488;
+    color: ${theme.colors.main.primary};
   }
 `;
 
