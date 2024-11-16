@@ -1,27 +1,19 @@
 import { css } from '@emotion/react';
-import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
-import { ROUTES } from '@/constants/routes';
 import { SIGNUP_SUCCESS_TEXT } from '@/constants/signup';
 import theme from '@/styles/theme';
 
-const SignUpSuccessPage = () => {
-  const navigate = useNavigate();
-  const handleClick = () => {
-    navigate(ROUTES.AUTH.LOGIN);
-  };
-  return (
-    <div css={containerStyle}>
-      <h2>{SIGNUP_SUCCESS_TEXT.heading}</h2>
-      <p>{SIGNUP_SUCCESS_TEXT.description}</p>
-      <img src={SIGNUP_SUCCESS_TEXT.src} alt={SIGNUP_SUCCESS_TEXT.alt} />
-      <Button variant='primary' size='lg' width={400} onClick={handleClick}>
-        로그인하러 가기
-      </Button>
-    </div>
-  );
-};
+const SignUpSuccessPage = () => (
+  <div css={containerStyle}>
+    <h2>{SIGNUP_SUCCESS_TEXT.heading}</h2>
+    <p>{SIGNUP_SUCCESS_TEXT.description}</p>
+    <img src={SIGNUP_SUCCESS_TEXT.src} alt={SIGNUP_SUCCESS_TEXT.alt} />
+    <Button variant='primary' size='lg' width={400}>
+      로그인하러 가기
+    </Button>
+  </div>
+);
 
 const containerStyle = css`
   display: flex;
