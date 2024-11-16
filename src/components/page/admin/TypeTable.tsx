@@ -6,7 +6,7 @@ import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
 import theme from '@/styles/theme';
 
-interface typeTableProps {
+interface TypeTableProps {
   icon: string;
   title: string;
 }
@@ -15,12 +15,12 @@ interface AttributeProps {
   item: string;
 }
 
-interface dataProps {
+interface DataProps {
   attributes: AttributeProps[];
-  data: typeTableProps[];
+  data: TypeTableProps[];
 }
 
-const TypeTable = ({ attributes, data }: dataProps) => {
+const TypeTable = ({ attributes, data }: DataProps) => {
   const [selected, setSelected] = useState<boolean[]>(new Array(data.length).fill(false));
   const [selectAll, setSelectAll] = useState(false);
 

@@ -20,6 +20,9 @@ const AdminLayout = () => (
 const wrapperStyle = css`
   min-height: 100vh;
   background-color: ${theme.colors.gray[100]};
+  header {
+    background-color: ${theme.colors.main.white};
+  }
 `;
 
 const mainStyle = css`
