@@ -16,6 +16,12 @@ const AdminVerifyPage = () => {
   const [resetTimer, setResetTimer] = useState<number>(0); // 타이머 리셋을 위한 상태
   const [shouldReset, setShouldReset] = useState(false);
   const [isInputDisabled, setIsInputDisabled] = useState(false);
+  const [serverVerificationCode, setServerVerificationCode] = useState<string>(''); // 서버에서 받은 인증번호 저장
+
+  // 페이지 마운트 시 최초 인증번호 요청
+  useEffect(() => {
+    handleResend();
+  }, []);
 
   // 재전송 처리를 위한 useEffect
   useEffect(() => {
@@ -40,8 +46,10 @@ const AdminVerifyPage = () => {
     setShouldReset(true);
     // setState는 비동기이므로, 이 시점에서는 아직 errorMessage가 변경되지 않았음
     try {
-      // await requestVerificationEmail(); // 관리자 이메일로 인증번호 요청 API
-
+      // const response = await requestVerificationEmail();
+      // setServerVerificationCode(response.verificationCode); // 서버 응답에서 인증번호 저장
+      // 테스트용 코드
+      setServerVerificationCode('123456'); // 테스트를 위해 하드코딩
       // 인증번호 요청 성공 시, isVerificationActive를 토글 => 타이머 재시작!
       setResetTimer((prev) => prev + 1); // 타이머 리셋
     } catch (error) {
@@ -58,11 +66,14 @@ const AdminVerifyPage = () => {
       return;
     }
 
-    if (validationResult.isValid) {
-      // if (verificationCode === '123456') {
-      navigate(ROUTES.ADMIN.STRATEGY.APPROVAL); // 관리자 전략 승인 페이지로 이동
-    } else {
+    // 1. 유효성 검사 통과 여부
+    // 2. 서버에서 받은 인증번호와 일치 여부
+    if (validationResult.isValid && verificationCode === serverVerificationCode) {
+      navigate(ROUTES.ADMIN.STRATEGY.APPROVAL);
+    } else if (!validationResult.isValid) {
       setErrorMessage(validationResult.message);
+    } else {
+      setErrorMessage('올바른 인증번호가 아닙니다.');
     }
   };
   return (
