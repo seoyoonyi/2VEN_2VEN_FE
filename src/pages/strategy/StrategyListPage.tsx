@@ -19,87 +19,19 @@ const cycles = [
   { label: '포지션', value: 'position' },
 ];
 
-// const strategies = [
-//   {
-//     strategyId: 1,
-//     strategyTitle: '지수 선물 상품을 활용한 전략',
-//     analytics_graph: AnalyticsGraph,
-//     tradingTypeIcon: TradeTypeHIcon,
-//     cycleIcon: TradeTypePIcon,
-//     investmentAssetClassesIcon: [futureIcon, StockIcon],
-//     writerId: 1,
-//     cumulativeReturn: 15.75,
-//     oneYearReturn: 12.5,
-//     mdd: 20580856,
-//     smscore: 60.36,
-//     followers_count: 23,
-//   },
-//   {
-//     strategyId: 2,
-//     strategyTitle: '단기 수익을 위한 변동성 전략',
-//     analytics_graph: AnalyticsGraph,
-//     tradingTypeIcon: TradeTypeHIcon,
-//     cycleIcon: TradeTypePIcon,
-//     investmentAssetClassesIcon: [StockIcon],
-//     writerId: 2,
-//     cumulativeReturn: 10.25,
-//     oneYearReturn: 8.4,
-//     mdd: -15002330,
-//     smscore: 70.12,
-//     followers_count: 2342,
-//   },
-//   {
-//     strategyId: 3,
-//     strategyTitle:
-//       '사람들 많이 살 때 따라사는 전략 입니다. 두줄로 되면 이런식으로 되고 어쩌구저쩌구 배고파',
-//     analytics_graph: AnalyticsGraph,
-//     tradingTypeIcon: TradeTypeHIcon,
-//     cycleIcon: TradeTypePIcon,
-//     investmentAssetClassesIcon: [futureIcon, futureIcon, futureIcon, futureIcon, futureIcon],
-//     writerId: 9,
-//     cumulativeReturn: 10.25,
-//     oneYearReturn: 8.4,
-//     mdd: -1243524,
-//     smscore: 70.12,
-//     followers_count: 245,
-//   },
-//   {
-//     strategyId: 3,
-//     strategyTitle: '크리스마스때 시작하면 대박나는 전략',
-//     analytics_graph: AnalyticsGraph,
-//     tradingTypeIcon: TradeTypeHIcon,
-//     cycleIcon: TradeTypePIcon,
-//     investmentAssetClassesIcon: [futureIcon],
-//     writerId: 9,
-//     cumulativeReturn: 10.25,
-//     oneYearReturn: 8.4,
-//     mdd: -1243524,
-//     smscore: 70.12,
-//     followers_count: 245,
-//   },
-//   {
-//     strategyId: 3,
-//     strategyTitle: '우리에게 주말은 없다 전략',
-//     analytics_graph: AnalyticsGraph,
-//     tradingTypeIcon: TradeTypeHIcon,
-//     cycleIcon: TradeTypePIcon,
-//     investmentAssetClassesIcon: [
-//       StockIcon,
-//       futureIcon,
-//       futureIcon,
-//       futureIcon,
-//       StockIcon,
-//       StockIcon,
-//       StockIcon,
-//     ],
-//     writerId: 9,
-//     cumulativeReturn: 10.25,
-//     oneYearReturn: 8.4,
-//     mdd: -1243524,
-//     smscore: 70.12,
-//     followers_count: 245,
-//   },
-// ];
+const products = [
+  { label: '국내주식', value: 'domestic_stock' },
+  { label: '국내지수 옵션', value: 'domestic_index_option' },
+  { label: '국내 ETF', value: 'domestic_etf' },
+  { label: '국내지수 선물', value: 'domestic_index_future' },
+  { label: '국내상품 선물', value: 'domestic_commodity_future' },
+  { label: 'F/X', value: 'fx' },
+  { label: '해외주식', value: 'foreign_stock' },
+  { label: '해외주식 옵션', value: 'foreign_stock_option' },
+  { label: '해외 ETF', value: 'foreign_etf' },
+  { label: '해외지수 선물', value: 'foreign_index_future' },
+  { label: '해외상품 선물', value: 'foreign_commodity_future' },
+];
 
 const generateStrategies = (count: number) => {
   const titles = [
@@ -158,7 +90,7 @@ const StrategyListPage = () => {
             Total <span>{strategies.length}</span>
           </div>
           <div css={optionContainerStyle}>
-            <Select options={cycles} onChange={() => {}} type='sm' width='160px' />
+            <Select options={products} onChange={() => {}} type='sm' width='160px' />
             <Select options={cycles} onChange={() => {}} type='sm' width='160px' />
             <Button
               variant='primary'
