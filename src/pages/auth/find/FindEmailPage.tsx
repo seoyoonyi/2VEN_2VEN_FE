@@ -13,7 +13,7 @@ const FindEmailPage = () => (
         <Input type='email' inputSize='lg' placeholder='이메일' showClearButton />
       </div>
       <Button width={400} css={buttonStyle} disabled>
-        로그인
+        확인
       </Button>
     </form>
     <ul css={findPassLinkStyle}>
