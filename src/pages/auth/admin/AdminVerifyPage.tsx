@@ -36,6 +36,7 @@ const AdminVerifyPage = () => {
           setErrorMessage('인증 시간이 만료되었습니다. 다시 시도해주세요.');
         }}
       />
+      {errorMessage && <p>{errorMessage}</p>}
     </div>
   );
 };
