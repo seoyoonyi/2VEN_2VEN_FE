@@ -37,6 +37,7 @@ import StrategyListPage from '@/pages/strategy/StrategyListPage';
 import TraderDetailPage from '@/pages/trader/TraderDetailPage';
 import TraderListPage from '@/pages/trader/TraderListPage';
 
+
 export const router = createBrowserRouter([
   {
     path: ROUTES.HOME.PATH,
@@ -49,7 +50,7 @@ export const router = createBrowserRouter([
       },
       // -------------------------------------- 인증
       {
-        path: ROUTES.AUTH.LOGIN,
+        path: ROUTES.AUTH.SIGNIN,
         element: <SignInPage />, // 로그인 페이지
       },
       {
@@ -195,9 +196,19 @@ export const router = createBrowserRouter([
   },
   {
     // 유효하지 않은 경로로 접근했을 때 404 페이지로 리다이렉트
-    path: '*',
-    element: <Navigate to={ROUTES.ERROR.NOT_FOUND} replace />,
+     path: '*',
+     element: <Navigate to={ROUTES.ERROR.NOT_FOUND} replace />,
   },
-]);
+ ],
+  {
+    future: {
+      v7_relativeSplatPath: true,
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_skipActionErrorRevalidation: true,
+    },
+  }
+);
 
 export default router;
