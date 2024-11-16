@@ -58,8 +58,8 @@ const AdminVerifyPage = () => {
       return;
     }
 
-    // if (validationResult.isValid) {
-    if (verificationCode === '123456') {
+    if (validationResult.isValid) {
+      // if (verificationCode === '123456') {
       navigate(ROUTES.ADMIN.STRATEGY.APPROVAL); // 관리자 전략 승인 페이지로 이동
     } else {
       setErrorMessage(validationResult.message);
