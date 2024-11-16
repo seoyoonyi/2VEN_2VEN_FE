@@ -11,11 +11,16 @@ interface typeTableProps {
   title: string;
 }
 
+interface AttributeProps {
+  item: string;
+}
+
 interface dataProps {
+  attributes: AttributeProps[];
   data: typeTableProps[];
 }
 
-const TypeTable = ({ data }: dataProps) => {
+const TypeTable = ({ attributes, data }: dataProps) => {
   const [selected, setSelected] = useState<boolean[]>(new Array(data.length).fill(false));
   const [selectAll, setSelectAll] = useState(false);
 
@@ -41,11 +46,11 @@ const TypeTable = ({ data }: dataProps) => {
             <th css={tableHeadStyle}>
               <Checkbox checked={selectAll} onChange={handleAllChecked} />
             </th>
-            <th css={tableHeadStyle} colSpan={3}>
-              아이콘
-            </th>
-            <th css={tableHeadStyle}>상품유형</th>
-            <th css={tableHeadStyle}>요청관리</th>
+            {attributes.map((row, idx) => (
+              <th key={idx} css={tableHeadStyle} colSpan={idx === 0 ? 4 : 1}>
+                {row.item}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -54,7 +59,7 @@ const TypeTable = ({ data }: dataProps) => {
               <td css={tableCellStyle}>
                 <Checkbox checked={selected[idx]} onChange={() => handleSelect(idx)} />
               </td>
-              <td css={tableCellStyle} colSpan={3}>
+              <td css={tableCellStyle} colSpan={4}>
                 <img src={row.icon} alt={row.title} css={tableImgStyle} />
               </td>
               <td css={tableCellStyle}>{row.title}</td>
@@ -83,7 +88,8 @@ const tableRowStyle = css`
 
 const tableHeadStyle = css`
   ${theme.textStyle.body.body1};
-  padding: 12px;
+  height: 56px;
+  padding: 10px 12px;
   vertical-align: middle;
   text-align: center;
   background-color: ${theme.colors.gray[100]};
@@ -98,7 +104,9 @@ const tableCellStyle = css`
 `;
 
 const tableImgStyle = css`
-  height: 22px;
+  display: block;
+  margin: 0 auto;
+  height: 20px;
   object-fit: cover;
 `;
 

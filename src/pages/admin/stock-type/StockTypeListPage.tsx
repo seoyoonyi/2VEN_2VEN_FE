@@ -35,6 +35,18 @@ const mockStock = [
   },
 ];
 
+const stockAttributes = [
+  {
+    item: '아이콘',
+  },
+  {
+    item: '상품유형',
+  },
+  {
+    item: '상품관리',
+  },
+];
+
 const StockTypeListPage = () => (
   <div css={stockStyle}>
     <div css={headingStyle}>
@@ -48,7 +60,7 @@ const StockTypeListPage = () => (
         </Button>
       </div>
     </div>
-    <TypeTable data={mockStock} />
+    <TypeTable attributes={stockAttributes} data={mockStock} />
   </div>
 );
 
