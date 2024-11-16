@@ -20,9 +20,8 @@ interface SelectBoxProps {
   onChange: (option: Option) => void;
   width?: string;
   disabled?: boolean;
+  defaultLabel?: string;
 }
-
-const defaultOption = { label: '선택', value: '' };
 
 const Select = ({
   id,
@@ -31,7 +30,9 @@ const Select = ({
   onChange,
   width = '200px',
   disabled = false,
+  defaultLabel = '선택',
 }: SelectBoxProps) => {
+  const defaultOption = { label: defaultLabel, value: '' };
   const [selected, setSelected] = useState<Option>(defaultOption);
 
   const handleSelect = (option: Option) => {
