@@ -79,10 +79,13 @@ const Input = ({
   const handleClear = () => {
     setInputValue('');
     setInputStatus('default');
-    const event = {
-      target: { value: '' }, // input value 초기화
-    } as React.ChangeEvent<HTMLInputElement>;
-    props.onChange?.(event); // 부모 컴포넌트로 이벤트 전달
+    if (props.onChange) {
+      const event = new Event('input', {
+        bubbles: true,
+      }) as unknown as React.ChangeEvent<HTMLInputElement>;
+      Object.defineProperty(event, 'target', { value: { value: '' } });
+      props.onChange(event);
+    }
   };
 
   // input type이 password일 때, 눈 아이콘 클릭 시(토글)
@@ -96,7 +99,8 @@ const Input = ({
     inputSizeStyles[inputSize], // input 사이즈에 따른 스타일
     inputStatusStyles[inputStatus], // input 상태에 따른 스타일
     leftIcon && paddingLeftStyles, // leftIcon이 있을 때 padding 적용
-    (rightIcon === 'eye' || (showClearButton && inputValue)) && paddingRightStyles, // rightIcon이 'eye'일 때 padding 적용
+    // rightIcon이 있거나 (leftIcon과 showClearButton이 모두 있고 inputValue가 있을 때)만 오른쪽 패딩 적용
+    (rightIcon || (leftIcon && showClearButton && inputValue)) && paddingRightStyles,
     customStyle,
   ];
 

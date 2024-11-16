@@ -16,7 +16,7 @@ export const ROUTES = {
       FORM: '/signup/form', // 회원가입 폼 페이지 (공통)
       SUCCESS: '/signup/success', // 회원가입 성공
     },
-    LOGIN: '/login', // 공통 로그인 페이지 (트레이더, 투자자, 관리자 모두 사용)
+    SIGNIN: '/signin', // 공통 로그인 페이지 (트레이더, 투자자, 관리자 모두 사용)
     FIND: {
       EMAIL: '/find/email', // 이메일 찾기
       EMAIL_SUCCESS: '/find/email/success', // 이메일 찾기 성공
