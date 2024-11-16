@@ -22,11 +22,11 @@ const VerificationInput = ({
   onTimeEnd,
   isDisabled = false, // 기본값 false
 }: VerificationInputProps) => {
-  const [timeLeft, setTimeLeft] = useState<number>(10); // 초기값 5분(300초)
+  const [timeLeft, setTimeLeft] = useState<number>(179); // 초기값 3분  => 179초
 
   // resetTimer가 변경될 때만 타이머 시작!
   useEffect(() => {
-    setTimeLeft(10); // 타이머 초기화
+    setTimeLeft(179); // 타이머 초기화
     onChange(''); // 입력값 초기화
   }, [resetTimer, onChange]);
 
