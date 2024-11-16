@@ -176,8 +176,12 @@ const yieldStyle = css`
   }
 `;
 
-const mddStyle = (mdd: number = 0) => css`
-  color: ${mdd < 0 ? theme.colors.main.blue : theme.colors.main.red};
+const mddStyle = (mdd: string | number | undefined) => css`
+  color: ${(mdd as number) === 0 || mdd === '-' || mdd === undefined
+    ? theme.colors.gray[900]
+    : (mdd as number) < 0
+      ? theme.colors.main.blue
+      : theme.colors.main.red};
 `;
 
 export default StrategyList;
