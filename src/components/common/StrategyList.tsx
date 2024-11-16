@@ -6,15 +6,15 @@ import theme from '@/styles/theme';
 interface StrategyData {
   strategyId: number;
   strategyTitle: string;
-  analytics_graph: string;
+  analytics_graph?: string;
   tradingTypeIcon: string;
   cycleIcon: string;
   investmentAssetClassesIcon: string[];
-  cumulativeReturn: number;
-  oneYearReturn: number;
-  mdd: number;
-  smscore: number;
-  followers_count: number;
+  cumulativeReturn?: number;
+  oneYearReturn?: number;
+  mdd?: number;
+  smscore?: number;
+  followers_count?: number;
 }
 
 interface StrategyListProps {
