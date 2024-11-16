@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/routes';
+import AdminLayout from '@/layouts/AdminLayout';
 import RootLayout from '@/layouts/RootLayout';
 import StockTypeListPage from '@/pages/admin/stock-type/StockTypeListPage';
 import StrategyApprovalListPage from '@/pages/admin/strategy/StrategyApprovalListPage';
@@ -166,33 +167,39 @@ export const router = createBrowserRouter([
         path: ROUTES.SEARCH.STRATEGY.WITH_KEYWORD(':keyword'),
         element: <SearchResultsInStrategy />, // 전략 내 검색결과 페이지
       },
+    ],
+  },
+  {
+    path: ROUTES.HOME.PATH,
+    element: <AdminLayout />,
+    errorElement: <NotFoundPage />,
+    children: [
       // -------------------------------------- 관리자
-
-        {
-          path: ROUTES.ADMIN.STOCK_TYPE.LIST,
-          element: <StockTypeListPage />, // 상품유형 관리 페이지(현재 대시보드 페이지)
-        },
-        {
-          path: ROUTES.ADMIN.TRADING_TYPE.LIST,
-          element: <TradingTypeListPage />, // 매매유형 관리 페이지
-        },
-        {
-          path: ROUTES.ADMIN.STRATEGY.APPROVAL,
-          element: <StrategyApprovalListPage />, // 전략 승인 관리 페이지
-        },
-      ],
-    },
-    {
-      // 404 및 기타 리다이렉트 처리
-      path: ROUTES.ERROR.NOT_FOUND,
-      element: <NotFoundPage />, // 404 Not Found 페이지
-    },
-    {
-      // 유효하지 않은 경로로 접근했을 때 404 페이지로 리다이렉트
-      path: '*',
-      element: <Navigate to={ROUTES.ERROR.NOT_FOUND} replace />,
-    },
-  ],
+      {
+        path: ROUTES.ADMIN.STOCK_TYPE.LIST,
+        element: <StockTypeListPage />, // 상품유형 관리 페이지(현재 대시보드 페이지)
+      },
+      {
+        path: ROUTES.ADMIN.TRADING_TYPE.LIST,
+        element: <TradingTypeListPage />, // 매매유형 관리 페이지
+      },
+      {
+        path: ROUTES.ADMIN.STRATEGY.APPROVAL,
+        element: <StrategyApprovalListPage />, // 전략 승인 관리 페이지
+      },
+    ],
+  },
+  {
+    // 404 및 기타 리다이렉트 처리
+    path: ROUTES.ERROR.NOT_FOUND,
+    element: <NotFoundPage />, // 404 Not Found 페이지
+  },
+  {
+    // 유효하지 않은 경로로 접근했을 때 404 페이지로 리다이렉트
+     path: '*',
+     element: <Navigate to={ROUTES.ERROR.NOT_FOUND} replace />,
+  },
+ ],
   {
     future: {
       v7_relativeSplatPath: true,
