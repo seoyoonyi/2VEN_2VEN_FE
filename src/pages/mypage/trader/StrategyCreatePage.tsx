@@ -9,7 +9,7 @@ const desc =
 
 const StrategyCreatePage = () => (
   <>
-    <PageHeader title='전략등록' desc={desc} />
+    <PageHeader title='전략등록' desc={desc} icon />
     <div css={createContainerStyle}>
       <StrategyCreateForm />
     </div>
