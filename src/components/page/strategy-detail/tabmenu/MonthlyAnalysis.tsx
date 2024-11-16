@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import AnalysisTable, { AnalysisProps } from '../AnalysisTable';
+import AnalysisTable, { AnalysisProps } from '../table/AnalysisTable';
 
 const MonthlyAnalysis = ({ attributes, data }: AnalysisProps) => (
   <div css={monthlyStyle}>
