@@ -27,6 +27,7 @@ const StrategyCreateForm = () => {
     selectedProducts,
     setField,
     checkProduct,
+    clearForm,
   } = useStrategyFormStore();
   const { strategyData, loading, error } = useFetchStrategyOptionData();
 
@@ -57,8 +58,9 @@ const StrategyCreateForm = () => {
     try {
       const res = await submitStrategyCreate(payload);
       if (res.status === 201) {
-        console.log('전략 등록 성공:', res.data);
+        clearForm;
         navigate('/strategies/1');
+        window.scrollTo(0, 0);
       }
     } catch (err) {
       console.error('전략 등록 실패:', err);
