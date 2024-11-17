@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
+import axios from 'axios';
 import { MdKeyboardArrowRight, MdArrowForward } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,9 +23,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchTraderStats = async () => {
       try {
-        const response = await fetch('/api/trader-Strategy'); // 실제 API 경로 적용,,
-        const data = await response.json();
-
+        const { data } = await axios.get('/api/trader-Strategy');
         setTraderCount(data.traderCount);
         setStrategyCount(data.strategyCount);
       } catch (error) {
@@ -40,7 +39,7 @@ const HomePage = () => {
   };
 
   const handleTraderListClick = () => {
-    navigate(ROUTES.TRADER.LIST);
+    navigate(ROUTES.STRATEGY.LIST);
   };
 
   return (
@@ -251,7 +250,7 @@ const rankingButtonStyle = css`
   align-items: center;
   gap: 12px;
   background: none;
-  border: none;
+  border: 0;
   cursor: pointer;
 `;
 
