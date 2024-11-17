@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { createPortal } from 'react-dom';
+import { MdClose } from 'react-icons/md';
 
 import useTableModalStore from '@/stores/tableModalStore';
 import theme from '@/styles/theme';
@@ -9,7 +10,7 @@ const TableModal = () => {
 
   if (!isOpen || !tableModalData) return null;
 
-  const { type, title, data, actionButton, onAction } = tableModalData;
+  const { title, data, actionButton, onAction } = tableModalData;
 
   const onClickButton = () => {
     onAction();
@@ -25,13 +26,18 @@ const TableModal = () => {
   return createPortal(
     <div css={modalBackgroundStyle}>
       <div css={modalStyle}>
-        <div css={titleStyle}>{title}</div>
+        <div css={titleSectionStyle}>
+          <div css={titleStyle}>{title}</div>
+          <button onClick={closeTableModal}>
+            <MdClose size={36} />
+          </button>
+        </div>
         <div css={descStyle}>{data}</div>
         <div css={modalButtonStyle}>
           <button onClick={closeTableModal} css={cancelButtonStyle}>
             취소
           </button>
-          <button onClick={onClickButton} css={getButtonStyle(type)}>
+          <button onClick={onClickButton} css={getButtonStyle}>
             {actionButton}
           </button>
         </div>
@@ -66,20 +72,31 @@ const modalStyle = css`
   border-radius: 10px;
 `;
 
+const titleSectionStyle = css`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  color: ${theme.colors.gray[800]};
+
+  button {
+    background-color: inherit;
+  }
+`;
+
 const titleStyle = css`
-  font-size: ${theme.typography.fontSizes.subtitle.lg};
-  font-weight: ${theme.typography.fontWeight.bold};
-  line-height: ${theme.typography.lineHeights.md};
+  text-align: left;
+  flex: 1;
+  ${theme.textStyle.subtitles.subtitle1};
   margin-bottom: 8px;
 `;
 
 const descStyle = css`
   white-space: pre-line;
   text-align: center;
-  font-size: ${theme.typography.fontSizes.caption};
-  font-weight: ${theme.typography.fontWeight.medium};
-  line-height: ${theme.typography.lineHeights.lg};
-  color: ${theme.colors.gray[500]};
+  ${theme.textStyle.body.body2};
+  color: ${theme.colors.gray[700]};
+  margin-bottom: 32px;
 `;
 
 const baseButtonStyle = css`
@@ -87,7 +104,7 @@ const baseButtonStyle = css`
   justify-content: center;
   align-items: center;
   height: 40px;
-  padding: 0 32px;
+  padding: 20px 32px;
   font-size: ${theme.typography.fontSizes.caption};
   font-weight: ${theme.typography.fontWeight.bold};
   line-height: ${theme.typography.lineHeights.sm};
@@ -104,20 +121,10 @@ const cancelButtonStyle = css`
   color: ${theme.colors.gray[500]};
 `;
 
-const getButtonStyle = (type: 'insert' | 'update') => {
-  if (type === 'insert') {
-    return css`
-      ${baseButtonStyle};
-      background-color: ${theme.colors.main.primary};
-      color: ${theme.colors.main.white};
-    `;
-  } else if (type === 'update') {
-    return css`
-      ${baseButtonStyle};
-      background-color: ${theme.colors.main.primary};
-      color: ${theme.colors.main.white};
-    `;
-  }
-};
+const getButtonStyle = css`
+  ${baseButtonStyle};
+  background-color: ${theme.colors.main.primary};
+  color: ${theme.colors.main.white};
+`;
 
 export default TableModal;

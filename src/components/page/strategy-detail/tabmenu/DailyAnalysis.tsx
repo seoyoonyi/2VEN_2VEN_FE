@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
 
@@ -9,20 +11,29 @@ import Button from '@/components/common/Button';
 import useTableModalStore from '@/stores/tableModalStore';
 
 const DailyAnalysis = ({ attributes, data }: AnalysisProps) => {
-  //const [tableData, setTableData] = useState<InputTableProps[]>([]);
+  const [tableData, setTableData] = useState<InputTableProps[]>([]);
+
   const { openTableModal } = useTableModalStore();
 
   const handleOpenModal = () => {
+    const initalData = Array(5).fill({ date: '', trade: '', day: '' });
     openTableModal({
       type: 'insert',
       title: '일간분석 데이터 직접 입력',
-      data: <InputTable data={[{ date: '', trade: '', day: '' }]} onSave={handleSaveData} />,
-      onAction: () => {},
+      data: <InputTable data={initalData} onChange={handleInputChange} />,
+      onAction: handleSaveData,
     });
   };
 
-  const handleSaveData = (data: InputTableProps[]) => {
-    console.log('저장~^^');
+  const handleInputChange = (updatedData: InputTableProps[]) => {
+    setTableData(updatedData);
+  };
+
+  const handleSaveData = () => {
+    setTableData((prevData) => {
+      const updatedData = [...prevData, ...tableData];
+      return updatedData;
+    });
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { css } from '@emotion/react';
 
@@ -12,18 +12,18 @@ export interface InputTableProps {
 
 export interface InputAnalysisProps {
   data: InputTableProps[];
-  onSave: (data: InputTableProps[]) => void;
+  onChange: (data: InputTableProps[]) => void;
 }
 
 const attributes = ['일자', '입출금', '일손익'];
 
-const InputTable = ({ data, onSave }: InputAnalysisProps) => {
+const InputTable = ({ data, onChange }: InputAnalysisProps) => {
   const [inputData, setInputData] = useState<InputTableProps[]>(data);
 
   const handleInputChange = (idx: number, field: keyof InputTableProps, value: string) => {
-    const updatedData = [...inputData];
-    updatedData[idx] = { ...updatedData[idx], [field]: value };
+    const updatedData = inputData.map((row, i) => (i === idx ? { ...row, [field]: value } : row));
     setInputData(updatedData);
+    onChange(updatedData);
   };
 
   return (

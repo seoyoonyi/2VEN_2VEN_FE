@@ -50,6 +50,10 @@ const AnalysisTable = ({ attributes, data, mode }: AnalysisProps) => {
     setSelectAll(updatedSelected.every(Boolean));
   };
 
+  const handleInputChange = (updatedData: InputTableProps[]) => {
+    setTableData(updatedData);
+  };
+
   const handleUpdateData = (data: InputTableProps, idx: number) => {
     const updatedTableData = [...tableData];
     updatedTableData[idx] = { ...updatedTableData[idx], ...data };
@@ -60,16 +64,16 @@ const AnalysisTable = ({ attributes, data, mode }: AnalysisProps) => {
     openTableModal({
       type: 'update',
       title: '일간분석 데이터 수정',
-      data: <InputTable data={[data]} onSave={() => handleUpdateData(data, idx)} />,
-      onAction: () => {},
+      data: <InputTable data={[data]} onChange={handleInputChange} />,
+      onAction: () => {
+        () => handleUpdateData(data, idx);
+      },
     });
   };
 
   const getColorValue = (item: string) => {
     if (item.startsWith('-')) return false;
-
     if (item.startsWith('+')) return true;
-
     return null;
   };
 
@@ -78,9 +82,11 @@ const AnalysisTable = ({ attributes, data, mode }: AnalysisProps) => {
       <table css={tableVars}>
         <thead>
           <tr css={tableRowStyle}>
-            <th css={tableHeadStyle}>
-              {mode === 'write' && <Checkbox checked={selectAll} onChange={handleAllChecked} />}
-            </th>
+            {mode === 'write' && (
+              <th css={tableHeadStyle}>
+                <Checkbox checked={selectAll} onChange={handleAllChecked} />
+              </th>
+            )}
             {attributes.map((item, idx) => (
               <th key={idx} css={tableHeadStyle}>
                 {mode === 'write' || item.title !== '수정' ? item.title : null}
@@ -92,9 +98,11 @@ const AnalysisTable = ({ attributes, data, mode }: AnalysisProps) => {
           {data.length > 0 ? (
             data.map((row, idx) => (
               <tr key={idx} css={tableRowStyle}>
-                <td css={tableCellStyle}>
-                  {mode === 'write' && <Checkbox checked={selectAll} onChange={handleAllChecked} />}
-                </td>
+                {mode === 'write' && (
+                  <td css={tableCellStyle}>
+                    <Checkbox checked={selected[idx]} onChange={() => handleSelected(idx)} />
+                  </td>
+                )}
                 <td css={tableCellStyle}>{row.date}</td>
                 <td css={tableCellStyle}>{row.original}</td>
                 <td css={tableCellStyle}>{row.trade}</td>
