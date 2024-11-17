@@ -38,8 +38,12 @@ const HomePage = () => {
     navigate(ROUTES.AUTH.SIGNUP.SELECT_TYPE);
   };
 
-  const handleTraderListClick = () => {
+  const handleStrategyListClick = () => {
     navigate(ROUTES.STRATEGY.LIST);
+  };
+
+  const handleTraderListClick = () => {
+    navigate(ROUTES.TRADER.LIST);
   };
 
   return (
@@ -58,7 +62,7 @@ const HomePage = () => {
               <Button variant='primary' size='xl' width={208} onClick={handleSignUpClick}>
                 투자자 가입하기
               </Button>
-              <Button variant='secondary' size='xl' width={208} onClick={handleTraderListClick}>
+              <Button variant='secondary' size='xl' width={208} onClick={handleStrategyListClick}>
                 전략 랭킹 보기
               </Button>
             </div>
