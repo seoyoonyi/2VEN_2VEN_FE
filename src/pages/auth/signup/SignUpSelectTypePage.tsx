@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
-import SignupTypeCard from '@/components/page/SignupTypeCard';
+import SignupTypeCard from '@/components/page/signup/SignupTypeCard';
 import { ROUTES } from '@/constants/routes';
 import { USER_TYPE_TEXT } from '@/constants/signup';
 import theme from '@/styles/theme';

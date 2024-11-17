@@ -20,7 +20,7 @@ const StrategyTab = ({ tabs }: TabProps) => (
           </Tab>
         ))}
       </TabList>
-      <TabPanels>
+      <TabPanels css={tabPanelStyle}>
         {tabs.map((tab, idx) => (
           <TabPanel key={idx}>{tab.component}</TabPanel>
         ))}
@@ -72,5 +72,9 @@ const selectedTab = css`
     height: 2px;
     background-color: ${theme.colors.main.primary};
   }
+`;
+
+const tabPanelStyle = css`
+  max-width: 940px;
 `;
 export default StrategyTab;
