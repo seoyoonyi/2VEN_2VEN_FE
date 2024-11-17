@@ -100,7 +100,7 @@ const shareButtonStyle = css`
   justify-content: center;
   align-items: center;
   background: none;
-  border: none;
+  border: 0;
   cursor: pointer;
   margin-left: 8px;
 `;
@@ -178,7 +178,7 @@ const authorDetailsStyle = css`
   width: 100%;
   gap: 8px;
   background: none;
-  border: none;
+  border: 0;
   cursor: pointer;
   outline: none;
 `;

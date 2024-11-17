@@ -41,8 +41,8 @@ const ulStyle = css`
 
 const bulletStyle = css`
   li {
-    list-style-type: disc !important;
-    margin-left: 16px !important;
+    list-style-type: disc;
+    margin-left: 16px;
   }
 
   span {

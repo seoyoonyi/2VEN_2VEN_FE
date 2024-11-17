@@ -69,9 +69,13 @@ const inputContainerStyle = css`
 const inputStyle = css`
   width: 288px;
   padding-right: 60px;
-  &:hover,
-  &:focus {
-    border: 1px solid ${theme.colors.gray[300]} !important;
+
+  &:hover:not(:disabled) {
+    border-color: ${theme.colors.gray[300]};
+  }
+
+  &:focus:not(:disabled) {
+    border-color: ${theme.colors.gray[300]};
   }
 `;
 const timerStyle = css`

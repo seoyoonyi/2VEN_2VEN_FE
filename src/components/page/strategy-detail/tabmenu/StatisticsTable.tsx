@@ -100,7 +100,7 @@ const containerStyle = css`
 const tableStyle = css`
   width: 100%;
   border-collapse: collapse;
-  border: none;
+  border: 0;
 `;
 
 const sectionStyle = css`
@@ -112,7 +112,7 @@ const sectionStyle = css`
 
 const rowStyle = css`
   td {
-    border: none;
+    border: 0;
     height: 50px;
     padding: 10px 12px;
     text-align: center;

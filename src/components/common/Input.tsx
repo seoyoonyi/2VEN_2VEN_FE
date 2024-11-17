@@ -218,7 +218,15 @@ const iconSpacingStyles = {
 const inputStatusStyles = {
   default: css``,
   error: css`
-    border-color: ${theme.colors.main.alert} !important;
+    border-color: ${theme.colors.main.alert};
+
+    &:hover:not(:disabled) {
+      border-color: ${theme.colors.main.alert};
+    }
+
+    &:focus:not(:disabled) {
+      border-color: ${theme.colors.main.alert};
+    }
   `,
   success: css`
     border-color: ${theme.colors.gray[400]};
@@ -231,7 +239,7 @@ const iconButtonStyles = css`
   align-items: center;
   justify-content: center;
   background: none;
-  border: none;
+  border: 0;
   padding: 0;
   cursor: pointer;
   color: ${theme.colors.gray[500]};

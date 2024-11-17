@@ -47,7 +47,7 @@ const baseButtonStyle = css`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: none;
+  border: 0;
   cursor: pointer;
   transition:
     background-color 0.2s ease-in-out,
