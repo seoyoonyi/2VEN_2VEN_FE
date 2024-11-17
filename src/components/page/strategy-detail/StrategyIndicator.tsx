@@ -36,7 +36,7 @@ const StrategyIndicator = ({
     </div>
     <div css={rateAreaStyle}>
       <div css={titleStyle}>승률</div>
-      <div css={rateContentStyle}>{winRate}</div>
+      <div css={winRateStyle}>{winRate}</div>
     </div>
   </div>
 );
@@ -46,11 +46,12 @@ const indicatorWrapperStyle = css`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: ${theme.colors.gray[50]};
+  background-color: ${theme.colors.teal[50]};
   padding: 32px;
 `;
 
 const rateAreaStyle = css`
+  color: ${theme.colors.gray[800]};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -58,11 +59,19 @@ const rateAreaStyle = css`
   flex: 1;
 `;
 
-const titleStyle = css``;
+const titleStyle = css`
+  ${theme.textStyle.captions.caption1};
+`;
+
+const winRateStyle = css`
+  margin-top: 10px;
+  ${theme.textStyle.subtitles.subtitle1};
+  color: ${theme.colors.teal[700]};
+`;
 
 const rateContentStyle = css`
   margin-top: 10px;
-  ${theme.textStyle.subtitles.subtitle4};
+  ${theme.textStyle.subtitles.subtitle1};
 `;
 
 export default StrategyIndicator;

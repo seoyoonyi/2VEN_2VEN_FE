@@ -1,5 +1,7 @@
 import { css } from '@emotion/react';
 
+import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
+import ChartSection from '@/components/page/strategy-detail/section/ChartSection';
 import StrategyContent from '@/components/page/strategy-detail/StrategyContent';
 import StrategyIndicator from '@/components/page/strategy-detail/StrategyIndicator';
 import StrategyTab from '@/components/page/strategy-detail/StrategyTab';
@@ -12,7 +14,8 @@ import theme from '@/styles/theme';
 
 const strategyDummy = [
   {
-    title: '전략 이름이 들어가는 자리입니다.',
+    title:
+      '전략 이름이 들어가는 자리입니다. 내용이 길어지면 이렇게 될 것 같아여 누가 제목을 이렇게 길게 쓸까 하지만 쓰다보면 길어질지도 몰라~~',
     author: {
       traderId: 'investKing',
       traderName: '나는야투자왕',
@@ -27,6 +30,9 @@ const strategyDummy = [
       avgProfit: 5.69,
       profitFactor: '1.54 : 1',
       winRate: 60.36,
+    },
+    file: {
+      url: `/file.txt`,
     },
   },
 ];
@@ -62,6 +68,170 @@ const statisticsData = [
   { label: '고정갱신 후 경과일', value: '0일' },
   { label: 'ROA', value: '453' },
 ];
+const dailyAttribues = [
+  {
+    title: '날짜',
+  },
+  {
+    title: '원금',
+  },
+  {
+    title: '입출금',
+  },
+  {
+    title: '일손익',
+  },
+  {
+    title: '일수익률',
+  },
+  {
+    title: '누적손익',
+  },
+  {
+    title: '누적수익률',
+  },
+  {
+    title: '수정',
+  },
+];
+const dailyAnalysisData = [
+  {
+    date: '2024.10.29',
+    original: '100,000,000',
+    trade: '0',
+    day: '+332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2024.10.29',
+    original: '100,000,000',
+    trade: '100,000',
+    day: '-332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2024.10.29',
+    original: '100,000,000',
+    trade: '0',
+    day: '332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2024.10.29',
+    original: '100,000,000',
+    trade: '20,000,000',
+    day: '332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2024.10.29',
+    original: '100,000,000',
+    trade: '0',
+    day: '332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2024.10.29',
+    original: '100,000,000',
+    trade: '0',
+    day: '332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+];
+const monthlyAttribues = [
+  {
+    title: '월',
+  },
+  {
+    title: '월평균 원금',
+  },
+  {
+    title: '입출금',
+  },
+  {
+    title: '월 손익',
+  },
+  {
+    title: '월 수익률',
+  },
+  {
+    title: '누적손익',
+  },
+  {
+    title: '누적수익률',
+  },
+  {
+    title: '수정',
+  },
+];
+const monthlyAnalysisData = [
+  {
+    date: '2026.04',
+    original: '100,000,000',
+    trade: '0',
+    day: '+332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2026.04',
+    original: '100,000,000',
+    trade: '0',
+    day: '+332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2026.04',
+    original: '100,000,000',
+    trade: '0',
+    day: '332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2026.04',
+    original: '100,000,000',
+    trade: '0',
+    day: '332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2026.04',
+    original: '100,000,000',
+    trade: '0',
+    day: '-332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+  {
+    date: '2026.04',
+    original: '100,000,000',
+    trade: '0',
+    day: '-332,410',
+    daily: '0.33%',
+    addMoney: '332,200',
+    addRate: '0.30%',
+  },
+];
 
 const tabMenu = [
   {
@@ -74,36 +244,42 @@ const tabMenu = [
   },
   {
     title: '일간분석',
-    component: <DailyAnalysis />,
+    component: <DailyAnalysis attributes={dailyAttribues} data={dailyAnalysisData} mode='write' />,
   },
   {
     title: '월간분석',
-    component: <MonthlyAnalysis />,
+    component: (
+      <MonthlyAnalysis attributes={monthlyAttribues} data={monthlyAnalysisData} mode='read' />
+    ),
   },
 ];
 
 const StrategyDetailPage = () => (
   <div css={containerStyle}>
     <div css={contentStyle}>
-      {strategyDummy.map((strategy, index) => (
-        <div key={index}>
-          <StrategyTitleSection
-            title={strategy.title}
-            author={strategy.author}
-            date={strategy.date}
-            followers={strategy.followers}
-          />
-          <StrategyContent content={strategy.content} />
-          <StrategyIndicator
-            cumulativeRate={strategy.indicator.cumulativeRate}
-            maximumRate={strategy.indicator.maximumRate}
-            avgProfit={strategy.indicator.avgProfit}
-            profitFactor={strategy.indicator.profitFactor}
-            winRate={strategy.indicator.winRate}
-          />
-          <StrategyTab tabs={tabMenu} />
-        </div>
-      ))}
+      <div css={contentWrapper}>
+        {strategyDummy.map((strategy, index) => (
+          <div key={index}>
+            <StrategyTitleSection
+              title={strategy.title}
+              author={strategy.author}
+              date={strategy.date}
+              followers={strategy.followers}
+            />
+            <StrategyContent content={strategy.content} />
+            <FileDownSection fileUrl={strategy.file.url} />
+            <StrategyIndicator
+              cumulativeRate={strategy.indicator.cumulativeRate}
+              maximumRate={strategy.indicator.maximumRate}
+              avgProfit={strategy.indicator.avgProfit}
+              profitFactor={strategy.indicator.profitFactor}
+              winRate={strategy.indicator.winRate}
+            />
+            <ChartSection />
+            <StrategyTab tabs={tabMenu} />
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 );
@@ -117,14 +293,19 @@ const containerStyle = css`
 `;
 
 const contentStyle = css`
-  display: flex;
-  flex-direction: column;
   margin-top: 95px;
-  ${theme.layout.width.content};
-  padding: 80px 80px 100px 80px;
+  width: ${theme.layout.width.content};
+  padding: 40px;
   box-sizing: border-box;
-  align-items: center;
   background-color: ${theme.colors.main.white};
+`;
+
+const contentWrapper = css`
+  max-width: 1060px;
+  width: 100%;
+  display: flex;
+  align-items: left;
+  flex-direction: column;
 `;
 
 export default StrategyDetailPage;
