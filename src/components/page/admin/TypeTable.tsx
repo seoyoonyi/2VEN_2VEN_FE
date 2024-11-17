@@ -6,7 +6,8 @@ import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
 import theme from '@/styles/theme';
 
-interface TypeTableProps {
+export interface TypeTableProps {
+  id: number;
   icon: string;
   title: string;
 }
@@ -18,9 +19,10 @@ interface AttributeProps {
 interface DataProps {
   attributes: AttributeProps[];
   data: TypeTableProps[];
+  onSelectChange: (selectedIdx: number[]) => void;
 }
 
-const TypeTable = ({ attributes, data }: DataProps) => {
+const TypeTable = ({ attributes, data, onSelectChange }: DataProps) => {
   const [selected, setSelected] = useState<boolean[]>(new Array(data.length).fill(false));
   const [selectAll, setSelectAll] = useState(false);
 
@@ -28,6 +30,8 @@ const TypeTable = ({ attributes, data }: DataProps) => {
     const newSelectAll = !selectAll;
     setSelectAll(newSelectAll);
     setSelected(new Array(data.length).fill(newSelectAll));
+    const selectIdx = newSelectAll ? data.map((item) => item.id) : [];
+    onSelectChange(selectIdx);
   };
 
   const handleSelect = (idx: number) => {
@@ -35,7 +39,10 @@ const TypeTable = ({ attributes, data }: DataProps) => {
     updatedSelected[idx] = !updatedSelected[idx];
     setSelected(updatedSelected);
 
+    const selectedIds = data.filter((_, index) => updatedSelected[index]).map((item) => item.id);
+
     setSelectAll(updatedSelected.every(Boolean));
+    onSelectChange(selectedIds);
   };
 
   return (
