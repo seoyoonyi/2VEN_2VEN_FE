@@ -9,58 +9,44 @@ import { formatTime } from '@/utils/time';
 interface VerificationInputProps {
   value: string; // 부모컴포넌트에서 관리하는 입력값
   onChange: (value: string) => void; // 입력값 변경 콜백함수
-  isActive?: boolean; // 컴포넌트 활성화 여부
+  resetTimer?: number; // 타이머 리셋을 위한 상태
   onTimeEnd?: () => void; // 타이머 종료 콜백함수
+  isDisabled?: boolean; // 입력창 비활성화 여부
 }
 
 // 타이머 기능있는 인증번호 입력창 컴포넌트(인증번호입력+타이머)
 const VerificationInput = ({
   value,
   onChange,
-  isActive = false, // 기본값은 비활성화
+  resetTimer = 0,
   onTimeEnd,
+  isDisabled = false, // 기본값 false
 }: VerificationInputProps) => {
-  const [timeLeft, setTimeLeft] = useState<number | null>(null); // 초기값 null로 설정
+  const [timeLeft, setTimeLeft] = useState<number>(179); // 초기값 3분  => 179초
 
-  // 활성화 상태가 되면 타이머 시작!
-  // isActive가 true로 변경될 때마다 타이머 재시작
+  // resetTimer가 변경될 때만 타이머 시작!
   useEffect(() => {
-    if (isActive) {
-      setTimeLeft(299); // 5분(300초) 타이머 시작 또는 타이머 재시작
-      onChange(''); // 입력값 초기화
-    }
-  }, [isActive, onChange]);
+    setTimeLeft(179); // 타이머 초기화
+    onChange(''); // 입력값 초기화
+  }, [resetTimer, onChange]);
 
   // 타이머 로직
   useEffect(() => {
-    // 비활성화 상태거나, timeLeft가 null이거나, 0이하일 때 타이머 종료
-    if (!isActive || timeLeft === null || timeLeft <= 0) {
-      // 타이머 종료 콜백함수 호출
-      if (timeLeft === 0) {
-        onTimeEnd?.();
-      }
+    // 타이머가 정확히 0일 때만 onTimeEnd 콜백함수 호출
+    if (timeLeft === 0) {
+      onTimeEnd?.();
       return;
     }
 
     const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        // 이전 값이 null이 아니고 0보다 크면 1초씩 감소
-        if (prev !== null) {
-          return prev - 1;
-        }
-        return prev;
-      });
+      setTimeLeft((prev) => prev - 1);
     }, 1000);
 
     // 컴포넌트 언마운트되면 타이머 종료
     return () => {
       clearInterval(timer);
     };
-  }, [timeLeft, isActive, onTimeEnd]);
-
-  if (!isActive) {
-    return null; // 비활성화 상태일 때는 null 반환
-  }
+  }, [timeLeft, onTimeEnd]);
 
   return (
     <div css={inputContainerStyle}>
@@ -71,7 +57,7 @@ const VerificationInput = ({
         onChange={(e) => onChange(e.target.value)}
         value={value}
         css={inputStyle}
-        disabled={timeLeft === 0} // 타이머 종료되면 입력창 비활성화
+        disabled={isDisabled || timeLeft === 0} // timeLeft가 0 이거나 isDisabled가 true이면 입력창 비활성화
       />
       <span css={timerStyle}>{timeLeft !== null ? formatTime(timeLeft) : ''}</span>
     </div>
