@@ -8,7 +8,7 @@ import theme from '@/styles/theme';
 
 type SelectType = 'sm' | 'md';
 
-interface Option {
+export interface Option {
   label: string;
   value: string;
 }

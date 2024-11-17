@@ -4,7 +4,7 @@ import Checkbox from '@/components/common/Checkbox';
 import theme from '@/styles/theme';
 
 interface ProductTypeProps {
-  products: string[];
+  products: { label: string; value: string }[];
   selectedProducts: string[];
   onProductChange: (product: string) => void;
 }
@@ -14,14 +14,17 @@ const ProductType = ({ products, selectedProducts, onProductChange }: ProductTyp
     <div css={labelStyle}>상품유형</div>
     <div css={checkboxContainerStyle}>
       {products.map((product) => (
-        <div key={product} style={{ display: 'flex' }}>
+        <div key={product.value} style={{ display: 'flex' }}>
           <Checkbox
-            id={product}
-            checked={selectedProducts.includes(product)}
-            onChange={() => onProductChange(product)}
+            id={product.value}
+            checked={selectedProducts.includes(product.value)}
+            onChange={() => onProductChange(product.value)}
           />
-          <label htmlFor={product} css={checkTextStyle(selectedProducts.includes(product))}>
-            {product}
+          <label
+            htmlFor={product.value}
+            css={checkTextStyle(selectedProducts.includes(product.value))}
+          >
+            {product.label}
           </label>
         </div>
       ))}
