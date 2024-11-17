@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { fetchStrategyRegistration } from '@/api/strategy';
+import { fetchStrategyRegistration } from '@/api/strategyCreate';
 import { Option } from '@/components/common/Select';
 import { mapToOptions } from '@/utils/mapToOptions';
 

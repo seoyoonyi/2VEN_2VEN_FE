@@ -3,14 +3,14 @@ import { useState } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
-import { submitStrategyCreate, StrategyPayload } from '@/api/strategy';
+import { submitStrategyCreate, StrategyPayload } from '@/api/strategyCreate';
 import Button from '@/components/common/Button';
 import Select from '@/components/common/Select';
 import FileUpload from '@/components/page/strategy-create/form-content/FileUpload';
 import ProductType from '@/components/page/strategy-create/form-content/ProductType';
 import StrategyIntro from '@/components/page/strategy-create/form-content/StrategyIntro';
 import StrategyName from '@/components/page/strategy-create/form-content/StrategyName';
-import { investmentFunds, isPublic } from '@/constants/createOptopns';
+import { investmentFunds, isPublic } from '@/constants/createOptions';
 import useCreateFormValidation from '@/hooks/useCreateFormValidation';
 import useFetchStrategyOptionData from '@/hooks/useFetchStrategyOptionData';
 import { useStrategyFormStore } from '@/stores/strategyFormStore';
