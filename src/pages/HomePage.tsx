@@ -24,8 +24,8 @@ const HomePage = () => {
     const fetchTraderStats = async () => {
       try {
         const { data } = await axios.get('/api/trader-Strategy');
-        setTraderCount(data.traderCount);
-        setStrategyCount(data.strategyCount);
+        setTraderCount(data.traderCount || '0');
+        setStrategyCount(data.strategyCount || '0');
       } catch (error) {
         console.error('트레이더 통계 조회 실패:', error);
       }
