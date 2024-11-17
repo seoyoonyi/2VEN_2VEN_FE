@@ -1,15 +1,17 @@
 import { StrictMode } from 'react';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from '@emotion/react';
 import { createRoot } from 'react-dom/client';
 
 import App from './App.tsx';
 
-const queryClient = new QueryClient();
+import GlobalStyle from '@/styles/GlobalStyle';
+import theme from '@/styles/theme';
+
 const initMocks = async (): Promise<void> => {
   if (process.env.NODE_ENV === 'development') {
     const { worker } = await import('./mocks/browser');
-    worker.start({
+    await worker.start({
       onUnhandledRequest: 'bypass',
     });
   }
@@ -25,9 +27,10 @@ const root = createRoot(rootElement);
 initMocks().then(() => {
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
         <App />
-      </QueryClientProvider>
+      </ThemeProvider>
     </StrictMode>
   );
 });
