@@ -243,11 +243,13 @@ const tabMenu = [
   },
   {
     title: '일간분석',
-    component: <DailyAnalysis attributes={dailyAttribues} data={dailyAnalysisData} />,
+    component: <DailyAnalysis attributes={dailyAttribues} data={dailyAnalysisData} mode='write' />,
   },
   {
     title: '월간분석',
-    component: <MonthlyAnalysis attributes={monthlyAttribues} data={monthlyAnalysisData} />,
+    component: (
+      <MonthlyAnalysis attributes={monthlyAttribues} data={monthlyAnalysisData} mode='read' />
+    ),
   },
 ];
 

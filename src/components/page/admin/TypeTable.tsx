@@ -18,10 +18,9 @@ interface AttributeProps {
 interface DataProps {
   attributes: AttributeProps[];
   data: TypeTableProps[];
-  colSpan?: number;
 }
 
-const TypeTable = ({ attributes, data, colSpan = 1 }: DataProps) => {
+const TypeTable = ({ attributes, data }: DataProps) => {
   const [selected, setSelected] = useState<boolean[]>(new Array(data.length).fill(false));
   const [selectAll, setSelectAll] = useState(false);
 
