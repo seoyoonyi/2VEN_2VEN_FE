@@ -47,9 +47,9 @@ const Pagination = ({ totalPage, limit, page, setPage }: paginationProps) => {
       </button>
       {pages.map((pageNum) => (
         <button
+          className={` ${page === pageNum && 'active'}`}
           css={css`
             ${NumberBtn};
-            ${page === pageNum && ActiveBtn}
           `}
           key={pageNum}
           onClick={() => setPage(pageNum)}
@@ -91,6 +91,11 @@ const PaginationWrapper = css`
       cursor: not-allowed;
       pointer-events: none;
     }
+
+    &.active {
+      background-color: ${theme.colors.teal[50]};
+      color: ${theme.colors.teal[600]};
+    }
   }
 `;
 
@@ -118,9 +123,4 @@ const ArrowBtn = css`
   &:hover {
     color: ${theme.colors.gray[500]};
   }
-`;
-
-const ActiveBtn = css`
-  background-color: ${theme.colors.teal[50]} !important;
-  color: ${theme.colors.teal[600]} !important;
 `;
