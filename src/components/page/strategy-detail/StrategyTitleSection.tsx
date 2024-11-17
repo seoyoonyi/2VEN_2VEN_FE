@@ -7,14 +7,14 @@ import Button from '@/components/common/Button';
 import theme from '@/styles/theme';
 
 interface TitleProps {
-  title: string;
+  title?: string;
   author: {
     traderId: string;
     traderName: string;
     imgUrl: string;
   };
-  date: string;
-  followers: number;
+  date?: string;
+  followers?: number;
 }
 
 const StrategyTitleSection = ({ title, author, date, followers }: TitleProps) => {
@@ -24,7 +24,7 @@ const StrategyTitleSection = ({ title, author, date, followers }: TitleProps) =>
     navigate(`/traders/${traderId}`);
   };
 
-  const InfoSection = ({ title, data }: { title: string; data: number | string }) => (
+  const InfoSection = ({ title, data }: { title: string; data?: number | string }) => (
     <div css={authorInfoStyle}>
       <div css={followerAreaStyle}>
         <div>{title}</div>
