@@ -65,7 +65,6 @@ const VerificationInput = ({
 };
 const inputContainerStyle = css`
   position: relative;
-  width: 288px;
 `;
 const inputStyle = css`
   width: 288px;

@@ -7,13 +7,13 @@ const wrapperStyle = css`
     font-weight: ${theme.typography.fontWeight.medium};
     margin-bottom: 24px;
   }
-  div{
+  div {
     margin-bottom: 12px;
   }
-  ol{
+  ol {
     padding-left: 16px;
   }
-  li{
+  li {
     list-style-type: decimal;
   }
   div > strong {
@@ -23,6 +23,7 @@ const wrapperStyle = css`
   }
   div > span {
     font-weight: ${theme.typography.fontWeight.regular};
+  }
 `;
 
 const highlightStyle = css`
