@@ -102,7 +102,7 @@ const shareButtonStyle = css`
   background: none;
   border: none;
   cursor: pointer;
-  margin-right: 16px;
+  margin-left: 8px;
 `;
 
 const circleStyle = css`
@@ -144,7 +144,7 @@ const titleAreaStyle = css`
 const infoAreaStyle = css`
   display: flex;
   flex-direction: column;
-  width: 921px;
+  width: 100%;
 `;
 
 const infoSectionStyle = css`

@@ -123,13 +123,13 @@ const rowStyle = css`
 
 const labelStyle = css`
   ${theme.textStyle.body.body2};
-  width: 227px;
+  width: 231px;
   background-color: ${theme.colors.gray[100]};
 `;
 
 const valueStyle = css`
   ${theme.textStyle.body.body3};
-  width: 227px;
+  width: 231px;
   box-sizing: border-box;
 `;
 

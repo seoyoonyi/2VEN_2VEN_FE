@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
+import ChartSection from '@/components/page/strategy-detail/section/ChartSection';
 import StrategyContent from '@/components/page/strategy-detail/StrategyContent';
 import StrategyIndicator from '@/components/page/strategy-detail/StrategyIndicator';
 import StrategyTab from '@/components/page/strategy-detail/StrategyTab';
@@ -256,26 +257,29 @@ const tabMenu = [
 const StrategyDetailPage = () => (
   <div css={containerStyle}>
     <div css={contentStyle}>
-      {strategyDummy.map((strategy, index) => (
-        <div key={index}>
-          <StrategyTitleSection
-            title={strategy.title}
-            author={strategy.author}
-            date={strategy.date}
-            followers={strategy.followers}
-          />
-          <StrategyContent content={strategy.content} />
-          <FileDownSection fileUrl={strategy.file.url} />
-          <StrategyIndicator
-            cumulativeRate={strategy.indicator.cumulativeRate}
-            maximumRate={strategy.indicator.maximumRate}
-            avgProfit={strategy.indicator.avgProfit}
-            profitFactor={strategy.indicator.profitFactor}
-            winRate={strategy.indicator.winRate}
-          />
-          <StrategyTab tabs={tabMenu} />
-        </div>
-      ))}
+      <div css={contentWrapper}>
+        {strategyDummy.map((strategy, index) => (
+          <div key={index}>
+            <StrategyTitleSection
+              title={strategy.title}
+              author={strategy.author}
+              date={strategy.date}
+              followers={strategy.followers}
+            />
+            <StrategyContent content={strategy.content} />
+            <FileDownSection fileUrl={strategy.file.url} />
+            <StrategyIndicator
+              cumulativeRate={strategy.indicator.cumulativeRate}
+              maximumRate={strategy.indicator.maximumRate}
+              avgProfit={strategy.indicator.avgProfit}
+              profitFactor={strategy.indicator.profitFactor}
+              winRate={strategy.indicator.winRate}
+            />
+            <ChartSection />
+            <StrategyTab tabs={tabMenu} />
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 );
@@ -289,14 +293,19 @@ const containerStyle = css`
 `;
 
 const contentStyle = css`
-  display: flex;
-  flex-direction: column;
   margin-top: 95px;
-  ${theme.layout.width.content};
+  width: ${theme.layout.width.content};
   padding: 40px;
   box-sizing: border-box;
-  align-items: center;
   background-color: ${theme.colors.main.white};
+`;
+
+const contentWrapper = css`
+  max-width: 1060px;
+  width: 100%;
+  display: flex;
+  align-items: left;
+  flex-direction: column;
 `;
 
 export default StrategyDetailPage;
