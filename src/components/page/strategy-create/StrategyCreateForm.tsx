@@ -1,124 +1,101 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
-import fetchStrategyRegistration from '@/api/strategyCreate';
+import { submitStrategyCreate, StrategyPayload } from '@/api/strategy';
 import Button from '@/components/common/Button';
 import Select from '@/components/common/Select';
 import FileUpload from '@/components/page/strategy-create/form-content/FileUpload';
 import ProductType from '@/components/page/strategy-create/form-content/ProductType';
 import StrategyIntro from '@/components/page/strategy-create/form-content/StrategyIntro';
 import StrategyName from '@/components/page/strategy-create/form-content/StrategyName';
+import { investmentFunds, isPublic } from '@/constants/createOptopns';
 import useCreateFormValidation from '@/hooks/useCreateFormValidation';
+import useFetchStrategyOptionData from '@/hooks/useFetchStrategyOptionData';
+import { useStrategyFormStore } from '@/stores/strategyFormStore';
 import theme from '@/styles/theme';
 
-const investmentFunds = [
-  { label: '1만원 ~ 500만원', value: '1-500' },
-  { label: '500만원 ~ 1000만원', value: '500-1000' },
-  { label: '1000만원 ~ 2000만원', value: '1000-2000' },
-  { label: '2000만원 ~ 5000만원', value: '2000-5000' },
-  { label: '5000만원 ~ 1억', value: '5000-10000' },
-  { label: '1억 ~ 2억', value: '10000-20000' },
-  { label: '2억 ~ 3억', value: '20000-30000' },
-  { label: '3억 ~ 4억', value: '30000-40000' },
-  { label: '4억 ~ 5억', value: '40000-50000' },
-  { label: '5억 ~ 10억', value: '50000-100000' },
-  { label: '10억 이상', value: '100000+' },
-];
-
-const isPublic = [
-  { label: '공개', value: 'public' },
-  { label: '비공개', value: 'private' },
-];
-
-type Option = { label: string; value: string };
-
 const StrategyCreateForm = () => {
-  const [cycles, setCycles] = useState<{ label: string; value: string }[]>([]);
-  const [operations, setOperations] = useState<{ label: string; value: string }[]>([]);
-  const [products, setProducts] = useState<string[]>([]);
+  const {
+    strategy,
+    text,
+    operation,
+    cycle,
+    fund,
+    publicStatus,
+    selectedProducts,
+    setField,
+    checkProduct,
+  } = useStrategyFormStore();
+  const { strategyData, loading, error } = useFetchStrategyOptionData();
 
-  const [strategy, setStrategy] = useState('');
-  const [text, setText] = useState('');
-  const [operation, setOperation] = useState('');
-  const [cycle, setCycle] = useState('');
-  const [fund, setFund] = useState('');
-  const [publicStatus, setPublicStatus] = useState('');
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [file, setFile] = useState<File | null>(null);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await fetchStrategyRegistration();
-      setCycles(mapToOptions(result.data.tradingCycleRegistrationDtoList));
-      setOperations(mapToOptions(result.data.tradingTypeRegistrationDtoList));
-      setProducts(
-        result.data.investmentAssetClassesRegistrationDtoList.map(
-          (item: { investmentAssetClassesName: string }) => item.investmentAssetClassesName
-        )
-      );
-    };
-
-    fetchData();
-  }, []);
-
-  const mapToOptions = (
-    data: Array<{
-      tradingCycleName?: string;
-      tradingTypeName?: string;
-      investmentAssetClassesName?: string;
-    }>
-  ): Option[] =>
-    data.map((item) => ({
-      label: item.tradingCycleName || item.tradingTypeName || item.investmentAssetClassesName || '',
-      value: item.tradingCycleName || item.tradingTypeName || item.investmentAssetClassesName || '',
-    }));
-
   const formState = { strategy, text, operation, cycle, fund, publicStatus, selectedProducts };
   const isFormValid = useCreateFormValidation(formState);
 
-  const handleStrategyChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setStrategy(e.target.value);
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => setText(e.target.value);
-  const handleOperationSelect = (option: { value: string }) => setOperation(option.value);
-  const handleCycleSelect = (option: { value: string }) => setCycle(option.value);
-  const handleFundSelect = (option: { value: string }) => setFund(option.value);
-  const handlePublicSelect = (option: { value: string }) => setPublicStatus(option.value);
-  const handleFileSelect = (file: File) => setFile(file);
-
-  const handleProductCheck = (product: string) => {
-    setSelectedProducts((prev) =>
-      prev.includes(product) ? prev.filter((item) => item !== product) : [...prev, product]
-    );
+  const handleFileSelect = (selectedFile: File) => {
+    console.log(file);
+    setFile(selectedFile);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('서버로 요청!');
-    console.log(file);
-    navigate('/strategies/1');
+    const payload: StrategyPayload = {
+      strategyTitle: strategy,
+      tradingTypeId: Number(operation),
+      tradingCycleId: Number(cycle),
+      minInvestmentAmount: fund,
+      strategyOverview: text,
+      isPosted: publicStatus,
+      investmentAssetClassesIdList: selectedProducts.map((v) => Number(v)),
+    };
+
+    try {
+      const res = await submitStrategyCreate(payload);
+      if (res.status === 201) {
+        console.log('전략 등록 성공:', res.data);
+        navigate('/strategies/1');
+      }
+    } catch (err) {
+      console.error('전략 등록 실패:', err);
+    }
   };
+
+  if (loading) return <p>Loading.....</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <form css={formContainerStyle} onSubmit={handleSubmit}>
-      <StrategyName strategy={strategy} onStrategyChange={handleStrategyChange} />
+      <StrategyName
+        strategy={strategy}
+        onStrategyChange={(e) => setField('strategy', e.target.value)}
+      />
 
       <div css={selectContainerStyle}>
         <section css={flexAlignStyle}>
           <label htmlFor='operation' css={labelStyle}>
             운용방식
           </label>
-          <Select id='operation' options={operations} onChange={handleOperationSelect} />
+          <Select
+            id='operation'
+            options={strategyData.operations}
+            onChange={(option) => setField('operation', option.value)}
+          />
         </section>
 
         <section css={flexAlignStyle}>
           <label htmlFor='cycle' css={labelStyle}>
             주기
           </label>
-          <Select id='cycle' options={cycles} onChange={handleCycleSelect} />
+          <Select
+            id='cycle'
+            options={strategyData.cycles}
+            onChange={(option) => setField('cycle', option.value)}
+          />
         </section>
       </div>
 
@@ -126,22 +103,34 @@ const StrategyCreateForm = () => {
         <label htmlFor='fund' css={labelStyle}>
           최소운용가능금액
         </label>
-        <Select id='fund' options={investmentFunds} onChange={handleFundSelect} />
+        <Select
+          id='fund'
+          options={investmentFunds}
+          onChange={(option) => setField('fund', option.value)}
+        />
       </section>
 
-      <StrategyIntro text={text} onTextChange={handleTextChange} maxLength={1000} />
+      <StrategyIntro
+        text={text}
+        onTextChange={(e) => setField('text', e.target.value)}
+        maxLength={1000}
+      />
 
       <ProductType
-        products={products}
+        products={strategyData.products}
         selectedProducts={selectedProducts}
-        onProductChange={handleProductCheck}
+        onProductChange={(productId) => checkProduct(productId)}
       />
 
       <section css={flexAlignStyle}>
         <label htmlFor='public-status' css={labelStyle}>
           공개여부
         </label>
-        <Select id='public-status' options={isPublic} onChange={handlePublicSelect} />
+        <Select
+          id='public-status'
+          options={isPublic}
+          onChange={(option) => setField('publicStatus', option.value)}
+        />
       </section>
 
       <FileUpload onFileSelect={handleFileSelect} />

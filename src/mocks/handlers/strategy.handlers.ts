@@ -1,6 +1,5 @@
 import { http, HttpResponse } from 'msw';
 
-import futureIcon from '@/assets/images/producttype_futures.png';
 import StockIcon from '@/assets/images/producttype_stock.png';
 import TradeTypeIcon from '@/assets/images/tradetype_H.png';
 import CycleIcon from '@/assets/images/tradetype_P.png';
@@ -24,6 +23,16 @@ export interface TradingCycleClass {
   tradingCycleId: number;
   tradingCycleName: string;
   tradingTypeIcon: string;
+}
+
+export interface StrategyRequestBody {
+  strategyTitle: string;
+  tradingTypeId: number;
+  tradingCycleId: number;
+  minInvestmentAmount: string;
+  strategyOverview: string;
+  isPosted: string;
+  investmentAssetClassesIdList: number[];
 }
 
 const tradingTypes = ['자동', '반자동(하이브리드)', '수동(매뉴얼)'];
@@ -77,7 +86,7 @@ export const strategyHandlers = [
     // 전략 목록 조회 핸들러 로직
   }),
 
-  // 전략 등록 조회 핸들러 로직
+  // 전략 등록 조회(get) 핸들러 로직
   http.get(`/api/strategies/registration-form`, ({ request }) => {
     const authHeader = request.headers.get('Auth');
     if (authHeader !== 'trader') {
@@ -104,6 +113,58 @@ export const strategyHandlers = [
     return HttpResponse.json(response, { status: 200 });
   }),
 
-  // 전략 등록 핸들러 로직
-  http.post('/api/strategy', async ({ request }) => {}),
+  // 전략 등록 등록(post) 핸들러 로직
+  http.post(`/api/strategies`, async ({ request }) => {
+    const authHeader = request.headers.get('Auth');
+    if (authHeader !== 'trader') {
+      return HttpResponse.json(
+        {
+          errorType: 'UnauthorizedException',
+          timestamp: new Date().toISOString(),
+          message: '로그인 정보가 없습니다.',
+          error: 'UNAUTHORIZED',
+        },
+        { status: 401 }
+      );
+    }
+
+    const body = (await request.json()) as StrategyRequestBody;
+    const {
+      strategyTitle,
+      tradingTypeId,
+      tradingCycleId,
+      minInvestmentAmount,
+      strategyOverview,
+      isPosted,
+      investmentAssetClassesIdList,
+    } = body;
+
+    if (
+      !strategyTitle ||
+      !tradingTypeId ||
+      !tradingCycleId ||
+      !minInvestmentAmount ||
+      !strategyOverview ||
+      !isPosted ||
+      !investmentAssetClassesIdList ||
+      !Array.isArray(investmentAssetClassesIdList)
+    ) {
+      return HttpResponse.json(
+        {
+          errorType: 'ValidationException',
+          timestamp: new Date().toISOString(),
+          message: '매개변수 유효성 검사 실패',
+          error: 'VALIDATION_FAILED',
+        },
+        { status: 409 }
+      );
+    }
+
+    return HttpResponse.json(
+      {
+        msg: 'CREATE_SUCCESS',
+      },
+      { status: 201 }
+    );
+  }),
 ];
