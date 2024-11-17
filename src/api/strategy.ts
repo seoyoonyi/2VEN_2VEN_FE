@@ -22,6 +22,7 @@ export const fetchStrategyRegistration = async () => {
     return res.data;
   } catch (error) {
     console.error('failed to fetch strategy registration data', error);
+    throw error;
   }
 };
 
