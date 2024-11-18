@@ -7,7 +7,7 @@ import useContentModalStore from '@/stores/contentModalStore';
 import theme from '@/styles/theme';
 
 const ContentModal = () => {
-  const { isOpen, contentModalData, closeModal } = useContentModalStore();
+  const { isOpen, contentModalData, closeContentModal } = useContentModalStore();
 
   if (!isOpen || !contentModalData) return null;
 
@@ -17,7 +17,7 @@ const ContentModal = () => {
     try {
       onAction();
     } finally {
-      closeModal();
+      closeContentModal();
     }
   };
 
@@ -32,12 +32,12 @@ const ContentModal = () => {
       <div css={modalStyle}>
         <div css={titleWrapperStyle}>
           <div css={titleStyle}>{title}</div>
-          <AiOutlineClose size={36} onClick={closeModal} css={iconStyle} />
+          <AiOutlineClose size={36} onClick={closeContentModal} css={iconStyle} />
         </div>
         <div css={contentStyle}>{content}</div>
         <div css={modalButtonStyle}>
           <Button
-            onClick={closeModal}
+            onClick={closeContentModal}
             variant='neutral'
             size='xs'
             customStyle={css`

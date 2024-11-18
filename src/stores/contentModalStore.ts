@@ -9,15 +9,15 @@ interface ContentModalData {
 interface ModalStore {
   isOpen: boolean;
   contentModalData: ContentModalData | null;
-  openModal: (data: ContentModalData) => void;
-  closeModal: () => void;
+  openContentModal: (data: ContentModalData) => void;
+  closeContentModal: () => void;
 }
 
 const useContentModalStore = create<ModalStore>((set) => ({
   isOpen: false,
   contentModalData: null,
-  openModal: (data: ContentModalData) => set({ isOpen: true, contentModalData: data }),
-  closeModal: () => set({ isOpen: false, contentModalData: null }),
+  openContentModal: (data: ContentModalData) => set({ isOpen: true, contentModalData: data }),
+  closeContentModal: () => set({ isOpen: false, contentModalData: null }),
 }));
 
 export default useContentModalStore;

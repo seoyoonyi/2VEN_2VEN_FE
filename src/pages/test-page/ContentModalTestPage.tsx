@@ -22,10 +22,10 @@ const ContentTest2 = () => (
 );
 
 const ContentModalTestPage = () => {
-  const { openModal } = useContentModalStore();
+  const { openContentModal } = useContentModalStore();
 
   const onClickContact = () => {
-    openModal({
+    openContentModal({
       title: '승인 거부',
       content: <ContentTest />,
       onAction: () => console.log('승인거부'),
@@ -33,7 +33,7 @@ const ContentModalTestPage = () => {
   };
 
   const onClickAdd = () => {
-    openModal({
+    openContentModal({
       title: '상품 유형 추가',
       content: <ContentTest2 />,
       onAction: () => console.log('상품유형 추가'),
