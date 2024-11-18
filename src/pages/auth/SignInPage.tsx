@@ -68,7 +68,7 @@ const SignInPage: React.FC = () => {
     <div css={containerStyle}>
       <h3 css={pageHeadingStyle}>로그인</h3>
       <form css={formStyle} onSubmit={handleSubmit}>
-        <div>
+        <div css={divStyle}>
           <Input
             type='text'
             inputSize='lg'
@@ -133,15 +133,14 @@ const pageHeadingStyle = css`
 const formStyle = css`
   flex-direction: column;
 
-  & > div:first-child {
-    margin-bottom: 12px;
-  }
   input {
     width: 400px;
     text-indent: 10px;
   }
 `;
-
+const divStyle = css`
+  margin-bottom: 12px;
+`;
 const buttonStyle = css`
   margin-top: 24px;
 `;
