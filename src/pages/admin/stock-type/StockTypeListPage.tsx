@@ -3,8 +3,11 @@ import { useState } from 'react';
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
+import ContentModal from '@/components/common/ContentModal';
 import Modal from '@/components/common/Modal';
+import FileInput from '@/components/page/admin/FileInput';
 import TypeTable from '@/components/page/admin/TypeTable';
+import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 
@@ -62,6 +65,7 @@ const StockTypeListPage = () => {
   const [selectedStocks, setSelectedStocks] = useState<number[]>([]);
   const [mockStocks, setMockStocks] = useState(mockStock);
   const { openModal } = useModalStore();
+  const { openContentModal } = useContentModalStore();
 
   const handleSelectChange = (selectedIdx: number[]) => {
     setSelectedStocks(selectedIdx);
@@ -90,12 +94,31 @@ const StockTypeListPage = () => {
     }
   };
 
+  const handleUploadIcon = (file: File | null) => {
+    if (file) {
+      const fileURL = URL.createObjectURL(file);
+      setMockStocks((prevItems) =>
+        prevItems.map((item) => (item.id === selectedStocks[0] ? { ...item, icon: fileURL } : item))
+      );
+    }
+  };
+
+  const handleUpload = () => {
+    openContentModal({
+      title: '상품유형 등록',
+      content: <FileInput title='상품유형' onFileChange={handleUploadIcon} />,
+      onAction: () => {
+        console.log('상품유형 등록 api');
+      },
+    });
+  };
+
   return (
     <div css={stockStyle}>
       <div css={headingStyle}>
         <div css={titleStyle}>상품유형 관리</div>
         <div css={buttonArea}>
-          <Button size='xs' width={89}>
+          <Button size='xs' width={89} onClick={handleUpload}>
             등록
           </Button>
           <Button variant='neutral' size='xs' width={89} onClick={handleDelete}>
@@ -109,6 +132,7 @@ const StockTypeListPage = () => {
         onSelectChange={handleSelectChange}
       />
       <Modal />
+      <ContentModal />
     </div>
   );
 };
