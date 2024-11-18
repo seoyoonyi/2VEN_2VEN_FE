@@ -1,76 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 
+import { fetchTradingTypes, fetchDeleteTradingType } from '@/api/tradingType';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import TypeTable, { TypeTableProps } from '@/components/page/admin/TypeTable';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
-
-const mockTradeItems = [
-  {
-    id: 1,
-    title: '자동',
-    icon: '/logo.svg',
-  },
-  {
-    id: 2,
-    title: '반자동(하이브리드)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 3,
-    title: '수동(메뉴얼)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 4,
-    title: '자동',
-    icon: '/logo.svg',
-  },
-  {
-    id: 5,
-    title: '반자동(하이브리드)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 6,
-    title: '수동(메뉴얼)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 7,
-    title: '자동',
-    icon: '/logo.svg',
-  },
-  {
-    id: 8,
-    title: '반자동(하이브리드)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 9,
-    title: '수동(메뉴얼)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 10,
-    title: '자동',
-    icon: '/logo.svg',
-  },
-  {
-    id: 11,
-    title: '반자동(하이브리드)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 12,
-    title: '수동(메뉴얼)',
-    icon: '/logo.svg',
-  },
-];
+import { TradingType } from '@/types/admin';
 
 const tradeAttributes = [
   {
@@ -84,18 +23,46 @@ const tradeAttributes = [
   },
 ];
 
-const paginatedData = (data: TypeTableProps[], currentPage: number, pageSize: number) => {
-  const startIdx = (currentPage - 1) * pageSize;
-  const endIdx = startIdx + pageSize;
-  return data.slice(startIdx, endIdx);
-};
-
 const TradingTypeListPage = () => {
-  const limit = 10;
-  const [page, setPage] = useState(1);
-  const [mockTrade, setMockTrade] = useState(mockTradeItems);
+  const [mockTrade, setMockTrade] = useState<TradingType[]>([]);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [paginationData, setPaginationData] = useState({
+    currentPage: 0,
+    totalPage: 0,
+    totalElements: 0,
+    pageSize: 0,
+  });
   const { openModal } = useModalStore();
+
+  const getTradingTypes = async () => {
+    try {
+      const res = await fetchTradingTypes();
+      setMockTrade(res.data);
+      setPaginationData({
+        currentPage: res.currentPage,
+        totalPage: res.totalPages,
+        totalElements: res.totalElements,
+        pageSize: res.pageSIze,
+      });
+    } catch (error) {
+      console.error('failed to fetch trading types', error);
+    }
+  };
+
+  const deleteTradingType = async (tradingIds: number[]) => {
+    try {
+      await Promise.all(tradingIds.map((id) => fetchDeleteTradingType(id)));
+      getTradingTypes();
+    } catch (error) {
+      console.error('failed to delete trading types', error);
+    }
+  };
+
+  const formattedData: TypeTableProps[] = mockTrade.map((item) => ({
+    id: item.tradingTypeOrder || mockTrade.length + 1,
+    icon: item.tradingTypeIcon,
+    title: item.tradingTypeName,
+  }));
 
   const handleSelectChange = (selectedIdx: number[]) => {
     setSelectedItems(selectedIdx);
@@ -108,8 +75,7 @@ const TradingTypeListPage = () => {
         title: '이미지 삭제',
         desc: `선택하신 ${selectedItems.length}개의 유형을 삭제하시겠습니까?`,
         onAction: () => {
-          setMockTrade((prevItems) => prevItems.filter((item) => !selectedItems.includes(item.id)));
-          setSelectedItems([]);
+          deleteTradingType(selectedItems);
         },
       });
     } else {
@@ -121,6 +87,14 @@ const TradingTypeListPage = () => {
       });
     }
   };
+
+  const handlePageChange = (page: number) => {
+    setPaginationData((prev) => ({ ...prev, currentPage: page }));
+  };
+
+  useEffect(() => {
+    getTradingTypes();
+  }, []);
 
   return (
     <div css={tradeStyle}>
@@ -137,14 +111,14 @@ const TradingTypeListPage = () => {
       </div>
       <TypeTable
         attributes={tradeAttributes}
-        data={paginatedData(mockTrade, page, limit)}
+        data={formattedData}
         onSelectChange={handleSelectChange}
       />
       <Pagination
-        totalPage={Math.ceil(mockTrade.length / limit)}
-        limit={limit}
-        page={page}
-        setPage={setPage}
+        totalPage={paginationData.totalPage}
+        limit={paginationData.pageSize}
+        page={paginationData.currentPage}
+        setPage={handlePageChange}
       />
       <Modal />
     </div>
