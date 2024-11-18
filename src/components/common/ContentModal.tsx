@@ -14,8 +14,11 @@ const ContentModal = () => {
   const { title, content, onAction } = contentModalData;
 
   const onClickButton = () => {
-    onAction();
-    closeModal();
+    try {
+      onAction();
+    } finally {
+      closeModal();
+    }
   };
 
   const modalRoot = document.getElementById('modal-root');
