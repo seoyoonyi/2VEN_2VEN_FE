@@ -1,35 +1,46 @@
+import { useState } from 'react';
+
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
+import Modal from '@/components/common/Modal';
 import TypeTable from '@/components/page/admin/TypeTable';
+import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 
 const mockStock = [
   {
+    id: 1,
     title: '국내주식',
     icon: '/DomestiicStocks.svg',
   },
   {
+    id: 2,
     title: '해외주식',
     icon: '/logo.svg',
   },
   {
+    id: 3,
     title: '국내선물',
     icon: '/logo.svg',
   },
   {
+    id: 4,
     title: '내선물도',
     icon: '/logo.svg',
   },
   {
+    id: 5,
     title: '주셈',
     icon: '/logo.svg',
   },
   {
+    id: 6,
     title: '해외ETF',
     icon: '/logo.svg',
   },
   {
+    id: 7,
     title: '국내ETF',
     icon: '/logo.svg',
   },
@@ -47,22 +58,60 @@ const stockAttributes = [
   },
 ];
 
-const StockTypeListPage = () => (
-  <div css={stockStyle}>
-    <div css={headingStyle}>
-      <div css={titleStyle}>상품유형 관리</div>
-      <div css={buttonArea}>
-        <Button size='xs' width={89}>
-          등록
-        </Button>
-        <Button variant='neutral' size='xs' width={89}>
-          삭제
-        </Button>
+const StockTypeListPage = () => {
+  const [selectedStocks, setSelectedStocks] = useState<number[]>([]);
+  const [mockStocks, setMockStocks] = useState(mockStock);
+  const { openModal } = useModalStore();
+
+  const handleSelectChange = (selectedIdx: number[]) => {
+    setSelectedStocks(selectedIdx);
+  };
+
+  const handleDelete = () => {
+    if (selectedStocks.length > 0) {
+      openModal({
+        type: 'warning',
+        title: '이미지 삭제',
+        desc: `선택하신 ${selectedStocks.length}개의 유형을 삭제하시겠습니까?`,
+        onAction: () => {
+          setMockStocks((prevItems) =>
+            prevItems.filter((item) => !selectedStocks.includes(item.id))
+          );
+          setSelectedStocks([]);
+        },
+      });
+    } else {
+      openModal({
+        type: 'warning',
+        title: '알림',
+        desc: `선택 된 항목이 없습니다.`,
+        onAction: () => {},
+      });
+    }
+  };
+
+  return (
+    <div css={stockStyle}>
+      <div css={headingStyle}>
+        <div css={titleStyle}>상품유형 관리</div>
+        <div css={buttonArea}>
+          <Button size='xs' width={89}>
+            등록
+          </Button>
+          <Button variant='neutral' size='xs' width={89} onClick={handleDelete}>
+            삭제
+          </Button>
+        </div>
       </div>
+      <TypeTable
+        attributes={stockAttributes}
+        data={mockStocks}
+        onSelectChange={handleSelectChange}
+      />
+      <Modal />
     </div>
-    <TypeTable attributes={stockAttributes} data={mockStock} />
-  </div>
-);
+  );
+};
 
 const stockStyle = css`
   display: flex;
