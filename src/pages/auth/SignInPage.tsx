@@ -34,7 +34,7 @@ const SignInPage: React.FC = () => (
         <Link to={ROUTES.AUTH.FIND.PASSWORD}>비밀번호 찾기</Link>
       </li>
       <li>
-        <Link to={ROUTES.AUTH.SIGNUP.FORM}>회원가입</Link>
+        <Link to={ROUTES.AUTH.SIGNUP.SELECT_TYPE}>회원가입</Link>
       </li>
     </ul>
   </div>
