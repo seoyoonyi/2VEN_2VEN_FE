@@ -44,12 +44,19 @@ export const validateNickname = (nickname: string): { isValid: boolean; message:
 };
 
 // 비밀번호 유효성 검사
-export const isValidPassword = (password: string): boolean => {
+export const isValidPassword = (password: string) => {
   // 영문, 숫자, 특수문자 포함 여부 및 길이 검사를 위한 정규식
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
   // 공백 검사를 위한 정규식
   const whitespaceRegex = /\s/;
 
-  return passwordRegex.test(password) && !whitespaceRegex.test(password);
+  const isValid = passwordRegex.test(password) && !whitespaceRegex.test(password);
+
+  return {
+    isValid,
+    message: isValid
+      ? '유효한 비밀번호입니다.'
+      : '비밀번호는 영문, 숫자, 특수문자를 포함한 8자 이상이어야 합니다.',
+  };
 };

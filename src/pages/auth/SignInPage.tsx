@@ -14,11 +14,24 @@ const SignInPage: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const signin = useSignin();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    const emailValidation = validateEmail(email);
+    const passwordValidation = isValidPassword(password);
+
+    if (!emailValidation.isValid) {
+      setErrorMessage(emailValidation.message);
+      return;
+    }
+
+    if (!passwordValidation.isValid) {
+      setErrorMessage(passwordValidation.message);
+      return;
+    }
     try {
       // 콘솔에서 확인
       const result = await signin.mutateAsync({ email, password });
@@ -39,7 +52,7 @@ const SignInPage: React.FC = () => {
       <form css={formStyle} onSubmit={handleSubmit}>
         <div>
           <Input
-            type='email'
+            type='text'
             inputSize='lg'
             leftIcon='mail'
             placeholder='이메일'
@@ -58,11 +71,12 @@ const SignInPage: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button type='submit' width={400} css={buttonStyle}>
+          <Button type='submit' width={400} css={buttonStyle} disabled={!email || !password}>
             로그인
           </Button>
         </div>
       </form>
+      {errorMessage && <p css={messageStyle}>{errorMessage}</p>}
       <ul css={signinLinkStyle}>
         <li>
           <Link to={ROUTES.AUTH.FIND.EMAIL}>아이디 찾기</Link>
@@ -137,5 +151,11 @@ const signinLinkStyle = css`
     }
   }
 `;
-
+const messageStyle = css`
+  margin-top: 16px;
+  text-align: center;
+  color: ${theme.colors.main.alert};
+  font-size: ${theme.typography.fontSizes.caption};
+  line-height: ${theme.typography.lineHeights.sm};
+`;
 export default SignInPage;
