@@ -5,7 +5,7 @@ import SignupTypeCard from '@/components/page/signup/SignupTypeCard';
 import { ROUTES } from '@/constants/routes';
 import { USER_TYPE_TEXT } from '@/constants/signup';
 import theme from '@/styles/theme';
-import { UserRole } from '@/types/auth';
+import { UserRole } from '@/types/route';
 
 const SignUpSelectTypePage = () => {
   const navigate = useNavigate();

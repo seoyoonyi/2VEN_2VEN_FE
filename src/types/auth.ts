@@ -1,4 +1,4 @@
-export type UserRole = 'INVESTOR' | 'TRADER' | 'ADMIN';
+import { UserRole } from '@/types/route';
 
 export interface User {
   member_id: number;
