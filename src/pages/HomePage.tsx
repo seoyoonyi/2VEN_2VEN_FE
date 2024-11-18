@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import axios from 'axios';
 import { MdKeyboardArrowRight, MdArrowForward } from 'react-icons/md';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 import TraderUserImage3 from '@/assets/images/ani_trader.png';
 import TraderUserImage1 from '@/assets/images/apt_trader.png';
