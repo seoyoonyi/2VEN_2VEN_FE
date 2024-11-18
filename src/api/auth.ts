@@ -1,37 +1,43 @@
-import { useMutation, UseMutationResult } from '@tanstack/react-query';
+// auth.ts
+import { useMutation } from '@tanstack/react-query';
 
-interface SignUpRequest {
-  email: string;
-  password: string;
-  username: string;
-}
+import { apiClient } from '@/api/apiClient';
+import { API_ENDPOINTS } from '@/api/apiEndpoints';
+import { MOCK_API_ENDPOINTS } from '@/mocks/mockEndpoints';
+import { useAuthStore } from '@/stores/authStore';
+import { SigninRequest, SigninResponse } from '@/types/auth';
 
-interface SignUpResponse {
-  // Define the expected response structure here 기대되는 응답 구조
-  id: string;
-  email: string;
-  username: string;
-}
+export const useSignin = () => {
+  const { setAuth } = useAuthStore();
+  const endpoint =
+    import.meta.env.VITE_ENABLE_MSW === 'true'
+      ? MOCK_API_ENDPOINTS.AUTH.LOGIN
+      : API_ENDPOINTS.AUTH.LOGIN;
 
-export const useSignUp = (): UseMutationResult<SignUpResponse, Error, SignUpRequest> =>
-  useMutation({
-    mutationFn: async (data: SignUpRequest) => {
-      const response = await fetch('/api/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-        // 세션 쿠키를 주고받기 위한 설정
-        credentials: 'include',
-      });
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(responseData.message);
+  return useMutation({
+    mutationKey: ['signin'],
+    mutationFn: async (credentials: SigninRequest) => {
+      try {
+        console.log('로그인 시도:', credentials);
+        const { data } = await apiClient.post<SigninResponse>(
+          API_ENDPOINTS.AUTH.LOGIN,
+          credentials
+        ); // 상대경로로 변경
+        console.log('로그인 응답:', data);
+        if (data.status === 'success' && data.data) {
+          setAuth(data.data.token, data.data.user);
+        }
+        return data;
+      } catch (error) {
+        console.error('API 에러:', error);
+        throw error;
       }
-
-      return responseData;
+    },
+    onSuccess: (data) => {
+      console.log('mutation 성공:', data);
+    },
+    onError: (error) => {
+      console.error('mutation 에러:', error);
     },
   });
+};

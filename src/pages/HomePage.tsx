@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import axios from 'axios';
 import { MdKeyboardArrowRight, MdArrowForward } from 'react-icons/md';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 import TraderUserImage3 from '@/assets/images/ani_trader.png';
 import TraderUserImage1 from '@/assets/images/apt_trader.png';
@@ -14,13 +14,25 @@ import SMScoreGraphImage from '@/assets/images/SMScore_graph.png';
 import TraderMainImage from '@/assets/images/trader_main.png';
 import Button from '@/components/common/Button';
 import { ROUTES } from '@/constants/routes';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { user } = useAuthStore(); // store에서 user 정보 가져오기
 
   const [traderCount, setTraderCount] = useState('0'); // 기본값 설정
   const [strategyCount, setStrategyCount] = useState('0'); // 기본값 설정
+
+  useEffect(() => {
+    // 비로그인 사용자 리다이렉트
+    if (!user) {
+      navigate('/signin', { replace: true });
+      return;
+    }
+    // role 확인용 로깅
+    console.log('Current user role:', user.role);
+  }, [user, navigate]);
 
   useEffect(() => {
     const fetchTraderStats = async () => {

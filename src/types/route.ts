@@ -1,4 +1,4 @@
-export type UserRole = 'trader' | 'investor' | 'admin';
+import { UserRole } from '@/types/auth';
 
 export interface HomeRouteState {
   userRole?: UserRole;
