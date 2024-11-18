@@ -1,13 +1,6 @@
-import { HomeRouteState, UserRole } from '@/types/route';
-
 export const ROUTES = {
   HOME: {
     PATH: '/', // 기본 홈 경로
-    // userRole을 state로 전달하는 함수
-    WITH_ROLE: (role: UserRole) => ({
-      pathname: '/',
-      state: { userRole: role } as HomeRouteState,
-    }),
   },
   AUTH: {
     SIGNUP: {
