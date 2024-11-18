@@ -19,7 +19,9 @@ export const useSignin = () => {
           credentials
         ); // 상대경로로 변경
         console.log('로그인 응답:', data);
+        // 로그인 성공 시
         if (data.status === 'success' && data.data) {
+          // JWT 토큰과 함께 role 정보를 useAuthStore에 저장
           setAuth(data.data.token, data.data.user);
         }
         return data;
