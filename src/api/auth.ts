@@ -3,16 +3,11 @@ import { useMutation } from '@tanstack/react-query';
 
 import { apiClient } from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
-import { MOCK_API_ENDPOINTS } from '@/mocks/mockEndpoints';
 import { useAuthStore } from '@/stores/authStore';
 import { SigninRequest, SigninResponse } from '@/types/auth';
 
 export const useSignin = () => {
   const { setAuth } = useAuthStore();
-  const endpoint =
-    import.meta.env.VITE_ENABLE_MSW === 'true'
-      ? MOCK_API_ENDPOINTS.AUTH.LOGIN
-      : API_ENDPOINTS.AUTH.LOGIN;
 
   return useMutation({
     mutationKey: ['signin'],
