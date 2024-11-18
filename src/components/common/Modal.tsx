@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { createPortal } from 'react-dom';
 
+import Button from '@/components/common/Button';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 
@@ -28,9 +29,16 @@ const Modal = () => {
         <div css={titleStyle}>{title}</div>
         <div css={descStyle}>{desc}</div>
         <div css={modalButtonStyle}>
-          <button onClick={closeModal} css={cancelButtonStyle}>
+          <Button
+            onClick={closeModal}
+            variant='neutral'
+            size='xs'
+            customStyle={css`
+              padding: 0 32px;
+            `}
+          >
             취소
-          </button>
+          </Button>
           <button onClick={onClickButton} css={getButtonStyle(type)}>
             {actionButton}
           </button>
@@ -98,12 +106,6 @@ const baseButtonStyle = css`
 const modalButtonStyle = css`
   display: flex;
   gap: 12px;
-`;
-
-const cancelButtonStyle = css`
-  ${baseButtonStyle};
-  background-color: ${theme.colors.gray[100]};
-  color: ${theme.colors.gray[500]};
 `;
 
 const getButtonStyle = (type: 'confirm' | 'warning') => {
