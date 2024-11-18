@@ -13,9 +13,8 @@ interface FileInputProps {
 }
 const FileInput = ({ title, file, onFileChange }: FileInputProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [typeName, setTypeName] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(file || null);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const [fileName, setFileName] = useState('');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -42,8 +41,8 @@ const FileInput = ({ title, file, onFileChange }: FileInputProps) => {
       <Input
         css={showTitleStyle}
         placeholder='유형 이름을 입력하세요'
-        value={typeName}
-        onChange={(e) => setTypeName(e.target.value)}
+        value={fileName}
+        onChange={(e) => setFileName(e.target.value)}
       />
       <div css={titleStyle}>아이콘</div>
       {selectedFile && (
