@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import TraderUserImage3 from '@/assets/images/ani_trader.png';
 import TraderUserImage1 from '@/assets/images/apt_trader.png';
+import EverageMetricsChartImage from '@/assets/images/everage_metrics_chart.png';
 import InvestorMainImage from '@/assets/images/investor_main.png';
 import TraderUserImage2 from '@/assets/images/nimo_trader.png';
 import TraderMainImage from '@/assets/images/trader_main.png';
@@ -134,7 +135,10 @@ const HomePage = () => {
             <div css={traderTextStyle}>
               <div>
                 <p css={questionTextStyle}>트레이더이신가요?</p>
-                <h1 css={mainHeadingStyle}>지금 바로 좋은 투자 전략을 공유해 보세요</h1>
+                <h1 css={mainHeadingStyle}>
+                  지금 바로 좋은 투자
+                  <br /> 전략을 공유해 보세요
+                </h1>
                 <p css={subTextStyle}>투자전략 분석과 투자자 매칭서비스를 제공해드립니다</p>
               </div>
               <div css={buttonGroupStyle}>
@@ -161,7 +165,19 @@ const HomePage = () => {
               <span css={spacingTextStyle}>개의 전략을 공유하고 있습니다</span> {/* 간격 조정 */}
             </p>
           </div>
+          {/* 대표전략통합평균지표 */}
+          <div css={metricsContainerStyle}>
+            <img
+              src={EverageMetricsChartImage}
+              alt='대표전략통합평균지표'
+              css={metricsImageStyle}
+            />
+          </div>
         </div>
+      </section>
+
+      <section>
+        <div css={happyStyle}>다음쿤텐츠</div>
       </section>
     </>
   );
@@ -392,6 +408,23 @@ const spacingTextStyle = css`
 
 const traderTextStyle = css`
   padding: 80px 0;
+`;
+
+/*대표전략통합평균지표*/
+const metricsContainerStyle = css`
+  position: absolute;
+  width: ${theme.layout.width.content};
+  padding: 200px 0;
+  z-index: 10;
+`;
+
+const metricsImageStyle = css`
+  width: 100%;
+`;
+
+const happyStyle = css`
+  background-color: skyblue;
+  height: 2098px;
 `;
 
 export default HomePage;
