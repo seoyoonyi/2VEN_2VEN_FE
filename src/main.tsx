@@ -8,15 +8,18 @@ import App from './App.tsx';
 import GlobalStyle from '@/styles/GlobalStyle';
 import theme from '@/styles/theme';
 
-const initMocks = async (): Promise<void> => {
-  if (process.env.NODE_ENV === 'development') {
+const initMocks = async () => {
+  if (import.meta.env.VITE_ENABLE_MSW === 'true') {
     const { worker } = await import('./mocks/browser');
     await worker.start({
       onUnhandledRequest: 'bypass',
     });
+    console.log('[MSW] Mock Service Worker is running.');
+  } else {
+    console.log('[MSW] Mock Service Worker is disabled.');
   }
-  return Promise.resolve();
 };
+
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {
