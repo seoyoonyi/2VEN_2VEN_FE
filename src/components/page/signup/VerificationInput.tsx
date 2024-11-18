@@ -24,7 +24,7 @@ const VerificationInput = ({
   isDisabled = false, // 기본값 false
   startTimer = true, // 기본값 true
 }: VerificationInputProps) => {
-  const [timeLeft, setTimeLeft] = useState<number>(8); // 초기값 3분  => 179초
+  const [timeLeft, setTimeLeft] = useState<number>(179); // 초기값 3분  => 179초
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null); // 타이머 id
   const [showTimer, setShowTimer] = useState(false); // 타이머 보이기 여부
   const [isTimerExpired, setIsTimerExpired] = useState(false); // 타이머 만료 상태 추가
@@ -35,7 +35,7 @@ const VerificationInput = ({
     if (intervalId) {
       clearInterval(intervalId);
     }
-    setTimeLeft(8); // 타이머 초기화
+    setTimeLeft(179); // 타이머 초기화
     setShowTimer(true); // 타이머 시작할 때 보이기
     setIsTimerExpired(false); // 타이머 시작할 때 만료 상태 초기화
 
@@ -76,7 +76,7 @@ const VerificationInput = ({
       }
       // 타이머가 만료된 상태가 아닐 때만 타이머를 숨김
       if (!isTimerExpired) {
-        setTimeLeft(8);
+        setTimeLeft(179);
         setShowTimer(false);
       }
     }
