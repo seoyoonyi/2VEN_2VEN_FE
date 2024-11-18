@@ -3,7 +3,9 @@ import { useState } from 'react';
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
+import Modal from '@/components/common/Modal';
 import TypeTable from '@/components/page/admin/TypeTable';
+import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 
 const mockStock = [
@@ -57,11 +59,37 @@ const stockAttributes = [
 ];
 
 const StockTypeListPage = () => {
-  const [setStock, setSelectedStocks] = useState<number[]>([]);
+  const [selectedStocks, setSelectedStocks] = useState<number[]>([]);
+  const [mockStocks, setMockStocks] = useState(mockStock);
+  const { openModal } = useModalStore();
 
   const handleSelectChange = (selectedIdx: number[]) => {
     setSelectedStocks(selectedIdx);
   };
+
+  const handleDelete = () => {
+    if (selectedStocks.length > 0) {
+      openModal({
+        type: 'warning',
+        title: '이미지 삭제',
+        desc: `선택하신 ${selectedStocks.length}개의 유형을 삭제하시겠습니까?`,
+        onAction: () => {
+          setMockStocks((prevItems) =>
+            prevItems.filter((item) => !selectedStocks.includes(item.id))
+          );
+          setSelectedStocks([]);
+        },
+      });
+    } else {
+      openModal({
+        type: 'warning',
+        title: '알림',
+        desc: `선택 된 항목이 없습니다.`,
+        onAction: () => {},
+      });
+    }
+  };
+
   return (
     <div css={stockStyle}>
       <div css={headingStyle}>
@@ -70,16 +98,17 @@ const StockTypeListPage = () => {
           <Button size='xs' width={89}>
             등록
           </Button>
-          <Button variant='neutral' size='xs' width={89}>
+          <Button variant='neutral' size='xs' width={89} onClick={handleDelete}>
             삭제
           </Button>
         </div>
       </div>
       <TypeTable
         attributes={stockAttributes}
-        data={mockStock}
+        data={mockStocks}
         onSelectChange={handleSelectChange}
       />
+      <Modal />
     </div>
   );
 };
