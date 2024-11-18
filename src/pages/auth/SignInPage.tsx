@@ -15,6 +15,7 @@ const SignInPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [errorField, setErrorField] = useState<'email' | 'password' | null>(null);
   const signin = useSignin();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -25,11 +26,13 @@ const SignInPage: React.FC = () => {
 
     if (!emailValidation.isValid) {
       setErrorMessage(emailValidation.message);
+      setErrorField('email');
       return;
     }
 
     if (!passwordValidation.isValid) {
       setErrorMessage(passwordValidation.message);
+      setErrorField('password');
       return;
     }
     try {
@@ -46,6 +49,21 @@ const SignInPage: React.FC = () => {
     }
   };
 
+  // 입력값 변경되면 에러메시지 제거
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    if (!e.target.value && errorField === 'email') {
+      setErrorMessage('');
+      setErrorField(null);
+    }
+  };
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    if (!e.target.value && errorField === 'password') {
+      setErrorMessage('');
+      setErrorField(null);
+    }
+  };
   return (
     <div css={containerStyle}>
       <h3 css={pageHeadingStyle}>로그인</h3>
@@ -58,7 +76,10 @@ const SignInPage: React.FC = () => {
             placeholder='이메일'
             showClearButton
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              handleEmailChange(e);
+            }}
           />
         </div>
         <div>
@@ -69,7 +90,10 @@ const SignInPage: React.FC = () => {
             rightIcon='eye'
             placeholder='비밀번호'
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              handlePasswordChange(e);
+            }}
           />
           <Button type='submit' width={400} css={buttonStyle} disabled={!email || !password}>
             로그인
@@ -117,6 +141,7 @@ const formStyle = css`
     text-indent: 10px;
   }
 `;
+
 const buttonStyle = css`
   margin-top: 24px;
 `;
