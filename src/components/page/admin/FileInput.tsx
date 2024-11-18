@@ -3,29 +3,36 @@ import { useEffect, useRef, useState } from 'react';
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
-import Input from '@/components/common/Input';
 import theme from '@/styles/theme';
 
 interface FileInputProps {
   title: string;
   file?: File | null;
-  onFileChange: (file: File | null) => void;
+  fname: string;
+  icon: string;
+  onNameChange: (name: string) => void;
 }
-const FileInput = ({ title, file, onFileChange }: FileInputProps) => {
+const FileInput = ({ title, file, fname, icon, onNameChange }: FileInputProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(file || null);
-  const [fileName, setFileName] = useState('');
+  const [fileName, setFileName] = useState(fname);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //이거 임시임 여기에 올리는 이미지 파일을 s3에 올린 후 그 이미지 url로 가져오는 로직 들어가야함 그 Url이 아이콘임 ~
     if (e.target.files) {
       setSelectedFile(e.target.files[0]);
       setFileName(e.target.files[0].name);
-      onFileChange(e.target.files[0]);
     }
   };
 
   const handleFileUpload = () => {
     if (fileInputRef.current) fileInputRef.current.click();
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    setFileName(newName);
+    onNameChange(newName);
   };
 
   useEffect(() => {
@@ -38,18 +45,20 @@ const FileInput = ({ title, file, onFileChange }: FileInputProps) => {
   return (
     <div css={inputStyle}>
       <div css={titleStyle}>{title}</div>
-      <Input
+      <input
+        type='text'
         css={showTitleStyle}
         placeholder='유형 이름을 입력하세요'
         value={fileName}
-        onChange={(e) => setFileName(e.target.value)}
+        onChange={handleNameChange}
       />
       <div css={titleStyle}>아이콘</div>
       {selectedFile && (
         <img src={URL.createObjectURL(selectedFile)} alt={selectedFile.name} css={imageStyle} />
       )}
+      {icon && !selectedFile && <img src={icon} alt={icon} css={imageStyle} />}
       <div css={inputAndButtonContainerStyle}>
-        <input type='text' value={fileName || ''} readOnly css={inputStyleOverride} />
+        <input type='text' value={icon || ''} readOnly css={inputStyleOverride} />
         <Button variant='secondary' size='sm' onClick={handleFileUpload} width={115}>
           찾아보기
         </Button>
@@ -80,7 +89,6 @@ const titleStyle = css`
 
 const imageStyle = css`
   align-self: flex-start;
-
   height: 40px;
   margin: 10px 0;
 `;
@@ -107,6 +115,14 @@ const inputStyleOverride = css`
 
 const showTitleStyle = css`
   margin: 12px 0 10px 0;
+  padding: 5px;
+  border: 1px solid ${theme.colors.gray[300]};
+  background-color: ${theme.colors.main.white};
+  outline: none;
+  transition: all 0.2s ease;
+  height: ${theme.input.height.md};
+  padding: ${theme.input.padding.md};
+  font-size: ${theme.input.fontSize.md};
 `;
 
 const fileInputStyle = css`

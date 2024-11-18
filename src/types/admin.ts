@@ -1,12 +1,14 @@
-export interface TradingType {
+export interface TradingTypeProps {
+  tradingTypeId?: number;
   tradingTypeOrder?: number;
   tradingTypeName: string;
   tradingTypeIcon: string;
   isActive?: string;
 }
 
-export interface InvestmentAssetClass {
-  investmentAssetClassesId: number;
+export interface InvestmentAssetProps {
+  order: number;
   investmentAssetClassesName: string;
   investmentAssetClassesIcon: string;
+  isActive: string;
 }

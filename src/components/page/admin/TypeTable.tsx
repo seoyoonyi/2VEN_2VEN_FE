@@ -20,9 +20,10 @@ interface DataProps {
   attributes: AttributeProps[];
   data: TypeTableProps[];
   onSelectChange: (selectedIdx: number[]) => void;
+  onEdit: (id: number) => void;
 }
 
-const TypeTable = ({ attributes, data, onSelectChange }: DataProps) => {
+const TypeTable = ({ attributes, data, onSelectChange, onEdit }: DataProps) => {
   const [selected, setSelected] = useState<boolean[]>(new Array(data.length).fill(false));
   const [selectAll, setSelectAll] = useState(false);
 
@@ -39,9 +40,7 @@ const TypeTable = ({ attributes, data, onSelectChange }: DataProps) => {
     updatedSelected[idx] = !updatedSelected[idx];
     setSelected(updatedSelected);
 
-    const selectedIds = data.filter((_, index) => updatedSelected[index]).map((item) => item.id);
-
-    setSelectAll(updatedSelected.every(Boolean));
+    const selectedIds = data.filter((d) => updatedSelected[d.id]).map((item) => item.id);
     onSelectChange(selectedIds);
   };
 
@@ -64,16 +63,19 @@ const TypeTable = ({ attributes, data, onSelectChange }: DataProps) => {
           {data.map((row, idx) => (
             <tr key={idx} css={tableRowStyle}>
               <td css={tableCellStyle}>
-                <Checkbox checked={selected[idx]} onChange={() => handleSelect(idx)} />
+                <Checkbox
+                  checked={selected[row.id] ?? false}
+                  onChange={() => handleSelect(row.id)}
+                />
               </td>
               <td css={tableCellStyle} colSpan={4}>
-                <img src={row.icon} alt={row.title} css={tableImgStyle} />
+                <img src={row.icon} alt={row.icon} css={tableImgStyle} />
               </td>
               <td css={tableCellStyle} colSpan={2}>
                 {row.title}
               </td>
               <td css={tableCellStyle} colSpan={2}>
-                <Button variant='accent' size='xs' width={72}>
+                <Button variant='accent' size='xs' width={72} onClick={() => onEdit(row.id)}>
                   수정
                 </Button>
               </td>
