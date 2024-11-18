@@ -3,13 +3,14 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import axios from 'axios';
 import { MdKeyboardArrowRight, MdArrowForward } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 import TraderUserImage3 from '@/assets/images/ani_trader.png';
 import TraderUserImage1 from '@/assets/images/apt_trader.png';
 import EverageMetricsChartImage from '@/assets/images/everage_metrics_chart.png';
 import InvestorMainImage from '@/assets/images/investor_main.png';
 import TraderUserImage2 from '@/assets/images/nimo_trader.png';
+import SMScoreGraphImage from '@/assets/images/SMScore_graph.png';
 import TraderMainImage from '@/assets/images/trader_main.png';
 import Button from '@/components/common/Button';
 import { ROUTES } from '@/constants/routes';
@@ -34,6 +35,64 @@ const HomePage = () => {
 
     fetchTraderStats();
   }, []);
+
+  const rankingData = [
+    {
+      rank: 1,
+      strategyId: 101,
+      strategyName: '따라사는 전략',
+      traderNickname: 'MACS',
+      traderImage: TraderUserImage1,
+      graph: SMScoreGraphImage,
+      dailyChange: '0%',
+      cumulativeReturn: '37%',
+      smScore: 85, // SM SCORE 추가
+    },
+    {
+      rank: 2,
+      strategyId: 102,
+      strategyName: 'EFT레버리지/인버스',
+      traderNickname: 'NIMO',
+      traderImage: TraderUserImage2,
+      graph: SMScoreGraphImage,
+      dailyChange: '1%',
+      cumulativeReturn: '40%',
+      smScore: 82,
+    },
+    {
+      rank: 3,
+      strategyId: 103,
+      strategyName: '인플레이션 방어 전략',
+      traderNickname: 'AniHelp',
+      traderImage: TraderUserImage3,
+      graph: SMScoreGraphImage,
+      dailyChange: '-1%',
+      cumulativeReturn: '33%',
+      smScore: 78,
+    },
+    {
+      rank: 4,
+      strategyId: 104,
+      strategyName: 'S&P500 추종 전략',
+      traderNickname: 'AptHunter',
+      traderImage: TraderUserImage1,
+      graph: SMScoreGraphImage,
+      dailyChange: '2%',
+      cumulativeReturn: '50%',
+      smScore: 75,
+    },
+    {
+      rank: 5,
+      strategyId: 105,
+      strategyName: '유동성 높은 ETF 전략',
+      traderNickname: 'SmartInvestor',
+      traderImage: TraderUserImage2,
+      graph: SMScoreGraphImage,
+      dailyChange: '0%',
+      cumulativeReturn: '45%',
+      smScore: 70,
+    },
+  ];
 
   const handleSignUpClick = () => {
     navigate(ROUTES.AUTH.SIGNUP.SELECT_TYPE);
@@ -172,13 +231,54 @@ const HomePage = () => {
               alt='대표전략통합평균지표'
               css={metricsImageStyle}
             />
+            {/* SMScore */}
+            <div css={scoreContentStyle}>
+              <div>
+                <h1 css={scoreTitleStyle}>SM SCORE 랭킹 TOP 5</h1>
+              </div>
+              <div css={tableStyle}>
+                <div css={headerStyle}>
+                  <div>순위</div>
+                  <div>전략명</div>
+                  <div>그래프</div>
+                  <div>전일대비</div>
+                  <div>누적수익률</div>
+                </div>
+                {rankingData.map((data) => (
+                  <Link to={`/strategies/${data.strategyId}`} key={data.rank} css={rowStyle}>
+                    <div css={rankStyle}>{data.rank}</div>
+                    <div css={strategyStyle}>
+                      <div css={strategyTitleStyle}>{data.strategyName}</div>
+                      <div css={traderInfoStyle}>
+                        <img
+                          src={data.traderImage}
+                          alt={`${data.traderNickname} 이미지`}
+                          css={traderImageStyle}
+                        />
+                        <span css={traderNicknameStyle}>{data.traderNickname}</span>
+                      </div>
+                    </div>
+                    <div css={graphStyle}>
+                      <img src={data.graph} alt='그래프' />
+                    </div>
+                    <div css={dailyChangeStyle}>
+                      <span className='value'>{data.dailyChange.split('%')[0]}</span>
+                      <span className='percent'>%</span>
+                    </div>
+                    <div css={cumulativeReturnStyle}>
+                      <span className='value'>{data.cumulativeReturn.split('%')[0]}</span>
+                      <span className='percent'>%</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section>
-        <div css={happyStyle}>다음쿤텐츠</div>
-      </section>
+      {/* 마지막섹션(배경) */}
+      <section css={lastSectionStyle}></section>
     </>
   );
 };
@@ -414,16 +514,132 @@ const traderTextStyle = css`
 const metricsContainerStyle = css`
   position: absolute;
   width: ${theme.layout.width.content};
-  padding: 200px 0;
   z-index: 10;
 `;
 
 const metricsImageStyle = css`
+  padding: 200px 0;
   width: 100%;
 `;
 
-const happyStyle = css`
-  background-color: skyblue;
+/*SM Score*/
+const scoreContentStyle = css`
+  max-width: ${theme.layout.width.content};
+  margin: 0 auto;
+`;
+
+const scoreTitleStyle = css`
+  ${theme.textStyle.headings.h1}
+  color: ${theme.colors.gray[900]};
+  text-align: center;
+  padding: 56px;
+`;
+
+const tableStyle = css``;
+
+const headerStyle = css`
+  background-color: ${theme.colors.gray[800]};
+  ${theme.textStyle.subtitles.subtitle3};
+  color: ${theme.colors.main.white};
+  display: grid;
+  height: 56px;
+  grid-template-columns: 64px 378px 378px 160px 160px;
+  align-items: center;
+  text-align: center;
+`;
+
+const rowStyle = css`
+  display: grid;
+  grid-template-columns: 64px 378px 378px 160px 160px;
+  height: 200px;
+  align-items: center;
+  text-align: center;
+  border-bottom: 1px solid ${theme.colors.gray[400]};
+  &:last-child {
+    border-bottom: 0;
+  }
+`;
+
+const rankStyle = css`
+  ${theme.textStyle.headings.h3};
+  color: ${theme.colors.teal[600]};
+  padding: 36px 0;
+`;
+
+const strategyStyle = css`
+  align-items: flex-start;
+  padding: 24px;
+`;
+
+const strategyTitleStyle = css`
+  ${theme.textStyle.headings.h3};
+  color: ${theme.colors.gray[900]};
+  text-align: start;
+`;
+
+const traderInfoStyle = css`
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  text-align: center;
+  align-items: center;
+`;
+
+const traderImageStyle = css`
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+`;
+
+const traderNicknameStyle = css`
+  ${theme.textStyle.subtitles.subtitle2};
+  color: ${theme.colors.gray[900]};
+`;
+
+const graphStyle = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    width: 90%;
+  }
+`;
+
+const dailyChangeStyle = css`
+  color: ${theme.colors.gray[900]};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  .value {
+    ${theme.textStyle.headings.h2};
+  }
+
+  .percent {
+    ${theme.textStyle.headings.h3};
+  }
+`;
+
+const cumulativeReturnStyle = css`
+  color: ${theme.colors.main.red};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  .value {
+    ${theme.textStyle.headings.h2};
+  }
+
+  .percent {
+    ${theme.textStyle.headings.h3};
+  }
+`;
+
+const lastSectionStyle = css`
+  position: relative;
   height: 2098px;
 `;
 
