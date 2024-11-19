@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/routes';
 import AdminLayout from '@/layouts/AdminLayout';
+import InvestorMypageLayout from '@/layouts/InvestorMypageLayout';
 import RootLayout from '@/layouts/RootLayout';
 import StockTypeListPage from '@/pages/admin/stock-type/StockTypeListPage';
 import StrategyApprovalListPage from '@/pages/admin/strategy/StrategyApprovalListPage';
@@ -116,23 +117,6 @@ export const router = createBrowserRouter(
           path: ROUTES.TRADER.PROFILE(':traderId'),
           element: <TraderDetailPage />, // 트레이더 프로필 상세 페이지
         },
-        // -------------------------------------- 마이페이지(투자자)
-        {
-          path: ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS,
-          element: <InvestorMyPage />, // 투자자 마이페이지 - 관심전략 폴더 목록
-        },
-        {
-          path: ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(':folderId'),
-          element: <InvestorFollowFolderPage />, // 특정 폴더의 관심전략 목록
-        },
-        {
-          path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY,
-          element: <MyInquiriesPage />, // 나의 상담 게시판
-        },
-        {
-          path: ROUTES.MYPAGE.INVESTOR.PROFILE,
-          element: <InvestorProfilePage />, // 투자자 프로필 관리
-        },
         // -------------------------------------- 마이페이지(트레이더)
         {
           path: ROUTES.MYPAGE.TRADER.STRATEGIES.LIST,
@@ -186,6 +170,30 @@ export const router = createBrowserRouter(
         {
           path: ROUTES.ADMIN.STRATEGY.APPROVAL,
           element: <StrategyApprovalListPage />, // 전략 승인 관리 페이지
+        },
+      ],
+    },
+    {
+      path: ROUTES.HOME.PATH,
+      element: <InvestorMypageLayout />,
+      errorElement: <NotFoundPage />,
+      children: [
+        // -------------------------------------- 마이페이지(투자자)
+        {
+          path: ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS,
+          element: <InvestorMyPage />, // 투자자 마이페이지 - 관심전략 폴더 목록
+        },
+        {
+          path: ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(':folderId'),
+          element: <InvestorFollowFolderPage />, // 특정 폴더의 관심전략 목록
+        },
+        {
+          path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY,
+          element: <MyInquiriesPage />, // 나의 상담 게시판
+        },
+        {
+          path: ROUTES.MYPAGE.INVESTOR.PROFILE,
+          element: <InvestorProfilePage />, // 투자자 프로필 관리
         },
       ],
     },

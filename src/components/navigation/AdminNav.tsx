@@ -41,8 +41,8 @@ const navMenu = css`
   gap: 8px;
   font-size: 18px;
   color: ${theme.colors.gray[500]};
-  ${theme.typography.fontWeight.bold};
-  ${theme.typography.lineHeights.sm};
+  font-weight: ${theme.typography.fontWeight.bold};
+  line-height: ${theme.typography.lineHeights.sm};
 
   &:hover {
     background-color: ${theme.colors.gray[50]};
