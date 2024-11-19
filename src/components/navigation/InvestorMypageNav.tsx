@@ -22,7 +22,7 @@ const InvestorMypageNav = () => (
           <Link to={`${ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS}`}>
             <li css={navMenu}>나의 관심 전략</li>
           </Link>
-          <Link to={`${ROUTES.MYPAGE.INVESTOR.MYINQUIRY}`}>
+          <Link to={`${ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST}`}>
             <li css={navMenu}>나의 문의</li>
           </Link>
           <Link to={`${ROUTES.MYPAGE.INVESTOR.PROFILE}`}>
