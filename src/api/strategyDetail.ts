@@ -8,13 +8,17 @@ export interface StrategyDetailRes {
   strategyIACEntities: InvestmentAssetClass[];
   tradingCycleName: string;
   tradingCycleIcon: string;
+  traderId: string;
+  traderName: string;
+  traderImage: string;
   strategyId: number;
   strategyTitle: string;
+  minInvestmentAmout: string;
   strategyOverview: string;
   followersCount: number;
   writedAt: string;
-  isPosted: string;
-  isGranted: string;
+  isPosted: 'Y' | 'N';
+  isGranted: 'Y' | 'N';
 }
 
 //전략 상세 기본 정보 조회

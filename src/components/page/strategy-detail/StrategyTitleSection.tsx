@@ -8,19 +8,28 @@ import theme from '@/styles/theme';
 
 interface TitleProps {
   title?: string;
-  author: {
-    traderId: string;
-    traderName: string;
-    imgUrl: string;
-  };
+  traderId?: string;
+  traderName?: string;
+  imgUrl?: string;
   date?: string;
   followers?: number;
+  minimumInvestment?: string;
+  lastUpdatedDate?: string;
 }
 
-const StrategyTitleSection = ({ title, author, date, followers }: TitleProps) => {
+const StrategyTitleSection = ({
+  title,
+  traderId,
+  traderName,
+  imgUrl,
+  date,
+  followers,
+  minimumInvestment,
+  lastUpdatedDate,
+}: TitleProps) => {
   const navigate = useNavigate();
 
-  const handleMoveProfile = (traderId: string) => {
+  const handleMoveProfile = (traderId?: string) => {
     navigate(`/traders/${traderId}`);
   };
 
@@ -62,17 +71,17 @@ const StrategyTitleSection = ({ title, author, date, followers }: TitleProps) =>
           <span css={postDateStyle}>작성일자 {date}</span>
           <div css={infoSectionStyle}>
             <div css={authorInfoStyle}>
-              <button onClick={() => handleMoveProfile(author.traderId)} css={authorDetailsStyle}>
-                <img src={author.imgUrl} alt={author.traderName} css={authorImageStyle} />
+              <button onClick={() => handleMoveProfile(traderId)} css={authorDetailsStyle}>
+                <img src={imgUrl} alt={traderName} css={authorImageStyle} />
                 <div css={followerAreaStyle}>
                   <div css={traderTextStyle}>트레이더</div>
-                  <div css={followerTextStyle}>{author.traderName}</div>
+                  <div css={followerTextStyle}>{traderName}</div>
                 </div>
               </button>
             </div>
             <InfoSection title={'팔로워'} data={followers} />
-            <InfoSection title={'최소운용가능금액'} data={'1억'} />
-            <InfoSection title={'최종손익입력날짜'} data={'24.10.20 13:47'} />
+            <InfoSection title={'최소운용가능금액'} data={minimumInvestment} />
+            <InfoSection title={'최종손익입력날짜'} data={lastUpdatedDate} />
           </div>
         </div>
       </div>
