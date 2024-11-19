@@ -5,7 +5,18 @@ import Pagination from '@/components/common/Pagination';
 import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
 
-const myInquirie = [
+type Status = '대기' | '완료';
+
+interface myInquiriesData {
+  id: number;
+  inqurieTitle: string;
+  profileImg: string;
+  nickName: string;
+  inqurieStatus: Status;
+  date: string;
+}
+
+const myInquiries: myInquiriesData[] = [
   {
     id: 1,
     inqurieTitle: '이거 믿을만한 전략인가요?',
@@ -103,7 +114,7 @@ const MyInquiriesPage = () => (
         <div>답변상태</div>
         <div>날짜</div>
       </div>
-      {myInquirie.map((inquirie) => (
+      {myInquiries.map((inquirie) => (
         <Link
           to={`${ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(inquirie.id.toString())}`}
           key={inquirie.id}
@@ -114,7 +125,7 @@ const MyInquiriesPage = () => (
               <div>{inquirie.inqurieTitle}</div>
             </div>
             <div css={traderInfoStyle}>
-              <img src={inquirie.profileImg} alt='' />
+              <img src={inquirie.profileImg} alt={`${inquirie.nickName}s profile`} />
               <span>{inquirie.nickName}</span>
             </div>
             <div css={statusStyle(inquirie.inqurieStatus)}>
@@ -126,7 +137,7 @@ const MyInquiriesPage = () => (
         </Link>
       ))}
     </div>
-    <Pagination totalPage={5} limit={10} page={1} setPage={1} />
+    <Pagination totalPage={5} limit={10} page={1} setPage={() => {}} />
   </div>
 );
 
@@ -224,7 +235,7 @@ const traderInfoStyle = css`
   }
 `;
 
-const statusStyle = (status: string) => css`
+const statusStyle = (status: Status) => css`
   display: flex;
   align-items: center;
   justify-content: center;
