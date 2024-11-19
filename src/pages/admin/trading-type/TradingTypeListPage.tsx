@@ -1,19 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { css } from '@emotion/react';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 
-import {
-  fetchTradingTypes,
-  fetchDeleteTradingType,
-  fetchPostTradingType,
-  fetchPutTradingType,
-} from '@/api/tradingType';
+import { fetchTradingTypes } from '@/api/tradingType';
 import Button from '@/components/common/Button';
 import ContentModal from '@/components/common/ContentModal';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import FileInput from '@/components/page/admin/FileInput';
-import TypeTable, { TypeTableProps } from '@/components/page/admin/TypeTable';
+import TypeTable from '@/components/page/admin/TypeTable';
+import { useAddTradingType, useDeleteTradingType, usePutTradingType } from '@/hooks/useTradingType';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
@@ -32,50 +29,57 @@ const tradeAttributes = [
 ];
 
 const TradingTypeListPage = () => {
-  const [mockTrade, setMockTrade] = useState<TradingTypeProps[]>([]);
+  const { openModal } = useModalStore();
+  const { openContentModal } = useContentModalStore();
+  const { mutate: deleteTradingType } = useDeleteTradingType();
+  const { mutate: addTradingType } = useAddTradingType();
+  const { mutate: updateTradingType } = usePutTradingType();
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [paginationData, setPaginationData] = useState({
-    currentPage: 0,
+    currentPage: 1,
     totalPage: 0,
     totalElements: 0,
     pageSize: 10,
   });
-  const { openModal } = useModalStore();
-  const { openContentModal } = useContentModalStore();
 
-  const formattedData: TypeTableProps[] = mockTrade.map((item) => ({
-    id: item.tradingTypeId || mockTrade.length + 1,
+  const { data } = useQuery<TradingTypeProps[], Error>({
+    queryKey: ['tradingTypes', paginationData.currentPage, paginationData.pageSize],
+    queryFn: async () => {
+      try {
+        const res = await fetchTradingTypes(
+          paginationData.currentPage - 1,
+          paginationData.pageSize
+        );
+        setPaginationData({
+          currentPage: paginationData.currentPage,
+          totalPage: res.totalPages,
+          totalElements: res.totalElements,
+          pageSize: res.pageSize,
+        });
+        return res.data;
+      } catch (err) {
+        console.error('Error fetching trading types:', err);
+        throw err;
+      }
+    },
+    placeholderData: keepPreviousData,
+  });
+
+  const formattedData = data?.map((item) => ({
+    id: item.tradingTypeId || data.length + 1,
     icon: item.tradingTypeIcon,
     title: item.tradingTypeName,
   }));
 
-  const getTradingTypes = async (page: number, pageSize: number) => {
-    try {
-      const res = await fetchTradingTypes(page - 1, pageSize);
-      setMockTrade(res.data);
-      setPaginationData({
-        currentPage: page,
-        totalPage: res.totalPages,
-        totalElements: res.totalElements,
-        pageSize: res.pageSize,
-      });
-    } catch (error) {
-      console.error('failed to fetch trading types', error);
-    }
-  };
-
-  const deleteTradingType = async (tradingIds: number[]) => {
-    try {
-      await Promise.all(tradingIds.map((id) => fetchDeleteTradingType(id)));
-      getTradingTypes(paginationData.currentPage, paginationData.pageSize);
-      setSelectedItems([]);
-    } catch (error) {
-      console.error('failed to delete trading types', error);
-    }
-  };
-
   const handleSelectChange = (selectedIdx: number[]) => {
     setSelectedItems(selectedIdx);
+  };
+
+  const handlePageChange = (page: number) => {
+    setPaginationData((prev) => ({
+      ...prev,
+      currentPage: page,
+    }));
   };
 
   const handleDelete = () => {
@@ -85,7 +89,8 @@ const TradingTypeListPage = () => {
         title: '이미지 삭제',
         desc: `선택하신 ${selectedItems.length}개의 유형을 삭제하시겠습니까?`,
         onAction: () => {
-          deleteTradingType(selectedItems);
+          selectedItems.forEach((id) => deleteTradingType(id));
+          setSelectedItems([]);
         },
       });
     } else {
@@ -98,12 +103,8 @@ const TradingTypeListPage = () => {
     }
   };
 
-  const handlePageChange = (page: number) => {
-    getTradingTypes(page, paginationData.pageSize);
-  };
-
   const handleEdit = (id: number) => {
-    const selectedType = mockTrade.find((item) => item.tradingTypeId === id);
+    const selectedType = data?.find((item) => item.tradingTypeId === id);
     if (selectedType) {
       let updatedName = selectedType.tradingTypeName;
       openContentModal({
@@ -117,15 +118,19 @@ const TradingTypeListPage = () => {
             onNameChange={(name) => (updatedName = name)}
           />
         ),
-        onAction: async () => {
-          await fetchPutTradingType({
+        onAction: () => {
+          if (!updatedName.trim()) {
+            alert('매매유형명이 입력되지않았습니다.');
+            return;
+          }
+          updateTradingType({
             tradingTypeId: selectedType.tradingTypeId,
             tradingTypeOrder: selectedType.tradingTypeOrder,
             tradingTypeName: updatedName,
             tradingTypeIcon: 'testIcon',
             isActive: 'Y',
           });
-          getTradingTypes(paginationData.currentPage, paginationData.pageSize);
+          setSelectedItems([]);
         },
       });
     }
@@ -133,7 +138,6 @@ const TradingTypeListPage = () => {
 
   const handleUpload = () => {
     let newName: string = '';
-
     openContentModal({
       title: '매매유형 등록',
       content: (
@@ -148,19 +152,18 @@ const TradingTypeListPage = () => {
         />
       ),
       onAction: async () => {
-        await fetchPostTradingType({
+        if (!newName.trim()) {
+          alert('매매유형명이 입력되지않았습니다.');
+          return;
+        }
+        addTradingType({
           tradingTypeName: newName,
           tradingTypeIcon: 'testIcon',
           isActive: 'Y',
         });
-        getTradingTypes(paginationData.currentPage, paginationData.pageSize);
       },
     });
   };
-
-  useEffect(() => {
-    getTradingTypes(1, paginationData.pageSize);
-  }, []);
 
   return (
     <div css={tradeStyle}>
@@ -177,7 +180,8 @@ const TradingTypeListPage = () => {
       </div>
       <TypeTable
         attributes={tradeAttributes}
-        data={formattedData}
+        data={formattedData || []}
+        selectedItems={selectedItems}
         onSelectChange={handleSelectChange}
         onEdit={handleEdit}
       />

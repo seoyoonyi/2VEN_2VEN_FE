@@ -19,29 +19,31 @@ interface AttributeProps {
 interface DataProps {
   attributes: AttributeProps[];
   data: TypeTableProps[];
+  selectedItems: number[];
   onSelectChange: (selectedIdx: number[]) => void;
   onEdit: (id: number) => void;
 }
 
-const TypeTable = ({ attributes, data, onSelectChange, onEdit }: DataProps) => {
-  const [selected, setSelected] = useState<boolean[]>(new Array(data.length).fill(false));
+const TypeTable = ({ attributes, data, selectedItems, onSelectChange, onEdit }: DataProps) => {
   const [selectAll, setSelectAll] = useState(false);
 
   const handleAllChecked = () => {
     const newSelectAll = !selectAll;
     setSelectAll(newSelectAll);
-    setSelected(new Array(data.length).fill(newSelectAll));
-    const selectIdx = newSelectAll ? data.map((item) => item.id) : [];
-    onSelectChange(selectIdx);
+    if (newSelectAll) {
+      const selectIdx = data.map((item) => item.id);
+      onSelectChange(selectIdx);
+    } else {
+      onSelectChange([]);
+    }
   };
 
   const handleSelect = (idx: number) => {
-    const updatedSelected = [...selected];
-    updatedSelected[idx] = !updatedSelected[idx];
-    setSelected(updatedSelected);
+    const updatedSelected = selectedItems.includes(idx)
+      ? selectedItems.filter((item) => item !== idx)
+      : [...selectedItems, idx];
 
-    const selectedIds = data.filter((d) => updatedSelected[d.id]).map((item) => item.id);
-    onSelectChange(selectedIds);
+    onSelectChange(updatedSelected);
   };
 
   return (
@@ -53,7 +55,7 @@ const TypeTable = ({ attributes, data, onSelectChange, onEdit }: DataProps) => {
               <Checkbox checked={selectAll} onChange={handleAllChecked} />
             </th>
             {attributes.map((row, idx) => (
-              <th key={idx} css={tableHeadStyle} colSpan={idx === 0 ? 4 : 2}>
+              <th key={idx} css={tableHeadStyle} colSpan={idx === 0 ? 4 : idx === 1 ? 3 : 2}>
                 {row.item}
               </th>
             ))}
@@ -64,14 +66,14 @@ const TypeTable = ({ attributes, data, onSelectChange, onEdit }: DataProps) => {
             <tr key={idx} css={tableRowStyle}>
               <td css={tableCellStyle}>
                 <Checkbox
-                  checked={selected[row.id] ?? false}
+                  checked={selectedItems.includes(row.id) ?? false}
                   onChange={() => handleSelect(row.id)}
                 />
               </td>
               <td css={tableCellStyle} colSpan={4}>
                 <img src={row.icon} alt={row.icon} css={tableImgStyle} />
               </td>
-              <td css={tableCellStyle} colSpan={2}>
+              <td css={tableCellStyle} colSpan={3}>
                 {row.title}
               </td>
               <td css={tableCellStyle} colSpan={2}>
@@ -86,6 +88,17 @@ const TypeTable = ({ attributes, data, onSelectChange, onEdit }: DataProps) => {
     </div>
   );
 };
+
+const tableStyle = css`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  .checkbox {
+    cursor: pointer;
+  }
+`;
 
 const tableVars = css`
   width: 100%;
@@ -123,17 +136,6 @@ const tableImgStyle = css`
   margin: 0 auto;
   height: 20px;
   object-fit: cover;
-`;
-
-const tableStyle = css`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  width: 100%;
-  .checkbox {
-    cursor: pointer;
-  }
 `;
 
 export default TypeTable;

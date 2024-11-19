@@ -23,18 +23,16 @@ export const fetchTradingTypes = async (page: number, pageSize: number) => {
 };
 
 //매매유형 삭제
-export const fetchDeleteTradingType = async (id: number) => {
-  try {
-    const req = await apiClient.delete(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${id}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Auth: 'admin',
-      },
-    });
-    return req.data;
-  } catch (error) {
-    console.error('failed to delete tradingType', error);
-  }
+export const fetchDeleteTradingType = async (
+  id: number
+): Promise<{ msg: string; timestamp: string }> => {
+  const req = await apiClient.delete(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Auth: 'admin',
+    },
+  });
+  return req.data;
 };
 
 //매매유형 등록
@@ -42,23 +40,20 @@ export const fetchPostTradingType = async ({
   tradingTypeName,
   tradingTypeIcon,
   isActive,
-}: TradingTypeProps) => {
+}: TradingTypeProps): Promise<{ msg: string; timestamp: string }> => {
   const body = {
     tradingTypeName,
     tradingTypeIcon,
     isActive,
   };
-  try {
-    const req = await apiClient.post(API_ENDPOINTS.ADMIN.TRADING_TYPES, body, {
-      headers: {
-        'Content-Type': 'application/json',
-        Auth: 'admin',
-      },
-    });
-    return req.data;
-  } catch (error) {
-    console.error('failed to post tradingtype', error);
-  }
+
+  const req = await apiClient.post(API_ENDPOINTS.ADMIN.TRADING_TYPES, body, {
+    headers: {
+      'Content-Type': 'application/json',
+      Auth: 'admin',
+    },
+  });
+  return req.data;
 };
 
 //매매유형 수정
@@ -68,22 +63,19 @@ export const fetchPutTradingType = async ({
   tradingTypeName,
   tradingTypeIcon,
   isActive,
-}: TradingTypeProps) => {
+}: TradingTypeProps): Promise<{ msg: string; timestamp: string }> => {
   const body = {
     tradingTypeOrder,
     tradingTypeName,
     tradingTypeIcon,
     isActive,
   };
-  try {
-    const req = await apiClient.put(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${tradingTypeId}`, body, {
-      headers: {
-        'Content-Type': 'application/json',
-        Auth: 'admin',
-      },
-    });
-    return req.data;
-  } catch (error) {
-    console.error('failed to post tradingtype', error);
-  }
+
+  const req = await apiClient.put(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${tradingTypeId}`, body, {
+    headers: {
+      'Content-Type': 'application/json',
+      Auth: 'admin',
+    },
+  });
+  return req.data;
 };
