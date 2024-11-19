@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
+import { AUTH_TEXT } from '@/constants/auth';
 import { ROUTES } from '@/constants/routes';
 import { useSigninMutation } from '@/hooks/mutations/useAuthMutation';
 import theme from '@/styles/theme';
@@ -55,7 +56,7 @@ const SignInPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Signin failed: ', error);
-      setErrorMessage('이메일 또는 비밀번호가 잘못 되었습니다. 다시 입력해 주세요.');
+      setErrorMessage(AUTH_TEXT.error.auth);
       setErrorField(null);
     }
   };
@@ -83,7 +84,7 @@ const SignInPage: React.FC = () => {
   };
   return (
     <div css={containerStyle}>
-      <h3 css={pageHeadingStyle}>로그인</h3>
+      <h3 css={pageHeadingStyle}>{AUTH_TEXT.title}</h3>
       <form css={formStyle} onSubmit={handleSubmit}>
         <div css={divStyle}>
           <Input
@@ -91,7 +92,7 @@ const SignInPage: React.FC = () => {
             type='text'
             inputSize='lg'
             leftIcon='mail'
-            placeholder='이메일'
+            placeholder={AUTH_TEXT.input.email.placeholder}
             showClearButton
             value={email}
             onChange={handleEmailChange}
@@ -105,26 +106,26 @@ const SignInPage: React.FC = () => {
             inputSize='lg'
             leftIcon='key'
             rightIcon='eye'
-            placeholder='비밀번호'
+            placeholder={AUTH_TEXT.input.password.placeholder}
             value={password}
             onChange={handlePasswordChange}
             status={errorField === 'password' ? 'error' : 'default'}
           />
           <Button type='submit' width={400} css={buttonStyle} disabled={!email || !password}>
-            로그인
+            {AUTH_TEXT.button.submit}
           </Button>
         </div>
       </form>
       {errorMessage && <p css={messageStyle}>{errorMessage}</p>}
       <ul css={signinLinkStyle}>
         <li>
-          <Link to={ROUTES.AUTH.FIND.EMAIL}>아이디 찾기</Link>
+          <Link to={ROUTES.AUTH.FIND.EMAIL}>{AUTH_TEXT.links.findEmail}</Link>
         </li>
         <li>
-          <Link to={ROUTES.AUTH.FIND.PASSWORD}>비밀번호 찾기</Link>
+          <Link to={ROUTES.AUTH.FIND.PASSWORD}>{AUTH_TEXT.links.findPassword}</Link>
         </li>
         <li>
-          <Link to={ROUTES.AUTH.SIGNUP.SELECT_TYPE}>회원가입</Link>
+          <Link to={ROUTES.AUTH.SIGNUP.SELECT_TYPE}>{AUTH_TEXT.links.signup}</Link>
         </li>
       </ul>
     </div>
