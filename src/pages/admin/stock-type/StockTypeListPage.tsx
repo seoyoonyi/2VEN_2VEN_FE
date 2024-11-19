@@ -122,6 +122,7 @@ const StockTypeListPage = () => {
       <TypeTable
         attributes={stockAttributes}
         data={mockStocks}
+        selectedItems={selectedStocks}
         onSelectChange={handleSelectChange}
         onEdit={() => {}}
       />

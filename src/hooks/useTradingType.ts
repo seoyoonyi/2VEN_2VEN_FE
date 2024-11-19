@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 import {
   fetchPostTradingType,
