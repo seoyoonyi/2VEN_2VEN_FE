@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { css } from '@emotion/react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { useSignin } from '@/api/auth';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { ROUTES } from '@/constants/routes';
+import { useSigninMutation } from '@/hooks/mutations/useAuthMutation';
 import theme from '@/styles/theme';
 import { isValidPassword, validateEmail } from '@/utils/validation';
 
@@ -16,7 +16,8 @@ const SignInPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [errorField, setErrorField] = useState<'email' | 'password' | null>(null);
-  const signin = useSignin();
+
+  const { mutateAsync: signin } = useSigninMutation();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -37,7 +38,7 @@ const SignInPage: React.FC = () => {
     }
     try {
       // 콘솔에서 확인
-      const result = await signin.mutateAsync({ email, password });
+      const result = await signin({ email, password });
       if (result.status === 'success' && result.data) {
         // 로그인 성공 시
         // role을 state로 전달하지 않고, 단순 홈으로 이동
@@ -46,6 +47,8 @@ const SignInPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Signin failed: ', error);
+      setErrorMessage('로그인에 실패했습니다. 다시 시도해주세요.');
+      setErrorField(null);
     }
   };
 
