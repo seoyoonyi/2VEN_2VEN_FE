@@ -24,15 +24,8 @@ const HomePage = () => {
   const [traderCount, setTraderCount] = useState('0'); // 기본값 설정
   const [strategyCount, setStrategyCount] = useState('0'); // 기본값 설정
 
-  useEffect(() => {
-    // 비로그인 사용자 리다이렉트
-    if (!user) {
-      navigate('/signin', { replace: true });
-      return;
-    }
-    // role 확인용 로깅
-    console.log('Current user role:', user.role);
-  }, [user, navigate]);
+  // role 확인용 로깅
+  console.log('Current user role:', user?.role);
 
   useEffect(() => {
     const fetchTraderStats = async () => {
