@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -17,10 +17,16 @@ const SignInPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [errorField, setErrorField] = useState<'email' | 'password' | null>(null);
 
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+
   const { mutateAsync: signin } = useSigninMutation();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    setErrorMessage(''); // 에러메시지 초기화
+    setErrorField(null); // 에러필드 초기화
 
     const emailValidation = validateEmail(email);
     const passwordValidation = isValidPassword(password);
@@ -28,12 +34,14 @@ const SignInPage: React.FC = () => {
     if (!emailValidation.isValid) {
       setErrorMessage(emailValidation.message);
       setErrorField('email');
+      emailInputRef.current?.focus();
       return;
     }
 
     if (!passwordValidation.isValid) {
       setErrorMessage(passwordValidation.message);
       setErrorField('password');
+      passwordInputRef.current?.focus();
       return;
     }
     try {
@@ -47,7 +55,7 @@ const SignInPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Signin failed: ', error);
-      setErrorMessage('로그인에 실패했습니다. 다시 시도해주세요.');
+      setErrorMessage('이메일 또는 비밀번호가 잘못 되었습니다. 다시 입력해 주세요.');
       setErrorField(null);
     }
   };
@@ -55,16 +63,22 @@ const SignInPage: React.FC = () => {
   // 입력값 변경되면 에러메시지 제거
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    if (!e.target.value && errorField === 'email') {
-      setErrorMessage('');
-      setErrorField(null);
+    if (errorField === 'email') {
+      const validation = validateEmail(e.target.value);
+      if (validation.isValid) {
+        setErrorMessage('');
+        setErrorField(null);
+      }
     }
   };
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    if (!e.target.value && errorField === 'password') {
-      setErrorMessage('');
-      setErrorField(null);
+    if (errorField === 'password') {
+      const validation = isValidPassword(e.target.value);
+      if (validation.isValid) {
+        setErrorMessage('');
+        setErrorField(null);
+      }
     }
   };
   return (
@@ -73,30 +87,28 @@ const SignInPage: React.FC = () => {
       <form css={formStyle} onSubmit={handleSubmit}>
         <div css={divStyle}>
           <Input
+            ref={emailInputRef}
             type='text'
             inputSize='lg'
             leftIcon='mail'
             placeholder='이메일'
             showClearButton
             value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              handleEmailChange(e);
-            }}
+            onChange={handleEmailChange}
+            status={errorField === 'email' ? 'error' : 'default'}
           />
         </div>
         <div>
           <Input
+            ref={passwordInputRef}
             type='password'
             inputSize='lg'
             leftIcon='key'
             rightIcon='eye'
             placeholder='비밀번호'
             value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              handlePasswordChange(e);
-            }}
+            onChange={handlePasswordChange}
+            status={errorField === 'password' ? 'error' : 'default'}
           />
           <Button type='submit' width={400} css={buttonStyle} disabled={!email || !password}>
             로그인

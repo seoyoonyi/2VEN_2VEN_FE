@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, RefObject, useEffect, useState } from 'react';
 
 import { css, SerializedStyles } from '@emotion/react';
 import { FiSearch } from 'react-icons/fi'; // 검색 아이콘
@@ -20,27 +20,27 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   rightIcon?: 'eye' | 'clear';
   showClearButton?: boolean;
   isDisabled?: boolean;
-  borderless?: boolean;
+  ref?: RefObject<HTMLInputElement>;
   customStyle?: SerializedStyles; // 사용되는 페이지에서 추가적인 스타일을 적용할 때 사용
   validate?: (value: string) => { isValid: boolean; message: string };
   onInputValidation?: (isValid: boolean) => void;
 }
 
-const Input = ({
-  inputSize = 'md',
-  width = '444px',
-  status = 'default',
-  leftIcon,
-  rightIcon,
-  showClearButton = false,
-  isDisabled = false,
-  borderless = false,
-  customStyle,
-  validate, // 입력값 검증 함수
-  onInputValidation, // 입력값 검증 결과 콜백 함수
-  ...props
-}: InputProps) => {
-  const [inputValue, setInputValue] = useState<string>('');
+const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+  const {
+    inputSize = 'md',
+    width = '444px',
+    status = 'default',
+    leftIcon,
+    rightIcon,
+    showClearButton = false,
+    isDisabled = false,
+    customStyle,
+    validate, // 입력값 검증 함수
+    onInputValidation, // 입력값 검증 결과 콜백 함수
+    ...inputProps
+  } = props;
+  const [inputValue, setInputValue] = useState<string>((props.value as string) || '');
   const [inputStatus, setInputStatus] = useState<InputStatus>(status);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -63,6 +63,10 @@ const Input = ({
   };
 
   useEffect(() => {
+    setInputStatus(status);
+  }, [status]);
+
+  useEffect(() => {
     // validate 함수가 존재하고 inputValue가 존재할 때 validation 체크
     if (validate && inputValue) {
       const validationResult = validate(inputValue);
@@ -74,19 +78,19 @@ const Input = ({
   // input 값이 변경될 때
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
-    props.onChange?.(e); // 부모 컴포넌트로 이벤트 전달
+    inputProps.onChange?.(e); // 부모 컴포넌트로 이벤트 전달
   };
 
   // input clear 버튼 클릭 시
   const handleClear = () => {
     setInputValue('');
     setInputStatus('default');
-    if (props.onChange) {
+    if (inputProps.onChange) {
       const event = new Event('input', {
         bubbles: true,
       }) as unknown as React.ChangeEvent<HTMLInputElement>;
       Object.defineProperty(event, 'target', { value: { value: '' } });
-      props.onChange(event);
+      inputProps.onChange(event);
     }
   };
 
@@ -103,7 +107,6 @@ const Input = ({
     leftIcon && paddingLeftStyles, // leftIcon이 있을 때 padding 적용
     // rightIcon이 있거나 (leftIcon과 showClearButton이 모두 있고 inputValue가 있을 때)만 오른쪽 패딩 적용
     (rightIcon || (leftIcon && showClearButton && inputValue)) && paddingRightStyles,
-    borderless && noBorderStyles, // borderless가 true일 때 border 제거
     customStyle,
   ];
 
@@ -113,8 +116,11 @@ const Input = ({
         {leftIcon && <div css={leftIconStyles}>{getIcon(leftIcon)}</div>}
 
         <input
-          {...props}
-          type={props.type === 'password' ? (showPassword ? 'text' : 'password') : props.type}
+          {...inputProps}
+          ref={ref}
+          type={
+            inputProps.type === 'password' ? (showPassword ? 'text' : 'password') : inputProps.type
+          }
           value={inputValue}
           disabled={isDisabled}
           css={currentInputStyles}
@@ -135,16 +141,9 @@ const Input = ({
       </div>
     </div>
   );
-};
+});
+Input.displayName = 'Input';
 
-const noBorderStyles = css`
-  &:hover:not(:disabled) {
-    border-color: ${theme.colors.gray[300]};
-  }
-  &:focus:not(:disabled) {
-    border-color: ${theme.colors.gray[300]};
-  }
-`;
 const containerStyles = css`
   display: inline-block;
   position: relative;
