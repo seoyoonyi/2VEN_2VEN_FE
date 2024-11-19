@@ -172,6 +172,7 @@ const monthlyAnalysisData = [
     addRate: '0.30%',
   },
 ];
+
 const dailyAttribues = [
   {
     title: '날짜',
@@ -256,6 +257,7 @@ const StrategyDetailPage = () => {
         <div css={contentWrapper}>
           <div key={strategy?.strategyId}>
             <StrategyTitleSection
+              id={strategy?.strategyId || 0}
               title={strategy?.strategyTitle}
               traderId={strategy?.traderId}
               traderName={strategy?.traderName}

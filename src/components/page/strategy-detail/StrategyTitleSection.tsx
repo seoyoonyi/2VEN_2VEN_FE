@@ -4,9 +4,11 @@ import { MdOutlineShare } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
+import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
 
 interface TitleProps {
+  id: number;
   title?: string;
   traderId?: string;
   traderName?: string;
@@ -18,6 +20,7 @@ interface TitleProps {
 }
 
 const StrategyTitleSection = ({
+  id,
   title,
   traderId,
   traderName,
@@ -29,8 +32,12 @@ const StrategyTitleSection = ({
 }: TitleProps) => {
   const navigate = useNavigate();
 
-  const handleMoveProfile = (traderId?: string) => {
-    navigate(`/traders/${traderId}`);
+  const handleMoveProfile = (traderId: string) => {
+    navigate(`${ROUTES.TRADER.PROFILE(traderId)}`);
+  };
+
+  const handleMoveEditPage = (id: string) => {
+    navigate(`${ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(id)}`);
   };
 
   const InfoSection = ({ title, data }: { title: string; data?: number | string }) => (
@@ -53,7 +60,14 @@ const StrategyTitleSection = ({
           <Button size='xs' variant='secondaryGray' width={90}>
             삭제
           </Button>
-          <Button size='xs' variant='neutral' width={90}>
+          <Button
+            size='xs'
+            variant='neutral'
+            width={90}
+            onClick={() => {
+              handleMoveEditPage(String(id));
+            }}
+          >
             수정
           </Button>
           <Button size='xs' width={120}>
@@ -71,7 +85,7 @@ const StrategyTitleSection = ({
           <span css={postDateStyle}>작성일자 {date}</span>
           <div css={infoSectionStyle}>
             <div css={authorInfoStyle}>
-              <button onClick={() => handleMoveProfile(traderId)} css={authorDetailsStyle}>
+              <button onClick={() => handleMoveProfile(traderId || '')} css={authorDetailsStyle}>
                 <img src={imgUrl} alt={traderName} css={authorImageStyle} />
                 <div css={followerAreaStyle}>
                   <div css={traderTextStyle}>트레이더</div>
