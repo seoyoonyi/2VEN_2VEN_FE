@@ -1,13 +1,6 @@
-import { HomeRouteState, UserRole } from '@/types/route';
-
 export const ROUTES = {
   HOME: {
     PATH: '/', // 기본 홈 경로
-    // userRole을 state로 전달하는 함수
-    WITH_ROLE: (role: UserRole) => ({
-      pathname: '/',
-      state: { userRole: role } as HomeRouteState,
-    }),
   },
   AUTH: {
     SIGNUP: {
@@ -46,7 +39,10 @@ export const ROUTES = {
         FOLDERS: '/mypage/investor', // 관심전략 폴더 목록 (투자자 마이페이지 첫 화면)
         STRATEGIES: (folderId: string) => `/mypage/investor/following/${folderId}`, // 특정 폴더의 관심전략 목록
       },
-      MYINQUIRY: '/mypage/investor/myinquiry', // 나의 상담 게시판
+      MYINQUIRY: {
+        LIST: '/mypage/investor/myinquiry', // 나의 상담 게시판
+        DETAIL: (inquiryId: string) => `/mypage/investor/myinquiry/${inquiryId}`,
+      },
       PROFILE: '/mypage/investor/profile', // 프로필 관리
     },
     TRADER: {

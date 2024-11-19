@@ -1,37 +1,14 @@
-import { useMutation, UseMutationResult } from '@tanstack/react-query';
+// auth.ts
+import { apiClient } from '@/api/apiClient';
+import { API_ENDPOINTS } from '@/api/apiEndpoints';
+import { SigninRequest, SigninResponse } from '@/types/auth';
 
-interface SignUpRequest {
-  email: string;
-  password: string;
-  username: string;
-}
-
-interface SignUpResponse {
-  // Define the expected response structure here 기대되는 응답 구조
-  id: string;
-  email: string;
-  username: string;
-}
-
-export const useSignUp = (): UseMutationResult<SignUpResponse, Error, SignUpRequest> =>
-  useMutation({
-    mutationFn: async (data: SignUpRequest) => {
-      const response = await fetch('/api/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-        // 세션 쿠키를 주고받기 위한 설정
-        credentials: 'include',
-      });
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(responseData.message);
-      }
-
-      return responseData;
-    },
-  });
+export const signin = async (credentials: SigninRequest): Promise<SigninResponse> => {
+  try {
+    const { data } = await apiClient.post<SigninResponse>(API_ENDPOINTS.AUTH.LOGIN, credentials);
+    return data;
+  } catch (error) {
+    console.error('Signin API failed:', error);
+    throw error;
+  }
+};

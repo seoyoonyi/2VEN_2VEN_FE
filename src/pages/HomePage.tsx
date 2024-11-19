@@ -14,13 +14,18 @@ import SMScoreGraphImage from '@/assets/images/SMScore_graph.png';
 import TraderMainImage from '@/assets/images/trader_main.png';
 import Button from '@/components/common/Button';
 import { ROUTES } from '@/constants/routes';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { user } = useAuthStore(); // store에서 user 정보 가져오기
 
   const [traderCount, setTraderCount] = useState('0'); // 기본값 설정
   const [strategyCount, setStrategyCount] = useState('0'); // 기본값 설정
+
+  // role 확인용 로깅
+  console.log('Current user role:', user?.role);
 
   useEffect(() => {
     const fetchTraderStats = async () => {
