@@ -20,6 +20,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   rightIcon?: 'eye' | 'clear';
   showClearButton?: boolean;
   isDisabled?: boolean;
+  borderless?: boolean;
   customStyle?: SerializedStyles; // 사용되는 페이지에서 추가적인 스타일을 적용할 때 사용
   validate?: (value: string) => { isValid: boolean; message: string };
   onInputValidation?: (isValid: boolean) => void;
@@ -33,6 +34,7 @@ const Input = ({
   rightIcon,
   showClearButton = false,
   isDisabled = false,
+  borderless = false,
   customStyle,
   validate, // 입력값 검증 함수
   onInputValidation, // 입력값 검증 결과 콜백 함수
@@ -101,6 +103,7 @@ const Input = ({
     leftIcon && paddingLeftStyles, // leftIcon이 있을 때 padding 적용
     // rightIcon이 있거나 (leftIcon과 showClearButton이 모두 있고 inputValue가 있을 때)만 오른쪽 패딩 적용
     (rightIcon || (leftIcon && showClearButton && inputValue)) && paddingRightStyles,
+    borderless && noBorderStyles, // borderless가 true일 때 border 제거
     customStyle,
   ];
 
@@ -134,6 +137,14 @@ const Input = ({
   );
 };
 
+const noBorderStyles = css`
+  &:hover:not(:disabled) {
+    border-color: ${theme.colors.gray[300]};
+  }
+  &:focus:not(:disabled) {
+    border-color: ${theme.colors.gray[300]};
+  }
+`;
 const containerStyles = css`
   display: inline-block;
   position: relative;
