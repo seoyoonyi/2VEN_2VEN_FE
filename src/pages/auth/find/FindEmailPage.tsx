@@ -1,29 +1,86 @@
+import { useState } from 'react';
+
 import { css } from '@emotion/react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { ROUTES } from '@/constants/routes';
+import { useEmailFinder } from '@/hooks/mutations/useEmailFinder';
 import theme from '@/styles/theme';
-const FindEmailPage = () => (
-  <div css={containerStyle}>
-    <h3 css={pageHeadingStyle}>이메일 찾기</h3>
-    <form css={formStyle}>
-      <div>
-        <Input type='email' inputSize='lg' placeholder='이메일' showClearButton />
-      </div>
-      <Button width={400} css={buttonStyle} disabled>
-        확인
-      </Button>
-    </form>
-    <ul css={findPassLinkStyle}>
-      <li>비밀번호가 기억나지 않나요?</li>
-      <li>
-        <Link to={ROUTES.AUTH.FIND.PASSWORD}>비밀번호 찾기</Link>
-      </li>
-    </ul>
-  </div>
-);
+import { isValidPhoneNumber } from '@/utils/validation';
+const FindEmailPage = () => {
+  const navigate = useNavigate();
+  const [phone, setPhone] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const emailFinder = useEmailFinder();
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setPhone(value);
+
+    if (!value) {
+      setErrorMessage(''); // 전화번호 입력값이 없을 때 에러메시지 초기화
+      return;
+    }
+    if (!isValidPhoneNumber(value)) {
+      setErrorMessage('올바른 전화번호를 입력해주세요.');
+    } else {
+      setErrorMessage('');
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log('Submit clicked', phone);
+    if (!isValidPhoneNumber(phone)) {
+      return;
+    }
+
+    try {
+      const response = await emailFinder.mutateAsync(phone);
+      if (response.status === 'success') {
+        navigate(ROUTES.AUTH.FIND.EMAIL_SUCCESS, { state: { email: response.data.email } });
+      }
+    } catch (error) {
+      setErrorMessage('전화번호를 다시 확인해주세요.');
+    }
+  };
+
+  return (
+    <div css={containerStyle}>
+      <h3 css={pageHeadingStyle}>이메일 찾기</h3>
+      <form css={formStyle} onSubmit={handleSubmit}>
+        <div>
+          <Input
+            type='tel'
+            inputSize='lg'
+            placeholder='전화번호를 입력해주세요.'
+            showClearButton
+            value={phone}
+            onChange={handlePhoneChange}
+            status={errorMessage ? 'error' : 'default'}
+          />
+        </div>
+        <Button
+          type='submit'
+          width={400}
+          css={buttonStyle}
+          disabled={!phone || !!errorMessage || emailFinder.isPending}
+        >
+          확인
+        </Button>
+      </form>
+      {errorMessage && <p css={messageStyle}>{errorMessage}</p>}
+      <ul css={findPassLinkStyle}>
+        <li>비밀번호가 기억나지 않나요?</li>
+        <li>
+          <Link to={ROUTES.AUTH.FIND.PASSWORD}>비밀번호 찾기</Link>
+        </li>
+      </ul>
+    </div>
+  );
+};
 
 const containerStyle = css`
   display: flex;
@@ -82,5 +139,12 @@ const findPassLinkStyle = css`
       display: none;
     }
   }
+`;
+const messageStyle = css`
+  margin-top: 16px;
+  text-align: center;
+  color: ${theme.colors.main.alert};
+  font-size: ${theme.typography.fontSizes.caption};
+  line-height: ${theme.typography.lineHeights.sm};
 `;
 export default FindEmailPage;
