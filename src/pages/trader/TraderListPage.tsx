@@ -1,16 +1,10 @@
-// // const TraderListPage = () => (
-// //   <div>
-// //     <h1>트레이더 목록 리스트</h1>
-// //   </div>
-// // );
-
-// // export default TraderListPage;
-
 import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
-import { useNavigate } from 'react-router-dom';
 
+import TraderUserImage3 from '@/assets/images/ani_trader.png';
+import TraderUserImage1 from '@/assets/images/apt_trader.png';
+import TraderUserImage2 from '@/assets/images/nimo_trader.png';
 import PageHeader from '@/components/common/PageHeader';
 import Pagination from '@/components/common/Pagination';
 import Select from '@/components/common/Select';
@@ -22,20 +16,68 @@ const sortOptions = [
   { label: '신규 트레이더', value: 'new_traders' },
 ];
 
-const generateTraders = (count: number) =>
-  Array.from({ length: count }, (_, index) => ({
-    traderId: index + 1,
-    name: `트레이더 ${index + 1}`,
-    profileImage: '/path/to/profile/image.png',
-    description: '트레이더의 소개 글이 여기에 들어갑니다. 글이 길어질 경우 자동으로 잘립니다.',
-    strategiesCount: Math.floor(Math.random() * 500) + 1,
-    followersCount: Math.floor(Math.random() * 10),
-  }));
+const generateTraders = (count: number) => {
+  // 5개의 기본 데이터 정의
+  const baseTraders = [
+    {
+      traderId: 1,
+      name: '트레이더 김철수',
+      profileImage: TraderUserImage1,
+      description: '안정적인 장기 투자를 선호하는 전문 트레이더입니다.',
+      strategiesCount: 3050,
+      followersCount: 0,
+    },
+    {
+      traderId: 2,
+      name: '트레이더 닉네임 이렇게꺼지 길어져도 되는지까지 한번 보자유',
+      profileImage: TraderUserImage2,
+      description: '단기 수익을 추구하며, 높은 변동성을 활용한 전략이 특징입니다.',
+      strategiesCount: 1500,
+      followersCount: 3,
+    },
+    {
+      traderId: 3,
+      name: '내가 바로 투자 짱',
+      profileImage: TraderUserImage3,
+      description:
+        '주도주로 매매하면 수익은 크고 손실은 작다! 믿는 종목에 발등 찍힌다. 주도주로 매매하면 수익은 크고 손실은 작다! 믿는 종목에 발등 찍힌다. 내용이 길다',
+      strategiesCount: 450,
+      followersCount: 8,
+    },
+    {
+      traderId: 4,
+      name: '투자는 내꺼야',
+      profileImage: '/path/to/profile/image4.png',
+      description:
+        '투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야',
+      strategiesCount: 1200,
+      followersCount: 5,
+    },
+    {
+      traderId: 5,
+      name: '이븐하게 구워줄게요',
+      profileImage: '/path/to/profile/image5.png',
+      description: '모수에서 먹으면 냠냠 맛있어요',
+      strategiesCount: 8000,
+      followersCount: 1,
+    },
+  ];
+
+  // 기본 데이터를 반복하여 원하는 개수(count)만큼 생성
+  return Array.from({ length: count }, (_, index) => {
+    const baseIndex = index % baseTraders.length; // 0~4 반복
+    const baseTrader = baseTraders[baseIndex];
+    return {
+      ...baseTrader,
+      traderId: index + 1, // 고유 ID 부여
+    };
+  });
+};
 
 const desc = '관심 있는 트레이더를 찾아 전략과 프로필을 확인해보세요.';
 
 const TraderListPage = () => {
-  const traders = generateTraders(70); // 50명의 가상 트레이더 데이터 생성
+  const traders = generateTraders(75); // 50명의 가상 트레이더 데이터 생성
   const [page, setPage] = useState(1);
   const limit = 14; // 한 페이지당 2칸씩*7줄
   const totalPages = Math.ceil(traders.length / limit);

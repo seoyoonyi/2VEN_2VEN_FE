@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { MdArrowForward } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 import theme from '@/styles/theme';
 
@@ -17,6 +18,8 @@ interface TraderListProps {
 }
 
 const TraderList = ({ traders }: TraderListProps) => {
+  const navigate = useNavigate();
+
   if (traders.length === 0) {
     return (
       <div css={emptyContainerStyle}>
@@ -32,7 +35,9 @@ const TraderList = ({ traders }: TraderListProps) => {
           {/* 좌측: 프로필 이미지 및 팔로워 */}
           <div css={badgeContainerStyle}>
             <img src={trader.profileImage} alt={`${trader.name} 프로필`} css={profileImageStyle} />
-            <div css={followerBadgeStyle}>{trader.followersCount}</div>
+            {trader.followersCount > 0 && (
+              <div css={followerBadgeStyle}>{trader.followersCount}</div>
+            )}
           </div>
           <div css={infoContainerStyle}>
             <div css={nameStyle}>{trader.name}</div>
@@ -43,7 +48,11 @@ const TraderList = ({ traders }: TraderListProps) => {
                 <span css={separatorStyle}></span>
                 <span css={strategyNumberStyle}>{trader.strategiesCount.toLocaleString()}개</span>
               </span>
-              <MdArrowForward size={24} />
+              <MdArrowForward
+                size={24}
+                onClick={() => navigate(`/traders/${trader.traderId}`)} // 클릭 시 이동
+                css={arrowIconStyle}
+              />
             </div>
           </div>
         </div>
@@ -54,22 +63,29 @@ const TraderList = ({ traders }: TraderListProps) => {
 
 const containerStyle = css`
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2칸씩 표시 */
-  gap: 24px; /* 카드 사이 간격 */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
 `;
 
 const cardStyle = css`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   background: ${theme.colors.main.white};
   border: 1px solid ${theme.colors.gray[400]};
   border-radius: 4px;
   padding: 32px;
   gap: 16px;
+  transition: outline-color ease; /* outline 효과 적용 */
+
+  &:hover {
+    outline: 2px solid ${theme.colors.teal[600]}; /* hover 시 outline 추가 */
+    outline-offset: -1px; /* border와 일치하도록 offset 설정 */
+    cursor: pointer;
+  }
 `;
 
 const badgeContainerStyle = css`
-  position: relative; /* 배지를 이미지 위에 배치하기 위해 */
+  position: relative;
 `;
 
 const profileImageStyle = css`
@@ -78,15 +94,16 @@ const profileImageStyle = css`
   height: 64px;
   border-radius: 50%;
   object-fit: cover;
+  border: 1px solid ${theme.colors.gray[300]};
 `;
 
 const followerBadgeStyle = css`
   position: absolute;
-  bottom: -4px; /* 이미지의 오른쪽 아래 */
+  bottom: -4px;
   right: -4px;
   width: 24px;
   height: 24px;
-  background: ${theme.colors.teal[900]}; /* 배지 색상 */
+  background: ${theme.colors.teal[900]};
   color: ${theme.colors.main.white};
   border-radius: 50%;
   display: flex;
@@ -94,7 +111,7 @@ const followerBadgeStyle = css`
   justify-content: center;
   font-size: 12px; /* 테마에 없음 */
   font-weight: ${theme.typography.fontWeight.bold};
-  border: 1px solid ${theme.colors.main.white}; /* 배지 테두리 */
+  border: 1px solid ${theme.colors.main.white};
 `;
 
 const infoContainerStyle = css`
@@ -154,6 +171,13 @@ const separatorStyle = css`
 const strategyNumberStyle = css`
   ${theme.textStyle.body.body1};
   color: ${theme.colors.teal[600]}; /* 숫자 부분의 색상 설정 */
+`;
+
+const arrowIconStyle = css`
+  cursor: pointer; /* 마우스 커서 변경 */
+  &:hover {
+    color: ${theme.colors.teal[600]}; /* 호버 시 색상 변경 */
+  }
 `;
 
 const emptyContainerStyle = css`
