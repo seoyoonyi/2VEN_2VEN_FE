@@ -68,23 +68,26 @@ export const fetchPutInvestmentType = async ({
   investmentAssetClassesName,
   investmentAssetClassesIcon,
   isActive,
-}: InvestmentAssetProps): Promise<{ msg: string }> => {
+}: InvestmentAssetProps) => {
   const body = {
     order,
     investmentAssetClassesName,
     investmentAssetClassesIcon,
     isActive,
   };
-
-  const req = await apiClient.put(
-    `${API_ENDPOINTS.ADMIN.STOCK_TYPES}/${investmentAssetClassesId}`,
-    body,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        Auth: 'admin',
-      },
-    }
-  );
-  return req.data;
+  try {
+    const req = await apiClient.put(
+      `${API_ENDPOINTS.ADMIN.STOCK_TYPES}/${investmentAssetClassesId}`,
+      body,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Auth: 'admin',
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to update stockTypeData');
+  }
 };
