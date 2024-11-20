@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
+import { FIND_EMAIL_TEXT } from '@/constants/auth';
 import { ROUTES } from '@/constants/routes';
 import { useEmailFinder } from '@/hooks/mutations/useEmailFinder';
 import theme from '@/styles/theme';
@@ -24,7 +25,7 @@ const FindEmailPage = () => {
       return;
     }
     if (!isValidPhoneNumber(value)) {
-      setErrorMessage('올바른 전화번호를 입력해주세요.');
+      setErrorMessage(FIND_EMAIL_TEXT.error.phone.invalid);
     } else {
       setErrorMessage('');
     }
@@ -43,7 +44,7 @@ const FindEmailPage = () => {
         navigate(ROUTES.AUTH.FIND.EMAIL_SUCCESS, { state: { email: response.data.email } });
       }
     } catch (error) {
-      setErrorMessage('전화번호를 다시 확인해주세요.');
+      setErrorMessage(FIND_EMAIL_TEXT.error.phone.notFound);
     }
   };
 
@@ -55,7 +56,7 @@ const FindEmailPage = () => {
           <Input
             type='tel'
             inputSize='lg'
-            placeholder='전화번호를 입력해주세요.'
+            placeholder={FIND_EMAIL_TEXT.input.phone.placeholder}
             showClearButton
             value={phone}
             onChange={handlePhoneChange}
@@ -68,14 +69,14 @@ const FindEmailPage = () => {
           css={buttonStyle}
           disabled={!phone || !!errorMessage || emailFinder.isPending}
         >
-          확인
+          {FIND_EMAIL_TEXT.button.submit}
         </Button>
       </form>
       {errorMessage && <p css={messageStyle}>{errorMessage}</p>}
       <ul css={findPassLinkStyle}>
-        <li>비밀번호가 기억나지 않나요?</li>
+        <li>{FIND_EMAIL_TEXT.links.findPasswordText}</li>
         <li>
-          <Link to={ROUTES.AUTH.FIND.PASSWORD}>비밀번호 찾기</Link>
+          <Link to={ROUTES.AUTH.FIND.PASSWORD}>{FIND_EMAIL_TEXT.links.findPassword}</Link>
         </li>
       </ul>
     </div>

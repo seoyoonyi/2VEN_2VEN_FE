@@ -60,7 +60,7 @@ export const FIND_EMAIL_TEXT = {
   title: '이메일 찾기',
   input: {
     phone: {
-      placeholder: '전화번호를 입력해주세요.',
+      placeholder: '전화번호를 입력해주세요. ( - 없이 숫자만)',
     },
   },
   button: {
