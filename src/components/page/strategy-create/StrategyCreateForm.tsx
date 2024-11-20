@@ -29,7 +29,8 @@ const StrategyCreateForm = () => {
     checkProduct,
   } = useStrategyFormStore();
   const { strategyData, loading, error } = useFetchStrategyOptionData();
-  const { mutate: submitStrategy, isLoading: isSubmitting } = useSubmitStrategyCreate();
+  const { mutate: submitStrategy, status } = useSubmitStrategyCreate();
+  const isSubmitting = status === 'pending';
 
   const [file, setFile] = useState<File | null>(null);
 
