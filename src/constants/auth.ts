@@ -55,3 +55,35 @@ export const AUTH_TEXT = {
     signup: '회원가입',
   },
 };
+
+export const FIND_EMAIL_TEXT = {
+  title: '이메일 찾기',
+  input: {
+    phone: {
+      placeholder: '전화번호를 입력해주세요.',
+    },
+  },
+  button: {
+    submit: '확인',
+  },
+  error: {
+    phone: {
+      invalid: '올바른 전화번호를 입력해주세요.',
+      notFound: '전화번호를 다시 확인해주세요.',
+    },
+  },
+  links: {
+    findPassword: '비밀번호 찾기',
+    findPasswordText: '비밀번호가 기억나지 않나요?',
+  },
+};
+
+export const EMAIL_FOUND_TEXT = {
+  title: '이메일을 찾았어요!',
+  button: {
+    signin: '로그인 하러가기',
+  },
+  image: {
+    alt: '이메일 찾기 이미지',
+  },
+};
