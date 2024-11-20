@@ -4,6 +4,7 @@ import { ROUTES } from '@/constants/routes';
 import AdminLayout from '@/layouts/AdminLayout';
 import InvestorMypageLayout from '@/layouts/InvestorMypageLayout';
 import RootLayout from '@/layouts/RootLayout';
+import TraderMyPageLayout from '@/layouts/TraderMyPageLayout';
 import StockTypeListPage from '@/pages/admin/stock-type/StockTypeListPage';
 import StrategyApprovalListPage from '@/pages/admin/strategy/StrategyApprovalListPage';
 import TradingTypeListPage from '@/pages/admin/trading-type/TradingTypeListPage';
@@ -118,27 +119,6 @@ export const router = createBrowserRouter(
           path: ROUTES.TRADER.PROFILE(':traderId'),
           element: <TraderDetailPage />, // 트레이더 프로필 상세 페이지
         },
-        // -------------------------------------- 마이페이지(트레이더)
-        {
-          path: ROUTES.MYPAGE.TRADER.STRATEGIES.LIST,
-          element: <TraderMyPage />, // 트레이더 마이페이지 - 나의 전략 리스트
-        },
-        {
-          path: ROUTES.MYPAGE.TRADER.STRATEGIES.CREATE,
-          element: <StrategyCreatePage />, // 전략 등록 페이지
-        },
-        {
-          path: ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(':strategyId'),
-          element: <StrategyEditPage />, // 전략 수정 페이지
-        },
-        {
-          path: ROUTES.MYPAGE.TRADER.INQUIRIES,
-          element: <InquiriesManagementPage />, // 문의 관리 페이지
-        },
-        {
-          path: ROUTES.MYPAGE.TRADER.PROFILE,
-          element: <TraderProfilePage />, // 트레이더 프로필 관리
-        },
         // -------------------------------------- 검색
         {
           path: ROUTES.SEARCH.ROOT.WITH_KEYWORD(':keyword'),
@@ -199,6 +179,34 @@ export const router = createBrowserRouter(
         {
           path: ROUTES.MYPAGE.INVESTOR.PROFILE,
           element: <InvestorProfilePage />, // 투자자 프로필 관리
+        },
+      ],
+    },
+    {
+      path: ROUTES.HOME.PATH,
+      element: <TraderMyPageLayout />,
+      errorElement: <NotFoundPage />,
+      children: [
+        // -------------------------------------- 마이페이지(트레이더)
+        {
+          path: ROUTES.MYPAGE.TRADER.STRATEGIES.LIST,
+          element: <TraderMyPage />, // 트레이더 마이페이지 - 나의 전략 리스트
+        },
+        {
+          path: ROUTES.MYPAGE.TRADER.STRATEGIES.CREATE,
+          element: <StrategyCreatePage />, // 전략 등록 페이지
+        },
+        {
+          path: ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(':strategyId'),
+          element: <StrategyEditPage />, // 전략 수정 페이지
+        },
+        {
+          path: ROUTES.MYPAGE.TRADER.INQUIRIES,
+          element: <InquiriesManagementPage />, // 문의 관리 페이지
+        },
+        {
+          path: ROUTES.MYPAGE.TRADER.PROFILE,
+          element: <TraderProfilePage />, // 트레이더 프로필 관리
         },
       ],
     },
