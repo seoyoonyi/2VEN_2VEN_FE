@@ -103,6 +103,14 @@ export const router = createBrowserRouter(
           element: <StrategyListPage />, // 전략 목록 페이지
         },
         {
+          path: ROUTES.MYPAGE.TRADER.STRATEGIES.CREATE,
+          element: <StrategyCreatePage />, // 전략 등록 페이지
+        },
+        {
+          path: ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(':strategyId'),
+          element: <StrategyEditPage />, // 전략 수정 페이지
+        },
+        {
           path: ROUTES.STRATEGY.DETAIL(':strategyId'),
           element: <StrategyDetailPage />, // 전략 상세 페이지
         },
@@ -191,14 +199,6 @@ export const router = createBrowserRouter(
         {
           path: ROUTES.MYPAGE.TRADER.STRATEGIES.LIST,
           element: <TraderMyPage />, // 트레이더 마이페이지 - 나의 전략 리스트
-        },
-        {
-          path: ROUTES.MYPAGE.TRADER.STRATEGIES.CREATE,
-          element: <StrategyCreatePage />, // 전략 등록 페이지
-        },
-        {
-          path: ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(':strategyId'),
-          element: <StrategyEditPage />, // 전략 수정 페이지
         },
         {
           path: ROUTES.MYPAGE.TRADER.INQUIRIES,
