@@ -11,7 +11,7 @@ import AccountVerify from '@/components/page/strategy-detail/tabmenu/AccountVeri
 import DailyAnalysis from '@/components/page/strategy-detail/tabmenu/DailyAnalysis';
 import MonthlyAnalysis from '@/components/page/strategy-detail/tabmenu/MonthlyAnalysis';
 import StatisticsTable from '@/components/page/strategy-detail/tabmenu/StatisticsTable';
-import useFetchStrategyDetail from '@/hooks/useFetchStrategyDetail';
+import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
 import theme from '@/styles/theme';
 import { formatDate } from '@/utils/dateFormat';
 

@@ -1,15 +1,6 @@
 import apiClient from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
-
-export interface StrategyPayload {
-  strategyTitle: string;
-  tradingTypeId: number;
-  tradingCycleId: number;
-  minInvestmentAmount: string;
-  strategyOverview: string;
-  isPosted: string;
-  investmentAssetClassesIdList: number[];
-}
+import { StrategyPayload } from '@/types/strategyForm';
 
 // 전략 등록 옵션 조회
 export const fetchStrategyRegistration = async () => {

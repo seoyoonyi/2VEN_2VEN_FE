@@ -10,7 +10,11 @@ import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import FileInput from '@/components/page/admin/FileInput';
 import TypeTable from '@/components/page/admin/TypeTable';
-import { useAddTradingType, useDeleteTradingType, usePutTradingType } from '@/hooks/useTradingType';
+import {
+  useAddTradingType,
+  useDeleteTradingType,
+  usePutTradingType,
+} from '@/hooks/mutations/useTradingType';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
