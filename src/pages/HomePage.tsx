@@ -580,6 +580,11 @@ const strategyTitleStyle = css`
   ${theme.textStyle.headings.h3};
   color: ${theme.colors.gray[900]};
   text-align: start;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1; /* 최대 1줄까지만 보여줌 */
+  overflow: hidden; /* 넘치는 글자를 숨김 */
+  text-overflow: ellipsis; /* ... 처리 */
 `;
 
 const traderInfoStyle = css`
