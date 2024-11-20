@@ -264,7 +264,7 @@ const StrategyDetailPage = () => {
               imgUrl={strategy?.traderImage}
               date={formatDate(strategy?.writedAt || '', 'withDayTime')}
               followers={strategy?.followersCount}
-              minimumInvestment={strategy?.minInvestmentAmout}
+              minimumInvestment={strategy?.minInvestmentAmount}
               lastUpdatedDate={'통계쪽입력날짜'}
             />
             <StrategyContent content={strategy?.strategyOverview} />
