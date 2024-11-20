@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import axios from 'axios';
 
-import { API_BASE_URL, apiClient } from '@/api/apiClient';
+import { apiClient } from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
 
 interface Notice {
@@ -82,15 +82,25 @@ const APITestPage = () => {
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        console.log('API_BASE_URL:', API_BASE_URL);
         console.log('apiClient baseURL:', apiClient.defaults.baseURL);
 
-        const response = await apiClient.get(API_ENDPOINTS.NOTICES);
+        const response = await apiClient.get('/mock/api/example', {
+          headers: {
+            useMock: true,
+          },
+        });
         const data = await response.data;
         setNotices(data);
 
+        const response1 = await apiClient.get(API_ENDPOINTS.ADMIN.TRADING_TYPES, {
+          headers: {
+            Authorization: 'admin',
+          },
+        });
+        console.log('API Response: ', response1.data);
+
         console.log('Response status:', response.status);
-        console.log('API Response:', data);
+        console.log('mockAPI Response:', data);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           setError(error.response?.data?.message || 'An error occurred while fetching notices');
