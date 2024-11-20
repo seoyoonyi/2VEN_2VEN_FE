@@ -8,21 +8,21 @@ const MOCK_USER = [
     member_id: 1,
     email: 'investor@example.com',
     password: 'Password1!',
-    nickname: '투자자',
+    nickname: 'investor11',
     role: 'INVESTOR',
   },
   {
     member_id: 2,
     email: 'trader@example.com',
     password: 'Password1!',
-    nickname: '트레이더',
+    nickname: 'trader444',
     role: 'TRADER',
   },
   {
     member_id: 3,
     email: 'admin@example.com',
     password: 'Password1!',
-    nickname: '관리자',
+    nickname: 'adminking',
     role: 'ADMIN',
   },
 ];
@@ -55,6 +55,23 @@ export const signinHandler = [
       data: {
         token: `mock-jwt-token-${user.role.toLowerCase()}`,
         user: userWithoutPassword,
+      },
+    });
+  }),
+];
+
+// 닉네임 중복 확인 핸들러
+export const checkNicknameHandler = [
+  http.get(`${API_ENDPOINTS.AUTH.CHECK_NICKNAME}*`, ({ request }) => {
+    const url = new URL(request.url);
+    const nickname = url.searchParams.get('nickname');
+    console.log('MSW: Check nickname request intercepted', nickname);
+    const isDuplicate = MOCK_USER.some((user) => user.nickname === nickname); // 닉네임 중복 확인
+
+    return HttpResponse.json({
+      status: 'success',
+      data: {
+        isDuplicate,
       },
     });
   }),
