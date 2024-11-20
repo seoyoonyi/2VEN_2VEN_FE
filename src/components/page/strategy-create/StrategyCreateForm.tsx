@@ -29,7 +29,7 @@ const StrategyCreateForm = () => {
     checkProduct,
   } = useStrategyFormStore();
   const { strategyData, loading, error } = useFetchStrategyOptionData();
-  const { mutate: submitStrategy } = useSubmitStrategyCreate();
+  const { mutate: submitStrategy, isLoading: isSubmitting } = useSubmitStrategyCreate();
 
   const [file, setFile] = useState<File | null>(null);
 
@@ -127,7 +127,13 @@ const StrategyCreateForm = () => {
       <FileUpload onFileSelect={handleFileSelect} />
 
       <div css={buttonContainerStyle}>
-        <Button type='submit' variant='primary' size='lg' width={326} disabled={!isFormValid}>
+        <Button
+          type='submit'
+          variant='primary'
+          size='lg'
+          width={326}
+          disabled={!isFormValid || isSubmitting}
+        >
           저장하기
         </Button>
       </div>
