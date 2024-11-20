@@ -18,7 +18,7 @@ const FileInput = ({ title, file, fname, icon, onNameChange }: FileInputProps) =
   const [fileName, setFileName] = useState(fname);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //이거 임시임 여기에 올리는 이미지 파일을 s3에 올린 후 그 이미지 url로 가져오는 로직 들어가야함 그 Url이 아이콘임 ~
+    //TODO:이거 임시임 여기에 올리는 이미지 파일을 s3에 올린 후 그 이미지 url로 가져오는 로직 들어가야함 그 Url이 아이콘임 ~
     if (e.target.files) {
       setSelectedFile(e.target.files[0]);
       setFileName(e.target.files[0].name);

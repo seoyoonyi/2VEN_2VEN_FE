@@ -14,7 +14,7 @@ import {
   useDeleteInvestmentAssets,
   usePostInvestmentAssets,
   usePutInvestmentAssets,
-} from '@/hooks/useStockType';
+} from '@/hooks/mutations/useStockType';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
