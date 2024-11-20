@@ -26,17 +26,17 @@ const useFetchStrategyOptionData = () => {
         const result = await fetchStrategyRegistration();
         setStrategyData({
           cycles: mapToOptions(
-            result.data.tradingCycleRegistrationDtoList,
+            result.tradingCycleRegistrationDtoList,
             'tradingCycleName',
             'tradingCycleId'
           ),
           operations: mapToOptions(
-            result.data.tradingTypeRegistrationDtoList,
+            result.tradingTypeRegistrationDtoList,
             'tradingTypeName',
             'tradingTypeId'
           ),
           products: mapToOptions(
-            result.data.investmentAssetClassesRegistrationDtoList,
+            result.investmentAssetClassesRegistrationDtoList,
             'investmentAssetClassesName',
             'investmentAssetClassesId'
           ),

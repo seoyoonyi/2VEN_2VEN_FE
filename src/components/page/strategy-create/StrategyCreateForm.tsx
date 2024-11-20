@@ -57,11 +57,10 @@ const StrategyCreateForm = () => {
 
     try {
       const res = await submitStrategyCreate(payload);
-      if (res.status === 201) {
-        clearForm;
-        navigate('/strategies/1');
-        window.scrollTo(0, 0);
-      }
+      clearForm;
+      navigate('/strategies/1');
+      window.scrollTo(0, 0);
+      console.log(res);
     } catch (err) {
       console.error('전략 등록 실패:', err);
     }
