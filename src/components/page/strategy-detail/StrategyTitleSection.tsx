@@ -4,27 +4,43 @@ import { MdOutlineShare } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
+import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
 
 interface TitleProps {
-  title: string;
-  author: {
-    traderId: string;
-    traderName: string;
-    imgUrl: string;
-  };
-  date: string;
-  followers: number;
+  id: number;
+  title?: string;
+  traderId?: string;
+  traderName?: string;
+  imgUrl?: string;
+  date?: string;
+  followers?: number;
+  minimumInvestment?: string;
+  lastUpdatedDate?: string;
 }
 
-const StrategyTitleSection = ({ title, author, date, followers }: TitleProps) => {
+const StrategyTitleSection = ({
+  id,
+  title,
+  traderId,
+  traderName,
+  imgUrl,
+  date,
+  followers,
+  minimumInvestment,
+  lastUpdatedDate,
+}: TitleProps) => {
   const navigate = useNavigate();
 
   const handleMoveProfile = (traderId: string) => {
-    navigate(`/traders/${traderId}`);
+    navigate(`${ROUTES.TRADER.PROFILE(traderId)}`);
   };
 
-  const InfoSection = ({ title, data }: { title: string; data: number | string }) => (
+  const handleMoveEditPage = (id: string) => {
+    navigate(`${ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(id)}`);
+  };
+
+  const InfoSection = ({ title, data }: { title: string; data?: number | string }) => (
     <div css={authorInfoStyle}>
       <div css={followerAreaStyle}>
         <div>{title}</div>
@@ -44,7 +60,14 @@ const StrategyTitleSection = ({ title, author, date, followers }: TitleProps) =>
           <Button size='xs' variant='secondaryGray' width={90}>
             삭제
           </Button>
-          <Button size='xs' variant='neutral' width={90}>
+          <Button
+            size='xs'
+            variant='neutral'
+            width={90}
+            onClick={() => {
+              handleMoveEditPage(String(id));
+            }}
+          >
             수정
           </Button>
           <Button size='xs' width={120}>
@@ -62,17 +85,17 @@ const StrategyTitleSection = ({ title, author, date, followers }: TitleProps) =>
           <span css={postDateStyle}>작성일자 {date}</span>
           <div css={infoSectionStyle}>
             <div css={authorInfoStyle}>
-              <button onClick={() => handleMoveProfile(author.traderId)} css={authorDetailsStyle}>
-                <img src={author.imgUrl} alt={author.traderName} css={authorImageStyle} />
+              <button onClick={() => handleMoveProfile(traderId || '')} css={authorDetailsStyle}>
+                <img src={imgUrl} alt={traderName} css={authorImageStyle} />
                 <div css={followerAreaStyle}>
                   <div css={traderTextStyle}>트레이더</div>
-                  <div css={followerTextStyle}>{author.traderName}</div>
+                  <div css={followerTextStyle}>{traderName}</div>
                 </div>
               </button>
             </div>
             <InfoSection title={'팔로워'} data={followers} />
-            <InfoSection title={'최소운용가능금액'} data={'1억'} />
-            <InfoSection title={'최종손익입력날짜'} data={'24.10.20 13:47'} />
+            <InfoSection title={'최소운용가능금액'} data={minimumInvestment} />
+            <InfoSection title={'최종손익입력날짜'} data={lastUpdatedDate} />
           </div>
         </div>
       </div>
