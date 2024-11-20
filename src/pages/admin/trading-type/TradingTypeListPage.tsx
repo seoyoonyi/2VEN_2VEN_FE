@@ -1,76 +1,20 @@
 import { useState } from 'react';
 
 import { css } from '@emotion/react';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 
+import { fetchTradingTypes } from '@/api/tradingType';
 import Button from '@/components/common/Button';
+import ContentModal from '@/components/common/ContentModal';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
-import TypeTable, { TypeTableProps } from '@/components/page/admin/TypeTable';
+import FileInput from '@/components/page/admin/FileInput';
+import TypeTable from '@/components/page/admin/TypeTable';
+import { useAddTradingType, useDeleteTradingType, usePutTradingType } from '@/hooks/useTradingType';
+import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
-
-const mockTradeItems = [
-  {
-    id: 1,
-    title: '자동',
-    icon: '/logo.svg',
-  },
-  {
-    id: 2,
-    title: '반자동(하이브리드)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 3,
-    title: '수동(메뉴얼)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 4,
-    title: '자동',
-    icon: '/logo.svg',
-  },
-  {
-    id: 5,
-    title: '반자동(하이브리드)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 6,
-    title: '수동(메뉴얼)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 7,
-    title: '자동',
-    icon: '/logo.svg',
-  },
-  {
-    id: 8,
-    title: '반자동(하이브리드)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 9,
-    title: '수동(메뉴얼)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 10,
-    title: '자동',
-    icon: '/logo.svg',
-  },
-  {
-    id: 11,
-    title: '반자동(하이브리드)',
-    icon: '/logo.svg',
-  },
-  {
-    id: 12,
-    title: '수동(메뉴얼)',
-    icon: '/logo.svg',
-  },
-];
+import { TradingTypeProps } from '@/types/admin';
 
 const tradeAttributes = [
   {
@@ -84,21 +28,58 @@ const tradeAttributes = [
   },
 ];
 
-const paginatedData = (data: TypeTableProps[], currentPage: number, pageSize: number) => {
-  const startIdx = (currentPage - 1) * pageSize;
-  const endIdx = startIdx + pageSize;
-  return data.slice(startIdx, endIdx);
-};
-
 const TradingTypeListPage = () => {
-  const limit = 10;
-  const [page, setPage] = useState(1);
-  const [mockTrade, setMockTrade] = useState(mockTradeItems);
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const { openModal } = useModalStore();
+  const { openContentModal } = useContentModalStore();
+  const { mutate: deleteTradingType } = useDeleteTradingType();
+  const { mutate: addTradingType } = useAddTradingType();
+  const { mutate: updateTradingType } = usePutTradingType();
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [paginationData, setPaginationData] = useState({
+    currentPage: 1,
+    totalPage: 0,
+    totalElements: 0,
+    pageSize: 10,
+  });
+
+  const { data } = useQuery<TradingTypeProps[], Error>({
+    queryKey: ['tradingTypes', paginationData.currentPage, paginationData.pageSize],
+    queryFn: async () => {
+      try {
+        const res = await fetchTradingTypes(
+          paginationData.currentPage - 1,
+          paginationData.pageSize
+        );
+        setPaginationData({
+          currentPage: paginationData.currentPage,
+          totalPage: res.totalPages,
+          totalElements: res.totalElements,
+          pageSize: res.pageSize,
+        });
+        return res.data;
+      } catch (err) {
+        console.error('Error fetching trading types:', err);
+        throw err;
+      }
+    },
+    placeholderData: keepPreviousData,
+  });
+
+  const formattedData = data?.map((item) => ({
+    id: item.tradingTypeId || data.length + 1,
+    icon: item.tradingTypeIcon,
+    title: item.tradingTypeName,
+  }));
 
   const handleSelectChange = (selectedIdx: number[]) => {
     setSelectedItems(selectedIdx);
+  };
+
+  const handlePageChange = (page: number) => {
+    setPaginationData((prev) => ({
+      ...prev,
+      currentPage: page,
+    }));
   };
 
   const handleDelete = () => {
@@ -108,7 +89,7 @@ const TradingTypeListPage = () => {
         title: '이미지 삭제',
         desc: `선택하신 ${selectedItems.length}개의 유형을 삭제하시겠습니까?`,
         onAction: () => {
-          setMockTrade((prevItems) => prevItems.filter((item) => !selectedItems.includes(item.id)));
+          selectedItems.forEach((id) => deleteTradingType(id));
           setSelectedItems([]);
         },
       });
@@ -122,12 +103,74 @@ const TradingTypeListPage = () => {
     }
   };
 
+  const handleEdit = (id: number) => {
+    const selectedType = data?.find((item) => item.tradingTypeId === id);
+    if (selectedType) {
+      let updatedName = selectedType.tradingTypeName;
+      openContentModal({
+        title: '매매유형 수정',
+        content: (
+          <FileInput
+            title='매매유형'
+            file={null}
+            fname={selectedType.tradingTypeName}
+            icon={selectedType.tradingTypeIcon}
+            onNameChange={(name) => (updatedName = name)}
+          />
+        ),
+        onAction: () => {
+          if (!updatedName.trim()) {
+            alert('매매유형명이 입력되지않았습니다.');
+            return;
+          }
+          updateTradingType({
+            tradingTypeId: selectedType.tradingTypeId,
+            tradingTypeOrder: selectedType.tradingTypeOrder,
+            tradingTypeName: updatedName,
+            tradingTypeIcon: 'testIcon',
+            isActive: 'Y',
+          });
+          setSelectedItems([]);
+        },
+      });
+    }
+  };
+
+  const handleUpload = () => {
+    let newName: string = '';
+    openContentModal({
+      title: '매매유형 등록',
+      content: (
+        <FileInput
+          title='매매유형'
+          file={null}
+          fname={''}
+          icon={''}
+          onNameChange={(name) => {
+            newName = name;
+          }}
+        />
+      ),
+      onAction: async () => {
+        if (!newName.trim()) {
+          alert('매매유형명이 입력되지않았습니다.');
+          return;
+        }
+        addTradingType({
+          tradingTypeName: newName,
+          tradingTypeIcon: 'testIcon',
+          isActive: 'Y',
+        });
+      },
+    });
+  };
+
   return (
     <div css={tradeStyle}>
       <div css={headingStyle}>
         <div css={titleStyle}>매매유형 관리</div>
         <div css={buttonArea}>
-          <Button size='xs' width={89}>
+          <Button size='xs' width={89} onClick={handleUpload}>
             등록
           </Button>
           <Button variant='neutral' size='xs' width={89} onClick={handleDelete}>
@@ -137,16 +180,19 @@ const TradingTypeListPage = () => {
       </div>
       <TypeTable
         attributes={tradeAttributes}
-        data={paginatedData(mockTrade, page, limit)}
+        data={formattedData || []}
+        selectedItems={selectedItems}
         onSelectChange={handleSelectChange}
+        onEdit={handleEdit}
       />
       <Pagination
-        totalPage={Math.ceil(mockTrade.length / limit)}
-        limit={limit}
-        page={page}
-        setPage={setPage}
+        totalPage={paginationData.totalPage}
+        limit={paginationData.pageSize}
+        page={paginationData.currentPage}
+        setPage={handlePageChange}
       />
       <Modal />
+      <ContentModal />
     </div>
   );
 };

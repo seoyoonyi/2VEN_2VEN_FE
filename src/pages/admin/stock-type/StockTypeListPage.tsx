@@ -94,19 +94,12 @@ const StockTypeListPage = () => {
     }
   };
 
-  const handleUploadIcon = (file: File | null) => {
-    if (file) {
-      const fileURL = URL.createObjectURL(file);
-      setMockStocks((prevItems) =>
-        prevItems.map((item) => (item.id === selectedStocks[0] ? { ...item, icon: fileURL } : item))
-      );
-    }
-  };
-
   const handleUpload = () => {
     openContentModal({
       title: '상품유형 등록',
-      content: <FileInput title='상품유형' onFileChange={handleUploadIcon} />,
+      content: (
+        <FileInput title='상품유형' file={null} fname={''} icon={''} onNameChange={() => {}} />
+      ),
       onAction: () => {
         console.log('상품유형 등록 api');
       },
@@ -129,7 +122,9 @@ const StockTypeListPage = () => {
       <TypeTable
         attributes={stockAttributes}
         data={mockStocks}
+        selectedItems={selectedStocks}
         onSelectChange={handleSelectChange}
+        onEdit={() => {}}
       />
       <Modal />
       <ContentModal />
