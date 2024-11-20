@@ -16,3 +16,16 @@ export const signin = async (credentials: SigninRequest): Promise<SigninResponse
     throw error;
   }
 };
+
+export const findEmail = async (phone: string) => {
+  const { data } = await apiClient.post(
+    API_ENDPOINTS.AUTH.FIND.EMAIL,
+    { phone },
+    {
+      headers: {
+        useMock: import.meta.env.VITE_ENABLE_MSW === 'true',
+      },
+    }
+  );
+  return data;
+};
