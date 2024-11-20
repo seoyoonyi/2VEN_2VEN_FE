@@ -63,6 +63,7 @@ const StockTypeListPage = () => {
         return res.data;
       } catch (error) {
         console.error('failed to fetch investmentTypes', error);
+        throw error;
       }
     },
     placeholderData: keepPreviousData,
@@ -108,6 +109,15 @@ const StockTypeListPage = () => {
     }
   };
 
+  const isCheckDupicateName = (
+    newName: string,
+    id: number | undefined = -1,
+    data?: InvestmentAssetProps[]
+  ): boolean => {
+    if (!data || !id) return false;
+    return data.some((item) => item.investmentAssetClassesName === newName);
+  };
+
   const handleUpload = () => {
     let newName: string = '';
     openContentModal({
@@ -126,6 +136,10 @@ const StockTypeListPage = () => {
       onAction: () => {
         if (!newName.trim()) {
           alert('상품유형명이 입력되지않았습니다.');
+          return;
+        }
+        if (isCheckDupicateName(newName, 1, data)) {
+          alert('이미 존재하는 상품유형입니다.');
           return;
         }
         addInvestmentAssets({
@@ -155,6 +169,10 @@ const StockTypeListPage = () => {
         onAction: () => {
           if (!updatedName.trim()) {
             alert('상품유형명이 입력되지않았습니다.');
+            return;
+          }
+          if (isCheckDupicateName(updatedName, selectedType.investmentAssetClassesId, data)) {
+            alert('이미 존재하는 상품유형입니다.');
             return;
           }
           updateInvestmentAssets({
