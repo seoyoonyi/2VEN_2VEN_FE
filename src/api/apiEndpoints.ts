@@ -6,6 +6,7 @@ export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: '/api/members/login',
     SIGNUP: '/api/members/signup',
+    CHECK_NICKNAME: '/api/members/check-nickname', // 닉네임 중복 확인
   },
   STRATEGY: {
     CREATE: '/api/strategies', // 전략 등록
