@@ -11,77 +11,168 @@ import Select from '@/components/common/Select';
 import TraderList from '@/components/common/TraderList';
 import theme from '@/styles/theme';
 
+const desc = '관심 있는 트레이더를 찾아 전략과 프로필을 확인해보세요.';
+
 const sortOptions = [
   { label: '전략 많은 순', value: 'most_strategies' },
   { label: '신규 트레이더', value: 'new_traders' },
 ];
 
-const generateTraders = (count: number) => {
-  // 5개의 기본 데이터 정의
-  const baseTraders = [
-    {
-      traderId: 1,
-      name: '트레이더 김철수',
-      profileImage: TraderUserImage1,
-      description: '안정적인 장기 투자를 선호하는 전문 트레이더입니다.',
-      strategiesCount: 3050,
-      followersCount: 0,
-    },
-    {
-      traderId: 2,
-      name: '트레이더 닉네임 이렇게꺼지 길어져도 되는지까지 한번 보자유',
-      profileImage: TraderUserImage2,
-      description: '단기 수익을 추구하며, 높은 변동성을 활용한 전략이 특징입니다.',
-      strategiesCount: 1500,
-      followersCount: 3,
-    },
-    {
-      traderId: 3,
-      name: '내가 바로 투자 짱',
-      profileImage: TraderUserImage3,
-      description:
-        '주도주로 매매하면 수익은 크고 손실은 작다! 믿는 종목에 발등 찍힌다. 주도주로 매매하면 수익은 크고 손실은 작다! 믿는 종목에 발등 찍힌다. 내용이 길다',
-      strategiesCount: 450,
-      followersCount: 8,
-    },
-    {
-      traderId: 4,
-      name: '투자는 내꺼야',
-      profileImage: '/path/to/profile/image4.png',
-      description:
-        '투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야',
-      strategiesCount: 1200,
-      followersCount: 5,
-    },
-    {
-      traderId: 5,
-      name: '이븐하게 구워줄게요',
-      profileImage: '/path/to/profile/image5.png',
-      description: '모수에서 먹으면 냠냠 맛있어요',
-      strategiesCount: 8000,
-      followersCount: 1,
-    },
-  ];
-
-  // 기본 데이터를 반복하여 원하는 개수(count)만큼 생성
-  return Array.from({ length: count }, (_, index) => {
-    const baseIndex = index % baseTraders.length; // 0~4 반복
-    const baseTrader = baseTraders[baseIndex];
-    return {
-      ...baseTrader,
-      traderId: index + 1, // 고유 ID 부여
-    };
-  });
-};
-
-const desc = '관심 있는 트레이더를 찾아 전략과 프로필을 확인해보세요.';
+const generateTraders = [
+  {
+    traderId: 1,
+    name: '트레이더 김철수',
+    profileImage: TraderUserImage1,
+    description: '안정적인 장기 투자를 선호하는 전문 트레이더입니다.',
+    strategiesCount: 3050,
+  },
+  {
+    traderId: 2,
+    name: '트레이더 닉네임 이렇게꺼지 길어져도 되는지까지 한번 보자유',
+    profileImage: TraderUserImage2,
+    description: '단기 수익을 추구하며, 높은 변동성을 활용한 전략이 특징입니다.',
+    strategiesCount: 1500,
+  },
+  {
+    traderId: 3,
+    name: '내가 바로 투자 짱',
+    profileImage: TraderUserImage3,
+    description: '주도주로 매매하면 수익은 크고 손실은 작다! 믿는 종목에 발등 찍힌다.',
+    strategiesCount: 450,
+  },
+  {
+    traderId: 4,
+    name: '투자는 내꺼야',
+    profileImage: '/path/to/profile/image4.png',
+    description: '투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야',
+    strategiesCount: 1200,
+  },
+  {
+    traderId: 5,
+    name: '이븐하게 구워줄게요',
+    profileImage: '/path/to/profile/image5.png',
+    description: '모수에서 먹으면 냠냠 맛있어요.',
+    strategiesCount: 8000,
+  },
+  {
+    traderId: 6,
+    name: '비트코인 매니아',
+    profileImage: '/path/to/profile/image6.png',
+    description: '암호화폐 시장의 상승과 하락을 모두 잡습니다.',
+    strategiesCount: 2000,
+  },
+  {
+    traderId: 7,
+    name: '글로벌 트레이더',
+    profileImage: '/path/to/profile/image7.png',
+    description: '전 세계 다양한 시장에 투자 경험이 풍부합니다.',
+    strategiesCount: 1800,
+  },
+  {
+    traderId: 8,
+    name: '성장주 전문가',
+    profileImage: '/path/to/profile/image8.png',
+    description: '고성장 기업 발굴 전문가입니다.',
+    strategiesCount: 1450,
+  },
+  {
+    traderId: 9,
+    name: '가치주 매니저',
+    profileImage: '/path/to/profile/image9.png',
+    description: '가치투자로 장기 수익률을 극대화합니다.',
+    strategiesCount: 950,
+  },
+  {
+    traderId: 10,
+    name: '숏 트레이더',
+    profileImage: '/path/to/profile/image10.png',
+    description: '숏 포지션으로 하락장을 기회로 삼습니다.',
+    strategiesCount: 750,
+  },
+  {
+    traderId: 11,
+    name: '테마주 트레이더',
+    profileImage: '/path/to/profile/image11.png',
+    description: '시장의 핫한 테마를 선점하는 전략가입니다.',
+    strategiesCount: 2100,
+  },
+  {
+    traderId: 12,
+    name: '배당주 투자자',
+    profileImage: '/path/to/profile/image12.png',
+    description: '안정적인 배당 수익을 목표로 투자합니다.',
+    strategiesCount: 1300,
+  },
+  {
+    traderId: 13,
+    name: '주식 초보 트레이더',
+    profileImage: '/path/to/profile/image13.png',
+    description: '초보지만 꾸준히 배우며 성장 중입니다.',
+    strategiesCount: 300,
+  },
+  {
+    traderId: 14,
+    name: '옵션 트레이더',
+    profileImage: '/path/to/profile/image14.png',
+    description: '옵션 거래를 활용한 고수익 추구가 특징입니다.',
+    strategiesCount: 1150,
+  },
+  {
+    traderId: 15,
+    name: '퀀트 투자 전문가',
+    profileImage: '/path/to/profile/image15.png',
+    description: '데이터 기반의 퀀트 전략으로 투자합니다.',
+    strategiesCount: 2200,
+  },
+  {
+    traderId: 16,
+    name: '리스크 관리 전문가',
+    profileImage: '/path/to/profile/image16.png',
+    description: '리스크 최소화와 안정적 수익을 목표로 합니다.',
+    strategiesCount: 1600,
+  },
+  {
+    traderId: 17,
+    name: 'ETF 트레이더',
+    profileImage: '/path/to/profile/image17.png',
+    description: 'ETF로 다양한 시장에 손쉽게 투자합니다.',
+    strategiesCount: 1400,
+  },
+  {
+    traderId: 18,
+    name: '크립토 고수',
+    profileImage: '/path/to/profile/image18.png',
+    description: '암호화폐에서 최적의 투자 전략을 구사합니다.',
+    strategiesCount: 1850,
+  },
+  {
+    traderId: 19,
+    name: '펀드 매니저',
+    profileImage: '/path/to/profile/image19.png',
+    description: '펀드 관리 경험이 풍부한 투자자입니다.',
+    strategiesCount: 2800,
+  },
+  {
+    traderId: 20,
+    name: '기술주 애호가',
+    profileImage: '/path/to/profile/image20.png',
+    description: '첨단 기술 관련 주식에 주로 투자합니다.',
+    strategiesCount: 1950,
+  },
+];
 
 const TraderListPage = () => {
-  const traders = generateTraders(75); // 50명의 가상 트레이더 데이터 생성
+  const traders = generateTraders;
   const [page, setPage] = useState(1);
   const limit = 14; // 한 페이지당 2칸씩*7줄
   const totalPages = Math.ceil(traders.length / limit);
   const currentPageData = traders.slice((page - 1) * limit, page * limit);
+
+  // strategiesCount 기준으로 상위 10명을 식별
+  const badgeRank = [...traders]
+    .sort((a, b) => b.strategiesCount - a.strategiesCount) // strategiesCount 내림차순 정렬
+    .slice(0, 10) // 상위 10명만 추출
+    .map((trader) => trader.traderId); // 상위 10명의 traderId 저장
 
   useEffect(() => {
     window.scrollTo(0, 0); // 페이지 변경 시 스크롤 맨 위로 이동
@@ -98,13 +189,13 @@ const TraderListPage = () => {
           <Select
             options={sortOptions}
             onChange={() => {}}
-            defaultLabel='전략 많은 순'
+            defaultLabel='기본 등록 순'
             type='sm'
             width='160px'
           />
         </div>
         <div css={listContainerStyle}>
-          <TraderList traders={currentPageData} />
+          <TraderList traders={currentPageData} badgeRank={badgeRank} />
           <Pagination totalPage={totalPages} limit={limit} page={page} setPage={setPage} />
         </div>
       </div>

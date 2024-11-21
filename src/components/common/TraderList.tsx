@@ -10,14 +10,15 @@ interface TraderData {
   profileImage: string;
   description: string;
   strategiesCount: number;
-  followersCount: number;
+  // followersCount: number;
 }
 
 interface TraderListProps {
   traders: TraderData[];
+  badgeRank: number[];
 }
 
-const TraderList = ({ traders }: TraderListProps) => {
+const TraderList = ({ traders, badgeRank }: TraderListProps) => {
   const navigate = useNavigate();
 
   if (traders.length === 0) {
@@ -32,11 +33,13 @@ const TraderList = ({ traders }: TraderListProps) => {
     <div css={containerStyle}>
       {traders.map((trader) => (
         <div css={cardStyle} key={trader.traderId}>
-          {/* 좌측: 프로필 이미지 및 팔로워 */}
+          {/* 좌측: 프로필 이미지 및 뱃지 */}
           <div css={badgeContainerStyle}>
             <img src={trader.profileImage} alt={`${trader.name} 프로필`} css={profileImageStyle} />
-            {trader.followersCount > 0 && (
-              <div css={followerBadgeStyle}>{trader.followersCount}</div>
+            {badgeRank.includes(trader.traderId) && (
+              <div css={badgeStyle}>
+                {badgeRank.indexOf(trader.traderId) + 1} {/* 순위 계산 */}
+              </div>
             )}
           </div>
           <div css={infoContainerStyle}>
@@ -97,7 +100,7 @@ const profileImageStyle = css`
   border: 1px solid ${theme.colors.gray[300]};
 `;
 
-const followerBadgeStyle = css`
+const badgeStyle = css`
   position: absolute;
   bottom: -4px;
   right: -4px;
