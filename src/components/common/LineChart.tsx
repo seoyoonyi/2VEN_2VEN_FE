@@ -42,7 +42,7 @@ const LineChart = ({ data, size, colorTheme }: LineChartProps) => {
       type: 'areaspline',
       width: sizes[size].width,
       height: sizes[size].height,
-      backgroundColor: 'white',
+      backgroundColor: 'transparent',
       margin: [0, 0, 0, 0],
     },
     title: {
@@ -52,15 +52,7 @@ const LineChart = ({ data, size, colorTheme }: LineChartProps) => {
       visible: false,
     },
     yAxis: {
-      labels: {
-        enabled: false,
-      },
-      title: {
-        text: '',
-      },
-      tickPositions: [0, maxValue / 2, (maxValue * 2) / 2, maxValue],
-      gridLineWidth: 1,
-      gridLineDashStyle: 'Dash',
+      visible: false,
     },
     legend: {
       enabled: false,
@@ -92,7 +84,7 @@ const LineChart = ({ data, size, colorTheme }: LineChartProps) => {
           },
           stops: [
             [0, selectedColors.middleColor],
-            [0.2, selectedColors.fillColor],
+            [0.1, selectedColors.fillColor],
             [1, theme.colors.main.white],
           ],
         },
