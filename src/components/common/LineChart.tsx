@@ -39,7 +39,7 @@ const LineChart = ({ data, size, colorTheme }: LineChartProps) => {
 
   const options = {
     chart: {
-      type: 'spline',
+      type: 'areaspline',
       width: sizes[size].width,
       height: sizes[size].height,
       backgroundColor: 'white',
@@ -66,6 +66,11 @@ const LineChart = ({ data, size, colorTheme }: LineChartProps) => {
       enabled: false,
     },
     plotOptions: {
+      series: {
+        marker: {
+          enabled: false,
+        },
+      },
       area: {
         marker: {
           enabled: false,
@@ -74,7 +79,6 @@ const LineChart = ({ data, size, colorTheme }: LineChartProps) => {
     },
     series: [
       {
-        type: 'area',
         data,
         lineWidth: 2,
         linecap: 'round',
