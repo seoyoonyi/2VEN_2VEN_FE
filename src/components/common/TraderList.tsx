@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { MdArrowForward } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import theme from '@/styles/theme';
 
@@ -10,16 +10,15 @@ interface TraderData {
   profileImage: string;
   description: string;
   strategiesCount: number;
-  followersCount: number;
+  createdAt: string; // 필요한지 확인 필요
 }
 
 interface TraderListProps {
   traders: TraderData[];
+  badgeRank: number[];
 }
 
-const TraderList = ({ traders }: TraderListProps) => {
-  const navigate = useNavigate();
-
+const TraderList = ({ traders, badgeRank }: TraderListProps) => {
   if (traders.length === 0) {
     return (
       <div css={emptyContainerStyle}>
@@ -31,12 +30,18 @@ const TraderList = ({ traders }: TraderListProps) => {
   return (
     <div css={containerStyle}>
       {traders.map((trader) => (
-        <div css={cardStyle} key={trader.traderId}>
-          {/* 좌측: 프로필 이미지 및 팔로워 */}
+        <Link
+          to={`/traders/${trader.traderId}`} // 네비게이션 경로 지정
+          css={cardStyle} // 카드 스타일 적용
+          key={trader.traderId}
+        >
+          {/* 좌측: 프로필 이미지 및 뱃지 */}
           <div css={badgeContainerStyle}>
             <img src={trader.profileImage} alt={`${trader.name} 프로필`} css={profileImageStyle} />
-            {trader.followersCount > 0 && (
-              <div css={followerBadgeStyle}>{trader.followersCount}</div>
+            {badgeRank.includes(trader.traderId) && (
+              <div css={badgeStyle}>
+                {badgeRank.indexOf(trader.traderId) + 1} {/* 순위 계산 */}
+              </div>
             )}
           </div>
           <div css={infoContainerStyle}>
@@ -48,14 +53,10 @@ const TraderList = ({ traders }: TraderListProps) => {
                 <span css={separatorStyle}></span>
                 <span css={strategyNumberStyle}>{trader.strategiesCount.toLocaleString()}개</span>
               </span>
-              <MdArrowForward
-                size={24}
-                onClick={() => navigate(`/traders/${trader.traderId}`)} // 클릭 시 이동
-                css={arrowIconStyle}
-              />
+              <MdArrowForward size={24} />
             </div>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
@@ -75,11 +76,11 @@ const cardStyle = css`
   border-radius: 4px;
   padding: 32px;
   gap: 16px;
-  transition: outline-color ease; /* outline 효과 적용 */
+  transition: outline-color ease;
 
   &:hover {
-    outline: 2px solid ${theme.colors.teal[600]}; /* hover 시 outline 추가 */
-    outline-offset: -1px; /* border와 일치하도록 offset 설정 */
+    outline: 2px solid ${theme.colors.teal[600]};
+    outline-offset: -1px;
     cursor: pointer;
   }
 `;
@@ -97,7 +98,7 @@ const profileImageStyle = css`
   border: 1px solid ${theme.colors.gray[300]};
 `;
 
-const followerBadgeStyle = css`
+const badgeStyle = css`
   position: absolute;
   bottom: -4px;
   right: -4px;
@@ -159,7 +160,7 @@ const strategyCountStyle = css`
 
 const strategyTextStyle = css`
   ${theme.textStyle.body.body1};
-  color: ${theme.colors.gray[700]}; /* "전략" 텍스트 색상 */
+  color: ${theme.colors.gray[700]};
 `;
 
 const separatorStyle = css`
@@ -170,14 +171,7 @@ const separatorStyle = css`
 
 const strategyNumberStyle = css`
   ${theme.textStyle.body.body1};
-  color: ${theme.colors.teal[600]}; /* 숫자 부분의 색상 설정 */
-`;
-
-const arrowIconStyle = css`
-  cursor: pointer; /* 마우스 커서 변경 */
-  &:hover {
-    color: ${theme.colors.teal[600]}; /* 호버 시 색상 변경 */
-  }
+  color: ${theme.colors.teal[600]};
 `;
 
 const emptyContainerStyle = css`
