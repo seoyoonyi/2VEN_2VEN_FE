@@ -16,12 +16,13 @@ const FileInput = ({ title, file, fname, icon, onNameChange }: FileInputProps) =
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(file || null);
   const [fileName, setFileName] = useState(fname);
+  const [iconName, setIconName] = useState(icon);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //TODO:이거 임시임 여기에 올리는 이미지 파일을 s3에 올린 후 그 이미지 url로 가져오는 로직 들어가야함 그 Url이 아이콘임 ~
     if (e.target.files) {
       setSelectedFile(e.target.files[0]);
-      setFileName(e.target.files[0].name);
+      setIconName(e.target.files[0].name);
     }
   };
 
@@ -61,7 +62,7 @@ const FileInput = ({ title, file, fname, icon, onNameChange }: FileInputProps) =
       )}
       {icon && !selectedFile && <img src={icon} alt={icon} css={imageStyle} />}
       <div css={inputAndButtonContainerStyle}>
-        <input type='text' value={icon || ''} readOnly css={inputStyleOverride} />
+        <input type='text' value={iconName} readOnly css={inputStyleOverride} />
         <Button variant='secondary' size='sm' onClick={handleFileUpload} width={115}>
           찾아보기
         </Button>
