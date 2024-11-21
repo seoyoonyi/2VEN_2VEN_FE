@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { MdArrowForward } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import theme from '@/styles/theme';
 
@@ -10,8 +10,7 @@ interface TraderData {
   profileImage: string;
   description: string;
   strategiesCount: number;
-  // followersCount: number;
-  // createdAt: string;
+  createdAt: string; // 필요한지 확인 필요
 }
 
 interface TraderListProps {
@@ -20,8 +19,6 @@ interface TraderListProps {
 }
 
 const TraderList = ({ traders, badgeRank }: TraderListProps) => {
-  const navigate = useNavigate();
-
   if (traders.length === 0) {
     return (
       <div css={emptyContainerStyle}>
@@ -33,7 +30,11 @@ const TraderList = ({ traders, badgeRank }: TraderListProps) => {
   return (
     <div css={containerStyle}>
       {traders.map((trader) => (
-        <div css={cardStyle} key={trader.traderId}>
+        <Link
+          to={`/traders/${trader.traderId}`} // 네비게이션 경로 지정
+          css={cardStyle} // 카드 스타일 적용
+          key={trader.traderId}
+        >
           {/* 좌측: 프로필 이미지 및 뱃지 */}
           <div css={badgeContainerStyle}>
             <img src={trader.profileImage} alt={`${trader.name} 프로필`} css={profileImageStyle} />
@@ -52,14 +53,10 @@ const TraderList = ({ traders, badgeRank }: TraderListProps) => {
                 <span css={separatorStyle}></span>
                 <span css={strategyNumberStyle}>{trader.strategiesCount.toLocaleString()}개</span>
               </span>
-              <MdArrowForward
-                size={24}
-                onClick={() => navigate(`/traders/${trader.traderId}`)} // 클릭 시 이동
-                css={arrowIconStyle}
-              />
+              <MdArrowForward size={24} />
             </div>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
@@ -175,13 +172,6 @@ const separatorStyle = css`
 const strategyNumberStyle = css`
   ${theme.textStyle.body.body1};
   color: ${theme.colors.teal[600]};
-`;
-
-const arrowIconStyle = css`
-  cursor: pointer;
-  &:hover {
-    color: ${theme.colors.teal[600]};
-  }
 `;
 
 const emptyContainerStyle = css`
