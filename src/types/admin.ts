@@ -7,7 +7,8 @@ export interface TradingTypeProps {
 }
 
 export interface InvestmentAssetProps {
-  order: number;
+  investmentAssetClassesId?: number;
+  order?: number;
   investmentAssetClassesName: string;
   investmentAssetClassesIcon: string;
   isActive: string;

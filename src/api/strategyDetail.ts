@@ -29,6 +29,7 @@ export const fetchDefaultStrategyDetail = async (id: number) => {
   try {
     const res = await axios.get(`/api/strategy-list/${id}`, {
       headers: {
+        useMock: true,
         'Content-Type': 'application/json',
         Auth: 'admin',
       },

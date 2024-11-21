@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
 import { SigninRequest } from '@/types/auth';
 
+// 로그인 요청에 대한 핸들러
 const MOCK_USER = [
   {
     member_id: 1,
@@ -24,6 +25,26 @@ const MOCK_USER = [
     password: 'Password1!',
     nickname: 'adminking',
     role: 'ADMIN',
+  },
+];
+
+// 전화번호로 이메일 찾기 요청에 대한 핸들러
+const MOCK_USER_WITH_PHONE = [
+  {
+    member_id: 1,
+    email: 'investor@example.com',
+    password: 'Password1!',
+    nickname: '투자자',
+    role: 'INVESTOR',
+    phone: '01012345678',
+  },
+  {
+    member_id: 2,
+    email: 'trader@example.com',
+    password: 'Password1!',
+    nickname: '트레이더',
+    role: 'TRADER',
+    phone: '01087654321',
   },
 ];
 
@@ -73,6 +94,35 @@ export const checkNicknameHandler = [
       data: {
         isDuplicate,
       },
+    });
+  }),
+];
+
+interface FindEmailRequest {
+  phone: string;
+}
+
+export const findEmailHandler = [
+  http.post(API_ENDPOINTS.AUTH.FIND.EMAIL, async ({ request }) => {
+    console.log('MSW: Find Email request intercepted at', API_ENDPOINTS.AUTH.FIND.EMAIL);
+    const { phone } = (await request.json()) as FindEmailRequest;
+    console.log('Received phone:', phone);
+
+    const user = MOCK_USER_WITH_PHONE.find((user) => user.phone === phone);
+
+    if (!user) {
+      return HttpResponse.json(
+        {
+          status: 'error',
+          error: '해당 전화번호로 등록된 계정을 찾을 수 없습니다.',
+        },
+        { status: 404 }
+      );
+    }
+
+    return HttpResponse.json({
+      status: 'success',
+      data: { email: user.email },
     });
   }),
 ];
