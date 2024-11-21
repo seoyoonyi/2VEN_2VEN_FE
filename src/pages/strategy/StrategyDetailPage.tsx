@@ -260,13 +260,22 @@ const StrategyDetailPage = () => {
 
   const handleDeleteDetail = (id: number) => {
     openModal({
-      type: 'confirm',
+      type: 'warning',
       title: '전략 삭제',
-      desc: '전략을 삭제하시겠습니까?',
+      desc: '해당 전략의 모든 정보가 삭제됩니다.',
       onAction: () => {
         deleteStrategyDetail(id);
         navigate(ROUTES.STRATEGY.LIST);
       },
+    });
+  };
+
+  const handleApproval = () => {
+    openModal({
+      type: 'confirm',
+      title: '승인요청',
+      desc: '승인 요청을 보내면 관리자 검토 후\n 전략이 승인됩니다.',
+      onAction: () => {},
     });
   };
 
@@ -286,6 +295,7 @@ const StrategyDetailPage = () => {
               minimumInvestment={strategy?.minInvestmentAmount}
               lastUpdatedDate={'통계쪽입력날짜'}
               onDelete={() => handleDeleteDetail(strategy.strategyId)}
+              onApproval={() => handleApproval()}
             />
             <StrategyContent content={strategy?.strategyOverview} />
             <FileDownSection fileUrl={strategyDummy.file.url} />

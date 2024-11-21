@@ -18,6 +18,7 @@ interface TitleProps {
   minimumInvestment?: string;
   lastUpdatedDate?: string;
   onDelete: (id: number) => void;
+  onApproval: () => void;
 }
 
 const StrategyTitleSection = ({
@@ -31,6 +32,7 @@ const StrategyTitleSection = ({
   minimumInvestment,
   lastUpdatedDate,
   onDelete,
+  onApproval,
 }: TitleProps) => {
   const navigate = useNavigate();
 
@@ -72,7 +74,7 @@ const StrategyTitleSection = ({
           >
             수정
           </Button>
-          <Button size='xs' width={120}>
+          <Button size='xs' width={120} onClick={onApproval}>
             승인요청
           </Button>
         </div>
