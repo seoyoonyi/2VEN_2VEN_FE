@@ -35,6 +35,7 @@ const colors = {
 
 const LineChart = ({ data, size, colorTheme }: LineChartProps) => {
   const selectedColors = colors[colorTheme];
+  const maxValue = Math.max(...data);
 
   const options = {
     chart: {
@@ -42,7 +43,6 @@ const LineChart = ({ data, size, colorTheme }: LineChartProps) => {
       width: sizes[size].width,
       height: sizes[size].height,
       backgroundColor: 'transparent',
-      margin: [0, 0, 0, 0],
     },
     title: {
       text: '',
@@ -51,7 +51,16 @@ const LineChart = ({ data, size, colorTheme }: LineChartProps) => {
       visible: false,
     },
     yAxis: {
-      visible: false,
+      labels: {
+        enabled: false,
+      },
+      title: {
+        text: '',
+      },
+      tickPositions: [0, maxValue / 3, (maxValue * 2) / 3, maxValue],
+      gridLineWidth: 1,
+      gridLineDashStyle: 'Dash',
+      gridLineTop: 0,
     },
     legend: {
       enabled: false,
