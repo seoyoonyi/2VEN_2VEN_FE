@@ -11,6 +11,7 @@ interface TraderData {
   description: string;
   strategiesCount: number;
   // followersCount: number;
+  // createdAt: string;
 }
 
 interface TraderListProps {
@@ -78,11 +79,11 @@ const cardStyle = css`
   border-radius: 4px;
   padding: 32px;
   gap: 16px;
-  transition: outline-color ease; /* outline 효과 적용 */
+  transition: outline-color ease;
 
   &:hover {
-    outline: 2px solid ${theme.colors.teal[600]}; /* hover 시 outline 추가 */
-    outline-offset: -1px; /* border와 일치하도록 offset 설정 */
+    outline: 2px solid ${theme.colors.teal[600]};
+    outline-offset: -1px;
     cursor: pointer;
   }
 `;
@@ -162,7 +163,7 @@ const strategyCountStyle = css`
 
 const strategyTextStyle = css`
   ${theme.textStyle.body.body1};
-  color: ${theme.colors.gray[700]}; /* "전략" 텍스트 색상 */
+  color: ${theme.colors.gray[700]};
 `;
 
 const separatorStyle = css`
@@ -173,13 +174,13 @@ const separatorStyle = css`
 
 const strategyNumberStyle = css`
   ${theme.textStyle.body.body1};
-  color: ${theme.colors.teal[600]}; /* 숫자 부분의 색상 설정 */
+  color: ${theme.colors.teal[600]};
 `;
 
 const arrowIconStyle = css`
-  cursor: pointer; /* 마우스 커서 변경 */
+  cursor: pointer;
   &:hover {
-    color: ${theme.colors.teal[600]}; /* 호버 시 색상 변경 */
+    color: ${theme.colors.teal[600]};
   }
 `;
 

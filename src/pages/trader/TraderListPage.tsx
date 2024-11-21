@@ -25,6 +25,7 @@ const generateTraders = [
     profileImage: TraderUserImage1,
     description: '안정적인 장기 투자를 선호하는 전문 트레이더입니다.',
     strategiesCount: 3050,
+    createdAt: '2024-11-01',
   },
   {
     traderId: 2,
@@ -32,6 +33,7 @@ const generateTraders = [
     profileImage: TraderUserImage2,
     description: '단기 수익을 추구하며, 높은 변동성을 활용한 전략이 특징입니다.',
     strategiesCount: 1500,
+    createdAt: '2024-04-27',
   },
   {
     traderId: 3,
@@ -39,6 +41,7 @@ const generateTraders = [
     profileImage: TraderUserImage3,
     description: '주도주로 매매하면 수익은 크고 손실은 작다! 믿는 종목에 발등 찍힌다.',
     strategiesCount: 450,
+    createdAt: '2024-05-02',
   },
   {
     traderId: 4,
@@ -46,6 +49,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image4.png',
     description: '투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야투자는 내꺼야',
     strategiesCount: 1200,
+    createdAt: '2024-10-07',
   },
   {
     traderId: 5,
@@ -53,6 +57,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image5.png',
     description: '모수에서 먹으면 냠냠 맛있어요.',
     strategiesCount: 8000,
+    createdAt: '2024-03-20',
   },
   {
     traderId: 6,
@@ -60,6 +65,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image6.png',
     description: '암호화폐 시장의 상승과 하락을 모두 잡습니다.',
     strategiesCount: 2000,
+    createdAt: '2024-06-15',
   },
   {
     traderId: 7,
@@ -67,6 +73,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image7.png',
     description: '전 세계 다양한 시장에 투자 경험이 풍부합니다.',
     strategiesCount: 1800,
+    createdAt: '2024-07-19',
   },
   {
     traderId: 8,
@@ -74,6 +81,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image8.png',
     description: '고성장 기업 발굴 전문가입니다.',
     strategiesCount: 1450,
+    createdAt: '2024-08-13',
   },
   {
     traderId: 9,
@@ -81,6 +89,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image9.png',
     description: '가치투자로 장기 수익률을 극대화합니다.',
     strategiesCount: 950,
+    createdAt: '2024-02-14',
   },
   {
     traderId: 10,
@@ -88,6 +97,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image10.png',
     description: '숏 포지션으로 하락장을 기회로 삼습니다.',
     strategiesCount: 750,
+    createdAt: '2024-11-01',
   },
   {
     traderId: 11,
@@ -95,6 +105,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image11.png',
     description: '시장의 핫한 테마를 선점하는 전략가입니다.',
     strategiesCount: 2100,
+    createdAt: '2024-01-22',
   },
   {
     traderId: 12,
@@ -102,6 +113,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image12.png',
     description: '안정적인 배당 수익을 목표로 투자합니다.',
     strategiesCount: 1300,
+    createdAt: '2024-05-27',
   },
   {
     traderId: 13,
@@ -109,6 +121,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image13.png',
     description: '초보지만 꾸준히 배우며 성장 중입니다.',
     strategiesCount: 300,
+    createdAt: '2024-03-08',
   },
   {
     traderId: 14,
@@ -116,6 +129,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image14.png',
     description: '옵션 거래를 활용한 고수익 추구가 특징입니다.',
     strategiesCount: 1150,
+    createdAt: '2024-06-01',
   },
   {
     traderId: 15,
@@ -123,6 +137,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image15.png',
     description: '데이터 기반의 퀀트 전략으로 투자합니다.',
     strategiesCount: 2200,
+    createdAt: '2024-10-20',
   },
   {
     traderId: 16,
@@ -130,6 +145,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image16.png',
     description: '리스크 최소화와 안정적 수익을 목표로 합니다.',
     strategiesCount: 1600,
+    createdAt: '2024-04-02',
   },
   {
     traderId: 17,
@@ -137,6 +153,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image17.png',
     description: 'ETF로 다양한 시장에 손쉽게 투자합니다.',
     strategiesCount: 1400,
+    createdAt: '2024-09-25',
   },
   {
     traderId: 18,
@@ -144,6 +161,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image18.png',
     description: '암호화폐에서 최적의 투자 전략을 구사합니다.',
     strategiesCount: 1850,
+    createdAt: '2024-07-05',
   },
   {
     traderId: 19,
@@ -151,6 +169,7 @@ const generateTraders = [
     profileImage: '/path/to/profile/image19.png',
     description: '펀드 관리 경험이 풍부한 투자자입니다.',
     strategiesCount: 2800,
+    createdAt: '2024-08-23',
   },
   {
     traderId: 20,
@@ -158,24 +177,36 @@ const generateTraders = [
     profileImage: '/path/to/profile/image20.png',
     description: '첨단 기술 관련 주식에 주로 투자합니다.',
     strategiesCount: 1950,
+    createdAt: '2024-02-07',
   },
 ];
 
 const TraderListPage = () => {
   const traders = generateTraders;
   const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState('');
   const limit = 14; // 한 페이지당 2칸씩*7줄
   const totalPages = Math.ceil(traders.length / limit);
-  const currentPageData = traders.slice((page - 1) * limit, page * limit);
+
+  const sortedTraders = [...traders].sort((a, b) => {
+    if (sortBy === 'most_strategies') {
+      return b.strategiesCount - a.strategiesCount; // 전략 많은 순으로 정렬
+    } else if (sortBy === 'new_traders') {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); // 등록일 내림차순
+    }
+    return 0;
+  });
+
+  const currentPageData = sortedTraders.slice((page - 1) * limit, page * limit);
 
   // strategiesCount 기준으로 상위 10명을 식별
   const badgeRank = [...traders]
-    .sort((a, b) => b.strategiesCount - a.strategiesCount) // strategiesCount 내림차순 정렬
-    .slice(0, 10) // 상위 10명만 추출
-    .map((trader) => trader.traderId); // 상위 10명의 traderId 저장
+    .sort((a, b) => b.strategiesCount - a.strategiesCount)
+    .slice(0, 10)
+    .map((trader) => trader.traderId);
 
   useEffect(() => {
-    window.scrollTo(0, 0); // 페이지 변경 시 스크롤 맨 위로 이동
+    window.scrollTo(0, 0);
   }, [page]);
 
   return (
@@ -188,7 +219,7 @@ const TraderListPage = () => {
           </div>
           <Select
             options={sortOptions}
-            onChange={() => {}}
+            onChange={(option) => setSortBy(option.value)}
             defaultLabel='기본 등록 순'
             type='sm'
             width='160px'
