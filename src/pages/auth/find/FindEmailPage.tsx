@@ -18,23 +18,23 @@ const FindEmailPage = () => {
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setPhone(value);
-
-    if (!value) {
-      setErrorMessage(''); // 전화번호 입력값이 없을 때 에러메시지 초기화
-      return;
-    }
-    if (!isValidPhoneNumber(value)) {
-      setErrorMessage(FIND_EMAIL_TEXT.error.phone.invalid);
-    } else {
+    // 숫자만 허용
+    const numbersOnly = value.replace(/[^0-9]/g, '');
+    setPhone(numbersOnly);
+    // 입력값이 없을 때 에러메시지 초기화
+    if (!numbersOnly) {
       setErrorMessage('');
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Submit clicked', phone);
+
+    // 폼 제출 시에만 유효성 검사
+    setErrorMessage(''); // 제출할 때마다 에러메시지 초기화
+
     if (!isValidPhoneNumber(phone)) {
+      setErrorMessage(FIND_EMAIL_TEXT.error.phone.invalid);
       return;
     }
 
@@ -55,6 +55,8 @@ const FindEmailPage = () => {
         <div>
           <Input
             type='tel'
+            pattern='[0-9]*' // 숫자만 허용
+            maxLength={11} // 최대 11자리
             inputSize='lg'
             placeholder={FIND_EMAIL_TEXT.input.phone.placeholder}
             showClearButton
@@ -67,7 +69,7 @@ const FindEmailPage = () => {
           type='submit'
           width={400}
           css={buttonStyle}
-          disabled={!phone || !!errorMessage || emailFinder.isPending}
+          disabled={!phone || emailFinder.isPending} // 전화번호가 있고 요청중이 아닐 때만 버튼 활성화
         >
           {FIND_EMAIL_TEXT.button.submit}
         </Button>
