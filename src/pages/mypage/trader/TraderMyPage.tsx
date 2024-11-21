@@ -1,10 +1,11 @@
 import { css } from '@emotion/react';
 import { Link } from 'react-router-dom';
 
+import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
 
 const TraderMyPage = () => (
-  <div css={containerStyle}>
+  <>
     <div css={myPageHeaderStyle}>
       <div>
         <h2>나의 전략</h2>
@@ -12,7 +13,7 @@ const TraderMyPage = () => (
           총 <span>0</span>개의 전략이 있습니다
         </p>
       </div>
-      <Link to=''>전략등록</Link>
+      <Link to={ROUTES.MYPAGE.TRADER.STRATEGIES.CREATE}>전략등록</Link>
     </div>
     <div>
       <p css={StrategyEmptyStyle}>
@@ -20,16 +21,8 @@ const TraderMyPage = () => (
         <br /> &apos;전략 등록&apos; 버튼을 눌러 새로운 전략을 추가해보세요!
       </p>
     </div>
-  </div>
+  </>
 );
-
-const containerStyle = css`
-  width: 955px;
-  height: 609px;
-  padding: 48px 40px 80px 40px;
-  background-color: ${theme.colors.main.white};
-  border-radius: 8px;
-`;
 
 const myPageHeaderStyle = css`
   display: flex;
@@ -66,7 +59,6 @@ const StrategyEmptyStyle = css`
   height: 200px;
   color: ${theme.colors.gray[400]};
   text-align: center;
-  // outline: 1px solid red;
 `;
 
 export default TraderMyPage;
