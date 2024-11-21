@@ -101,14 +101,19 @@ const SignUpForm = () => {
             onBlur={handleNicknameBlur}
             status={
               nicknameMessage
-                ? nicknameMessage.includes('사용 가능')
+                ? nicknameMessage.includes('사용 가능한 닉네임')
                   ? 'success'
                   : 'error'
                 : 'default'
             }
           />
           {nicknameMessage && (
-            <p css={[messageStyle, nicknameMessage.includes('사용 가능') && successMessageStyle]}>
+            <p
+              css={[
+                messageStyle,
+                nicknameMessage.includes('사용 가능한 닉네임') && successMessageStyle,
+              ]}
+            >
               {nicknameMessage}
             </p>
           )}
