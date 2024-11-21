@@ -62,27 +62,31 @@ const TypeTable = ({ attributes, data, selectedItems, onSelectChange, onEdit }: 
           </tr>
         </thead>
         <tbody>
-          {data.map((row, idx) => (
-            <tr key={idx} css={tableRowStyle}>
-              <td css={tableCellStyle}>
-                <Checkbox
-                  checked={selectedItems.includes(row.id) ?? false}
-                  onChange={() => handleSelect(row.id)}
-                />
-              </td>
-              <td css={tableCellStyle} colSpan={4}>
-                <img src={row.icon} alt={row.icon} css={tableImgStyle} />
-              </td>
-              <td css={tableCellStyle} colSpan={3}>
-                {row.title}
-              </td>
-              <td css={tableCellStyle} colSpan={2}>
-                <Button variant='accent' size='xs' width={72} onClick={() => onEdit(row.id)}>
-                  수정
-                </Button>
-              </td>
-            </tr>
-          ))}
+          {data ? (
+            data.map((row, idx) => (
+              <tr key={idx} css={tableRowStyle}>
+                <td css={tableCellStyle}>
+                  <Checkbox
+                    checked={selectedItems.includes(row.id) ?? false}
+                    onChange={() => handleSelect(row.id)}
+                  />
+                </td>
+                <td css={tableCellStyle} colSpan={4}>
+                  <img src={row.icon} alt={row.icon} css={tableImgStyle} />
+                </td>
+                <td css={tableCellStyle} colSpan={3}>
+                  {row.title}
+                </td>
+                <td css={tableCellStyle} colSpan={2}>
+                  <Button variant='accent' size='xs' width={72} onClick={() => onEdit(row.id)}>
+                    수정
+                  </Button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <div>업로드 된 데이터가 없습니다.</div>
+          )}
         </tbody>
       </table>
     </div>
