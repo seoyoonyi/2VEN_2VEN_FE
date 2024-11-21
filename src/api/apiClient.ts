@@ -2,44 +2,65 @@ import axios from 'axios';
 
 import { useAuthStore } from '@/stores/authStore';
 
-export const apiClient = axios.create();
+export const API_BASE_URL = import.meta.env.VITE_BASE_URL;
 
-// TODO: MSW와 실제 API를 구분하기 위한 baseURL 설정(api 다 나오면 이걸로 변경..)
-// export const API_BASE_URL =
-//   import.meta.env.VITE_ENABLE_MSW === 'true'
-//     ? '' // MSW 사용 시 빈 문자열
-//     : import.meta.env.VITE_BASE_URL;
-
-// export const apiClient = axios.create({
-//   baseURL: API_BASE_URL,
-// });
-
-// TODO: 요청 인터셉터 구현
-// - 요청 URL과 메서드 로깅 (디버깅용)
-// - 엔드포인트 요청 시 헤더에 useMock:true추가 --> msw 데이터 , 추가 안하면 리얼 api
-// - Authorization 헤더에 로그인 토큰 추가 (localStorage or sessionStorage에서 가져오기)
-
-apiClient.interceptors.request.use((config) => {
-  if (config.headers.useMock) {
-    config.baseURL = '';
-    delete config.headers.useMock;
-  } else {
-    config.baseURL = import.meta.env.VITE_BASE_URL;
-  }
-  const { token } = useAuthStore.getState();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+export const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-// TODO: 응답 인터셉터 구현
-// - 응답 데이터를 호출부에서 쉽게 처리할 수 있도록 변환
-// - 상태 코드 기반 에러 처리 추가 (401 Unauthorized, 404 Not Found 등)
+apiClient.interceptors.request.use(
+  (config) => {
+    // 요청 URL과 메서드 로깅(개발환경에서만!)
+    if (import.meta.env.MODE === 'development') {
+      console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
+    }
+
+    // JWT 토큰이 있으면, Authorization 헤더에 추가
+    const { token } = useAuthStore.getState();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // MSW 사용 여부에 따라 useMock 헤더 추가
+    if (config.headers.useMick) {
+      config.baseURL = '';
+      delete config.headers.useMock;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('[Response Error]', error.response || error.message);
+    if (error.responxe) {
+      const { status } = error.response;
+
+      switch (status) {
+        case 401: {
+          // 인증 에러 처리
+          useAuthStore.getState().signout();
+          break;
+        }
+        case 403: {
+          console.error('접근 권한이 없습니다.');
+          break;
+        }
+        case 404: {
+          console.error('요청한 리소스를 찾을 수 없습니다.');
+          break;
+        }
+        case 500: {
+          console.error('서버 에러입니다.');
+          break;
+        }
+      }
+    }
     return Promise.reject(error);
   }
 );
