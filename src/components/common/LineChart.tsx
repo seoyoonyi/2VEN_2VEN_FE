@@ -35,7 +35,6 @@ const colors = {
 
 const LineChart = ({ data, size, colorTheme }: LineChartProps) => {
   const selectedColors = colors[colorTheme];
-  const maxValue = Math.max(...data);
 
   const options = {
     chart: {
