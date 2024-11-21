@@ -17,6 +17,7 @@ interface TitleProps {
   followers?: number;
   minimumInvestment?: string;
   lastUpdatedDate?: string;
+  onDelete: (id: number) => void;
 }
 
 const StrategyTitleSection = ({
@@ -29,6 +30,7 @@ const StrategyTitleSection = ({
   followers,
   minimumInvestment,
   lastUpdatedDate,
+  onDelete,
 }: TitleProps) => {
   const navigate = useNavigate();
 
@@ -57,7 +59,7 @@ const StrategyTitleSection = ({
           <MdOutlineShare size={16} css={shareStyle} />
         </button>
         <div css={buttonAreaStyle}>
-          <Button size='xs' variant='secondaryGray' width={90}>
+          <Button size='xs' variant='secondaryGray' width={90} onClick={() => onDelete(id)}>
             삭제
           </Button>
           <Button

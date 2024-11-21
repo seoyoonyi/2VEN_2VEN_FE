@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import Modal from '@/components/common/Modal';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
 import ChartSection from '@/components/page/strategy-detail/section/ChartSection';
 import StrategyContent from '@/components/page/strategy-detail/StrategyContent';
@@ -11,7 +12,10 @@ import AccountVerify from '@/components/page/strategy-detail/tabmenu/AccountVeri
 import DailyAnalysis from '@/components/page/strategy-detail/tabmenu/DailyAnalysis';
 import MonthlyAnalysis from '@/components/page/strategy-detail/tabmenu/MonthlyAnalysis';
 import StatisticsTable from '@/components/page/strategy-detail/tabmenu/StatisticsTable';
+import { ROUTES } from '@/constants/routes';
+import useStrategyDetailDelete from '@/hooks/mutations/useStrategyDetailDelete';
 import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
+import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 import { formatDate } from '@/utils/dateFormat';
 
@@ -249,7 +253,22 @@ const tabMenu = [
 
 const StrategyDetailPage = () => {
   const { strategyId } = useParams();
+  const navigate = useNavigate();
   const { strategy } = useFetchStrategyDetail(strategyId || '');
+  const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
+  const { openModal } = useModalStore();
+
+  const handleDeleteDetail = (id: number) => {
+    openModal({
+      type: 'confirm',
+      title: '전략 삭제',
+      desc: '전략을 삭제하시겠습니까?',
+      onAction: () => {
+        deleteStrategyDetail(id);
+        navigate(ROUTES.STRATEGY.LIST);
+      },
+    });
+  };
 
   return (
     <div css={containerStyle}>
@@ -266,6 +285,7 @@ const StrategyDetailPage = () => {
               followers={strategy?.followersCount}
               minimumInvestment={strategy?.minInvestmentAmount}
               lastUpdatedDate={'통계쪽입력날짜'}
+              onDelete={() => handleDeleteDetail(strategy.strategyId)}
             />
             <StrategyContent content={strategy?.strategyOverview} />
             <FileDownSection fileUrl={strategyDummy.file.url} />
@@ -281,6 +301,7 @@ const StrategyDetailPage = () => {
           </div>
         </div>
       </div>
+      <Modal />
     </div>
   );
 };
