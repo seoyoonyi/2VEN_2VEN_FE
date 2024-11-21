@@ -9,7 +9,6 @@ export const fetchDefaultStrategyDetail = async (id: number) => {
   try {
     const res = await apiClient.get(`${API_ENDPOINTS.STRATEGY.CREATE}/${id}`, {
       headers: {
-        useMock: true,
         'Content-Type': 'application/json',
         Auth: 'admin',
       },
@@ -18,5 +17,19 @@ export const fetchDefaultStrategyDetail = async (id: number) => {
   } catch (error) {
     console.error('failed to fetch DefaultStrategyDetail data', error);
     throw error;
+  }
+};
+
+export const fetchDeleteStrategyDetail = async (id: number) => {
+  try {
+    const req = await apiClient.delete(`${API_ENDPOINTS.STRATEGY.CREATE}/${id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Auth: 'admin',
+      },
+    });
+    return req.data;
+  } catch (error) {
+    console.error('faild to fetch DeleteStrategyDetail', error);
   }
 };
