@@ -69,7 +69,7 @@ export const FIND_EMAIL_TEXT = {
   error: {
     phone: {
       invalid: '올바른 전화번호를 입력해주세요.',
-      notFound: '전화번호를 다시 확인해주세요.',
+      notFound: '가입되지 않은 전화번호입니다.',
     },
   },
   links: {
