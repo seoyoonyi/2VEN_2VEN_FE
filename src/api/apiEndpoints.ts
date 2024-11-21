@@ -7,6 +7,14 @@ export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: '/api/members/login',
     SIGNUP: '/api/members/signup',
+    FIND: {
+      EMAIL: '/api/members/check-phone', // 이메일 찾기
+      PASSWORD: '/api/members/find/password', // 비밀번호 찾기
+      PASSWORD_RESET: '/api/members/find/password/reset', // 비밀번호 재설정
+    },
+    ADMIN: {
+      VERIFY: '/api/auth/check-verification-code', // 관리자 인증
+    },
   },
   STRATEGY: {
     CREATE: '/api/strategies', // 전략 등록

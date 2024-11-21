@@ -1,21 +1,27 @@
 import { css } from '@emotion/react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import SearchImage from '@/assets/images/search_image.png';
 import Button from '@/components/common/Button';
+import { EMAIL_FOUND_TEXT } from '@/constants/auth';
 import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
+import { maskEmail } from '@/utils/validation';
 
-const EmailFoundPage = () => (
-  <div css={containerStyle}>
-    <h3 css={pageHeadingStyle}>이메일을 찾았어요!</h3>
-    <img src={SearchImage} alt='이메일 찾기 이미지' />
-    <p>sy****@n***.com</p>
-    <Button width={400}>
-      <Link to={ROUTES.AUTH.SIGNIN}>로그인 하러가기</Link>
-    </Button>
-  </div>
-);
+const EmailFoundPage = () => {
+  const location = useLocation();
+  const email = location.state?.email;
+  return (
+    <div css={containerStyle}>
+      <h3 css={pageHeadingStyle}>{EMAIL_FOUND_TEXT.title}</h3>
+      <img src={SearchImage} alt={EMAIL_FOUND_TEXT.image.alt} />
+      <p>{maskEmail(email)}</p>
+      <Button width={400}>
+        <Link to={ROUTES.AUTH.SIGNIN}>{EMAIL_FOUND_TEXT.button.signin}</Link>
+      </Button>
+    </div>
+  );
+};
 
 const containerStyle = css`
   display: flex;
