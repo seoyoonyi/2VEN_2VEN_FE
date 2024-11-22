@@ -7,9 +7,11 @@ export const REGEX = {
   email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   // 닉네임: 영문 대소문자와 숫자 조합 필수, 2-10자 사이, 공백 불가능 ✅
   nickname: {
-    onlyAlphanumeric: /^[a-zA-Z0-9]+$/, // 영문자와 숫자만 허용
-    hasNumber: /[0-9]/, // 숫자 포함
-    hasLetter: /[a-zA-Z]/, // 영문자 포함
+    korean: /[가-힣]/, // 한글 포함 여부
+    upperEnglish: /[A-Z]/, // 영어 대문자 포함 여부
+    lowerEnglish: /[a-z]/, // 영어 소문자 포함 여부
+    number: /[0-9]/, // 숫자 포함 여부
+    allowedChars: /^[가-힣A-Za-z0-9]+$/, // 허용된 문자만 포함
   },
   // 비밀번호: 영문, 숫자, 특수문자 포함 8자 이상
   password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
@@ -28,8 +30,7 @@ export const VALIDATION_MESSAGE = {
   nickname: {
     length: '닉네임은 2-10자 사이여야 합니다.',
     whitespace: '공백은 사용할 수 없습니다.',
-    charset: '영문 대소문자와 숫자만 사용 가능합니다.',
-    combination: '영문자와 숫자를 반드시 함께 사용해야 합니다.',
+    chars: '한글, 영문 대소문자, 숫자만 사용 가능합니다.',
     valid: '유효한 닉네임입니다.',
   },
   password: {
