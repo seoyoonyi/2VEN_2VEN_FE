@@ -14,6 +14,7 @@ import { ROUTES } from '@/constants/routes';
 const InquiryCreateForm = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
 
   const handleInquiryListClick = () => {
     navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST);
@@ -24,7 +25,7 @@ const InquiryCreateForm = () => {
     <form css={formContainerStyle}>
       <InquiryStrategyInfo />
       <InquiryTitle title={title} onTitleChange={(e) => setTitle(e.target.value)} />
-      <InquiryContent />
+      <InquiryContent content={content} onContentChange={(e) => setContent(e.target.value)} />
       {/* 관련 전략명 */}
       {/* <div css={formRowStyle}>
       <div css={formGroupStyle}>

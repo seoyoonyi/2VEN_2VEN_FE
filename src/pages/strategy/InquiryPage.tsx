@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 
 import PageHeader from '@/components/common/PageHeader';
 import InquiryCreateForm from '@/components/page/inquiry-create/InquiryCreateForm';
-// import Button from '@/pages/test-page/ButtonTestPage';
+// import Button from '@/pages/test-page/ModalTestPage';
 import theme from '@/styles/theme';
 
 // 다른 페이지와 달리 백틱으로 줄바꿈 함
