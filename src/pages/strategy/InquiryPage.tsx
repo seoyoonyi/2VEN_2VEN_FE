@@ -22,10 +22,9 @@ const InquiryPage = () => (
 
 const createContainerStyle = css`
   width: ${theme.layout.width.content};
-  margin: 0 auto; /*합쳐서 가능?*/
+  margin: 0 auto;
   padding: 48px 120px;
-  outline: 1px solid red; /*아웃라인*/
-  margin-bottom: 28px; /*합쳐서 가능?*/
+  margin-bottom: 28px;
 `;
 
 export default InquiryPage;
