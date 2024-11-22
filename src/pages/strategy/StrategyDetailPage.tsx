@@ -254,7 +254,7 @@ const tabMenu = [
 const StrategyDetailPage = () => {
   const { strategyId } = useParams();
   const navigate = useNavigate();
-  const { strategy } = useFetchStrategyDetail(strategyId || '');
+  const { strategy, isLoading } = useFetchStrategyDetail(strategyId || '');
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { openModal } = useModalStore();
 
@@ -279,6 +279,9 @@ const StrategyDetailPage = () => {
     });
   };
 
+  if (isLoading) {
+    <div>로딩중....</div>;
+  }
   return (
     <div css={containerStyle}>
       <div css={contentStyle}>

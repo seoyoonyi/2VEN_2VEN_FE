@@ -11,7 +11,7 @@ export interface StrategyDetailProps {
   traderImage: string;
   strategyId: number;
   strategyTitle: string;
-  minInvestmentAmout: string;
+  minInvestmentAmount: string;
   strategyOverview: string;
   followersCount: number;
   writedAt: string;

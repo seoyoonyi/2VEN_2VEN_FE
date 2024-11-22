@@ -16,7 +16,6 @@ export const fetchDefaultStrategyDetail = async (id: number) => {
     return res.data;
   } catch (error) {
     console.error('failed to fetch DefaultStrategyDetail data', error);
-    throw error;
   }
 };
 
