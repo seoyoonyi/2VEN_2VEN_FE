@@ -6,6 +6,7 @@ import { ROUTES } from '@/constants/routes';
 import { USER_TYPE_TEXT } from '@/constants/signup';
 import theme from '@/styles/theme';
 import { UserRole } from '@/types/route';
+import { addRolePrefix } from '@/utils/auth';
 
 const SignUpSelectTypePage = () => {
   const navigate = useNavigate();
@@ -16,7 +17,8 @@ const SignUpSelectTypePage = () => {
   }));
 
   const handleSignup = (role: UserRole) => {
-    navigate(ROUTES.AUTH.SIGNUP.FORM, { state: { userRole: role } }); // HomeRouteState 타입에 맞게 객체로 전달(investor, trader)
+    console.log(role);
+    navigate(ROUTES.AUTH.SIGNUP.FORM, { state: { userRole: addRolePrefix(role) } }); // HomeRouteState 타입에 맞게 객체로 전달(investor, trader)
   };
 
   return (
