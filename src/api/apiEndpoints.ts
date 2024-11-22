@@ -3,6 +3,7 @@ export const API_ENDPOINTS = {
   ADMIN: {
     TRADING_TYPES: '/api/admin/trading-types',
     STOCK_TYPES: '/api/admin/inv-asset-classes',
+    ICON_FILES: '/api/files/upload',
   },
   AUTH: {
     LOGIN: '/api/members/login',
@@ -35,5 +36,8 @@ export const API_ENDPOINTS = {
   FILES: {
     PROFILE: (fileId: string) => `/api/files/profile/${fileId}`, // 프로필 이미지 다운로드
     PROPOSAL: '/api/files/proposal', // 제안서 파일 업로드
+  },
+  FILES: {
+    GET: '/api/files/download',
   },
 };
