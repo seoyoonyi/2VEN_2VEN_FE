@@ -40,8 +40,9 @@ export const ROUTES = {
         STRATEGIES: (folderId: string) => `/mypage/investor/following/${folderId}`, // 특정 폴더의 관심전략 목록
       },
       MYINQUIRY: {
-        LIST: '/mypage/investor/myinquiry', // 나의 상담 게시판
-        DETAIL: (inquiryId: string) => `/mypage/investor/myinquiry/${inquiryId}`,
+        LIST: '/mypage/investor/myinquiry', // 나의 문의 게시판
+        DETAIL: (inquiryId: string) => `/mypage/investor/myinquiry/${inquiryId}`, // 문의 상세
+        EDIT: (inquiryId: string) => `/mypage/investor/myinquiry/${inquiryId}/edit`, // 문의 수정
       },
       PROFILE: '/mypage/investor/profile', // 프로필 관리
     },
