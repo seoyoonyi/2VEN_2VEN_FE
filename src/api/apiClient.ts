@@ -9,6 +9,7 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // CORS with Credentials 설정
 });
 
 apiClient.interceptors.request.use(

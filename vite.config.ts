@@ -13,6 +13,12 @@ export default defineConfig({
     tsconfigPaths(),
   ],
   server: {
-    port: 3000, // 어떤 포트로 서버를 열지
+    proxy: {
+      '/api': {
+        target: 'https://2ven.shop',
+        changeOrigin: true,
+        secure: false, // https를 사용하는 경우 인증서 검증을 skip
+      },
+    },
   },
 });
