@@ -32,7 +32,6 @@ export const fetchFileUrl = async (id: number) => {
         Auth: 'anyone',
       },
     });
-    console.log(res);
     return res.data;
   } catch (error) {
     console.error('failed to fetch file', error);

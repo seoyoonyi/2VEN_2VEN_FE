@@ -111,6 +111,7 @@ const TradingTypeListPage = () => {
     const selectedType = data?.find((item) => item.tradingTypeId === id);
     if (selectedType) {
       let updatedName = selectedType.tradingTypeName;
+      let updatedIcon = selectedType.tradingTypeIcon;
       openContentModal({
         title: '매매유형 수정',
         content: (
@@ -120,6 +121,7 @@ const TradingTypeListPage = () => {
             fname={selectedType.tradingTypeName}
             icon={selectedType.tradingTypeIcon}
             onNameChange={(name) => (updatedName = name)}
+            onFileIconUrl={(icon) => (updatedIcon = icon)}
           />
         ),
         onAction: () => {
@@ -131,7 +133,7 @@ const TradingTypeListPage = () => {
             tradingTypeId: selectedType.tradingTypeId,
             tradingTypeOrder: selectedType.tradingTypeOrder,
             tradingTypeName: updatedName,
-            tradingTypeIcon: 'testIcon',
+            tradingTypeIcon: updatedIcon,
             isActive: 'Y',
           });
           setSelectedItems([]);
@@ -142,6 +144,7 @@ const TradingTypeListPage = () => {
 
   const handleUpload = () => {
     let newName: string = '';
+    let newIcon: string = '';
     openContentModal({
       title: '매매유형 등록',
       content: (
@@ -153,6 +156,9 @@ const TradingTypeListPage = () => {
           onNameChange={(name) => {
             newName = name;
           }}
+          onFileIconUrl={(icon) => {
+            newIcon = icon;
+          }}
         />
       ),
       onAction: async () => {
@@ -162,7 +168,7 @@ const TradingTypeListPage = () => {
         }
         addTradingType({
           tradingTypeName: newName,
-          tradingTypeIcon: 'testIcon',
+          tradingTypeIcon: newIcon,
           isActive: 'Y',
         });
       },

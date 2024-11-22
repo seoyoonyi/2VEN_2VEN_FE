@@ -2,27 +2,50 @@ import { useEffect, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
 
+import { fetchFileUrl } from '@/api/uploadFile';
 import Button from '@/components/common/Button';
+import useIconMutation from '@/hooks/mutations/useIconMutation';
 import theme from '@/styles/theme';
 
 interface FileInputProps {
   title: string;
-  file?: File | null;
+  file: File | null;
   fname: string;
   icon: string;
   onNameChange: (name: string) => void;
+  onFileIconUrl: (url: string) => void;
 }
-const FileInput = ({ title, file, fname, icon, onNameChange }: FileInputProps) => {
+const FileInput = ({ title, file, fname, icon, onNameChange, onFileIconUrl }: FileInputProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(file || null);
+  const [selectedFile, setSelectedFile] = useState<File>();
   const [fileName, setFileName] = useState(fname);
   const [iconName, setIconName] = useState(icon);
+  const [iconUrl, setIconUrl] = useState('');
+  const { mutate } = useIconMutation();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //TODO:이거 임시임 여기에 올리는 이미지 파일을 s3에 올린 후 그 이미지 url로 가져오는 로직 들어가야함 그 Url이 아이콘임 ~
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    //TODO:사용자 Id 가져와서 넣어야함 ^^ props에 추가해줘야함
     if (e.target.files) {
       setSelectedFile(e.target.files[0]);
       setIconName(e.target.files[0].name);
+
+      if (selectedFile) {
+        mutate(
+          {
+            fileItem: e.target.files[0],
+            uploaderId: 'admintest123',
+          },
+          {
+            onSuccess: async (data) => {
+              if (data.fileId) {
+                const fileUrl = await fetchFileUrl(data.fileId);
+                setIconUrl(fileUrl);
+                onFileIconUrl(fileUrl);
+              }
+            },
+          }
+        );
+      }
     }
   };
 
@@ -60,7 +83,7 @@ const FileInput = ({ title, file, fname, icon, onNameChange }: FileInputProps) =
       {selectedFile && (
         <img src={URL.createObjectURL(selectedFile)} alt={selectedFile.name} css={imageStyle} />
       )}
-      {icon && !selectedFile && <img src={icon} alt={icon} css={imageStyle} />}
+      {icon && !selectedFile && <img src={iconUrl} alt={icon} css={imageStyle} />}
       <div css={inputAndButtonContainerStyle}>
         <input type='text' value={iconName} readOnly css={inputStyleOverride} />
         <Button variant='secondary' size='sm' onClick={handleFileUpload} width={115}>

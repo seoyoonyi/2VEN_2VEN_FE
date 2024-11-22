@@ -40,6 +40,7 @@ const StockTypeListPage = () => {
     pageSize: 10,
   });
   const [selectedStocks, setSelectedStocks] = useState<number[]>([]);
+  const [file, setFile] = useState<File | null>(null);
   const { mutate: addInvestmentAssets } = usePostInvestmentAssets();
   const { mutate: deleteInvestmentAssets } = useDeleteInvestmentAssets();
   const { mutate: updateInvestmentAssets } = usePutInvestmentAssets();
@@ -120,6 +121,7 @@ const StockTypeListPage = () => {
 
   const handleUpload = () => {
     let newName: string = '';
+    let selectedIcon: string = '';
     openContentModal({
       title: '상품유형 등록',
       content: (
@@ -131,11 +133,18 @@ const StockTypeListPage = () => {
           onNameChange={(name) => {
             newName = name;
           }}
+          onFileIconUrl={(newIcon) => {
+            selectedIcon = newIcon;
+          }}
         />
       ),
       onAction: () => {
         if (!newName.trim()) {
           alert('상품유형명이 입력되지않았습니다.');
+          return;
+        }
+        if (!file) {
+          alert('파일을 선택하세요');
           return;
         }
         if (isCheckDupicateName(newName, 1, data)) {
@@ -144,9 +153,10 @@ const StockTypeListPage = () => {
         }
         addInvestmentAssets({
           investmentAssetClassesName: newName,
-          investmentAssetClassesIcon: 'testIcon',
+          investmentAssetClassesIcon: selectedIcon,
           isActive: 'Y',
         });
+        setFile(null);
       },
     });
   };
@@ -155,15 +165,19 @@ const StockTypeListPage = () => {
     const selectedType = data?.find((item) => item.investmentAssetClassesId === id);
     if (selectedType) {
       let updatedName = selectedType.investmentAssetClassesName;
+      let updatedIcon = selectedType.investmentAssetClassesIcon;
       openContentModal({
-        title: '매매유형 수정',
+        title: '상품유형 수정',
         content: (
           <FileInput
-            title='매매유형'
-            file={null}
+            title='상품유형'
+            file={file}
             fname={selectedType.investmentAssetClassesName}
             icon={selectedType.investmentAssetClassesIcon}
             onNameChange={(name) => (updatedName = name)}
+            onFileIconUrl={(newIcon) => {
+              updatedIcon = newIcon;
+            }}
           />
         ),
         onAction: () => {
@@ -171,17 +185,13 @@ const StockTypeListPage = () => {
             alert('상품유형명이 입력되지않았습니다.');
             return;
           }
-          if (isCheckDupicateName(updatedName, selectedType.investmentAssetClassesId, data)) {
-            alert('이미 존재하는 상품유형입니다.');
-            return;
-          }
           updateInvestmentAssets({
             investmentAssetClassesId: selectedType.investmentAssetClassesId,
             investmentAssetClassesName: updatedName,
-            investmentAssetClassesIcon: 'testIcon',
+            investmentAssetClassesIcon: updatedIcon,
             isActive: 'Y',
           });
-          setSelectedStocks([]);
+          setFile(null);
         },
       });
     }
