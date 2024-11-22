@@ -34,7 +34,7 @@ const InquiryStrategyInfo = ({
         value={investmentAmount}
         onChange={onAmountChange}
         placeholder='0'
-        css={inputStyle}
+        css={[inputStyle, amountStyle]}
       />
       <label htmlFor='investment-date' css={labelStyle}>
         투자개시시점
@@ -105,6 +105,14 @@ const inputStyle = css`
   &::placeholder {
     color: ${theme.colors.gray[700] + '4a'};
     font-weight: ${theme.typography.fontWeight.regular};
+  }
+`;
+
+const amountStyle = css`
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 `;
 
