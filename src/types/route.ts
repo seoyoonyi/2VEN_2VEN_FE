@@ -1,4 +1,4 @@
-export type UserRole = 'INVESTOR' | 'TRADER' | 'ADMIN';
+export type UserRole = 'ROLE_INVESTOR' | 'ROLE_TRADER' | 'ROLE_ADMIN';
 
 export interface HomeRouteState {
   userRole?: UserRole;

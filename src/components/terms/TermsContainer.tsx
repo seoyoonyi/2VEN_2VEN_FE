@@ -44,15 +44,15 @@ const TermsContainer = ({ userRole, terms, setTerms }: TermsContainerProps) => {
         <div css={termsTitleStyle}>
           {/* 회원유형별 약관(필수) */}
           <Checkbox checked={terms.roleRequired} onChange={handleTermsChange('roleRequired')}>
-            {userRole === 'INVESTOR'
+            {userRole === 'ROLE_INVESTOR'
               ? TERMS_CHECKBOX_TITLE.INVESTOR_TERMS_REQUIRED
               : TERMS_CHECKBOX_TITLE.TRADER_TERMS_REQUIRED}
           </Checkbox>
         </div>
         <div css={termsDescStyle}>
           <div css={contentsStyle}>
-            {userRole === 'INVESTOR' && <InvestorTerms />}
-            {userRole === 'TRADER' && <TraderTerms />}
+            {userRole === 'ROLE_INVESTOR' && <InvestorTerms />}
+            {userRole === 'ROLE_TRADER' && <TraderTerms />}
           </div>
         </div>
       </div>
