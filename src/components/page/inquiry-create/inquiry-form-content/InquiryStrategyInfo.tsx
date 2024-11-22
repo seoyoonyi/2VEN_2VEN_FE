@@ -6,12 +6,16 @@ interface InquiryStrategyInfoProps {
   strategyName: string;
   investmentAmount: string;
   investmentDate: string;
+  onAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const InquiryStrategyInfo = ({
   strategyName,
   investmentAmount,
   investmentDate,
+  onAmountChange,
+  onDateChange,
 }: InquiryStrategyInfoProps) => (
   <div css={containerStyle}>
     <div css={infoStyle}>
@@ -24,11 +28,24 @@ const InquiryStrategyInfo = ({
       <label htmlFor='investment-amount' css={labelStyle}>
         투자개시금액
       </label>
-      <input id='investment-amount' type='text' value={investmentAmount} readOnly css={RowStyle} />
+      <input
+        id='investment-amount'
+        type='number'
+        value={investmentAmount}
+        onChange={onAmountChange}
+        placeholder='0'
+        css={inputStyle}
+      />
       <label htmlFor='investment-date' css={labelStyle}>
         투자개시시점
       </label>
-      <input id='investment-date' type='text' value={investmentDate} readOnly css={RowStyle} />
+      <input
+        id='investment-date'
+        type='date'
+        value={investmentDate}
+        onChange={onDateChange}
+        css={inputStyle}
+      />
     </div>
   </div>
 );
@@ -76,17 +93,19 @@ const nameStyle = css`
   outline: none;
 `;
 
-const RowStyle = css`
+const inputStyle = css`
   background-color: ${theme.colors.main.white};
   color: ${theme.colors.gray[600]};
-  display: flex;
   width: 299px;
   height: 56px;
   padding: 12px 16px;
   border: 1px solid ${theme.colors.gray[300]};
-  gap: 10px;
-  align-items: center;
   outline: none;
+
+  &::placeholder {
+    color: ${theme.colors.gray[700] + '4a'};
+    font-weight: ${theme.typography.fontWeight.regular};
+  }
 `;
 
 export default InquiryStrategyInfo;

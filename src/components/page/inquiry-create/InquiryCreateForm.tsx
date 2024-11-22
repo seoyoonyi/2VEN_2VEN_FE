@@ -12,14 +12,14 @@ import { ROUTES } from '@/constants/routes';
 const generateInquiry = {
   strategyId: '1',
   strategyName: '사람들이 살 때 많이 따라사는 전략',
-  investmentAmount: '200,000,000,000',
-  investmentDate: '2024.12.25',
 };
 
 const InquiryCreateForm = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [investmentAmount, setInvestmentAmount] = useState('');
+  const [investmentDate, setInvestmentDate] = useState('');
 
   const handleInquiryListClick = () => {
     navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST);
@@ -33,8 +33,10 @@ const InquiryCreateForm = () => {
     <form css={formContainerStyle}>
       <InquiryStrategyInfo
         strategyName={generateInquiry.strategyName}
-        investmentAmount={generateInquiry.investmentAmount}
-        investmentDate={generateInquiry.investmentDate}
+        investmentAmount={investmentAmount}
+        onAmountChange={(e) => setInvestmentAmount(e.target.value)}
+        investmentDate={investmentDate}
+        onDateChange={(e) => setInvestmentDate(e.target.value)}
       />
       <InquiryTitle title={title} onTitleChange={(e) => setTitle(e.target.value)} />
       <InquiryContent content={content} onContentChange={(e) => setContent(e.target.value)} />
