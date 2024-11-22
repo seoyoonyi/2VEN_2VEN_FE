@@ -188,9 +188,9 @@ const StockTypeListPage = () => {
   };
 
   return (
-    <div css={stockStyle}>
-      <div css={headingStyle}>
-        <div css={titleStyle}>상품유형 관리</div>
+    <>
+      <div css={adminHeaderStyle}>
+        <h2>상품유형 관리</h2>
         <div css={buttonArea}>
           <Button size='xs' width={89} onClick={handleUpload}>
             등록
@@ -206,6 +206,7 @@ const StockTypeListPage = () => {
         selectedItems={selectedStocks}
         onSelectChange={handleSelectChange}
         onEdit={handleEdit}
+        customStyle={tabletyle}
       />
       <Pagination
         totalPage={paginationData.totalPage}
@@ -215,35 +216,27 @@ const StockTypeListPage = () => {
       />
       <Modal />
       <ContentModal />
-    </div>
+    </>
   );
 };
 
-const stockStyle = css`
-  display: flex;
-  width: 955px;
-  padding: 48px 40px 80px 40px;
-  flex-direction: column;
-  align-items: center;
-  gap: 32px;
-  background-color: ${theme.colors.main.white};
-  border-radius: 8px;
-`;
-
-const headingStyle = css`
+const adminHeaderStyle = css`
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  width: 100%;
-`;
+  margin-bottom: 40px;
 
-const titleStyle = css`
-  ${theme.textStyle.headings.h3};
-  color: ${theme.colors.gray[700]};
+  h2 {
+    ${theme.textStyle.headings.h3}
+  }
 `;
 
 const buttonArea = css`
   display: flex;
   gap: 8px;
 `;
+
+const tabletyle = css`
+  width: 875px;
+`;
+
 export default StockTypeListPage;

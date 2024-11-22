@@ -4,7 +4,7 @@ import { css, SerializedStyles } from '@emotion/react';
 
 import theme from '@/styles/theme';
 
-type ButtonVariant = 'primary' | 'secondary' | 'secondaryGray' | 'neutral' | 'accent';
+type ButtonVariant = 'primary' | 'secondary' | 'secondaryGray' | 'neutral' | 'accent' | 'ghostGray';
 type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'; // 버튼 높이에 따른 크기
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -196,6 +196,22 @@ const buttonVariantStyles = {
     &:disabled {
       background-color: ${theme.buttons.accent.bg.disabled};
       color: ${theme.buttons.accent.text.disabled};
+    }
+  `,
+  ghostGray: css`
+    background-color: transparent;
+    color: ${theme.buttons.ghostGray.text.default};
+
+    &:hover:not(:disabled) {
+      color: ${theme.buttons.ghostGray.text.hover};
+    }
+
+    &:active:not(:disabled) {
+      color: ${theme.buttons.ghostGray.text.pressed};
+    }
+
+    &:disabled {
+      color: ${theme.buttons.ghostGray.text.disabled};
     }
   `,
 };

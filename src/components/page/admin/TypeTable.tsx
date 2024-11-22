@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { css } from '@emotion/react';
+import { css, SerializedStyles } from '@emotion/react';
 
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
@@ -22,9 +22,17 @@ interface DataProps {
   selectedItems: number[];
   onSelectChange: (selectedIdx: number[]) => void;
   onEdit: (id: number) => void;
+  customStyle?: SerializedStyles;
 }
 
-const TypeTable = ({ attributes, data, selectedItems, onSelectChange, onEdit }: DataProps) => {
+const TypeTable = ({
+  attributes,
+  data,
+  selectedItems,
+  onSelectChange,
+  onEdit,
+  customStyle,
+}: DataProps) => {
   const [selectAll, setSelectAll] = useState(false);
 
   const handleAllChecked = () => {
@@ -47,7 +55,7 @@ const TypeTable = ({ attributes, data, selectedItems, onSelectChange, onEdit }: 
   };
 
   return (
-    <div css={tableStyle}>
+    <div css={[tableStyle, customStyle]}>
       <table css={tableVars}>
         <thead>
           <tr css={tableRowStyle}>
