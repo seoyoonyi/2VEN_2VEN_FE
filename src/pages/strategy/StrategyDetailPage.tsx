@@ -5,6 +5,7 @@ import Modal from '@/components/common/Modal';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
 import ChartSection from '@/components/page/strategy-detail/section/ChartSection';
 import StrategyContent from '@/components/page/strategy-detail/StrategyContent';
+import StrategyHeader from '@/components/page/strategy-detail/StrategyHeader';
 import StrategyIndicator from '@/components/page/strategy-detail/StrategyIndicator';
 import StrategyTab from '@/components/page/strategy-detail/StrategyTab';
 import StrategyTitleSection from '@/components/page/strategy-detail/StrategyTitleSection';
@@ -287,8 +288,14 @@ const StrategyDetailPage = () => {
       <div css={contentStyle}>
         <div css={contentWrapper}>
           <div key={strategy?.strategyId}>
+            <StrategyHeader
+              id={strategy?.strategyId}
+              onApproval={() => {
+                handleApproval();
+              }}
+              onDelete={() => handleDeleteDetail(strategy.strategyId)}
+            />
             <StrategyTitleSection
-              id={strategy?.strategyId || 0}
               title={strategy?.strategyTitle}
               traderId={strategy?.traderId}
               traderName={strategy?.traderName}
@@ -297,8 +304,6 @@ const StrategyDetailPage = () => {
               followers={strategy?.followersCount}
               minimumInvestment={strategy?.minInvestmentAmount}
               lastUpdatedDate={'통계쪽입력날짜'}
-              onDelete={() => handleDeleteDetail(strategy.strategyId)}
-              onApproval={() => handleApproval()}
             />
             <StrategyContent content={strategy?.strategyOverview} />
             <FileDownSection fileUrl={strategyDummy.file.url} />
