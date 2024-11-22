@@ -3,9 +3,9 @@ import { css } from '@emotion/react';
 import theme from '@/styles/theme';
 
 interface InquiryStrategyInfoProps {
-  strategyName: string; // 관심 전략명
-  investmentAmount: string; // 투자 금액
-  investmentDate: string; // 투자 시작 날짜
+  strategyName: string;
+  investmentAmount: string;
+  investmentDate: string;
 }
 
 const InquiryStrategyInfo = ({

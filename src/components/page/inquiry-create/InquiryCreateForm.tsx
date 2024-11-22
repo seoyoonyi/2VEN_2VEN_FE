@@ -8,9 +8,9 @@ import InquiryContent from '@/components/page/inquiry-create/inquiry-form-conten
 import InquiryStrategyInfo from '@/components/page/inquiry-create/inquiry-form-content/InquiryStrategyInfo';
 import InquiryTitle from '@/components/page/inquiry-create/inquiry-form-content/InquiryTitle';
 import { ROUTES } from '@/constants/routes';
-// import theme from '@/styles/theme';
 
 const generateInquiry = {
+  strategyId: '1',
   strategyName: '사람들이 살 때 많이 따라사는 전략',
   investmentAmount: '200,000,000,000',
   investmentDate: '2024.12.25',
@@ -25,8 +25,11 @@ const InquiryCreateForm = () => {
     navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST);
   };
 
+  const handleStrategyDetailClick = () => {
+    navigate(ROUTES.STRATEGY.DETAIL('strategyId'));
+  };
+
   return (
-    // <form css={formContainerStyle} onSubmit={handleSubmit}>
     <form css={formContainerStyle}>
       <InquiryStrategyInfo
         strategyName={generateInquiry.strategyName}
@@ -38,7 +41,7 @@ const InquiryCreateForm = () => {
 
       {/* 버튼 */}
       <div css={buttonContainerStyle}>
-        <Button variant='neutral' size='lg' width={200} onClick={() => console.log('작성 취소')}>
+        <Button variant='neutral' size='lg' width={200} onClick={handleStrategyDetailClick}>
           작성취소
         </Button>
         <Button variant='primary' size='lg' width={200} onClick={handleInquiryListClick}>
@@ -54,7 +57,6 @@ const formContainerStyle = css`
   flex-direction: column;
   width: 900px;
   margin: 0 auto;
-  // gap: 56px;
 `;
 
 const buttonContainerStyle = css`

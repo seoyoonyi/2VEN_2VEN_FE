@@ -52,7 +52,7 @@ const lengthStyle = css`
   font-weight: ${theme.typography.fontWeight.regular};
   line-height: ${theme.typography.lineHeights.lg};
   display: flex;
-  font-size: 13px; /* 테마에 없음 */
+  font-size: 13px;
 `;
 
 const textareaStyle = css`
