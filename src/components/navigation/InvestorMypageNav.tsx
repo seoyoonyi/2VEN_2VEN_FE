@@ -12,7 +12,7 @@ import theme from '@/styles/theme';
 const InvestorMypageNav = () => {
   // 사진이 없을때
   // const [userImage, setUserImage] = useState(null);
-  const [userImage, setUserImage] = useState(
+  const [userImage] = useState(
     'https://i.pinimg.com/474x/78/04/d7/7804d73be61366364997b925a613f438.jpg'
   );
 

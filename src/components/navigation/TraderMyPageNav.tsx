@@ -12,7 +12,7 @@ import theme from '@/styles/theme';
 const TraderMyPageNav = () => {
   // 사진이 없을때
   // const [userImage, setUserImage] = useState(null);
-  const [userImage, setUserImage] = useState(
+  const [userImage] = useState(
     'https://i.pinimg.com/736x/2b/4c/91/2b4c913711c4a8be893aa873b3b23193.jpg'
   );
 
