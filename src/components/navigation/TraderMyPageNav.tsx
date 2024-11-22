@@ -9,27 +9,27 @@ import ProfileSection from '@/components/page/mypage/ProfileSection';
 import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
 
-const items = [
-  {
-    to: `${ROUTES.MYPAGE.TRADER.STRATEGIES.LIST}`,
-    label: '나의 전략',
-  },
-  {
-    to: `${ROUTES.MYPAGE.TRADER.INQUIRIES}`,
-    label: '문의 관리',
-    notificationCount: 0,
-  },
-  {
-    to: `${ROUTES.MYPAGE.TRADER.PROFILE}`,
-    label: '프로필 관리',
-  },
-];
-
 const TraderMyPageNav = () => {
-  const [userImage, setUserImage] = useState(null);
-  // const [userImage, setUserImage] = useState(
-  //   'https://i.pinimg.com/736x/2b/4c/91/2b4c913711c4a8be893aa873b3b23193.jpg'
-  // );
+  // 사진이 없을때
+  // const [userImage, setUserImage] = useState(null);
+  const [userImage, setUserImage] = useState(
+    'https://i.pinimg.com/736x/2b/4c/91/2b4c913711c4a8be893aa873b3b23193.jpg'
+  );
+
+  const TraderMyPageNavItems = [
+    {
+      to: `${ROUTES.MYPAGE.TRADER.STRATEGIES.LIST}`,
+      label: '나의 전략',
+    },
+    {
+      to: `${ROUTES.MYPAGE.TRADER.INQUIRIES}`,
+      label: '문의 관리',
+    },
+    {
+      to: `${ROUTES.MYPAGE.TRADER.PROFILE}`,
+      label: '프로필 관리',
+    },
+  ];
 
   return (
     <div css={navContainerStyle}>
@@ -40,7 +40,7 @@ const TraderMyPageNav = () => {
           nickname='내가여기서투자짱'
           desc='주도주로 매매하면 수익은 크고 손실은 작다! 믿는 종목에 발등 찍힌다.'
         />
-        <NavigationMenu items={items} />
+        <NavigationMenu items={TraderMyPageNavItems} />
       </div>
       <Button variant='ghostGray' customStyle={logoutStyle} size='sm'>
         <GrLogout size={16} />
