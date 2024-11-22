@@ -13,6 +13,7 @@ export const validateEmail = (value: string) => ({
 
 // 닉네임 유효성 검사 함수 수정본
 export const validateNickname = (nickname: string) => {
+  // 길이 검사
   if (nickname.length < 2 || nickname.length > 10) {
     return {
       isValid: false,
@@ -20,7 +21,7 @@ export const validateNickname = (nickname: string) => {
     };
   }
 
-  // 공백검사
+  // 공백 검사
   if (REGEX.whitespace.test(nickname)) {
     return {
       isValid: false,
@@ -28,20 +29,27 @@ export const validateNickname = (nickname: string) => {
     };
   }
 
-  // 영문자와 숫자로만 구성되었는지 검사할게!
-  if (!REGEX.nickname.onlyAlphanumeric.test(nickname)) {
+  // 허용된 문자만 포함되어 있는지 검사
+  if (!REGEX.nickname.allowedChars.test(nickname)) {
     return {
       isValid: false,
-      message: VALIDATION_MESSAGE.nickname.charset,
+      message: VALIDATION_MESSAGE.nickname.chars,
     };
   }
-  // 숫자와 영문자가 모두 포함되었는지 검사할게!
-  const hasNumber = REGEX.nickname.hasNumber.test(nickname);
-  const hasLetter = REGEX.nickname.hasLetter.test(nickname);
-  if (!hasNumber || !hasLetter) {
+
+  // 최소한 한가지 이상의 타입이 포함되어 있어야 함
+  const containsKorean = REGEX.nickname.korean.test(nickname);
+  const containsUpper = REGEX.nickname.upperEnglish.test(nickname);
+  const containsLower = REGEX.nickname.lowerEnglish.test(nickname);
+  const containsNumber = REGEX.nickname.number.test(nickname);
+
+  // 최소한 하나의 문자 타입은 포함되어야 함
+  const hasValidChars = containsKorean || containsUpper || containsLower || containsNumber;
+
+  if (!hasValidChars) {
     return {
       isValid: false,
-      message: VALIDATION_MESSAGE.nickname.combination,
+      message: VALIDATION_MESSAGE.nickname.chars,
     };
   }
 
