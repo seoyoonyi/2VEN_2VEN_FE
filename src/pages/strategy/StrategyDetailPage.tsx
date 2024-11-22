@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import Modal from '@/components/common/Modal';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
+import IconTagSection from '@/components/page/strategy-detail/IconTagSection';
 import ChartSection from '@/components/page/strategy-detail/section/ChartSection';
 import StrategyContent from '@/components/page/strategy-detail/StrategyContent';
 import StrategyHeader from '@/components/page/strategy-detail/StrategyHeader';
@@ -177,6 +178,12 @@ const monthlyAnalysisData = [
     addRate: '0.30%',
   },
 ];
+const imgTest = [
+  { img: '/src/assets/images/domestic_present.svg' },
+  { img: '/src/assets/images/domestic_present.svg' },
+  { img: '/src/assets/images/domestic_present.svg' },
+  { img: '/src/assets/images/domestic_present.svg' },
+];
 
 const dailyAttribues = [
   {
@@ -295,6 +302,7 @@ const StrategyDetailPage = () => {
               }}
               onDelete={() => handleDeleteDetail(strategy.strategyId)}
             />
+            <IconTagSection imgs={imgTest} />
             <StrategyTitleSection
               title={strategy?.strategyTitle}
               traderId={strategy?.traderId}

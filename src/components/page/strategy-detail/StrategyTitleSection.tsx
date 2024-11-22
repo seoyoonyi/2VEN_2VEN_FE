@@ -42,10 +42,6 @@ const StrategyTitleSection = ({
 
   return (
     <div css={containerStyle}>
-      <div css={tagAreaStyle}>
-        <div css={tagStyle}>태그</div>
-        <div css={tagStyle}>태그2</div>
-      </div>
       <div css={titleAreaStyle}>
         <div css={infoAreaStyle}>
           <div css={titleStyle}>{title}</div>
@@ -76,21 +72,6 @@ const containerStyle = css`
   flex-direction: column;
   gap: 16px;
   align-self: stretch;
-`;
-
-const tagAreaStyle = css`
-  display: flex;
-  gap: 8px;
-`;
-
-const tagStyle = css`
-  display: flex;
-  padding: 0px 10px;
-  height: 21px;
-  align-items: center;
-  justify-content: center;
-  ${theme.textStyle.captions.caption2};
-  background-color: ${theme.colors.teal[100]};
 `;
 
 const titleAreaStyle = css`
