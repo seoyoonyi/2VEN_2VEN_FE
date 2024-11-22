@@ -1,4 +1,8 @@
-import { findEmailHandler, signinHandler } from '@/mocks/handlers/auth.handlers';
+import {
+  checkNicknameHandler,
+  signinHandler,
+  findEmailHandler,
+} from '@/mocks/handlers/auth.handlers';
 import { exampleHandlers } from '@/mocks/handlers/example.handlers';
 import { strategyHandlers } from '@/mocks/handlers/strategy.handlers';
 import { strategyDetailHandlers } from '@/mocks/handlers/strategyDetail.handlers';
@@ -8,5 +12,6 @@ export const handlers = [
   ...strategyHandlers,
   ...exampleHandlers,
   ...strategyDetailHandlers,
+  ...checkNicknameHandler,
   ...findEmailHandler,
 ];

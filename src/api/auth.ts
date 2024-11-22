@@ -17,6 +17,14 @@ export const signin = async (credentials: SigninRequest): Promise<SigninResponse
   }
 };
 
+export const checkNicknameDuplicate = async (nickname: string) => {
+  const { data } = await apiClient.get(
+    `${API_ENDPOINTS.AUTH.CHECK_NICKNAME}?nickname=${encodeURIComponent(nickname)}`,
+    { headers: { useMock: import.meta.env.VITE_ENABLE_MSW === 'true' } }
+  );
+  return data;
+};
+
 export const findEmail = async (phone: string) => {
   const { data } = await apiClient.post(
     API_ENDPOINTS.AUTH.FIND.EMAIL,

@@ -11,6 +11,7 @@ export const validateEmail = (value: string) => ({
   message: value ? VALIDATION_MESSAGE.email.invalid : VALIDATION_MESSAGE.email.empty,
 });
 
+// 닉네임 유효성 검사 함수 수정본
 export const validateNickname = (nickname: string) => {
   if (nickname.length < 2 || nickname.length > 10) {
     return {
@@ -19,6 +20,7 @@ export const validateNickname = (nickname: string) => {
     };
   }
 
+  // 공백검사
   if (REGEX.whitespace.test(nickname)) {
     return {
       isValid: false,
@@ -26,10 +28,20 @@ export const validateNickname = (nickname: string) => {
     };
   }
 
-  if (!REGEX.nickname.test(nickname)) {
+  // 영문자와 숫자로만 구성되었는지 검사할게!
+  if (!REGEX.nickname.onlyAlphanumeric.test(nickname)) {
     return {
       isValid: false,
       message: VALIDATION_MESSAGE.nickname.charset,
+    };
+  }
+  // 숫자와 영문자가 모두 포함되었는지 검사할게!
+  const hasNumber = REGEX.nickname.hasNumber.test(nickname);
+  const hasLetter = REGEX.nickname.hasLetter.test(nickname);
+  if (!hasNumber || !hasLetter) {
+    return {
+      isValid: false,
+      message: VALIDATION_MESSAGE.nickname.combination,
     };
   }
 

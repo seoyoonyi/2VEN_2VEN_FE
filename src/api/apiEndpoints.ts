@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: '/api/members/login',
     SIGNUP: '/api/members/signup',
+    CHECK_NICKNAME: '/api/members/check-nickname', // 닉네임 중복 확인
     FIND: {
       EMAIL: '/api/members/check-phone', // 이메일 찾기
       PASSWORD: '/api/members/find/password', // 비밀번호 찾기
