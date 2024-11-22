@@ -22,7 +22,7 @@ export interface SigninResponse {
 
 // API 공통 응답 타입
 export interface ApiResponse<T> {
-  memberInfo: T; // BackendSigninResponse 타입으로 변경
+  data: T; // BackendSigninResponse 타입으로 변경
   message: string;
   status: 'success' | 'error';
 }
