@@ -72,8 +72,11 @@ const generateStrategies = (count: number) => {
   }));
 };
 
-const desc =
-  '투자 성과에 따라 순위가 매겨진 전략들을 비교하여 \n 나에게 맞는 최적의 전략을 선택해보세요!';
+const desc = [
+  {
+    text: '투자 성과에 따라 순위가 매겨진 전략들을 비교하여 \n 나에게 맞는 최적의 전략을 선택해보세요!',
+  },
+];
 
 const StrategyListPage = () => {
   const strategies = generateStrategies(80);
@@ -91,7 +94,7 @@ const StrategyListPage = () => {
 
   return (
     <div>
-      <PageHeader title='전략랭킹' desc={desc} />
+      <PageHeader title='전략랭킹' desc={desc} descType='center' />
       <div css={strategyListContainerStyle}>
         <div css={filterBarContainerStyle}>
           <div css={totalStyle}>

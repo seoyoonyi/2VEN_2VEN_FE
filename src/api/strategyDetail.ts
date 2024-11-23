@@ -1,25 +1,5 @@
-import axios from 'axios';
-
-import { InvestmentAssetClass } from '@/mocks/handlers/strategy.handlers';
-
-export interface StrategyDetailRes {
-  tradingTypeName: string;
-  tradingTypeIcon: string;
-  strategyIACEntities: InvestmentAssetClass[];
-  tradingCycleName: string;
-  tradingCycleIcon: string;
-  traderId: string;
-  traderName: string;
-  traderImage: string;
-  strategyId: number;
-  strategyTitle: string;
-  minInvestmentAmout: string;
-  strategyOverview: string;
-  followersCount: number;
-  writedAt: string;
-  isPosted: 'Y' | 'N';
-  isGranted: 'Y' | 'N';
-}
+import { apiClient } from './apiClient';
+import { API_ENDPOINTS } from './apiEndpoints';
 
 //전략 상세 기본 정보 조회
 export const fetchDefaultStrategyDetail = async (id: number) => {
@@ -27,9 +7,8 @@ export const fetchDefaultStrategyDetail = async (id: number) => {
     throw new Error('Strategy ID is required');
   }
   try {
-    const res = await axios.get(`/api/strategy-list/${id}`, {
+    const res = await apiClient.get(`${API_ENDPOINTS.STRATEGY.CREATE}/${id}`, {
       headers: {
-        useMock: true,
         'Content-Type': 'application/json',
         Auth: 'admin',
       },
@@ -37,6 +16,19 @@ export const fetchDefaultStrategyDetail = async (id: number) => {
     return res.data;
   } catch (error) {
     console.error('failed to fetch DefaultStrategyDetail data', error);
-    throw error;
+  }
+};
+
+export const fetchDeleteStrategyDetail = async (id: number) => {
+  try {
+    const req = await apiClient.delete(`${API_ENDPOINTS.STRATEGY.CREATE}/${id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Auth: 'admin',
+      },
+    });
+    return req.data;
+  } catch (error) {
+    console.error('faild to fetch DeleteStrategyDetail', error);
   }
 };

@@ -11,9 +11,7 @@ const InvestorMypageLayout = () => (
     <Header />
     <main css={mainStyle}>
       <InvestorMypageNav />
-      <div css={outletWrapperStyle}>
-        <Outlet />
-      </div>
+      <Outlet />
     </main>
     <Footer />
   </div>
@@ -32,13 +30,6 @@ const mainStyle = css`
   justify-content: center;
   gap: 20px;
   margin: 76px 0;
-`;
-
-const outletWrapperStyle = css`
-  min-width: 955px;
-  padding: 48px 40px 80px 40px;
-  background-color: ${theme.colors.main.white};
-  border-radius: 8px;
 `;
 
 export default InvestorMypageLayout;

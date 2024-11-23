@@ -1,14 +1,10 @@
 import { css } from '@emotion/react';
-import { GiCircle } from 'react-icons/gi';
-import { MdOutlineShare } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
 import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
 
 interface TitleProps {
-  id: number;
   title?: string;
   traderId?: string;
   traderName?: string;
@@ -20,7 +16,6 @@ interface TitleProps {
 }
 
 const StrategyTitleSection = ({
-  id,
   title,
   traderId,
   traderName,
@@ -36,10 +31,6 @@ const StrategyTitleSection = ({
     navigate(`${ROUTES.TRADER.PROFILE(traderId)}`);
   };
 
-  const handleMoveEditPage = (id: string) => {
-    navigate(`${ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(id)}`);
-  };
-
   const InfoSection = ({ title, data }: { title: string; data?: number | string }) => (
     <div css={authorInfoStyle}>
       <div css={followerAreaStyle}>
@@ -51,34 +42,6 @@ const StrategyTitleSection = ({
 
   return (
     <div css={containerStyle}>
-      <div css={actionAreaStyle}>
-        <button css={shareButtonStyle}>
-          <GiCircle size={40} css={circleStyle} />
-          <MdOutlineShare size={16} css={shareStyle} />
-        </button>
-        <div css={buttonAreaStyle}>
-          <Button size='xs' variant='secondaryGray' width={90}>
-            삭제
-          </Button>
-          <Button
-            size='xs'
-            variant='neutral'
-            width={90}
-            onClick={() => {
-              handleMoveEditPage(String(id));
-            }}
-          >
-            수정
-          </Button>
-          <Button size='xs' width={120}>
-            승인요청
-          </Button>
-        </div>
-      </div>
-      <div css={tagAreaStyle}>
-        <div css={tagStyle}>태그</div>
-        <div css={tagStyle}>태그2</div>
-      </div>
       <div css={titleAreaStyle}>
         <div css={infoAreaStyle}>
           <div css={titleStyle}>{title}</div>
@@ -109,54 +72,6 @@ const containerStyle = css`
   flex-direction: column;
   gap: 16px;
   align-self: stretch;
-`;
-
-const actionAreaStyle = css`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-`;
-
-const shareButtonStyle = css`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: none;
-  border: 0;
-  cursor: pointer;
-  margin-left: 8px;
-`;
-
-const circleStyle = css`
-  color: ${theme.colors.gray[400]};
-  position: absolute;
-`;
-
-const shareStyle = css`
-  position: relative;
-  z-index: 1;
-`;
-
-const buttonAreaStyle = css`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const tagAreaStyle = css`
-  display: flex;
-  gap: 8px;
-`;
-
-const tagStyle = css`
-  display: flex;
-  padding: 0px 10px;
-  height: 21px;
-  align-items: center;
-  justify-content: center;
-  ${theme.textStyle.captions.caption2};
-  background-color: ${theme.colors.teal[100]};
 `;
 
 const titleAreaStyle = css`

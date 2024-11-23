@@ -130,15 +130,15 @@ export const router = createBrowserRouter(
         },
         // -------------------------------------- 검색
         {
-          path: ROUTES.SEARCH.ROOT.WITH_KEYWORD(':keyword'),
+          path: ROUTES.SEARCH.ROOT,
           element: <SearchTotalResultsPage />, // 통합검색결과 페이지(전략과 트레이더 검색결과)
         },
         {
-          path: ROUTES.SEARCH.TRADER.WITH_KEYWORD(':keyword'),
+          path: ROUTES.SEARCH.TRADER,
           element: <SearchResultsInTrader />, // 트레이더 내 검색결과 페이지
         },
         {
-          path: ROUTES.SEARCH.STRATEGY.WITH_KEYWORD(':keyword'),
+          path: ROUTES.SEARCH.STRATEGY,
           element: <SearchResultsInStrategy />, // 전략 내 검색결과 페이지
         },
       ],

@@ -1,9 +1,12 @@
 import { css } from '@emotion/react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import Modal from '@/components/common/Modal';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
+import IconTagSection from '@/components/page/strategy-detail/IconTagSection';
 import ChartSection from '@/components/page/strategy-detail/section/ChartSection';
 import StrategyContent from '@/components/page/strategy-detail/StrategyContent';
+import StrategyHeader from '@/components/page/strategy-detail/StrategyHeader';
 import StrategyIndicator from '@/components/page/strategy-detail/StrategyIndicator';
 import StrategyTab from '@/components/page/strategy-detail/StrategyTab';
 import StrategyTitleSection from '@/components/page/strategy-detail/StrategyTitleSection';
@@ -11,7 +14,10 @@ import AccountVerify from '@/components/page/strategy-detail/tabmenu/AccountVeri
 import DailyAnalysis from '@/components/page/strategy-detail/tabmenu/DailyAnalysis';
 import MonthlyAnalysis from '@/components/page/strategy-detail/tabmenu/MonthlyAnalysis';
 import StatisticsTable from '@/components/page/strategy-detail/tabmenu/StatisticsTable';
+import { ROUTES } from '@/constants/routes';
+import useStrategyDetailDelete from '@/hooks/mutations/useStrategyDetailDelete';
 import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
+import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 import { formatDate } from '@/utils/dateFormat';
 
@@ -172,6 +178,12 @@ const monthlyAnalysisData = [
     addRate: '0.30%',
   },
 ];
+const imgTest = [
+  { img: '/src/assets/images/domestic_present.svg' },
+  { img: '/src/assets/images/domestic_present.svg' },
+  { img: '/src/assets/images/domestic_present.svg' },
+  { img: '/src/assets/images/domestic_present.svg' },
+];
 
 const dailyAttribues = [
   {
@@ -249,22 +261,56 @@ const tabMenu = [
 
 const StrategyDetailPage = () => {
   const { strategyId } = useParams();
-  const { strategy } = useFetchStrategyDetail(strategyId || '');
+  const navigate = useNavigate();
+  const { strategy, isLoading } = useFetchStrategyDetail(strategyId || '');
+  const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
+  const { openModal } = useModalStore();
 
+  const handleDeleteDetail = (id: number) => {
+    openModal({
+      type: 'warning',
+      title: '전략 삭제',
+      desc: '해당 전략의 모든 정보가 삭제됩니다.',
+      onAction: () => {
+        deleteStrategyDetail(id);
+        navigate(ROUTES.STRATEGY.LIST);
+      },
+    });
+  };
+
+  const handleApproval = () => {
+    openModal({
+      type: 'confirm',
+      title: '승인요청',
+      desc: '승인 요청을 보내면 관리자 검토 후\n 전략이 승인됩니다.',
+      onAction: () => {},
+    });
+  };
+
+  if (isLoading) {
+    <div>로딩중....</div>;
+  }
   return (
     <div css={containerStyle}>
       <div css={contentStyle}>
         <div css={contentWrapper}>
           <div key={strategy?.strategyId}>
+            <StrategyHeader
+              id={strategy?.strategyId}
+              onApproval={() => {
+                handleApproval();
+              }}
+              onDelete={() => handleDeleteDetail(strategy.strategyId)}
+            />
+            <IconTagSection imgs={imgTest} />
             <StrategyTitleSection
-              id={strategy?.strategyId || 0}
               title={strategy?.strategyTitle}
               traderId={strategy?.traderId}
               traderName={strategy?.traderName}
               imgUrl={strategy?.traderImage}
               date={formatDate(strategy?.writedAt || '', 'withDayTime')}
               followers={strategy?.followersCount}
-              minimumInvestment={strategy?.minInvestmentAmout}
+              minimumInvestment={strategy?.minInvestmentAmount}
               lastUpdatedDate={'통계쪽입력날짜'}
             />
             <StrategyContent content={strategy?.strategyOverview} />
@@ -281,6 +327,7 @@ const StrategyDetailPage = () => {
           </div>
         </div>
       </div>
+      <Modal />
     </div>
   );
 };

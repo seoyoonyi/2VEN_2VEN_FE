@@ -1,27 +1,31 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
-import { fetchDefaultStrategyDetail, StrategyDetailRes } from '@/api/strategyDetail';
+import { fetchDefaultStrategyDetail } from '@/api/strategyDetail';
+import { ROUTES } from '@/constants/routes';
 
 const useFetchStrategyDetail = (strategyId: string) => {
-  const [strategy, setStrategy] = useState<StrategyDetailRes>();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchDefaultData = async (strategyId: string) => {
-      try {
-        const validStrategyId: string = strategyId ?? 'defaultStrategyId';
-
-        const strategy = await fetchDefaultStrategyDetail(Number(validStrategyId));
-        setStrategy(strategy.data);
-      } catch (error) {
-        console.error('failed Default to fetch strategyDetailPage');
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['strategyDetail', strategyId],
+    queryFn: async () => {
+      const res = await fetchDefaultStrategyDetail(Number(strategyId));
+      if (!res.data || !res.data.strategyTitle) {
+        throw new Error('Invalid strategy data');
       }
-    };
-    if (strategyId) {
-      fetchDefaultData(strategyId);
-    }
-  }, [strategyId]);
+      return res.data;
+    },
+    enabled: !!strategyId,
+    retry: 1,
+  });
 
-  return { strategy };
+  if (!strategyId || isError) {
+    navigate(ROUTES.ERROR.NOT_FOUND);
+    return { isError: true };
+  }
+
+  return { strategy: data, isLoading, isError };
 };
 
 export default useFetchStrategyDetail;
