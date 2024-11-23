@@ -35,6 +35,7 @@ const MyInquiresDetailPage = () => (
 );
 
 const containerStyle = css`
+  width: 955px;
   display: flex;
   flex-direction: column;
   gap: 16px;

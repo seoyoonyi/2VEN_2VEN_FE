@@ -11,7 +11,7 @@ const TraderMyPageLayout = () => (
     <Header />
     <main css={mainStyle}>
       <TraderMyPageNav />
-      <div css={outletWrapperStyle}>
+      <div>
         <Outlet />
       </div>
     </main>
@@ -32,13 +32,6 @@ const mainStyle = css`
   justify-content: center;
   gap: 20px;
   margin: 76px 0;
-`;
-
-const outletWrapperStyle = css`
-  width: 955px;
-  padding: 48px 40px 80px 40px;
-  background-color: ${theme.colors.main.white};
-  border-radius: 8px;
 `;
 
 export default TraderMyPageLayout;
