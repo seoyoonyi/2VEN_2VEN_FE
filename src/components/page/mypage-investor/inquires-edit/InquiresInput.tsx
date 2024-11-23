@@ -13,6 +13,7 @@ const InquiresInput = ({ title, content }: InquiresInputProps) => (
         value={title}
         onChange={() => {}}
         placeholder='문의 제목을 입력해주세요.'
+        css={titleInputStyle}
       />
       <div css={lengthStyle}>
         <span>{title.length}</span>/80
@@ -55,16 +56,25 @@ const flexStyle = css`
   }
 `;
 
+const titleInputStyle = css`
+  font-size: ${theme.typography.fontSizes.subtitle.md};
+  line-height: ${theme.typography.lineHeights.md};
+  color: ${theme.colors.gray[700]};
+`;
+
 const textareaStyle = css`
   width: 100%;
   height: 208px;
   padding: 12px;
-  line-height: ${theme.typography.lineHeights.lg};
+  line-height: ${theme.typography.lineHeights.sm};
   resize: none;
   border: 1px solid ${theme.colors.gray[300]};
   background-color: ${theme.colors.main.white};
   outline: none;
   transition: all 0.2s ease;
+  color: ${theme.colors.gray[700]};
+  font-size: 18px;
+  font-weight: ${theme.typography.fontWeight.regular};
 
   &::placeholder {
     color: ${theme.colors.gray[700] + '4a'};
