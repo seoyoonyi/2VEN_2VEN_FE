@@ -5,7 +5,7 @@ import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
 
 const TraderMyPage = () => (
-  <>
+  <div css={myPageWrapperStyle}>
     <div css={myPageHeaderStyle}>
       <div>
         <h2>나의 전략</h2>
@@ -21,8 +21,15 @@ const TraderMyPage = () => (
         <br /> &apos;전략 등록&apos; 버튼을 눌러 새로운 전략을 추가해보세요!
       </p>
     </div>
-  </>
+  </div>
 );
+
+const myPageWrapperStyle = css`
+  width: 955px;
+  padding: 48px 40px 80px 40px;
+  background-color: ${theme.colors.main.white};
+  border-radius: 8px;
+`;
 
 const myPageHeaderStyle = css`
   display: flex;

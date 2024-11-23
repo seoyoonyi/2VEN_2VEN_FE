@@ -56,19 +56,9 @@ export const ROUTES = {
     },
   },
   SEARCH: {
-    ROOT: {
-      // 검색어를 쿼리 파라미터로 처리하는 함수
-      WITH_KEYWORD: (keyword: string) => `/search?keyword=${encodeURIComponent(keyword)}`,
-    },
-    TRADER: {
-      // 트레이더 검색 결과 전체보기 + 검색어
-      WITH_KEYWORD: (keyword: string) => `/search/traders?keyword=${encodeURIComponent(keyword)}`,
-    },
-    STRATEGY: {
-      // 전략 검색 결과 전체보기 + 검색어
-      WITH_KEYWORD: (keyword: string) =>
-        `/search/strategies?keyword=${encodeURIComponent(keyword)}`,
-    },
+    ROOT: '/search',
+    TRADER: '/search/traders',
+    STRATEGY: '/search/strategies',
   },
   ADMIN: {
     STOCK_TYPE: {

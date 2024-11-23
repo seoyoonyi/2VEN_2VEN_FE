@@ -100,7 +100,7 @@ const myInquiries: myInquiriesData[] = [
 ];
 
 const MyInquiriesPage = () => (
-  <>
+  <div css={myPageWrapperStyle}>
     {/* <div css={titleWrapper}>
       <h1>나의 문의</h1>
       <span>
@@ -118,38 +118,47 @@ const MyInquiriesPage = () => (
     </div>
 
     <div css={tableWrapper}>
-      <div css={headerStyle}>
-        <div>제목</div>
-        <div>트레이더</div>
-        <div>답변상태</div>
-        <div>날짜</div>
+      <div>
+        <div css={headerStyle}>
+          <div>제목</div>
+          <div>트레이더</div>
+          <div>답변상태</div>
+          <div>날짜</div>
+        </div>
+        {myInquiries.map((inquirie) => (
+          <Link
+            to={`${ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(inquirie.id.toString())}`}
+            key={inquirie.id}
+          >
+            <div css={rowStyle}>
+              <div css={inquiriesTitleStyle}>
+                <span>Q.</span>
+                <div>{inquirie.inqurieTitle}</div>
+              </div>
+              <div css={traderInfoStyle}>
+                <img src={inquirie.profileImg} alt={`${inquirie.nickName}s profile`} />
+                <span>{inquirie.nickName}</span>
+              </div>
+              <div css={statusStyle(inquirie.inqurieStatus)}>
+                {inquirie.inqurieStatus === '대기' && <span className='dot' />}
+                {inquirie.inqurieStatus}
+              </div>
+              <div>{inquirie.date}</div>
+            </div>
+          </Link>
+        ))}
       </div>
-      {myInquiries.map((inquirie) => (
-        <Link
-          to={`${ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(inquirie.id.toString())}`}
-          key={inquirie.id}
-        >
-          <div css={rowStyle}>
-            <div css={inquirieTitleStyle}>
-              <span>Q.</span>
-              <div>{inquirie.inqurieTitle}</div>
-            </div>
-            <div css={traderInfoStyle}>
-              <img src={inquirie.profileImg} alt={`${inquirie.nickName}s profile`} />
-              <span>{inquirie.nickName}</span>
-            </div>
-            <div css={statusStyle(inquirie.inqurieStatus)}>
-              {inquirie.inqurieStatus === '대기' && <span className='dot' />}
-              {inquirie.inqurieStatus}
-            </div>
-            <div>{inquirie.date}</div>
-          </div>
-        </Link>
-      ))}
+      <Pagination totalPage={5} limit={10} page={1} setPage={() => {}} />
     </div>
-    <Pagination totalPage={5} limit={10} page={1} setPage={() => {}} />
-  </>
+  </div>
 );
+
+const myPageWrapperStyle = css`
+  width: 955px;
+  padding: 48px 40px 80px 40px;
+  background-color: ${theme.colors.main.white};
+  border-radius: 8px;
+`;
 
 const myPageHeaderStyle = css`
   margin-bottom: 40px;
@@ -167,12 +176,15 @@ const myPageHeaderStyle = css`
 `;
 
 const tableWrapper = css`
-  margin-bottom: 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 56px;
 `;
 
 const rowStyle = css`
   display: grid;
-  grid-template-columns: 415px 200px 140px 120px;
+  grid-template-columns: minmax(0, 4.8fr) minmax(0, 2.5fr) minmax(0, 1.6fr) minmax(0, 1.4fr);
   align-items: center;
   height: 90px;
   background: ${theme.colors.main.white};
@@ -191,7 +203,7 @@ const headerStyle = css`
   font-weight: ${theme.typography.fontWeight.bold};
 `;
 
-const inquirieTitleStyle = css`
+const inquiriesTitleStyle = css`
   display: flex;
   align-items: flex-start;
   padding: 24px;

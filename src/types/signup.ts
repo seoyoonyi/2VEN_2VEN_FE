@@ -5,8 +5,8 @@ export interface UserTypeData {
   alt: string;
 }
 export interface UserTypeText {
-  investor: UserTypeData;
-  trader: UserTypeData;
+  INVESTOR: UserTypeData;
+  TRADER: UserTypeData;
 }
 
 export interface TermsState {
