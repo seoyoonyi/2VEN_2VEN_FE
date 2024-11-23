@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
-import { QuestionProps } from '@/types/myinquiresDetail';
+import { QuestionProps } from '@/types/myinquires';
 
 const Question = ({
   title,
@@ -100,7 +100,7 @@ const infoStyle = css`
 
   span {
     color: ${theme.colors.gray[400]};
-    font-size: 14px;
+    font-size: ${theme.typography.fontSizes.caption};
     font-weight: 400;
   }
 `;
@@ -113,7 +113,7 @@ const editWrapper = css`
     background-color: transparent;
     color: ${theme.colors.gray[500]};
     text-align: center;
-    font-size: 14px;
+    font-size: ${theme.typography.fontSizes.caption};
     line-height: 130%;
     cursor: pointer;
   }
@@ -132,7 +132,7 @@ const statusStyle = (status: string) => css`
   width: 72px;
   height: 32px;
   justify-content: center;
-  font-weight: 400;
+  font-weight: ${theme.typography.fontWeight.regular};
   background-color: ${status === 'PENDING' ? theme.colors.teal[50] : theme.colors.gray[200]};
   color: ${theme.colors.main.black};
 
@@ -145,9 +145,9 @@ const statusStyle = (status: string) => css`
 `;
 
 const titleStyle = css`
-  font-size: 34px;
-  font-weight: 700;
-  line-height: 140%;
+  font-size: ${theme.typography.fontSizes.subtitle.md};
+  font-weight: ${theme.typography.fontWeight.bold};
+  line-height: ${theme.typography.lineHeights.md};
 `;
 
 const strategyInfoWrapper = css`
@@ -173,15 +173,15 @@ const strategyInfoStyle = css`
   h3 {
     width: 84px;
     color: ${theme.colors.main.primary};
-    font-weight: 700;
+    font-weight: ${theme.typography.fontWeight.bold};
   }
 
   div {
     padding: 0 8px;
     color: ${theme.colors.main.black};
     font-size: 18px;
-    font-weight: 700;
-    line-height: 130%;
+    font-weight: ${theme.typography.fontWeight.bold};
+    line-height: ${theme.typography.lineHeights.sm};
     border-left: 1px solid ${theme.colors.gray[300]};
   }
 
@@ -191,14 +191,14 @@ const strategyInfoStyle = css`
     color: ${theme.colors.gray[700]};
     border-left: 1px solid ${theme.colors.gray[300]};
     font-size: 18px;
-    font-weight: 400;
-    line-height: 130%;
+    font-weight: ${theme.typography.fontWeight.regular};
+    line-height: ${theme.typography.lineHeights.sm};
   }
 `;
 
 const questionStyle = css`
   padding: 12px 16px;
-  font-weight: 400;
+  font-weight: ${theme.typography.fontWeight.regular};
   color: ${theme.colors.main.black};
   overflow-y: auto;
 `;

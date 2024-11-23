@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 
 import Answer from '@/components/page/mypage-investor/inquires-detail/Answer';
 import Question from '@/components/page/mypage-investor/inquires-detail/Question';
-import { InquiryDetailData } from '@/types/myinquiresDetail';
+import { InquiryDetailData } from '@/types/myinquires';
 
 const myInquiresDetailData: InquiryDetailData = {
   id: 1,

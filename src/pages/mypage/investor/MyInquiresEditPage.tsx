@@ -1,9 +1,10 @@
-import { useState } from 'react';
-
 import { css } from '@emotion/react';
 
+import Button from '@/components/common/Button';
+import InquiresInput from '@/components/page/mypage-investor/inquires-edit/InquiresInput';
+import StrategyInfo from '@/components/page/mypage-investor/inquires-edit/StrategyInfo';
 import theme from '@/styles/theme';
-import { InquiryDetailData } from '@/types/myinquiresDetail';
+import { InquiryDetailData } from '@/types/myinquires';
 
 const myInquiresDetailData: InquiryDetailData = {
   id: 1,
@@ -30,17 +31,44 @@ const myInquiresDetailData: InquiryDetailData = {
 
 const MyInquiresEditPage = () => (
   <div css={editWrapper}>
-    <div>문의 수정</div>
-
-    <div>
-      <div></div>
+    <div css={titleStyle}>문의 수정</div>
+    <StrategyInfo {...myInquiresDetailData} />
+    <InquiresInput {...myInquiresDetailData} />
+    <div css={buttonWrapper}>
+      <Button variant='neutral' customStyle={buttonStyle}>
+        작성취소
+      </Button>
+      <Button customStyle={buttonStyle}>수정완료</Button>
     </div>
   </div>
 );
 
 const editWrapper = css`
+  width: 955px;
   display: flex;
   flex-direction: column;
+  padding: 48px 40px 56px 40px;
+  background-color: ${theme.colors.main.white};
+  border-radius: 8px;
+`;
+
+const titleStyle = css`
+  color: ${theme.colors.main.black};
+  font-size: ${theme.typography.fontSizes.heading.h3};
+  font-weight: ${theme.typography.fontWeight.bold};
+  line-height: ${theme.typography.lineHeights.md};
+  margin-bottom: 24px;
+`;
+
+const buttonWrapper = css`
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const buttonStyle = css`
+  padding: 0 32px;
 `;
 
 export default MyInquiresEditPage;

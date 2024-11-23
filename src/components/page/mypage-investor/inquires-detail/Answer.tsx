@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
-import { AnswerProps } from '@/types/myinquiresDetail';
+import { AnswerProps } from '@/types/myinquires';
 
 const Answer = ({ traderName, traderProfileUrl, traderAnswer, answerDate }: AnswerProps) => (
   <div css={answerWrapper}>
@@ -37,9 +37,9 @@ const headerWrapper = css`
 
   h1 {
     width: 724px;
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 140%;
+    font-size: ${theme.typography.fontSizes.subtitle.lg};
+    font-weight: ${theme.typography.fontWeight.bold};
+    line-height: ${theme.typography.lineHeights.md};
   }
 `;
 
@@ -64,14 +64,14 @@ const traderAnswerWrapper = css`
 
   span {
     color: ${theme.colors.gray[400]};
-    font-size: 14px;
-    font-weight: 400;
+    font-size: ${theme.typography.fontSizes.caption};
+    font-weight: ${theme.typography.fontWeight.regular};
   }
 `;
 
 const answerStyle = css`
   color: ${theme.colors.main.black};
-  font-weight: 400;
+  font-weight: ${theme.typography.fontWeight.regular};
 `;
 
 export default Answer;
