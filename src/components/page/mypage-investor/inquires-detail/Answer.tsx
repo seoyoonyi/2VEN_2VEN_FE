@@ -72,6 +72,7 @@ const traderAnswerWrapper = css`
 const answerStyle = css`
   color: ${theme.colors.main.black};
   font-weight: ${theme.typography.fontWeight.regular};
+  white-space: pre-wrap;
 `;
 
 export default Answer;

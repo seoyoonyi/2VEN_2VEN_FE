@@ -201,6 +201,7 @@ const questionStyle = css`
   font-weight: ${theme.typography.fontWeight.regular};
   color: ${theme.colors.main.black};
   overflow-y: auto;
+  white-space: pre-wrap;
 `;
 
 export default Question;

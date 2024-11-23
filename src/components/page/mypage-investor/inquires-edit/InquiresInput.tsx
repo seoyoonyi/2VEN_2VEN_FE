@@ -75,6 +75,7 @@ const textareaStyle = css`
   color: ${theme.colors.gray[700]};
   font-size: 18px;
   font-weight: ${theme.typography.fontWeight.regular};
+  white-space: pre-wrap;
 
   &::placeholder {
     color: ${theme.colors.gray[700] + '4a'};
