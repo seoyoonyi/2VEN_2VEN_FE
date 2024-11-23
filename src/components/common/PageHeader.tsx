@@ -3,19 +3,26 @@ import { MdCheck } from 'react-icons/md';
 
 import theme from '@/styles/theme';
 
+type PageHeaderType = 'left' | 'center';
+
 interface PageHeaderProps {
   title: string;
-  desc?: string;
+  desc: { text: string; color?: string; icon?: boolean }[];
+  descType?: PageHeaderType;
   icon?: boolean;
 }
 
-const PageHeader = ({ title, desc, icon }: PageHeaderProps) => (
+const PageHeader = ({ title, desc, descType = 'left' }: PageHeaderProps) => (
   <section css={headerStyle}>
     <div css={containerStyle}>
       <h1 css={titleStyle}>{title}</h1>
-      <div css={descWrapperStyle}>
-        {icon && <MdCheck css={iconStyle} />}
-        <div css={descStyle}>{desc}</div>
+      <div css={descWrapperStyle(descType)}>
+        {desc.map(({ text, color, icon }, index) => (
+          <div css={descItemStyle} key={index}>
+            {icon && <MdCheck css={iconStyle} />}
+            <span css={descStyle(color)}>{text}</span>
+          </div>
+        ))}
       </div>
     </div>
   </section>
@@ -42,10 +49,18 @@ const titleStyle = css`
   line-height: ${theme.typography.lineHeights.md};
 `;
 
-const descWrapperStyle = css`
+const descWrapperStyle = (descType: PageHeaderType) => css`
   display: flex;
-  text-align: center;
+  flex-direction: column;
+  align-items: ${descType === 'center' ? 'center' : 'flex-start'};
+  text-align: ${descType};
   gap: 4px;
+`;
+
+const descItemStyle = css`
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
 `;
 
 const iconStyle = css`
@@ -56,8 +71,8 @@ const iconStyle = css`
   color: ${theme.colors.main.primary};
 `;
 
-const descStyle = css`
-  color: ${theme.colors.gray[600]};
+const descStyle = (color?: string) => css`
+  color: ${color || theme.colors.gray[600]};
   white-space: pre-line;
   font-size: ${theme.typography.fontSizes.subtitle.md};
   font-weight: ${theme.typography.fontWeight.medium};

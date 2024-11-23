@@ -11,7 +11,7 @@ import Select from '@/components/common/Select';
 import TraderList from '@/components/common/TraderList';
 import theme from '@/styles/theme';
 
-const desc = '관심 있는 트레이더를 찾아 전략과 프로필을 확인해보세요.';
+const desc = [{ text: '관심 있는 트레이더를 찾아 전략과 프로필을 확인해보세요.' }];
 
 const sortOptions = [
   { label: '전략 많은 순', value: 'most_strategies' },
@@ -211,7 +211,7 @@ const TraderListPage = () => {
 
   return (
     <div>
-      <PageHeader title='트레이더' desc={desc} />
+      <PageHeader title='트레이더' desc={desc} descType='center' />
       <div css={traderListContainerStyle}>
         <div css={filterBarContainerStyle}>
           <div css={totalStyle}>
