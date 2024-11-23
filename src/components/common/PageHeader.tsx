@@ -5,7 +5,7 @@ import theme from '@/styles/theme';
 
 interface PageHeaderProps {
   title: string;
-  desc: string;
+  desc?: string;
   icon?: boolean;
 }
 
