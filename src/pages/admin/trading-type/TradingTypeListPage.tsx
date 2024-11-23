@@ -182,20 +182,21 @@ const TradingTypeListPage = () => {
           </Button>
         </div>
       </div>
-      <TypeTable
-        attributes={tradeAttributes}
-        data={formattedData || []}
-        selectedItems={selectedItems}
-        onSelectChange={handleSelectChange}
-        onEdit={handleEdit}
-        customStyle={tabletyle}
-      />
-      <Pagination
-        totalPage={paginationData.totalPage}
-        limit={paginationData.pageSize}
-        page={paginationData.currentPage}
-        setPage={handlePageChange}
-      />
+      <div css={tableWrapper}>
+        <TypeTable
+          attributes={tradeAttributes}
+          data={formattedData || []}
+          selectedItems={selectedItems}
+          onSelectChange={handleSelectChange}
+          onEdit={handleEdit}
+        />
+        <Pagination
+          totalPage={paginationData.totalPage}
+          limit={paginationData.pageSize}
+          page={paginationData.currentPage}
+          setPage={handlePageChange}
+        />
+      </div>
       <Modal />
       <ContentModal />
     </>
@@ -217,8 +218,11 @@ const buttonArea = css`
   gap: 8px;
 `;
 
-const tabletyle = css`
-  width: 875px;
+const tableWrapper = css`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 56px;
 `;
 
 export default TradingTypeListPage;
