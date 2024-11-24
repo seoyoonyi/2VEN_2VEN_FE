@@ -25,6 +25,7 @@ import InvestorFollowFolderPage from '@/pages/mypage/investor/InvestorFollowFold
 import InvestorMyPage from '@/pages/mypage/investor/InvestorMyPage';
 import InvestorProfilePage from '@/pages/mypage/investor/InvestorProfilePage';
 import MyInquiresDetailPage from '@/pages/mypage/investor/MyInquiresDetailPage';
+import MyInquiresEditPage from '@/pages/mypage/investor/MyInquiresEditPage';
 import MyInquiriesPage from '@/pages/mypage/investor/MyInquiriesPage';
 import InquiriesManagementPage from '@/pages/mypage/trader/InquiriesManagementPage';
 import StrategyCreatePage from '@/pages/mypage/trader/StrategyCreatePage';
@@ -183,6 +184,10 @@ export const router = createBrowserRouter(
         {
           path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(':inquiryId'),
           element: <MyInquiresDetailPage />, // 나의 문의 상세 게시판
+        },
+        {
+          path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY.EDIT(':inquiryId'),
+          element: <MyInquiresEditPage />, // 나의 문의 수정 게시판
         },
         {
           path: ROUTES.MYPAGE.INVESTOR.PROFILE,

@@ -1,7 +1,9 @@
 import { css } from '@emotion/react';
 
-import Answer from '@/components/page/mypage-investor/inquires-detail/Answer';
-import Question from '@/components/page/mypage-investor/inquires-detail/Question';
+import Button from '@/components/common/Button';
+import InquiresInput from '@/components/page/mypage-investor/inquires-edit/InquiresInput';
+import StrategyInfo from '@/components/page/mypage-investor/inquires-edit/StrategyInfo';
+import theme from '@/styles/theme';
 import { InquiryDetailData } from '@/types/myinquires';
 
 const myInquiresDetailData: InquiryDetailData = {
@@ -27,18 +29,46 @@ const myInquiresDetailData: InquiryDetailData = {
   answerDate: '2024-11-22T03:34:23.732Z',
 };
 
-const MyInquiresDetailPage = () => (
-  <div css={containerStyle}>
-    <Question {...myInquiresDetailData} />
-    {myInquiresDetailData.status === 'COMPLETE' && <Answer {...myInquiresDetailData} />}
+const MyInquiresEditPage = () => (
+  <div css={editWrapper}>
+    <div css={titleStyle}>문의 수정</div>
+    <StrategyInfo {...myInquiresDetailData} />
+    <InquiresInput {...myInquiresDetailData} />
+    <div css={buttonWrapper}>
+      <Button variant='neutral' customStyle={buttonStyle}>
+        작성취소
+      </Button>
+      <Button customStyle={buttonStyle}>수정완료</Button>
+    </div>
   </div>
 );
 
-const containerStyle = css`
+const editWrapper = css`
   width: 955px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  padding: 48px 40px 56px 40px;
+  background-color: ${theme.colors.main.white};
+  border-radius: 8px;
 `;
 
-export default MyInquiresDetailPage;
+const titleStyle = css`
+  color: ${theme.colors.main.black};
+  font-size: ${theme.typography.fontSizes.heading.h3};
+  font-weight: ${theme.typography.fontWeight.bold};
+  line-height: ${theme.typography.lineHeights.md};
+  margin-bottom: 24px;
+`;
+
+const buttonWrapper = css`
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const buttonStyle = css`
+  padding: 0 32px;
+`;
+
+export default MyInquiresEditPage;
