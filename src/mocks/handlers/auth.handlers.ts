@@ -3,48 +3,49 @@ import { http, HttpResponse } from 'msw';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
 import { SigninRequest } from '@/types/auth';
 
-// 로그인 요청에 대한 핸들러
+// Mock 데이터 구조 개선
 const MOCK_USER = [
   {
-    member_id: 1,
-    email: 'investor@example.com',
-    password: 'Password1!',
+    member_id: '1',
+    email: 'user1@example.com',
+    password: 'asdf1234!',
     nickname: 'investor11',
-    role: 'INVESTOR',
+    role: 'MEMBER_ROLE_INVESTOR', // role 형식 통일
+    profile_image: '',
   },
   {
-    member_id: 2,
-    email: 'trader@example.com',
-    password: 'Password1!',
+    member_id: '2',
+    email: 'user4@example.com',
+    password: 'asdf1234!',
     nickname: 'trader444',
-    role: 'TRADER',
+    role: 'MEMBER_ROLE_TRADER',
+    profile_image: '',
   },
   {
-    member_id: 3,
+    member_id: '3',
     email: 'admin@example.com',
-    password: 'Password1!',
+    password: 'asdf1234!',
     nickname: 'adminking',
-    role: 'ADMIN',
-  },
-];
-
-// 전화번호로 이메일 찾기 요청에 대한 핸들러
-const MOCK_USER_WITH_PHONE = [
-  {
-    member_id: 1,
-    email: 'investor@example.com',
-    password: 'Password1!',
-    nickname: '투자자',
-    role: 'INVESTOR',
-    phone: '01012345678',
+    role: 'MEMBER_ROLE_ADMIN',
+    profile_image: '',
+    admin_info: {
+      is_authorized: true,
+      authorization_status: 'AUTHORIZED' as const,
+      authorized_at: new Date().toISOString(),
+      expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 현재 시간 + 30분
+    },
   },
   {
-    member_id: 2,
-    email: 'trader@example.com',
-    password: 'Password1!',
-    nickname: '트레이더',
-    role: 'TRADER',
-    phone: '01087654321',
+    member_id: '4',
+    email: 'admin2@example.com',
+    password: 'asdf1234!',
+    nickname: 'newadmin',
+    role: 'MEMBER_ROLE_ADMIN',
+    profile_image: '',
+    admin_info: {
+      is_authorized: false,
+      authorization_status: 'PENDING' as const,
+    },
   },
 ];
 
@@ -59,23 +60,44 @@ export const signinHandler = [
     const user = MOCK_USER.find((user) => user.email === email);
     if (!user || user.password !== password) {
       console.log('MSW: 인증 실패'); // 실패 로깅
-      return HttpResponse.json(
-        {
+      return new HttpResponse(
+        JSON.stringify({
           status: 'error',
           error: '이메일 또는 비밀번호가 올바르지 않습니다.',
-        },
-        { status: 401 }
+          data: null,
+        }),
+        {
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
       );
     }
 
-    const { password: _, ...userWithoutPassword } = user;
-    console.log('MSW: 인증 성공', userWithoutPassword); // 성공 로깅
+    const { password: _, ...userInfo } = user;
+    console.log('MSW: 인증 성공', userInfo); // 성공 로깅
 
-    return HttpResponse.json({
+    // 새로운 응답구조에 맞춘 응답데이터 생성
+    const responseData = {
       status: 'success',
+      message: '로그인에 성공했습니다.',
       data: {
-        token: `mock-jwt-token-${user.role.toLowerCase()}`,
-        user: userWithoutPassword,
+        member_id: userInfo.member_id,
+        email: userInfo.email,
+        nickname: userInfo.nickname,
+        role: userInfo.role,
+        profile_image: userInfo.profile_image,
+        ...(userInfo.role === 'ROLE_ADMIN' && { admin_info: userInfo.admin_info }),
+      },
+    };
+
+    // JWT 토큰을 헤더에 포함하여 응답
+    return new HttpResponse(JSON.stringify(responseData), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer mock-jwt-token-${user.role.toLowerCase()}`,
       },
     });
   }),
@@ -96,6 +118,26 @@ export const checkNicknameHandler = [
       },
     });
   }),
+];
+
+// 전화번호로 이메일 찾기를 위한 Mock 데이터
+const MOCK_USER_WITH_PHONE = [
+  {
+    member_id: '1',
+    email: 'investor@example.com',
+    password: 'Password1!',
+    nickname: '투자자',
+    role: 'ROLE_INVESTOR',
+    phone: '01012345678',
+  },
+  {
+    member_id: '2',
+    email: 'trader@example.com',
+    password: 'Password1!',
+    nickname: '트레이더',
+    role: 'ROLE_TRADER',
+    phone: '01087654321',
+  },
 ];
 
 interface FindEmailRequest {
