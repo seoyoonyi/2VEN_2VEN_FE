@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 import { css } from '@emotion/react';
 
@@ -26,6 +26,20 @@ const MonthlyAnalysis = ({ attributes, strategyId }: AnalysisProps) => {
     totalElements: 0,
     pageSize: 5,
   });
+  const normalizedData = useMemo(
+    () =>
+      monthlyData.map((data) => ({
+        dataId: data.strategyMonthlyDataId,
+        date: data.analysisMonth,
+        principal: data.monthlyAveragePrinciple,
+        dep_wd_price: data.monthlyDepWdAmount,
+        profit_loss: data.monthlyPl,
+        pl_rate: data.monthlyReturn,
+        cumulative_profit_loss: data.monthlyCumulativePl,
+        cumulative_profit_loss_rate: data.monthlyCumulativeReturn,
+      })),
+    [monthlyData]
+  );
 
   const handleChangePage = async (newPage: number) => {
     setPaginatedData((prev) => ({
@@ -54,7 +68,7 @@ const MonthlyAnalysis = ({ attributes, strategyId }: AnalysisProps) => {
 
   return (
     <div css={monthlyStyle}>
-      <AnalysisTable attributes={attributes} analysis={monthlyData} mode='read' />
+      <AnalysisTable attributes={attributes} analysis={normalizedData} mode='read' />
       <div css={paginationArea}>
         <Pagination
           limit={paginatedData.pageSize}

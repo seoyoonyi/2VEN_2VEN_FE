@@ -18,38 +18,21 @@ export interface AnalysisAttribuesProps {
   title: string;
 }
 
-const getAnalysisValue = (row: AnalysisDataProps | MonthlyDataProps, mode: 'write' | 'read') => {
-  if (mode === 'write') {
-    const data = row as AnalysisDataProps;
-    return {
-      dataId: data.daily_strategic_statistics_id,
-      date: data.input_date,
-      principal: data.principal,
-      dep_wd_price: data.dep_wd_price,
-      profit_loss: data.daily_profit_loss,
-      pl_rate: data.daily_pl_rate,
-      cumulative_profit_loss: data.cumulative_profit_loss,
-      cumulative_profit_loss_rate: data.cumulative_profit_loss_rate,
-    };
-  } else {
-    const data = row as MonthlyDataProps;
-    return {
-      dataId: data.strategyMonthlyDataId,
-      date: data.analysisMonth,
-      principal: data.monthlyAveragePrinciple,
-      dep_wd_price: data.monthlyDepWdAmount,
-      profit_loss: data.monthlyPl,
-      pl_rate: data.monthlyReturn,
-      cumulative_profit_loss: data.monthlyCumulativePl,
-      cumulative_profit_loss_rate: data.monthlyCumulativeReturn,
-    };
-  }
-};
+interface NormalizedAnalysProps {
+  dataId: number;
+  date: string;
+  principal: number;
+  dep_wd_price: number;
+  profit_loss: number;
+  pl_rate: number;
+  cumulative_profit_loss: number;
+  cumulative_profit_loss_rate: number;
+}
 
 export interface AnalysisProps {
   attributes: AnalysisAttribuesProps[];
   strategyId?: number;
-  analysis?: AnalysisDataProps[] | MonthlyDataProps[];
+  analysis?: NormalizedAnalysProps[];
   mode: 'write' | 'read';
   onUpload?: () => void;
 }
@@ -59,11 +42,6 @@ const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) 
   const [selectAll, setSelectAll] = useState(false);
   const [tableData, setTableData] = useState<InputTableProps[]>([]);
   const { openTableModal } = useTableModalStore();
-
-  const calculatedAnalysis = useMemo(
-    () => analysis?.map((row) => getAnalysisValue(row, mode)),
-    [analysis, mode]
-  );
 
   const handleAllChecked = () => {
     const newSelectAll = !selectAll;
@@ -124,8 +102,8 @@ const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) 
           </tr>
         </thead>
         <tbody>
-          {calculatedAnalysis?.length || 0 ? (
-            calculatedAnalysis?.map((values) => (
+          {analysis?.length || 0 ? (
+            analysis?.map((values) => (
               <tr key={values.dataId} css={tableRowStyle}>
                 {mode === 'write' && (
                   <td css={tableCellStyle}>

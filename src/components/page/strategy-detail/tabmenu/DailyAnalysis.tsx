@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
@@ -33,6 +33,21 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
   });
   const [analysis, setAnalysis] = useState<AnalysisDataProps[]>([]);
   const { openTableModal } = useTableModalStore();
+
+  const normalizedData = useMemo(
+    () =>
+      analysis.map((data) => ({
+        dataId: data.daily_strategic_statistics_id,
+        date: data.input_date,
+        principal: data.principal,
+        dep_wd_price: data.dep_wd_price,
+        profit_loss: data.daily_profit_loss,
+        pl_rate: data.daily_pl_rate,
+        cumulative_profit_loss: data.cumulative_profit_loss,
+        cumulative_profit_loss_rate: data.cumulative_profit_loss_rate,
+      })),
+    [analysis]
+  );
 
   const handleOpenModal = () => {
     const initalData = Array(5).fill({ date: '', trade: '', day: '' });
@@ -107,7 +122,7 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
 
       <AnalysisTable
         attributes={attributes}
-        analysis={analysis}
+        analysis={normalizedData}
         mode={'write'}
         onUpload={handleOpenModal}
       />
