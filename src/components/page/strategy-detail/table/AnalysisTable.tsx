@@ -1,10 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
-
-import { AnalysisDataProps } from '../tabmenu/DailyAnalysis';
-import { MonthlyDataProps } from '../tabmenu/MonthlyAnalysis';
 
 import InputTable, { InputTableProps } from './InputTable';
 import TableModal from './TableModal';
