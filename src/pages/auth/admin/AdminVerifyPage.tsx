@@ -52,6 +52,7 @@ const AdminVerifyPage = () => {
 
   // 인증번호 재요청
   const handleResend = () => {
+    console.log(isVerificationActive);
     setShouldReset(true);
     // setState는 비동기이므로, 이 시점에서는 아직 errorMessage가 변경되지 않았음
     try {
