@@ -59,13 +59,14 @@ export const fetchPostTradingType = async ({
 //매매유형 수정
 export const fetchPutTradingType = async ({
   tradingTypeId,
+  tradingTypeOrder,
   tradingTypeName,
   tradingTypeIcon,
   isActive,
 }: TradingTypeProps): Promise<{ msg: string; timestamp: string }> => {
-  console.log(tradingTypeId, tradingTypeIcon, tradingTypeName);
   const body = {
     tradingTypeName,
+    tradingTypeOrder,
     tradingTypeIcon,
     isActive,
   };
