@@ -10,6 +10,7 @@ import TableModal from '../table/TableModal';
 import { fetchDailyAnalysis } from '@/api/strategyDetail';
 import Button from '@/components/common/Button';
 import Pagination from '@/components/common/Pagination';
+import usePagination from '@/hooks/usePagination';
 import useTableModalStore from '@/stores/tableModalStore';
 
 export interface AnalysisDataProps {
@@ -25,15 +26,9 @@ export interface AnalysisDataProps {
 
 const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
   const [tableData, setTableData] = useState<InputTableProps[]>([]);
-  const [paginatedData, setPaginatedData] = useState({
-    currentPage: 1,
-    totalPage: 0,
-    totalElements: 0,
-    pageSize: 5,
-  });
   const [analysis, setAnalysis] = useState<AnalysisDataProps[]>([]);
+  const { pagination, setPage, setPaginatedData } = usePagination(1, 5);
   const { openTableModal } = useTableModalStore();
-
   const normalizedData = useMemo(
     () =>
       analysis.map((data) => ({
@@ -70,29 +65,23 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
     });
   };
 
-  const handleChangePage = async (newPage: number) => {
-    setPaginatedData((prev) => ({
-      ...prev,
-      currentPage: newPage,
-    }));
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetchDailyAnalysis(
         Number(strategyId),
-        paginatedData.currentPage,
-        paginatedData.pageSize
+        pagination.currentPage,
+        pagination.pageSize
       );
       setAnalysis(res.data);
-      setPaginatedData((prev) => ({
-        ...prev,
+      setPaginatedData({
+        currentPage: res.page,
         totalPage: res.totalPages,
         totalElements: res.totalItems,
-      }));
+        pageSize: res.pageSize,
+      });
     };
     fetchData();
-  }, [strategyId, paginatedData.currentPage, paginatedData.pageSize]);
+  }, [strategyId, pagination.currentPage, pagination.pageSize, setPaginatedData]);
 
   return (
     <div css={dailyStyle}>
@@ -119,7 +108,6 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
           </Button>
         </div>
       )}
-
       <AnalysisTable
         attributes={attributes}
         analysis={normalizedData}
@@ -128,10 +116,10 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
       />
       <div css={PaginationArea}>
         <Pagination
-          totalPage={paginatedData.totalPage}
-          limit={paginatedData.pageSize}
-          page={paginatedData.currentPage}
-          setPage={handleChangePage}
+          totalPage={pagination.totalPage}
+          limit={pagination.pageSize}
+          page={pagination.currentPage}
+          setPage={setPage}
         />
       </div>
       <TableModal />

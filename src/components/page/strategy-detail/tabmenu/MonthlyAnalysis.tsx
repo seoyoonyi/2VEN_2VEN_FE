@@ -6,6 +6,7 @@ import AnalysisTable, { AnalysisProps } from '../table/AnalysisTable';
 
 import { fetchMonthlyAnalysis } from '@/api/strategyDetail';
 import Pagination from '@/components/common/Pagination';
+import usePagination from '@/hooks/usePagination';
 
 export interface MonthlyDataProps {
   strategyMonthlyDataId: number;
@@ -20,12 +21,7 @@ export interface MonthlyDataProps {
 
 const MonthlyAnalysis = ({ attributes, strategyId }: AnalysisProps) => {
   const [monthlyData, setMonthlyData] = useState<MonthlyDataProps[]>([]);
-  const [paginatedData, setPaginatedData] = useState({
-    currentPage: 1,
-    totalPage: 0,
-    totalElements: 0,
-    pageSize: 5,
-  });
+  const { pagination, setPage, setPaginatedData } = usePagination(1, 5);
   const normalizedData = useMemo(
     () =>
       monthlyData.map((data) => ({
@@ -41,19 +37,12 @@ const MonthlyAnalysis = ({ attributes, strategyId }: AnalysisProps) => {
     [monthlyData]
   );
 
-  const handleChangePage = async (newPage: number) => {
-    setPaginatedData((prev) => ({
-      ...prev,
-      currentPage: newPage,
-    }));
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetchMonthlyAnalysis(
         Number(strategyId),
-        paginatedData.currentPage,
-        paginatedData.pageSize
+        pagination.currentPage,
+        pagination.pageSize
       );
       setPaginatedData({
         currentPage: res.page,
@@ -64,17 +53,17 @@ const MonthlyAnalysis = ({ attributes, strategyId }: AnalysisProps) => {
       setMonthlyData(res.data);
     };
     fetchData();
-  }, [strategyId, paginatedData.currentPage, paginatedData.pageSize]);
+  }, [strategyId, pagination.currentPage, pagination.pageSize, setPaginatedData]);
 
   return (
     <div css={monthlyStyle}>
       <AnalysisTable attributes={attributes} analysis={normalizedData} mode='read' />
       <div css={paginationArea}>
         <Pagination
-          limit={paginatedData.pageSize}
-          page={paginatedData.currentPage}
-          totalPage={paginatedData.totalPage}
-          setPage={handleChangePage}
+          limit={pagination.pageSize}
+          page={pagination.currentPage}
+          totalPage={pagination.totalPage}
+          setPage={setPage}
         />
       </div>
     </div>

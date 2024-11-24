@@ -15,6 +15,7 @@ import DailyAnalysis from '@/components/page/strategy-detail/tabmenu/DailyAnalys
 import MonthlyAnalysis from '@/components/page/strategy-detail/tabmenu/MonthlyAnalysis';
 import StatisticsTable from '@/components/page/strategy-detail/tabmenu/StatisticsTable';
 import { ROUTES } from '@/constants/routes';
+import { monthlyAttribues, dailyAttribues } from '@/constants/strategyAnalysis';
 import useStrategyDetailDelete from '@/hooks/mutations/useStrategyDetailDelete';
 import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
 import useModalStore from '@/stores/modalStore';
@@ -72,59 +73,6 @@ const imgTest = [
   { img: '/src/assets/images/domestic_present.svg' },
   { img: '/src/assets/images/domestic_present.svg' },
   { img: '/src/assets/images/domestic_present.svg' },
-];
-
-const dailyAttribues = [
-  {
-    title: '날짜',
-  },
-  {
-    title: '원금',
-  },
-  {
-    title: '입출금',
-  },
-  {
-    title: '일손익',
-  },
-  {
-    title: '일수익률',
-  },
-  {
-    title: '누적손익',
-  },
-  {
-    title: '누적수익률',
-  },
-  {
-    title: '수정',
-  },
-];
-const monthlyAttribues = [
-  {
-    title: '월',
-  },
-  {
-    title: '월평균 원금',
-  },
-  {
-    title: '입출금',
-  },
-  {
-    title: '월 손익',
-  },
-  {
-    title: '월 수익률',
-  },
-  {
-    title: '누적손익',
-  },
-  {
-    title: '누적수익률',
-  },
-  {
-    title: '수정',
-  },
 ];
 
 const StrategyDetailPage = () => {
