@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { css } from '@emotion/react';
 
+import Input from '@/components/common/Input';
 import theme from '@/styles/theme';
 
 export interface InputTableProps {
@@ -42,16 +43,15 @@ const InputTable = ({ data, onChange }: InputAnalysisProps) => {
           {inputData.map((row, idx) => (
             <tr key={idx} css={tableRowStyle}>
               <td css={tableCellStyle}>
-                <input
-                  type='text'
+                <Input
+                  type='date'
                   value={row.input_date}
-                  placeholder='예)YYYY.MM.DD'
                   onChange={(e) => handleInputChange(idx, 'input_date', e.target.value)}
                   css={inputStyle}
                 />
               </td>
               <td css={tableCellStyle}>
-                <input
+                <Input
                   type='text'
                   value={row.daily_profit_loss}
                   placeholder='예)123,456,789'
@@ -60,7 +60,7 @@ const InputTable = ({ data, onChange }: InputAnalysisProps) => {
                 />
               </td>
               <td css={tableCellStyle}>
-                <input
+                <Input
                   type='text'
                   value={row.dep_wd_price}
                   placeholder='예)+123,456'
@@ -123,8 +123,7 @@ const tableCellStyle = css`
 
 const inputStyle = css`
   width: 100%;
-  padding: 8px;
-  border: 1px solid ${theme.colors.gray[300]};
   border-radius: 4px;
 `;
+
 export default InputTable;
