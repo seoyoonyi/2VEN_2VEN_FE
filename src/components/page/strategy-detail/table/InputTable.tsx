@@ -5,9 +5,9 @@ import { css } from '@emotion/react';
 import theme from '@/styles/theme';
 
 export interface InputTableProps {
-  date: string;
-  trade: string;
-  day: string;
+  input_date: string;
+  dep_wd_price: number;
+  daily_profit_loss: number;
 }
 
 export interface InputAnalysisProps {
@@ -44,27 +44,27 @@ const InputTable = ({ data, onChange }: InputAnalysisProps) => {
               <td css={tableCellStyle}>
                 <input
                   type='text'
-                  value={row.date}
+                  value={row.input_date}
                   placeholder='예)YYYY.MM.DD'
-                  onChange={(e) => handleInputChange(idx, 'date', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'input_date', e.target.value)}
                   css={inputStyle}
                 />
               </td>
               <td css={tableCellStyle}>
                 <input
                   type='text'
-                  value={row.trade}
+                  value={row.daily_profit_loss}
                   placeholder='예)123,456,789'
-                  onChange={(e) => handleInputChange(idx, 'trade', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'daily_profit_loss', e.target.value)}
                   css={inputStyle}
                 />
               </td>
               <td css={tableCellStyle}>
                 <input
                   type='text'
-                  value={row.day}
+                  value={row.dep_wd_price}
                   placeholder='예)+123,456'
-                  onChange={(e) => handleInputChange(idx, 'day', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'dep_wd_price', e.target.value)}
                   css={inputStyle}
                 />
               </td>

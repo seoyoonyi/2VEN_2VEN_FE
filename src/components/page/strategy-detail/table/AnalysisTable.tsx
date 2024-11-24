@@ -16,22 +16,24 @@ export interface AnalysisAttribuesProps {
 }
 
 export interface AnalysisDataProps {
-  date: string;
-  original: string;
-  trade: string;
-  day: string;
-  daily: string;
-  addMoney: string;
-  addRate: string;
+  daily_strategic_statistics_id: number;
+  input_date: string;
+  principal: number;
+  dep_wd_price: number;
+  daily_profit_loss: number;
+  daily_pl_rate: number;
+  cumulative_profit_loss: number;
+  cumulative_profit_loss_rate: number;
 }
 
 export interface AnalysisProps {
   attributes: AnalysisAttribuesProps[];
   data: AnalysisDataProps[];
   mode: 'write' | 'read';
+  onUpload?: () => void;
 }
 
-const AnalysisTable = ({ attributes, data, mode }: AnalysisProps) => {
+const AnalysisTable = ({ attributes, data, mode, onUpload }: AnalysisProps) => {
   const [selected, setSelected] = useState<boolean[]>(new Array(data.length).fill(false));
   const [selectAll, setSelectAll] = useState(false);
   const [tableData, setTableData] = useState<InputTableProps[]>([]);
@@ -71,9 +73,10 @@ const AnalysisTable = ({ attributes, data, mode }: AnalysisProps) => {
     });
   };
 
-  const getColorValue = (item: string) => {
-    if (item.startsWith('-')) return false;
-    if (item.startsWith('+')) return true;
+  const getColorValue = (item: number) => {
+    const strItem = String(item);
+    if (strItem.startsWith('-')) return false;
+    if (strItem.startsWith('+')) return true;
     return null;
   };
 
@@ -103,24 +106,24 @@ const AnalysisTable = ({ attributes, data, mode }: AnalysisProps) => {
                     <Checkbox checked={selected[idx]} onChange={() => handleSelected(idx)} />
                   </td>
                 )}
-                <td css={tableCellStyle}>{row.date}</td>
-                <td css={tableCellStyle}>{row.original}</td>
-                <td css={tableCellStyle}>{row.trade}</td>
+                <td css={tableCellStyle}>{row.input_date}</td>
+                <td css={tableCellStyle}>{row.principal}</td>
+                <td css={tableCellStyle}>{row.dep_wd_price}</td>
                 <td
                   css={[
                     tableCellStyle,
-                    getColorValue(row.day) === true
+                    getColorValue(row.daily_profit_loss) === true
                       ? redTextStyle
-                      : getColorValue(row.day) === false
+                      : getColorValue(row.daily_profit_loss) === false
                         ? blueTextStyle
                         : defaultTextStyle,
                   ]}
                 >
-                  {row.day}
+                  {row.daily_profit_loss}
                 </td>
-                <td css={tableCellStyle}>{row.daily}</td>
-                <td css={tableCellStyle}>{row.addMoney}</td>
-                <td css={tableCellStyle}>{row.addRate}</td>
+                <td css={tableCellStyle}>{row.daily_pl_rate}</td>
+                <td css={tableCellStyle}>{row.cumulative_profit_loss}</td>
+                <td css={tableCellStyle}>{row.cumulative_profit_loss_rate}</td>
                 {mode === 'write' && (
                   <td css={tableCellStyle}>
                     <Button
@@ -140,7 +143,13 @@ const AnalysisTable = ({ attributes, data, mode }: AnalysisProps) => {
               <td colSpan={attributes.length + 1} css={noDataStyle}>
                 내용을 추가해주세요.
                 <div css={addArea}>
-                  <Button variant='secondary' size='xs' width={116} css={buttonStyle}>
+                  <Button
+                    variant='secondary'
+                    size='xs'
+                    width={116}
+                    css={buttonStyle}
+                    onClick={onUpload}
+                  >
                     <BiPlus size={16} />
                     직접입력
                   </Button>
