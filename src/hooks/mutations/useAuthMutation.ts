@@ -2,11 +2,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import { signin } from '@/api/auth';
+import { useAdminAuthStore } from '@/stores/adminAuthStore';
 import { useAuthStore } from '@/stores/authStore';
-import { SigninRequest, SigninResponse } from '@/types/auth';
+import { isAdminUser, SigninRequest, SigninResponse } from '@/types/auth';
 
 export const useSigninMutation = () => {
   const { setAuth } = useAuthStore();
+  const { setAdminAuth } = useAdminAuthStore();
   const queryClient = useQueryClient();
 
   return useMutation<SigninResponse, AxiosError, SigninRequest>({
@@ -17,13 +19,21 @@ export const useSigninMutation = () => {
         const response = await signin(credentials);
         console.log('Signin response:', response);
 
-        if (!response.data?.token) {
-          throw new Error('토큰이 없습니다.');
-        }
-        if (!response.data?.user) {
-          throw new Error('사용자 정보가 없습니다.');
+        if (!response.data?.token || !response.data?.user) {
+          throw new Error('인증 정보가 올바르지 않습니다.');
         }
 
+        // 관리자의 경우, 관리자 스토어도 업데이트
+        if (isAdminUser(response.data.user)) {
+          setAdminAuth({
+            is_authorized: response.data.user.is_authorized,
+            authorization_status: response.data.user.authorization_status,
+            authorized_at: response.data.user.authorized_at,
+            expires_at: response.data.user.expires_at,
+          });
+        }
+
+        // 공통 인증정보 저장
         setAuth(response.data.token, response.data.user);
         return response;
       } catch (error) {
