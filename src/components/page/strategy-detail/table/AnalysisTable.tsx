@@ -125,7 +125,7 @@ const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) 
         </thead>
         <tbody>
           {calculatedAnalysis?.length || 0 ? (
-            calculatedAnalysis?.map((values, idx) => (
+            calculatedAnalysis?.map((values) => (
               <tr key={values.dataId} css={tableRowStyle}>
                 {mode === 'write' && (
                   <td css={tableCellStyle}>
