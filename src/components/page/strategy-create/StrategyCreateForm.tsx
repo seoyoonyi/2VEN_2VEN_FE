@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
+import Modal from '@/components/common/Modal';
 import Select from '@/components/common/Select';
 import FileUpload from '@/components/page/strategy-create/form-content/FileUpload';
 import ProductType from '@/components/page/strategy-create/form-content/ProductType';
@@ -12,9 +13,10 @@ import { investmentFunds, isPublic } from '@/constants/createOptions';
 import { useSubmitStrategyCreate } from '@/hooks/mutations/useSubmitStrategyCreate';
 import useFetchStrategyOptionData from '@/hooks/queries/useFetchStrategyOptionData';
 import useCreateFormValidation from '@/hooks/useCreateFormValidation';
+import useModalStore from '@/stores/modalStore';
 import { useStrategyFormStore } from '@/stores/strategyFormStore';
 import theme from '@/styles/theme';
-import { StrategyPayload } from '@/types/strategyForm';
+import { StrategyPayload } from '@/types/strategy';
 
 const StrategyCreateForm = () => {
   const {
@@ -28,6 +30,7 @@ const StrategyCreateForm = () => {
     setField,
     checkProduct,
   } = useStrategyFormStore();
+  const { openModal } = useModalStore();
   const { strategyData, loading, error } = useFetchStrategyOptionData();
   const { mutate: submitStrategy, status } = useSubmitStrategyCreate();
   const isSubmitting = status === 'pending';
@@ -42,8 +45,7 @@ const StrategyCreateForm = () => {
     setFile(selectedFile);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     const payload: StrategyPayload = {
       strategyTitle: strategy,
       tradingTypeId: Number(operation),
@@ -54,18 +56,35 @@ const StrategyCreateForm = () => {
       investmentAssetClassesIdList: selectedProducts.map((v) => Number(v)),
     };
 
-    submitStrategy(payload);
+    try {
+      await submitStrategy(payload);
+    } catch (error) {
+      console.error('등록 실패:', error);
+    }
+  };
+
+  const onClickRegister = () => {
+    openModal({
+      type: 'confirm',
+      title: '전략 등록',
+      desc: '전략을 저장하시겠습니까?',
+      onAction: async () => {
+        await handleSubmit();
+      },
+    });
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmit();
   };
 
   if (loading) return <p>Loading.....</p>;
   if (error) return <p>{error}</p>;
 
   return (
-    <form css={formContainerStyle} onSubmit={handleSubmit}>
-      <StrategyName
-        strategy={strategy}
-        onStrategyChange={(e) => setField('strategy', e.target.value)}
-      />
+    <form css={formContainerStyle} onSubmit={handleFormSubmit}>
+      <StrategyName strategy={strategy} onStrategyChange={(value) => setField('strategy', value)} />
 
       <div css={selectContainerStyle}>
         <section css={flexAlignStyle}>
@@ -129,15 +148,17 @@ const StrategyCreateForm = () => {
 
       <div css={buttonContainerStyle}>
         <Button
-          type='submit'
+          type='button'
           variant='primary'
           size='lg'
           width={326}
           disabled={!isFormValid || isSubmitting}
+          onClick={onClickRegister}
         >
           저장하기
         </Button>
       </div>
+      <Modal />
     </form>
   );
 };

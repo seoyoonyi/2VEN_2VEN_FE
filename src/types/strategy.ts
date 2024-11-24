@@ -18,5 +18,7 @@ export interface StrategyPayload {
 
 export interface SubmitStrategyResponse {
   msg: string;
-  id: number;
+  data: {
+    Strategy_Id: number;
+  };
 }

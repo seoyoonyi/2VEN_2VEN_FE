@@ -1,6 +1,6 @@
 import apiClient from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
-import { StrategyPayload } from '@/types/strategyForm';
+import { StrategyPayload } from '@/types/strategy';
 
 // 전략 등록 옵션 조회
 export const fetchStrategyRegistration = async () => {
@@ -28,7 +28,6 @@ export const submitStrategyCreate = async (payload: StrategyPayload) => {
         Auth: 'trader',
       },
     });
-    console.log('전략 등록 데이터,,', payload);
     return data;
   } catch (error) {
     console.error('Failed to submit strategy create:', error);
