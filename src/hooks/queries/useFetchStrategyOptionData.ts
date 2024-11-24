@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchStrategyRegistration } from '@/api/strategyCreate';
+import { fetchStrategyRegistration } from '@/api/strategy';
 import { StrategyData } from '@/types/strategy';
 import { mapToOptions } from '@/utils/mapToOptions';
 

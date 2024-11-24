@@ -11,7 +11,6 @@ export const fetchStrategyRegistration = async () => {
         Auth: 'trader',
       },
     });
-    console.log('옵션들,,', res.data.data);
     return res.data.data;
   } catch (error) {
     console.error('Failed to fetch strategy registration data:', error);
@@ -31,6 +30,22 @@ export const submitStrategyCreate = async (payload: StrategyPayload) => {
     return data;
   } catch (error) {
     console.error('Failed to submit strategy create:', error);
+    throw error;
+  }
+};
+
+// 전략 수정 조회
+export const fetchUpdateStrategy = async (strategyId: string) => {
+  try {
+    const res = await apiClient.get(`${API_ENDPOINTS.STRATEGY.UPDATE_FORM}/${strategyId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Auth: 'trader',
+      },
+    });
+    return res.data.Data;
+  } catch (error) {
+    console.error('Failed to fetch update strategy data:', error);
     throw error;
   }
 };

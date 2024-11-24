@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
-import { submitStrategyCreate } from '@/api/strategyCreate';
+import { submitStrategyCreate } from '@/api/strategy';
 import { useStrategyFormStore } from '@/stores/strategyFormStore';
 import { StrategyPayload, SubmitStrategyResponse } from '@/types/strategy';
 

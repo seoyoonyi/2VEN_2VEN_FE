@@ -1,7 +1,11 @@
-import { css } from '@emotion/react';
+import { useState, useEffect } from 'react';
 
+import { css } from '@emotion/react';
+import { useParams } from 'react-router-dom';
+
+import { fetchUpdateStrategy } from '@/api/strategy';
 import PageHeader from '@/components/common/PageHeader';
-import StrategyCreateForm from '@/components/page/strategy-create/StrategyCreateForm';
+import StrategyForm from '@/components/page/strategy/StrategyForm';
 import theme from '@/styles/theme';
 
 const desc = [
@@ -11,14 +15,37 @@ const desc = [
   },
 ];
 
-const StrategyEditPage = () => (
-  <div>
-    <PageHeader title='전략수정' desc={desc} icon />
-    <div css={createContainerStyle}>
-      <StrategyCreateForm />
+const StrategyEditPage = () => {
+  const { strategyId } = useParams<{ strategyId: string }>();
+  const [strategyData, setStrategyData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!strategyId) {
+        console.error('Invalid strategyId');
+        return;
+      }
+
+      try {
+        const data = await fetchUpdateStrategy(strategyId);
+        setStrategyData(data);
+      } catch (error) {
+        console.error('전략 수정 조회 이상', error);
+      }
+    };
+
+    fetchData();
+  }, [strategyId]);
+
+  return (
+    <div>
+      <PageHeader title='전략수정' desc={desc} icon />
+      <div css={createContainerStyle}>
+        <StrategyForm strategyDetailData={strategyData} isEditMode={true} />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const createContainerStyle = css`
   width: ${theme.layout.width.content};

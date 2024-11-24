@@ -1,14 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import Select from '@/components/common/Select';
-import FileUpload from '@/components/page/strategy-create/form-content/FileUpload';
-import ProductType from '@/components/page/strategy-create/form-content/ProductType';
-import StrategyIntro from '@/components/page/strategy-create/form-content/StrategyIntro';
-import StrategyName from '@/components/page/strategy-create/form-content/StrategyName';
+import FileUpload from '@/components/page/strategy/form-content/FileUpload';
+import ProductType from '@/components/page/strategy/form-content/ProductType';
+import StrategyIntro from '@/components/page/strategy/form-content/StrategyIntro';
+import StrategyName from '@/components/page/strategy/form-content/StrategyName';
 import { investmentFunds, isPublic } from '@/constants/createOptions';
 import { useSubmitStrategyCreate } from '@/hooks/mutations/useSubmitStrategyCreate';
 import useFetchStrategyOptionData from '@/hooks/queries/useFetchStrategyOptionData';
@@ -16,9 +16,15 @@ import useCreateFormValidation from '@/hooks/useCreateFormValidation';
 import useModalStore from '@/stores/modalStore';
 import { useStrategyFormStore } from '@/stores/strategyFormStore';
 import theme from '@/styles/theme';
-import { StrategyPayload } from '@/types/strategy';
+import { StrategyPayload, StrategyDetailsData } from '@/types/strategy';
 
-const StrategyCreateForm = () => {
+const StrategyCreateForm = ({
+  strategyDetailData,
+  isEditMode,
+}: {
+  strategyDetailData?: StrategyDetailsData;
+  isEditMode?: boolean;
+}) => {
   const {
     strategy,
     text,
@@ -29,7 +35,33 @@ const StrategyCreateForm = () => {
     selectedProducts,
     setField,
     checkProduct,
+    clearForm,
   } = useStrategyFormStore();
+
+  useEffect(() => {
+    if (isEditMode && strategyDetailData) {
+      setField('strategy', strategyDetailData.strategyTitle);
+      setField('text', strategyDetailData.strategyOverview);
+      setField('operation', strategyDetailData.tradingTypeName);
+      setField('cycle', strategyDetailData.tradingCycleName);
+      setField('fund', strategyDetailData.minInvestmentAmount);
+      setField('publicStatus', strategyDetailData.isPosted);
+      setField(
+        'selectedProducts',
+        strategyDetailData.strategyIACEntities
+          .map((item) => String(item.investmentAssetClassesId))
+          .join(',')
+      );
+    }
+  }, [isEditMode, strategyDetailData, setField]);
+
+  useEffect(
+    () => () => {
+      clearForm();
+    },
+    [clearForm]
+  );
+
   const { openModal } = useModalStore();
   const { strategyData, loading, error } = useFetchStrategyOptionData();
   const { mutate: submitStrategy, status } = useSubmitStrategyCreate();
@@ -94,6 +126,9 @@ const StrategyCreateForm = () => {
           <Select
             id='operation'
             options={strategyData.operations}
+            value={strategyData.operations.find(
+              (option) => option.label === strategyDetailData?.tradingTypeName
+            )}
             onChange={(option) => setField('operation', option.value)}
           />
         </section>
@@ -104,6 +139,9 @@ const StrategyCreateForm = () => {
           </label>
           <Select
             id='cycle'
+            value={strategyData.cycles.find(
+              (option) => option.label === strategyDetailData?.tradingCycleName
+            )}
             options={strategyData.cycles}
             onChange={(option) => setField('cycle', option.value)}
           />
@@ -117,6 +155,9 @@ const StrategyCreateForm = () => {
         <Select
           id='fund'
           options={investmentFunds}
+          value={investmentFunds.find(
+            (option) => option.label === strategyDetailData?.minInvestmentAmount
+          )}
           onChange={(option) => setField('fund', option.value)}
         />
       </section>
@@ -140,6 +181,7 @@ const StrategyCreateForm = () => {
         <Select
           id='public-status'
           options={isPublic}
+          value={isPublic.find((option) => option.value === strategyDetailData?.isPosted)}
           onChange={(option) => setField('publicStatus', option.value)}
         />
       </section>
