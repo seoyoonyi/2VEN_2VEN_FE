@@ -110,7 +110,7 @@ export const dailyAnalysisHandlers = [
     const { strategyId } = params;
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') || '1', 10);
-    const pageSize = parseInt(url.searchParams.get('pageSize') || '10', 10);
+    const pageSize = parseInt(url.searchParams.get('pageSize') || '5', 10);
 
     const data = AnalysisData[0];
     const startIndex = (page - 1) * pageSize;

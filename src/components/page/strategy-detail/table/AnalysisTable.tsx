@@ -28,13 +28,14 @@ export interface AnalysisDataProps {
 
 export interface AnalysisProps {
   attributes: AnalysisAttribuesProps[];
-  data: AnalysisDataProps[];
+  strategyId?: number;
+  analysis?: AnalysisDataProps[];
   mode: 'write' | 'read';
   onUpload?: () => void;
 }
 
-const AnalysisTable = ({ attributes, data, mode, onUpload }: AnalysisProps) => {
-  const [selected, setSelected] = useState<boolean[]>(new Array(data.length).fill(false));
+const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) => {
+  const [selected, setSelected] = useState<boolean[]>(new Array(analysis?.length).fill(false));
   const [selectAll, setSelectAll] = useState(false);
   const [tableData, setTableData] = useState<InputTableProps[]>([]);
   const { openTableModal } = useTableModalStore();
@@ -42,7 +43,7 @@ const AnalysisTable = ({ attributes, data, mode, onUpload }: AnalysisProps) => {
   const handleAllChecked = () => {
     const newSelectAll = !selectAll;
     setSelectAll(newSelectAll);
-    setSelected(new Array(data.length).fill(newSelectAll));
+    setSelected(new Array(analysis?.length).fill(newSelectAll));
   };
 
   const handleSelected = (idx: number) => {
@@ -98,8 +99,8 @@ const AnalysisTable = ({ attributes, data, mode, onUpload }: AnalysisProps) => {
           </tr>
         </thead>
         <tbody>
-          {data.length > 0 ? (
-            data.map((row, idx) => (
+          {analysis?.length || 0 > 0 ? (
+            analysis?.map((row, idx) => (
               <tr key={idx} css={tableRowStyle}>
                 {mode === 'write' && (
                   <td css={tableCellStyle}>

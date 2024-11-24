@@ -1,18 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
 
-import AnalysisTable, { AnalysisProps } from '../table/AnalysisTable';
+import AnalysisTable, { AnalysisProps, AnalysisDataProps } from '../table/AnalysisTable';
 import InputTable, { InputTableProps } from '../table/InputTable';
 import TableModal from '../table/TableModal';
 
+import { fetchDailyAnalysis } from '@/api/strategyDetail';
 import Button from '@/components/common/Button';
+import Pagination from '@/components/common/Pagination';
 import useTableModalStore from '@/stores/tableModalStore';
 
-const DailyAnalysis = ({ attributes, data }: AnalysisProps) => {
+const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
   const [tableData, setTableData] = useState<InputTableProps[]>([]);
-
+  const [paginatedData, setPaginatedData] = useState({
+    currentPage: 1,
+    totalPage: 0,
+    totalElements: 0,
+    pageSize: 5,
+  });
+  const [analysis, setAnalysis] = useState<AnalysisDataProps[]>([]);
   const { openTableModal } = useTableModalStore();
 
   const handleOpenModal = () => {
@@ -36,9 +44,33 @@ const DailyAnalysis = ({ attributes, data }: AnalysisProps) => {
     });
   };
 
+  const handleChangePage = async (newPage: number) => {
+    setPaginatedData((prev) => ({
+      ...prev,
+      currentPage: newPage,
+    }));
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetchDailyAnalysis(
+        Number(strategyId),
+        paginatedData.currentPage,
+        paginatedData.pageSize
+      );
+      setAnalysis(res.data);
+      setPaginatedData((prev) => ({
+        ...prev,
+        totalPage: res.totalPages,
+        totalElements: res.totalItems,
+      }));
+    };
+    fetchData();
+  }, [strategyId, paginatedData.currentPage, paginatedData.pageSize]);
+
   return (
     <div css={dailyStyle}>
-      {data.length > 0 && (
+      {analysis.length > 0 && (
         <div css={editArea}>
           <div css={addArea}>
             <Button
@@ -61,7 +93,18 @@ const DailyAnalysis = ({ attributes, data }: AnalysisProps) => {
           </Button>
         </div>
       )}
-      <AnalysisTable attributes={attributes} data={data} mode={'write'} />
+      <AnalysisTable
+        attributes={attributes}
+        analysis={analysis}
+        mode={'write'}
+        onUpload={handleOpenModal}
+      />
+      <Pagination
+        totalPage={paginatedData.totalPage}
+        limit={paginatedData.pageSize}
+        page={paginatedData.currentPage}
+        setPage={handleChangePage}
+      />
       <TableModal />
     </div>
   );

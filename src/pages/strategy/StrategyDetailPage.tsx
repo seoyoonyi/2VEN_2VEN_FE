@@ -66,62 +66,7 @@ const statisticsData = [
   { label: '고정갱신 후 경과일', value: '0일' },
   { label: 'ROA', value: '453' },
 ];
-const dailyAnalysisData = [
-  {
-    date: '2024.10.29',
-    original: '100,000,000',
-    trade: '0',
-    day: '+332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2024.10.29',
-    original: '100,000,000',
-    trade: '100,000',
-    day: '-332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2024.10.29',
-    original: '100,000,000',
-    trade: '0',
-    day: '332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2024.10.29',
-    original: '100,000,000',
-    trade: '20,000,000',
-    day: '332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2024.10.29',
-    original: '100,000,000',
-    trade: '0',
-    day: '332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2024.10.29',
-    original: '100,000,000',
-    trade: '0',
-    day: '332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-];
+
 const monthlyAnalysisData = [
   {
     date: '2026.04',
@@ -211,53 +156,32 @@ const dailyAttribues = [
     title: '수정',
   },
 ];
-const monthlyAttribues = [
-  {
-    title: '월',
-  },
-  {
-    title: '월평균 원금',
-  },
-  {
-    title: '입출금',
-  },
-  {
-    title: '월 손익',
-  },
-  {
-    title: '월 수익률',
-  },
-  {
-    title: '누적손익',
-  },
-  {
-    title: '누적수익률',
-  },
-  {
-    title: '수정',
-  },
-];
-
-const tabMenu = [
-  {
-    title: '통계',
-    component: <StatisticsTable data={statisticsData} />,
-  },
-  {
-    title: '실계좌인증',
-    component: <AccountVerify />,
-  },
-  {
-    title: '일간분석',
-    component: <DailyAnalysis attributes={dailyAttribues} data={dailyAnalysisData} mode='write' />,
-  },
-  {
-    title: '월간분석',
-    component: (
-      <MonthlyAnalysis attributes={monthlyAttribues} data={monthlyAnalysisData} mode='read' />
-    ),
-  },
-];
+// const monthlyAttribues = [
+//   {
+//     title: '월',
+//   },
+//   {
+//     title: '월평균 원금',
+//   },
+//   {
+//     title: '입출금',
+//   },
+//   {
+//     title: '월 손익',
+//   },
+//   {
+//     title: '월 수익률',
+//   },
+//   {
+//     title: '누적손익',
+//   },
+//   {
+//     title: '누적수익률',
+//   },
+//   {
+//     title: '수정',
+//   },
+// ];
 
 const StrategyDetailPage = () => {
   const { strategyId } = useParams();
@@ -265,6 +189,29 @@ const StrategyDetailPage = () => {
   const { strategy, isLoading } = useFetchStrategyDetail(strategyId || '');
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { openModal } = useModalStore();
+
+  const tabMenu = [
+    {
+      title: '통계',
+      component: <StatisticsTable data={statisticsData} />,
+    },
+    {
+      title: '실계좌인증',
+      component: <AccountVerify />,
+    },
+    {
+      title: '일간분석',
+      component: (
+        <DailyAnalysis attributes={dailyAttribues} strategyId={Number(strategyId)} mode='write' />
+      ),
+    },
+    // {
+    //   title: '월간분석',
+    //   component: (
+    //     <MonthlyAnalysis attributes={monthlyAttribues} data={monthlyAnalysisData} mode='read' />
+    //   ),
+    // },
+  ];
 
   const handleDeleteDetail = (id: number) => {
     openModal({

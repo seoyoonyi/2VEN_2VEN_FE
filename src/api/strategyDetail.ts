@@ -35,11 +35,15 @@ export const fetchDeleteStrategyDetail = async (id: number) => {
 };
 
 //일간분석 조회
-export const fetchDailyAnalysis = async (strategyId: number) => {
+export const fetchDailyAnalysis = async (strategyId: number, page: number, pageSize: number) => {
   try {
     const res = await apiClient.get(
       `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/daily-analyses`,
       {
+        params: {
+          page,
+          pageSize,
+        },
         headers: {
           useMock: import.meta.env.VITE_ENABLE_MSW === 'true',
         },
