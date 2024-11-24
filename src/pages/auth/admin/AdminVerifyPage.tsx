@@ -23,7 +23,6 @@ const AdminVerifyPage = () => {
   const [shouldReset, setShouldReset] = useState(false);
   const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [isVerificationActive, setIsVerificationActive] = useState(true);
-  const [serverVerificationCode, setServerVerificationCode] = useState<string>(''); // 서버에서 받은 인증번호 저장s
   const [isVerificationRequested, setIsVerificationRequested] = useState(false); // 추가된 상태
 
   const { mutate: requestVerificationCode } = useRequestVerificationMutation();

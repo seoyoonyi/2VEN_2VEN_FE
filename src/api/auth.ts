@@ -1,5 +1,5 @@
 // auth.ts
-import { AxiosError, isAxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 
 import { apiClient } from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';

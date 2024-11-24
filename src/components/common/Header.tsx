@@ -20,7 +20,7 @@ const Header = () => {
   // const location = useLocation();
 
   // const isAdminRoute = location.pathname.startsWith('/admin'); // /admin으로 시작하는 경로인지 확인
-  const isAdmin = user?.role === 'MEMBER_ROLE_ADMIN'; // 사용자의 role이 ROLE_ADMIN인지 확인
+  // const isAdmin = user?.role === 'MEMBER_ROLE_ADMIN'; // 사용자의 role이 ROLE_ADMIN인지 확인
   // const isAuthorizedAdmin = isAdmin && adminAuth?.is_authorized; // 사용자가 ROLE_ADMIN이고 adminAuth의 is_authorized가 true인지 확인
 
   const handleButtonClick = (value: string) => {

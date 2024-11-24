@@ -57,8 +57,8 @@ const AdminSessionTimer = () => {
   return (
     <div css={timerStyle}>
       <MdOutlineTimer />
-      {/* <span>{timeLeft}</span> */}
-      <span>32:54</span>
+      <span>{timeLeft}</span>
+      {/* <span>32:54</span> */}
     </div>
   );
 };

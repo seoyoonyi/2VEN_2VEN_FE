@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/routes';
 import { useAdminAuthStore } from '@/stores/adminAuthStore';
@@ -9,7 +9,6 @@ import { isAdminUser } from '@/types/auth';
 import { withOpacity } from '@/utils/color';
 
 const GlobalNav = () => {
-  const location = useLocation();
   const { user } = useAuthStore();
   const { adminAuth } = useAdminAuthStore();
   const isAdmin = user && isAdminUser(user); // 사용자의 role이 ROLE_ADMIN인지 확인
