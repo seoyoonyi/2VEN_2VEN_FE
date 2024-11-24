@@ -1,3 +1,5 @@
+import { dailyAnalysisHandlers } from './dailyAnalysis.handlers';
+
 import {
   checkNicknameHandler,
   signinHandler,
@@ -14,4 +16,5 @@ export const handlers = [
   ...strategyDetailHandlers,
   ...checkNicknameHandler,
   ...findEmailHandler,
+  ...dailyAnalysisHandlers,
 ];
