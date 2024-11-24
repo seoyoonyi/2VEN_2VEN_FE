@@ -52,7 +52,6 @@ const SearchInput = ({ onSearchSubmit, ...props }: SearchInputProps) => {
 const searchContainerStyles = css`
   position: relative;
   display: inline-block;
-  width: 100%;
 `;
 
 const searchIconStyles = css`
