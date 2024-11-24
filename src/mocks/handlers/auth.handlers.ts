@@ -168,3 +168,51 @@ export const findEmailHandler = [
     });
   }),
 ];
+
+interface VerifyCodeRequest {
+  code: string;
+}
+// 이메일 인증 코드입력 후 서버에 확인하는 핸들러
+export const verificationHandlers = [
+  // 이메일로 인증번호 요청 핸들러
+  http.post(API_ENDPOINTS.AUTH.EMAIL.REQUEST_VERIFICATION, async () => {
+    console.log('MSW: Intercepting verification code request');
+    return HttpResponse.json(
+      {
+        status: 'success',
+        message: '인증번호가 이메일로 발송되었습니다.',
+        data: null,
+      },
+      {
+        status: 200,
+      }
+    );
+  }),
+
+  http.post(API_ENDPOINTS.AUTH.EMAIL.CHECK_VERIFICATION, async ({ request }) => {
+    console.log('MSW: Intercepting verification check');
+
+    const body = (await request.json()) as VerifyCodeRequest;
+
+    // 테스트용 코드: 123456 이면 성공!
+    if (body.code === '123456') {
+      return HttpResponse.json({
+        status: 'success',
+        message: '관리자 인증이 완료되었습니다.',
+        data: {
+          expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 현재 시간 + 30분
+        },
+      });
+    }
+    return HttpResponse.json(
+      {
+        status: 'error',
+        error: '인증번호가 올바르지 않습니다.',
+        data: null,
+      },
+      {
+        status: 401,
+      }
+    );
+  }),
+];
