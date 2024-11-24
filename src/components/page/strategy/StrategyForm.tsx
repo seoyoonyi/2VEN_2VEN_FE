@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 
+import { submitStrategyUpdate } from '@/api/strategy';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import Select from '@/components/common/Select';
@@ -48,9 +49,7 @@ const StrategyCreateForm = ({
       setField('publicStatus', strategyDetailData.isPosted);
       setField(
         'selectedProducts',
-        strategyDetailData.strategyIACEntities
-          .map((item) => String(item.investmentAssetClassesId))
-          .join(',')
+        strategyDetailData.strategyIACEntities.map((item) => String(item.investmentAssetClassesId))
       );
     }
   }, [isEditMode, strategyDetailData, setField]);
@@ -89,17 +88,21 @@ const StrategyCreateForm = ({
     };
 
     try {
-      await submitStrategy(payload);
+      if (isEditMode && strategyDetailData) {
+        await submitStrategyUpdate(strategyDetailData.strategyId, payload);
+      } else {
+        await submitStrategy(payload);
+      }
     } catch (error) {
-      console.error('등록 실패:', error);
+      console.error('전략 등록/수정 실패:', error);
     }
   };
 
   const onClickRegister = () => {
     openModal({
       type: 'confirm',
-      title: '전략 등록',
-      desc: '전략을 저장하시겠습니까?',
+      title: isEditMode ? '전략 수정' : '전략 등록',
+      desc: isEditMode ? '전략을 수정하시겠습니까?' : '전략을 저장하시겠습니까?',
       onAction: async () => {
         await handleSubmit();
       },
@@ -197,7 +200,7 @@ const StrategyCreateForm = ({
           disabled={!isFormValid || isSubmitting}
           onClick={onClickRegister}
         >
-          저장하기
+          {isEditMode ? '수정하기' : '저장하기'}
         </Button>
       </div>
       <Modal />

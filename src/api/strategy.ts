@@ -27,6 +27,7 @@ export const submitStrategyCreate = async (payload: StrategyPayload) => {
         Auth: 'trader',
       },
     });
+    console.log(payload);
     return data;
   } catch (error) {
     console.error('Failed to submit strategy create:', error);
@@ -46,6 +47,28 @@ export const fetchUpdateStrategy = async (strategyId: string) => {
     return res.data.Data;
   } catch (error) {
     console.error('Failed to fetch update strategy data:', error);
+    throw error;
+  }
+};
+
+// 전략 수정
+export const submitStrategyUpdate = async (strategyId: number, payload: StrategyPayload) => {
+  try {
+    const { data } = await apiClient.put(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}`,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Auth: 'trader',
+        },
+      }
+    );
+    console.log('전략수정성공!', data);
+    console.log('전략성공,,,', payload);
+    return data;
+  } catch (error) {
+    console.error('Failed to submit strategy update', error);
     throw error;
   }
 };
