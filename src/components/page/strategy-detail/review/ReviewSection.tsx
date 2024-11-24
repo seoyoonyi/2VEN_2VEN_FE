@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { useState } from 'react';
 
 import { css } from '@emotion/react';
@@ -15,7 +14,7 @@ interface Review {
   date: string;
 }
 
-const itemsPerPage = 5; // 한 페이지에 표시할 리뷰 수
+const itemsPerPage = 5;
 
 const ReviewSection = () => {
   const [reviews, setReviews] = useState<Review[]>([
@@ -33,14 +32,16 @@ const ReviewSection = () => {
       content: '워메워메',
       date: '2024-11-24',
     },
-  ]); // 전체 리뷰 데이터
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  ]);
+
+  // 전체 리뷰 데이터
+  const [currentPage, setCurrentPage] = useState(1);
 
   const writerId = '내가 투자 짱';
 
   // 리뷰 추가 시 호출될 함수
   const handleAddReview = (newReview: Review) => {
-    setReviews((prevReviews) => [newReview, ...prevReviews]); // 새로운 리뷰 추가
+    setReviews((prevReviews) => [newReview, ...prevReviews]);
   };
 
   // 리뷰 수정 시 호출될 함수
@@ -71,21 +72,21 @@ const ReviewSection = () => {
 
       {/* 리뷰 입력 및 표시 */}
       <ReviewInputList
-        reviews={displayedReviews} // 현재 페이지의 리뷰 전달
+        reviews={displayedReviews}
         writerId={writerId}
         profileImg='https://via.placeholder.com/40'
-        onAddReview={handleAddReview} // 새로운 리뷰 추가 핸들러 전달
-        onEditReview={handleEditReview} // 리뷰 수정 핸들러 전달
-        onDeleteReview={handleDeleteReview} // 리뷰 삭제 핸들러 전달
+        onAddReview={handleAddReview}
+        onEditReview={handleEditReview}
+        onDeleteReview={handleDeleteReview}
       />
 
       {/* 페이지네이션 */}
       <div css={PaginationStyle}>
         <Pagination
-          totalPage={Math.ceil(reviews.length / itemsPerPage)} // 총 페이지 수 계산
+          totalPage={Math.ceil(reviews.length / itemsPerPage)}
           limit={itemsPerPage}
           page={currentPage}
-          setPage={setCurrentPage} // 페이지 변경 핸들러
+          setPage={setCurrentPage}
         />
       </div>
     </div>

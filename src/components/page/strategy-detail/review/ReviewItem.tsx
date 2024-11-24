@@ -15,23 +15,22 @@ interface Review {
 interface ReviewItemProps {
   review: Review;
   writerId: string;
-  onEdit: (id: number, updatedContent: string) => void; // 수정 콜백
-  onDelete: (id: number) => void; // 삭제 콜백
+  onEdit: (id: number, updatedContent: string) => void;
+  onDelete: (id: number) => void;
 }
 
 const ReviewItem = ({ review, writerId, onEdit, onDelete }: ReviewItemProps) => {
-  const [isEditing, setIsEditing] = useState(false); // 수정 모드 상태
-  const [updatedContent, setUpdatedContent] = useState(review.content); // 수정된 리뷰 내용
-
+  const [isEditing, setIsEditing] = useState(false);
+  const [updatedContent, setUpdatedContent] = useState(review.content);
   const handleEdit = () => {
     if (isEditing) {
-      onEdit(review.id, updatedContent); // 수정 내용 저장
+      onEdit(review.id, updatedContent);
     }
-    setIsEditing(!isEditing); // 수정 모드 토글
+    setIsEditing(!isEditing);
   };
 
   const handleDelete = () => {
-    onDelete(review.id); // 삭제 실행
+    onDelete(review.id);
   };
 
   return (
@@ -43,7 +42,7 @@ const ReviewItem = ({ review, writerId, onEdit, onDelete }: ReviewItemProps) => 
             <span css={userNameStyle}>{review.writerId}</span>
             <span css={dateStyle}>{review.date}</span>
           </div>
-          {review.writerId === writerId && ( // 작성자가 본인일 때만 버튼 표시
+          {review.writerId === writerId && (
             <div css={reviewActionsStyle}>
               <button css={actionButtonStyle} onClick={handleEdit}>
                 {isEditing ? '완료' : '수정'}
@@ -99,7 +98,7 @@ const headerStyle = css`
 const userInfoStyle = css`
   display: flex;
   align-items: center;
-  gap: 8px; /* 닉네임과 날짜 사이의 간격 */
+  gap: 8px;
 `;
 
 const userNameStyle = css`
@@ -110,7 +109,7 @@ const userNameStyle = css`
 const dateStyle = css`
   ${theme.textStyle.captions.caption2};
   color: ${theme.colors.gray[400]};
-  margin-right: auto; /* 버튼을 오른쪽으로 밀기 위한 설정 */
+  margin-right: auto;
 `;
 
 const reviewActionsStyle = css`

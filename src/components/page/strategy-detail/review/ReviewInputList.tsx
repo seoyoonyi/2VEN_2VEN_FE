@@ -8,19 +8,19 @@ import theme from '@/styles/theme';
 
 interface Review {
   id: number;
-  writerId: string; // 작성자 ID
-  profileImg: string; // 프로필 이미지 URL
+  writerId: string;
+  profileImg: string;
   content: string;
   date: string;
 }
 
 interface ReviewInputListProps {
-  reviews: Review[]; // 부모에서 전달받은 리뷰 데이터
+  reviews: Review[];
   writerId: string;
   profileImg: string;
-  onAddReview: (newReview: Review) => void; // 리뷰 추가 콜백
-  onEditReview: (id: number, updatedContent: string) => void; // 리뷰 수정 콜백
-  onDeleteReview: (id: number) => void; // 리뷰 삭제 콜백
+  onAddReview: (newReview: Review) => void;
+  onEditReview: (id: number, updatedContent: string) => void;
+  onDeleteReview: (id: number) => void;
 }
 
 const ReviewInputList = ({
@@ -34,25 +34,25 @@ const ReviewInputList = ({
   const [inputValue, setInputValue] = useState('');
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value); // 입력값 업데이트
+    setInputValue(e.target.value);
   };
 
   const handleAddButtonClick = () => {
     if (!inputValue.trim()) return;
 
-    // 새로운 리뷰 생성
+    // 리뷰 등록
     const newReview: Review = {
-      id: Date.now(), // 고유 ID 생성
-      writerId, // 작성자 ID
-      profileImg, // 기본 프로필 이미지 경로
+      id: Date.now(),
+      writerId,
+      profileImg,
       content: inputValue.trim(),
-      date: new Date().toISOString().split('T')[0], // 현재 날짜
+      date: new Date().toISOString().split('T')[0],
     };
 
-    setInputValue(''); // 입력 필드 초기화
+    setInputValue('');
 
     if (onAddReview) {
-      onAddReview(newReview); // 콜백 호출
+      onAddReview(newReview);
     }
   };
 
@@ -71,31 +71,13 @@ const ReviewInputList = ({
           variant='primary'
           size='sm'
           width={110}
-          disabled={!inputValue.trim()} // 입력값이 없을 경우 버튼 비활성화
-          onClick={handleAddButtonClick} // 등록 버튼 클릭 시 동작
+          disabled={!inputValue.trim()}
+          onClick={handleAddButtonClick}
         >
           등록
         </Button>
       </div>
 
-      {/* 리뷰 리스트 */}
-      {/* <div css={reviewListStyle}>
-        {reviews.map((review) => (
-          <div key={review.id} css={reviewItemStyle}>
-            <img src={review.profileImg} alt='프로필 이미지' css={avatarStyle} />
-            <div>
-              <div css={reviewHeaderStyle}>
-                <span css={userNameStyle}>{review.writerId}</span>
-                <span css={dateStyle}>{review.date}</span>
-              </div>
-              <p css={reviewContentStyle}>{review.content}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}; */}
       <div css={reviewListStyle}>
         {reviews.map((review) => (
           <ReviewItem
