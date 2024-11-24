@@ -6,6 +6,7 @@ import Avatar from '@/components/common/Avatar';
 import Button from '@/components/common/Button';
 import GlobalNav from '@/components/navigation/GlobalNav';
 import SearchInput from '@/components/page/search/SearchInput';
+import AdminSessionTimer from '@/components/page/signup/AdminSessionTimer';
 import { ROUTES } from '@/constants/routes';
 import { useAdminAuthStore } from '@/stores/adminAuthStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -58,7 +59,7 @@ const Header = () => {
             </Button>
           ) : (
             <Link to={ROUTES.AUTH.ADMIN.VERIFY}>
-              <span>세션 카운트 다운</span>
+              <AdminSessionTimer />
             </Link>
           )}
         </div>
@@ -129,14 +130,6 @@ const searchAndMyPageContainer = css`
   display: flex;
   align-items: center;
   gap: 24px;
-`;
-
-const myPageStyle = css`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
 `;
 
 export default Header;
