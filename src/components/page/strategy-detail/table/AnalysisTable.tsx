@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
+
+import { AnalysisDataProps } from '../tabmenu/DailyAnalysis';
+import { MonthlyDataProps } from '../tabmenu/MonthlyAnalysis';
 
 import InputTable, { InputTableProps } from './InputTable';
 import TableModal from './TableModal';
@@ -15,21 +18,38 @@ export interface AnalysisAttribuesProps {
   title: string;
 }
 
-export interface AnalysisDataProps {
-  daily_strategic_statistics_id: number;
-  input_date: string;
-  principal: number;
-  dep_wd_price: number;
-  daily_profit_loss: number;
-  daily_pl_rate: number;
-  cumulative_profit_loss: number;
-  cumulative_profit_loss_rate: number;
-}
+const getAnalysisValue = (row: AnalysisDataProps | MonthlyDataProps, mode: 'write' | 'read') => {
+  if (mode === 'write') {
+    const data = row as AnalysisDataProps;
+    return {
+      dataId: data.daily_strategic_statistics_id,
+      date: data.input_date,
+      principal: data.principal,
+      dep_wd_price: data.dep_wd_price,
+      profit_loss: data.daily_profit_loss,
+      pl_rate: data.daily_pl_rate,
+      cumulative_profit_loss: data.cumulative_profit_loss,
+      cumulative_profit_loss_rate: data.cumulative_profit_loss_rate,
+    };
+  } else {
+    const data = row as MonthlyDataProps;
+    return {
+      dataId: data.strategyMonthlyDataId,
+      date: data.analysisMonth,
+      principal: data.monthlyAveragePrinciple,
+      dep_wd_price: data.monthlyDepWdAmount,
+      profit_loss: data.monthlyPl,
+      pl_rate: data.monthlyReturn,
+      cumulative_profit_loss: data.monthlyCumulativePl,
+      cumulative_profit_loss_rate: data.monthlyCumulativeReturn,
+    };
+  }
+};
 
 export interface AnalysisProps {
   attributes: AnalysisAttribuesProps[];
   strategyId?: number;
-  analysis?: AnalysisDataProps[];
+  analysis?: AnalysisDataProps[] | MonthlyDataProps[];
   mode: 'write' | 'read';
   onUpload?: () => void;
 }
@@ -39,6 +59,11 @@ const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) 
   const [selectAll, setSelectAll] = useState(false);
   const [tableData, setTableData] = useState<InputTableProps[]>([]);
   const { openTableModal } = useTableModalStore();
+
+  const calculatedAnalysis = useMemo(
+    () => analysis?.map((row) => getAnalysisValue(row, mode)),
+    [analysis, mode]
+  );
 
   const handleAllChecked = () => {
     const newSelectAll = !selectAll;
@@ -69,7 +94,7 @@ const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) 
       title: '일간분석 데이터 수정',
       data: <InputTable data={[data]} onChange={handleInputChange} />,
       onAction: () => {
-        () => handleUpdateData(data, idx);
+        handleUpdateData(data, idx);
       },
     });
   };
@@ -99,39 +124,51 @@ const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) 
           </tr>
         </thead>
         <tbody>
-          {analysis?.length || 0 > 0 ? (
-            analysis?.map((row, idx) => (
-              <tr key={idx} css={tableRowStyle}>
+          {calculatedAnalysis?.length || 0 ? (
+            calculatedAnalysis?.map((values, idx) => (
+              <tr key={values.dataId} css={tableRowStyle}>
                 {mode === 'write' && (
                   <td css={tableCellStyle}>
-                    <Checkbox checked={selected[idx]} onChange={() => handleSelected(idx)} />
+                    <Checkbox
+                      checked={selected[values.dataId]}
+                      onChange={() => handleSelected(values.dataId)}
+                    />
                   </td>
                 )}
-                <td css={tableCellStyle}>{row.input_date}</td>
-                <td css={tableCellStyle}>{row.principal}</td>
-                <td css={tableCellStyle}>{row.dep_wd_price}</td>
+                <td css={tableCellStyle}>{values.date}</td>
+                <td css={tableCellStyle}>{values.principal}</td>
+                <td css={tableCellStyle}>{values.dep_wd_price}</td>
                 <td
                   css={[
                     tableCellStyle,
-                    getColorValue(row.daily_profit_loss) === true
+                    getColorValue(values.profit_loss) === true
                       ? redTextStyle
-                      : getColorValue(row.daily_profit_loss) === false
+                      : getColorValue(values.profit_loss) === false
                         ? blueTextStyle
                         : defaultTextStyle,
                   ]}
                 >
-                  {row.daily_profit_loss}
+                  {values.profit_loss}
                 </td>
-                <td css={tableCellStyle}>{row.daily_pl_rate}</td>
-                <td css={tableCellStyle}>{row.cumulative_profit_loss}</td>
-                <td css={tableCellStyle}>{row.cumulative_profit_loss_rate}</td>
+                <td css={tableCellStyle}>{values.pl_rate}</td>
+                <td css={tableCellStyle}>{values.cumulative_profit_loss}</td>
+                <td css={tableCellStyle}>{values.cumulative_profit_loss_rate}</td>
                 {mode === 'write' && (
                   <td css={tableCellStyle}>
                     <Button
                       variant='secondaryGray'
                       size='xs'
                       width={65}
-                      onClick={() => handleUpdateModal(row, idx)}
+                      onClick={() =>
+                        handleUpdateModal(
+                          {
+                            input_date: values.date,
+                            dep_wd_price: values.dep_wd_price,
+                            daily_profit_loss: values.profit_loss,
+                          },
+                          values.dataId
+                        )
+                      }
                     >
                       수정
                     </Button>
@@ -179,6 +216,7 @@ const tableStyle = css`
   .checkbox {
     cursor: pointer;
   }
+  min-height: 430px;
 `;
 
 const tableVars = css`

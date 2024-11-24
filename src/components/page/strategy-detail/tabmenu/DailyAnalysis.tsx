@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
 
-import AnalysisTable, { AnalysisProps, AnalysisDataProps } from '../table/AnalysisTable';
+import AnalysisTable, { AnalysisProps } from '../table/AnalysisTable';
 import InputTable, { InputTableProps } from '../table/InputTable';
 import TableModal from '../table/TableModal';
 
@@ -11,6 +11,17 @@ import { fetchDailyAnalysis } from '@/api/strategyDetail';
 import Button from '@/components/common/Button';
 import Pagination from '@/components/common/Pagination';
 import useTableModalStore from '@/stores/tableModalStore';
+
+export interface AnalysisDataProps {
+  daily_strategic_statistics_id: number;
+  input_date: string;
+  principal: number;
+  dep_wd_price: number;
+  daily_profit_loss: number;
+  daily_pl_rate: number;
+  cumulative_profit_loss: number;
+  cumulative_profit_loss_rate: number;
+}
 
 const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
   const [tableData, setTableData] = useState<InputTableProps[]>([]);
@@ -93,18 +104,21 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
           </Button>
         </div>
       )}
+
       <AnalysisTable
         attributes={attributes}
         analysis={analysis}
         mode={'write'}
         onUpload={handleOpenModal}
       />
-      <Pagination
-        totalPage={paginatedData.totalPage}
-        limit={paginatedData.pageSize}
-        page={paginatedData.currentPage}
-        setPage={handleChangePage}
-      />
+      <div css={PaginationArea}>
+        <Pagination
+          totalPage={paginatedData.totalPage}
+          limit={paginatedData.pageSize}
+          page={paginatedData.currentPage}
+          setPage={handleChangePage}
+        />
+      </div>
       <TableModal />
     </div>
   );
@@ -128,5 +142,13 @@ const buttonStyle = css`
   display: flex;
   align-items: center;
   gap: 3px;
+`;
+
+const PaginationArea = css`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  margin-top: 40px;
 `;
 export default DailyAnalysis;

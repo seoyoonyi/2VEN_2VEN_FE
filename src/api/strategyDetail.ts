@@ -54,3 +54,24 @@ export const fetchDailyAnalysis = async (strategyId: number, page: number, pageS
     console.error('fetch to failed Daily Analysis', error);
   }
 };
+
+//월간분석 조회
+export const fetchMonthlyAnalysis = async (strategyId: number, page: number, pageSize: number) => {
+  try {
+    const res = await apiClient.get(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/monthly-analysis`,
+      {
+        params: {
+          page,
+          pageSize,
+        },
+        headers: {
+          useMock: import.meta.env.VITE_ENABLE_MSW === 'true',
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error('fetch to failed Monthly Analysis', error);
+  }
+};

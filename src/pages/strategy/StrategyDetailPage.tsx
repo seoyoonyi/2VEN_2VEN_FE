@@ -67,62 +67,6 @@ const statisticsData = [
   { label: 'ROA', value: '453' },
 ];
 
-const monthlyAnalysisData = [
-  {
-    date: '2026.04',
-    original: '100,000,000',
-    trade: '0',
-    day: '+332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2026.04',
-    original: '100,000,000',
-    trade: '0',
-    day: '+332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2026.04',
-    original: '100,000,000',
-    trade: '0',
-    day: '332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2026.04',
-    original: '100,000,000',
-    trade: '0',
-    day: '332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2026.04',
-    original: '100,000,000',
-    trade: '0',
-    day: '-332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2026.04',
-    original: '100,000,000',
-    trade: '0',
-    day: '-332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-];
 const imgTest = [
   { img: '/src/assets/images/domestic_present.svg' },
   { img: '/src/assets/images/domestic_present.svg' },
@@ -156,32 +100,32 @@ const dailyAttribues = [
     title: '수정',
   },
 ];
-// const monthlyAttribues = [
-//   {
-//     title: '월',
-//   },
-//   {
-//     title: '월평균 원금',
-//   },
-//   {
-//     title: '입출금',
-//   },
-//   {
-//     title: '월 손익',
-//   },
-//   {
-//     title: '월 수익률',
-//   },
-//   {
-//     title: '누적손익',
-//   },
-//   {
-//     title: '누적수익률',
-//   },
-//   {
-//     title: '수정',
-//   },
-// ];
+const monthlyAttribues = [
+  {
+    title: '월',
+  },
+  {
+    title: '월평균 원금',
+  },
+  {
+    title: '입출금',
+  },
+  {
+    title: '월 손익',
+  },
+  {
+    title: '월 수익률',
+  },
+  {
+    title: '누적손익',
+  },
+  {
+    title: '누적수익률',
+  },
+  {
+    title: '수정',
+  },
+];
 
 const StrategyDetailPage = () => {
   const { strategyId } = useParams();
@@ -205,12 +149,16 @@ const StrategyDetailPage = () => {
         <DailyAnalysis attributes={dailyAttribues} strategyId={Number(strategyId)} mode='write' />
       ),
     },
-    // {
-    //   title: '월간분석',
-    //   component: (
-    //     <MonthlyAnalysis attributes={monthlyAttribues} data={monthlyAnalysisData} mode='read' />
-    //   ),
-    // },
+    {
+      title: '월간분석',
+      component: (
+        <MonthlyAnalysis
+          attributes={monthlyAttribues}
+          strategyId={Number(strategyId)}
+          mode='read'
+        />
+      ),
+    },
   ];
 
   const handleDeleteDetail = (id: number) => {
