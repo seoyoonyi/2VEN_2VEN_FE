@@ -39,6 +39,7 @@ const FindPasswordPage = () => {
   }, [verificationCode]);
 
   const handleEmailVerification = () => {
+    console.log(isVerificationActive);
     // 이메일 입력값 확인
     if (!email) {
       setErrorMessage('이메일을 입력해주세요.');
