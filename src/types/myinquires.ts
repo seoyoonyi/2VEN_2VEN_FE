@@ -37,3 +37,8 @@ export interface AnswerProps {
   traderAnswer: string;
   answerDate: string;
 }
+
+export interface StrategyInfoProps
+  extends Pick<InquiryDetailData, 'strategyName' | 'investmentAmount' | 'investmentDate'> {}
+
+export interface InquiresInputProps extends Pick<InquiryDetailData, 'title' | 'content'> {}

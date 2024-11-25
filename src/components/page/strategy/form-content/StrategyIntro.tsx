@@ -8,26 +8,36 @@ interface StrategyIntroProps {
   maxLength?: number;
 }
 
-const StrategyIntro = ({ text, onTextChange, maxLength = 1000 }: StrategyIntroProps) => (
-  <section css={flexStyle}>
-    <div css={descStyle}>
-      <label htmlFor='strategy-desc' css={labelStyle}>
-        전략소개
-      </label>
-      <div css={lengthStyle}>
-        <span style={{ color: theme.colors.main.primary }}>{text.length}</span> / {maxLength}
+const StrategyIntro = ({ text, onTextChange, maxLength = 1000 }: StrategyIntroProps) => {
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const inputText = e.target.value;
+
+    if (inputText.length <= maxLength) {
+      onTextChange(e);
+    }
+  };
+
+  return (
+    <section css={flexStyle}>
+      <div css={descStyle}>
+        <label htmlFor='strategy-desc' css={labelStyle}>
+          전략소개
+        </label>
+        <div css={lengthStyle}>
+          <span style={{ color: theme.colors.main.primary }}>{text.length}</span> / {maxLength}
+        </div>
       </div>
-    </div>
-    <textarea
-      id='strategy-desc'
-      value={text}
-      onChange={onTextChange}
-      placeholder='텍스트를 입력해주세요'
-      css={textareaStyle}
-      maxLength={maxLength}
-    />
-  </section>
-);
+      <textarea
+        id='strategy-desc'
+        value={text}
+        onChange={handleTextChange}
+        placeholder='텍스트를 입력해주세요'
+        css={textareaStyle}
+        maxLength={maxLength}
+      />
+    </section>
+  );
+};
 
 const flexStyle = css`
   display: flex;
