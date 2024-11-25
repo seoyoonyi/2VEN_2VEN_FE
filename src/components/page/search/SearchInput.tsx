@@ -36,7 +36,7 @@ const SearchInput = ({ onSearchSubmit, ...props }: SearchInputProps) => {
         placeholder='내용을 입력해주세요'
         value={searchValue}
         onChange={handleSearchChange}
-        onKeyPress={handleInputEnterPress}
+        onKeyDown={handleInputEnterPress}
         showClearButton
         customStyle={css`
           width: 300px;
