@@ -3,30 +3,21 @@ import { isAxiosError } from 'axios';
 
 import { apiClient } from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
-import { SigninRequest, SigninResponse, User } from '@/types/auth';
-
-interface BackendSigninResponse {
-  data: {
-    member_id: string;
-    email: string;
-    nickname: string;
-    role: string;
-  };
-  message: string;
-  status: 'success' | 'error';
-}
+import {
+  AdminUser,
+  ApiResponse,
+  BackendSigninResponse,
+  SigninRequest,
+  SigninResponse,
+  User,
+} from '@/types/auth';
 
 export const signin = async (credentials: SigninRequest): Promise<SigninResponse> => {
   try {
-    console.log('Sending login request with:', credentials);
-
     const response = await apiClient.post<BackendSigninResponse>(
       API_ENDPOINTS.AUTH.LOGIN,
       credentials
     );
-
-    console.log('Received response:', response.data);
-    console.log('Response headers:', response.headers);
 
     /// 응답 데이터와 토큰이 모두 있는지 확인
     const authHeader = response.headers['authorization'];
@@ -37,40 +28,61 @@ export const signin = async (credentials: SigninRequest): Promise<SigninResponse
     }
 
     const token = authHeader.replace('Bearer ', '');
-    console.log('Extracted token:', token);
-
-    if (!response.data.data) {
+    const { data } = response.data;
+    if (!data) {
+      // 사용자 정보가 없는 경우
       console.error('User data missing from response');
       console.log('Response data structure:', response.data);
       throw new Error('사용자 정보를 받지 못했습니다.');
     }
-    const user: User = {
-      member_id: response.data.data.member_id,
-      email: response.data.data.email,
-      nickname: response.data.data.nickname,
-      role: response.data.data.role as User['role'], // 이미 'ROLE_' 접두사가 붙어있음
+
+    // 기본 사용자 정보(공통)
+    const baseUser: User = {
+      member_id: data.member_id,
+      email: data.email,
+      nickname: data.nickname,
+      role: data.role as User['role'], // 이미 'ROLE_' 접두사가 붙어있음
+      profile_image: data.profile_image,
     };
 
-    console.log('Constructed user object:', user);
+    // 관리자인 경우 추가 정보처리
+    if (data.role === 'MEMBER_ROLE_ADMIN' && data.admin_info) {
+      const adminUser: AdminUser = {
+        ...baseUser,
+        role: 'MEMBER_ROLE_ADMIN',
+        is_authorized: data.admin_info?.is_authorized ?? false,
+        authorization_status: data.admin_info?.authorization_status ?? 'PENDING',
+        authorized_at: data.admin_info?.authorized_at,
+        expires_at: data.admin_info?.expires_at,
+      };
 
+      return {
+        status: 'success',
+        message: response.data.message,
+        data: {
+          token,
+          user: adminUser,
+        },
+      };
+    }
+
+    console.log('Constructed user object:', baseUser);
+
+    // 일반 사용자인 경우
     return {
       status: 'success',
       message: response.data.message,
       data: {
         token,
-        user,
+        user: baseUser,
       },
     };
   } catch (error) {
-    // 더 자세한 에러 로깅
     if (isAxiosError(error)) {
-      console.error('Signin API failed:', {
-        status: error.response?.status,
-        data: error.response?.data,
-        headers: error.response?.headers,
-      });
-    } else {
-      console.error('Signin API failed:', error);
+      if (error.response?.status === 401) {
+        throw new Error('이메일 또는 비밀번호가 올바르지 않습니다.');
+      }
+      throw new Error(error.response?.data?.message || '로그인 처리 중 오류가 발생했습니다.');
     }
     throw error;
   }
@@ -95,4 +107,32 @@ export const findEmail = async (phone: string) => {
     }
   );
   return data;
+};
+
+// 이메일로 인증번호를 요청하는 API
+export const requestVerificationCode = async (): Promise<ApiResponse<null>> => {
+  const response = await apiClient.post<ApiResponse<null>>(
+    API_ENDPOINTS.AUTH.EMAIL.REQUEST_VERIFICATION,
+    {},
+    {
+      headers: {
+        useMock: import.meta.env.VITE_ENABLE_MSW === 'true', // MSW 사용 시 true
+      },
+    }
+  );
+  return response.data;
+};
+
+// 입력한 인증번호 검증 API (기존 코드)
+export const verifyCode = async (code: string): Promise<ApiResponse<{ expires_at: string }>> => {
+  const response = await apiClient.post<ApiResponse<{ expires_at: string }>>(
+    API_ENDPOINTS.AUTH.EMAIL.CHECK_VERIFICATION, // 이메일 인증 API 경로(사용자, 관리자 공통)
+    { code },
+    {
+      headers: {
+        useMock: import.meta.env.VITE_ENABLE_MSW === 'true', // MSW 사용 시 true
+      },
+    }
+  );
+  return response.data;
 };

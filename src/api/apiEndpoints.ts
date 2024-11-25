@@ -13,8 +13,9 @@ export const API_ENDPOINTS = {
       PASSWORD: '/api/members/find/password', // 비밀번호 찾기
       PASSWORD_RESET: '/api/members/find/password/reset', // 비밀번호 재설정
     },
-    ADMIN: {
-      VERIFY: '/api/auth/check-verification-code', // 관리자 인증
+    EMAIL: {
+      REQUEST_VERIFICATION: '/api/auth/send-verification-code', // 이메일 인증 코드 요청
+      CHECK_VERIFICATION: '/api/auth/check-verification-code', // 이메일 인증 코드를 서버에 보내 확인
     },
   },
   STRATEGY: {
