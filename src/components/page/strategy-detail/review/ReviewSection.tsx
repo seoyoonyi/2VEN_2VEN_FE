@@ -98,6 +98,7 @@ const containerStyle = css`
   max-width: ${theme.layout.width.content};
   padding: 40px 40px 56px 40px;
   background-color: ${theme.colors.main.white};
+  border-radius: 8px;
 `;
 
 const headerStyle = css`
