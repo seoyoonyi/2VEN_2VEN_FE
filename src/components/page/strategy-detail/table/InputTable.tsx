@@ -2,12 +2,13 @@ import { useState } from 'react';
 
 import { css } from '@emotion/react';
 
+import Input from '@/components/common/Input';
 import theme from '@/styles/theme';
 
 export interface InputTableProps {
-  date: string;
-  trade: string;
-  day: string;
+  input_date: string;
+  dep_wd_price: number;
+  daily_profit_loss: number;
 }
 
 export interface InputAnalysisProps {
@@ -42,29 +43,28 @@ const InputTable = ({ data, onChange }: InputAnalysisProps) => {
           {inputData.map((row, idx) => (
             <tr key={idx} css={tableRowStyle}>
               <td css={tableCellStyle}>
-                <input
-                  type='text'
-                  value={row.date}
-                  placeholder='예)YYYY.MM.DD'
-                  onChange={(e) => handleInputChange(idx, 'date', e.target.value)}
+                <Input
+                  type='date'
+                  value={row.input_date}
+                  onChange={(e) => handleInputChange(idx, 'input_date', e.target.value)}
                   css={inputStyle}
                 />
               </td>
               <td css={tableCellStyle}>
-                <input
+                <Input
                   type='text'
-                  value={row.trade}
+                  value={row.daily_profit_loss}
                   placeholder='예)123,456,789'
-                  onChange={(e) => handleInputChange(idx, 'trade', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'daily_profit_loss', e.target.value)}
                   css={inputStyle}
                 />
               </td>
               <td css={tableCellStyle}>
-                <input
+                <Input
                   type='text'
-                  value={row.day}
+                  value={row.dep_wd_price}
                   placeholder='예)+123,456'
-                  onChange={(e) => handleInputChange(idx, 'day', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'dep_wd_price', e.target.value)}
                   css={inputStyle}
                 />
               </td>
@@ -123,8 +123,7 @@ const tableCellStyle = css`
 
 const inputStyle = css`
   width: 100%;
-  padding: 8px;
-  border: 1px solid ${theme.colors.gray[300]};
   border-radius: 4px;
 `;
+
 export default InputTable;
