@@ -4,16 +4,15 @@ import { Link } from 'react-router-dom';
 import notFoundImg from '@/assets/images/not_found.png';
 import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
-
-const NotFoundPage = () => (
-  <div css={notFoundContainer}>
+const ErrorPage = () => (
+  <div css={errorContainer}>
     <div css={leftContainer}>
       <img src={notFoundImg} alt='페이지를 찾을 수 없는 일러스트' aria-hidden='true' />
     </div>
     <div css={rightContainer}>
-      <h2>페이지를 찾을 수 없습니다</h2>
+      <h2>문제가 발생했습니다</h2>
       <p>
-        페이지가 삭제되었거나 이동했을 수 있습니다. <br />
+        알 수 없는 오류가 발생했습니다. <br />
         하지만 새로운 투자 기회는 여전히 남아 있어요!
       </p>
 
@@ -22,7 +21,7 @@ const NotFoundPage = () => (
   </div>
 );
 
-const notFoundContainer = css`
+const errorContainer = css`
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -51,7 +50,7 @@ const rightContainer = css`
 
   a {
     display: flex;
-    width: 154px;
+    width: 180px;
     height: 60px;
     padding: 20px 32px;
     justify-content: center;
@@ -62,4 +61,4 @@ const rightContainer = css`
   }
 `;
 
-export default NotFoundPage;
+export default ErrorPage;
