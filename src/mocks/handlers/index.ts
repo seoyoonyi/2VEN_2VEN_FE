@@ -1,5 +1,6 @@
 import { dailyAnalysisHandlers } from './dailyAnalysis.handlers';
 import { monthlyAnalysisHandlers } from './monthlyAnalysis.handlers';
+import { statisticsHandlers } from './strategyStatistics.handlers';
 
 import {
   checkNicknameHandler,
@@ -21,4 +22,5 @@ export const handlers = [
   ...verificationHandlers,
   ...dailyAnalysisHandlers,
   ...monthlyAnalysisHandlers,
+  ...statisticsHandlers,
 ];
