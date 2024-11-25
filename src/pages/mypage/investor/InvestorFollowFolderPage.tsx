@@ -57,6 +57,21 @@ const InvestorFollowFolderPage = () => {
   const currentPageData = strategies.slice((page - 1) * limit, page * limit);
   const startRank = (page - 1) * limit + 1;
 
+  const dropdownActions = [
+    {
+      label: '폴더 이동',
+      onClick: () => {
+        console.log('폴더 이동');
+      },
+    },
+    {
+      label: '전략 언팔로우',
+      onClick: () => {
+        console.log('전략 언팔로우');
+      },
+    },
+  ];
+
   return (
     <div css={myPageWrapperStyle}>
       <div>
@@ -77,6 +92,7 @@ const InvestorFollowFolderPage = () => {
             containerWidth='875px'
             gridTemplate='255px 150px 140px 120px 80px 80px 50px'
             moreMenu
+            dropdownActions={dropdownActions}
           />
           <Pagination totalPage={totalPages} limit={limit} page={page} setPage={setPage} />
         </div>
