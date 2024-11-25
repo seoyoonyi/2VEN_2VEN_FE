@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Modal from '@/components/common/Modal';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
 import IconTagSection from '@/components/page/strategy-detail/IconTagSection';
+import ReviewSection from '@/components/page/strategy-detail/review/ReviewSection';
 import ChartSection from '@/components/page/strategy-detail/section/ChartSection';
 import StrategyContent from '@/components/page/strategy-detail/StrategyContent';
 import StrategyHeader from '@/components/page/strategy-detail/StrategyHeader';
@@ -170,6 +171,9 @@ const StrategyDetailPage = () => {
           </div>
         </div>
       </div>
+      <div css={reviewSectionWrapper}>
+        <ReviewSection />
+      </div>
       <Modal />
     </div>
   );
@@ -177,6 +181,8 @@ const StrategyDetailPage = () => {
 
 const containerStyle = css`
   display: flex;
+  flex-direction: column;
+  align-items: center;
   background-color: ${theme.colors.gray[100]};
   justify-content: center;
   flex-shrink: 0;
@@ -197,6 +203,11 @@ const contentWrapper = css`
   display: flex;
   align-items: left;
   flex-direction: column;
+`;
+
+const reviewSectionWrapper = css`
+  width: ${theme.layout.width.content};
+  margin: 16px 0 76px 0;
 `;
 
 export default StrategyDetailPage;
