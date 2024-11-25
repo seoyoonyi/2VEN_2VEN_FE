@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-
 import { css } from '@emotion/react';
 import { AiOutlineMore } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 
+import DropdownMenu from '@/components/common/DropdownMenu';
 import LineChart from '@/components/common/LineChart';
 import { ROUTES } from '@/constants/routes';
+import { useDropdown } from '@/hooks/useDropdown';
 import theme from '@/styles/theme';
 import { StrategyListData } from '@/types/strategy';
 
@@ -35,27 +35,7 @@ const StrategyList = ({
 }: StrategyListProps) => {
   const navigate = useNavigate();
 
-  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
-
-  const toggleDropdown = (strategyId: number) => {
-    setActiveDropdown((prev) => (prev === strategyId ? null : strategyId));
-  };
-
-  const closeDropdown = () => {
-    setActiveDropdown(null);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = () => {
-      closeDropdown();
-    };
-
-    document.addEventListener('click', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
+  const { activeDropdown, toggleDropdown, closeDropdown } = useDropdown();
 
   const onClickStrategyList = (strategyId: string) => {
     navigate(ROUTES.STRATEGY.DETAIL(strategyId));
@@ -141,54 +121,17 @@ const StrategyList = ({
           <div>{strategy.smscore !== undefined ? strategy.smscore : '-'}</div>
           <div>{strategy.followers_count !== undefined ? strategy.followers_count : '0'}</div>
           {moreMenu && (
-            <div
-              css={moreMenuStyle}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleDropdown(strategy.strategyId);
-              }}
-              role='button'
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  toggleDropdown(strategy.strategyId);
-                }
-              }}
-            >
-              <AiOutlineMore size={20} />
-              {activeDropdown === strategy.strategyId && (
-                <div
-                  css={dropdownStyle}
-                  role='button'
-                  tabIndex={0}
-                  onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => e.stopPropagation()}
-                  onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }
-                  }}
-                >
-                  {dropdownActions.map((action) => (
-                    <div
-                      key={action.label}
-                      onClick={() => action.onClick(strategy.strategyId)}
-                      role='button'
-                      tabIndex={0}
-                      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          action.onClick(strategy.strategyId);
-                        }
-                      }}
-                    >
-                      {action.label}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <DropdownMenu
+              isActive={activeDropdown === strategy.strategyId}
+              toggleDropdown={() => toggleDropdown(strategy.strategyId)}
+              actions={dropdownActions.map((action) => ({
+                label: action.label,
+                handleClick: () => {
+                  action.onClick(strategy.strategyId);
+                  closeDropdown();
+                },
+              }))}
+            />
           )}
         </div>
       ))}
