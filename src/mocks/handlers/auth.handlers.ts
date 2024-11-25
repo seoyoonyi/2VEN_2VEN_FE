@@ -11,7 +11,6 @@ const MOCK_USER = [
     password: 'asdf1234!',
     nickname: 'investor11',
     role: 'MEMBER_ROLE_INVESTOR', // role 형식 통일
-    profile_image: '',
   },
   {
     member_id: '2',
@@ -19,7 +18,6 @@ const MOCK_USER = [
     password: 'asdf1234!',
     nickname: 'trader444',
     role: 'MEMBER_ROLE_TRADER',
-    profile_image: '',
   },
   {
     member_id: '3',
@@ -27,7 +25,6 @@ const MOCK_USER = [
     password: 'asdf1234!',
     nickname: 'adminking',
     role: 'MEMBER_ROLE_ADMIN',
-    profile_image: '',
     admin_info: {
       is_authorized: true,
       authorization_status: 'AUTHORIZED' as const,
@@ -41,7 +38,6 @@ const MOCK_USER = [
     password: 'asdf1234!',
     nickname: 'newadmin',
     role: 'MEMBER_ROLE_ADMIN',
-    profile_image: '',
     admin_info: {
       is_authorized: false,
       authorization_status: 'PENDING' as const,
@@ -87,7 +83,6 @@ export const signinHandler = [
         email: userInfo.email,
         nickname: userInfo.nickname,
         role: userInfo.role,
-        profile_image: userInfo.profile_image,
         ...(userInfo.role === 'ROLE_ADMIN' && { admin_info: userInfo.admin_info }),
       },
     };

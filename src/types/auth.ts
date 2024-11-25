@@ -24,7 +24,6 @@ export interface BackendSigninResponse {
     email: string;
     nickname: string;
     role: string;
-    profile_image?: string | null;
     admin_info?: {
       // role이 'ROLE_ADMIN'일 때만 포함
       is_authorized: boolean;
