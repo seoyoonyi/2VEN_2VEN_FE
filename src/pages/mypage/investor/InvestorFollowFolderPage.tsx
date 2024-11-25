@@ -7,8 +7,13 @@ import futureIcon from '@/assets/images/producttype_futures.png';
 import StockIcon from '@/assets/images/producttype_stock.png';
 import TradeTypeHIcon from '@/assets/images/tradetype_H.png';
 import TradeTypePIcon from '@/assets/images/tradetype_P.png';
+import ContentModal from '@/components/common/ContentModal';
 import Pagination from '@/components/common/Pagination';
 import StrategyList from '@/components/common/StrategyList';
+import Toast from '@/components/common/Toast';
+import FolderModal from '@/components/page/mypage-investor/myfolder/FolderModal';
+import useContentModalStore from '@/stores/contentModalStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 
 const generateStrategies = (count: number) => {
@@ -50,6 +55,9 @@ const generateStrategies = (count: number) => {
 };
 
 const InvestorFollowFolderPage = () => {
+  const { openContentModal } = useContentModalStore();
+  const { isToastVisible, showToast, hideToast, message } = useToastStore();
+
   const strategies = generateStrategies(80);
   const [page, setPage] = useState(1);
   const limit = 5;
@@ -57,17 +65,29 @@ const InvestorFollowFolderPage = () => {
   const currentPageData = strategies.slice((page - 1) * limit, page * limit);
   const startRank = (page - 1) * limit + 1;
 
+  const handleMoveFolder = () => {
+    openContentModal({
+      title: '폴더 이동',
+      content: <FolderModal isMove={true} />,
+      onAction: () => {
+        console.log('폴더 이동');
+        showToast('폴더 이동이 완료되었습니다.');
+      },
+    });
+  };
+
   const dropdownActions = [
     {
       label: '폴더 이동',
       onClick: () => {
-        console.log('폴더 이동');
+        handleMoveFolder();
       },
     },
     {
       label: '전략 언팔로우',
       onClick: () => {
         console.log('전략 언팔로우');
+        showToast('전략을 언팔로우했습니다.');
       },
     },
   ];
@@ -97,6 +117,8 @@ const InvestorFollowFolderPage = () => {
           <Pagination totalPage={totalPages} limit={limit} page={page} setPage={setPage} />
         </div>
       </div>
+      <ContentModal />
+      {isToastVisible && <Toast message={message} onClose={hideToast} isVisible={isToastVisible} />}
     </div>
   );
 };
