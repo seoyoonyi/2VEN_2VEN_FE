@@ -8,7 +8,7 @@ interface StrategyFormState {
   fund: string;
   publicStatus: string;
   selectedProducts: string[];
-  setField: (field: keyof StrategyFormState, value: string) => void;
+  setField: <T extends keyof StrategyFormState>(field: T, value: StrategyFormState[T]) => void;
   checkProduct: (productId: string) => void;
   clearForm: () => void;
 }
@@ -21,7 +21,11 @@ export const useStrategyFormStore = create<StrategyFormState>((set) => ({
   fund: '',
   publicStatus: '',
   selectedProducts: [],
-  setField: (field, value) => set((state) => ({ ...state, [field]: value })),
+  setField: (field, value) =>
+    set((state) => ({
+      ...state,
+      [field]: value,
+    })),
   checkProduct: (productId) =>
     set((state) => ({
       selectedProducts: state.selectedProducts.includes(productId)

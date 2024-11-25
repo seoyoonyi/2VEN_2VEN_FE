@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from '@headlessui/react';
@@ -21,6 +21,7 @@ interface SelectBoxProps {
   width?: string;
   disabled?: boolean;
   defaultLabel?: string;
+  value?: Option;
 }
 
 const Select = ({
@@ -31,9 +32,16 @@ const Select = ({
   width = '200px',
   disabled = false,
   defaultLabel = '선택',
+  value,
 }: SelectBoxProps) => {
   const defaultOption = { label: defaultLabel, value: '' };
-  const [selected, setSelected] = useState<Option>(defaultOption);
+  const [selected, setSelected] = useState<Option>(value || defaultOption);
+
+  useEffect(() => {
+    if (value) {
+      setSelected(value);
+    }
+  }, [value]);
 
   const handleSelect = (option: Option) => {
     setSelected(option);

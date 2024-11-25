@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
 import PageHeader from '@/components/common/PageHeader';
-import StrategyCreateForm from '@/components/page/strategy-create/StrategyCreateForm';
+import StrategyForm from '@/components/page/strategy/StrategyForm';
 import theme from '@/styles/theme';
 
 const desc = [
@@ -15,7 +15,7 @@ const StrategyCreatePage = () => (
   <>
     <PageHeader title='전략등록' desc={desc} />
     <div css={createContainerStyle}>
-      <StrategyCreateForm />
+      <StrategyForm />
     </div>
   </>
 );
