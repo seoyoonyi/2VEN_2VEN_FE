@@ -16,9 +16,10 @@ import DailyAnalysis from '@/components/page/strategy-detail/tabmenu/DailyAnalys
 import MonthlyAnalysis from '@/components/page/strategy-detail/tabmenu/MonthlyAnalysis';
 import StatisticsTable from '@/components/page/strategy-detail/tabmenu/StatisticsTable';
 import { ROUTES } from '@/constants/routes';
-import { monthlyAttribues, dailyAttribues } from '@/constants/strategyAnalysis';
+import { monthlyAttribues, dailyAttribues, statisticsLabels } from '@/constants/strategyAnalysis';
 import useStrategyDetailDelete from '@/hooks/mutations/useStrategyDetailDelete';
 import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
+import useStatistics from '@/hooks/queries/useStatistics';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 import { formatDate } from '@/utils/dateFormat';
@@ -36,39 +37,6 @@ const strategyDummy = {
   },
 };
 
-const statisticsData = [
-  { label: '잔고', value: '896,217,437' },
-  { label: '누적 입출금액', value: '866,217,437' },
-  { label: '원금', value: '238,704,360' },
-  { label: '누적 수익 금액', value: '247,525,031' },
-  { label: '최대 누적수익금액', value: '247,525,031' },
-  { label: '현재 자본인하금액', value: '-54,632,778', highlight: true },
-  { label: '최대 자본인하금액', value: '-54,632,778', highlight: true },
-  { label: '평균 손익 금액', value: '336,311' },
-  { label: '최대 일수익 금액', value: '25,257,250' },
-  { label: '최대 일손실 금액', value: '-17,465,050' },
-  { label: '총 매매 일수', value: '736일' },
-  { label: '총 이익 일수', value: '508일' },
-  { label: '총 손실 일수', value: '228일' },
-  { label: '승률', value: '69%' },
-  { label: 'Profit Factor', value: '1.48' },
-  { label: '운용기간', value: '2년 4월' },
-  { label: '시작일자', value: '2012-10-11' },
-  { label: '최종일자', value: '2015-03-11' },
-  { label: '누적 수익률(%)', value: '49.24%' },
-  { label: '최대 누적수익률', value: '49.24%' },
-  { label: '현재 자본인하율(%)', value: '0%' },
-  { label: '최대 자본인하율(%)', value: '-13.96%' },
-  { label: '평균 손익률', value: '336,311' },
-  { label: '최대 일수익율', value: '25,257,250' },
-  { label: '최대 일손실율', value: '-17,465,050' },
-  { label: '현재 연속 손익일수', value: '6일' },
-  { label: '최대 연속 이익일수', value: '22일' },
-  { label: '최대 연속 손실일수', value: '-6일' },
-  { label: '고정갱신 후 경과일', value: '0일' },
-  { label: 'ROA', value: '453' },
-];
-
 const imgTest = [
   { img: '/src/assets/images/domestic_present.svg' },
   { img: '/src/assets/images/domestic_present.svg' },
@@ -79,14 +47,24 @@ const imgTest = [
 const StrategyDetailPage = () => {
   const { strategyId } = useParams();
   const navigate = useNavigate();
-  const { strategy, isLoading } = useFetchStrategyDetail(strategyId || '');
+  const { strategy } = useFetchStrategyDetail(strategyId || '');
+  const { statistics, isLoading } = useStatistics(Number(strategyId));
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { openModal } = useModalStore();
+
+  if (isLoading) {
+    return <div>로딩중....</div>;
+  }
+
+  const statisticsTableData = statisticsLabels.map((label, idx) => ({
+    label,
+    value: Object.values(statistics)[idx] as string,
+  }));
 
   const tabMenu = [
     {
       title: '통계',
-      component: <StatisticsTable data={statisticsData} />,
+      component: <StatisticsTable data={statisticsTableData} />,
     },
     {
       title: '실계좌인증',
@@ -131,9 +109,6 @@ const StrategyDetailPage = () => {
     });
   };
 
-  if (isLoading) {
-    <div>로딩중....</div>;
-  }
   return (
     <div css={containerStyle}>
       <div css={contentStyle}>
