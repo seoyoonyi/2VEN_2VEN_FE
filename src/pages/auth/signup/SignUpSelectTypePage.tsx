@@ -18,7 +18,7 @@ const SignUpSelectTypePage = () => {
 
   const handleSignup = (role: UserRole) => {
     console.log(role);
-    navigate(ROUTES.AUTH.SIGNUP.FORM, { state: { userRole: addRolePrefix(role) } }); // HomeRouteState 타입에 맞게 객체로 전달(investor, trader)
+    navigate(ROUTES.AUTH.SIGNUP.FORM, { state: { userRole: addRolePrefix(role) } });
   };
 
   return (
