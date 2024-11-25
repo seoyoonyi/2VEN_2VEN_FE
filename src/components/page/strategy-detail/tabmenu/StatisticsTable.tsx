@@ -123,7 +123,7 @@ const rowStyle = css`
 
 const labelStyle = css`
   ${theme.textStyle.body.body2};
-  width: 291px;
+  width: 232px;
   background-color: ${theme.colors.gray[100]};
 `;
 
