@@ -88,7 +88,7 @@ const FindPasswordPage = () => {
       return;
     }
     verifyCode(
-      { email, code: verificationCode },
+      { email, verificationCode },
       {
         onSuccess: (response) => {
           if (response.status === 'success') {
