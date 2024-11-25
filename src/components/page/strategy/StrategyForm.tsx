@@ -1,22 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
+import Modal from '@/components/common/Modal';
 import Select from '@/components/common/Select';
-import FileUpload from '@/components/page/strategy-create/form-content/FileUpload';
-import ProductType from '@/components/page/strategy-create/form-content/ProductType';
-import StrategyIntro from '@/components/page/strategy-create/form-content/StrategyIntro';
-import StrategyName from '@/components/page/strategy-create/form-content/StrategyName';
+import FileUpload from '@/components/page/strategy/form-content/FileUpload';
+import ProductType from '@/components/page/strategy/form-content/ProductType';
+import StrategyIntro from '@/components/page/strategy/form-content/StrategyIntro';
+import StrategyName from '@/components/page/strategy/form-content/StrategyName';
 import { investmentFunds, isPublic } from '@/constants/createOptions';
 import { useSubmitStrategyCreate } from '@/hooks/mutations/useSubmitStrategyCreate';
+import { useSubmitStrategyUpdate } from '@/hooks/mutations/useSubmitStrategyUpdate';
 import useFetchStrategyOptionData from '@/hooks/queries/useFetchStrategyOptionData';
 import useCreateFormValidation from '@/hooks/useCreateFormValidation';
+import useModalStore from '@/stores/modalStore';
 import { useStrategyFormStore } from '@/stores/strategyFormStore';
 import theme from '@/styles/theme';
-import { StrategyPayload } from '@/types/strategyForm';
+import { StrategyPayload, StrategyDetailsData } from '@/types/strategy';
 
-const StrategyCreateForm = () => {
+const StrategyForm = ({
+  strategyDetailData,
+  isEditMode,
+}: {
+  strategyDetailData?: StrategyDetailsData;
+  isEditMode?: boolean;
+}) => {
   const {
     strategy,
     text,
@@ -27,9 +36,35 @@ const StrategyCreateForm = () => {
     selectedProducts,
     setField,
     checkProduct,
+    clearForm,
   } = useStrategyFormStore();
+
+  useEffect(() => {
+    if (isEditMode && strategyDetailData) {
+      setField('strategy', strategyDetailData.strategyTitle);
+      setField('text', strategyDetailData.strategyOverview);
+      setField('operation', strategyDetailData.tradingTypeName);
+      setField('cycle', strategyDetailData.tradingCycleName);
+      setField('fund', strategyDetailData.minInvestmentAmount);
+      setField('publicStatus', strategyDetailData.isPosted);
+      setField(
+        'selectedProducts',
+        strategyDetailData.strategyIACEntities.map((item) => String(item.investmentAssetClassesId))
+      );
+    }
+  }, [isEditMode, strategyDetailData, setField]);
+
+  useEffect(
+    () => () => {
+      clearForm();
+    },
+    [clearForm]
+  );
+
+  const { openModal } = useModalStore();
   const { strategyData, loading, error } = useFetchStrategyOptionData();
   const { mutate: submitStrategy, status } = useSubmitStrategyCreate();
+  const { mutate: updateStrategy } = useSubmitStrategyUpdate();
   const isSubmitting = status === 'pending';
 
   const [file, setFile] = useState<File | null>(null);
@@ -42,8 +77,7 @@ const StrategyCreateForm = () => {
     setFile(selectedFile);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     const payload: StrategyPayload = {
       strategyTitle: strategy,
       tradingTypeId: Number(operation),
@@ -54,18 +88,39 @@ const StrategyCreateForm = () => {
       investmentAssetClassesIdList: selectedProducts.map((v) => Number(v)),
     };
 
-    submitStrategy(payload);
+    try {
+      if (isEditMode && strategyDetailData) {
+        updateStrategy({ strategyId: strategyDetailData.strategyId, payload });
+      } else {
+        submitStrategy(payload);
+      }
+    } catch (error) {
+      console.error('전략 등록/수정 실패:', error);
+    }
+  };
+
+  const onClickRegister = () => {
+    openModal({
+      type: 'confirm',
+      title: isEditMode ? '전략 수정' : '전략 등록',
+      desc: isEditMode ? '전략을 수정하시겠습니까?' : '전략을 저장하시겠습니까?',
+      onAction: async () => {
+        await handleSubmit();
+      },
+    });
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmit();
   };
 
   if (loading) return <p>Loading.....</p>;
   if (error) return <p>{error}</p>;
 
   return (
-    <form css={formContainerStyle} onSubmit={handleSubmit}>
-      <StrategyName
-        strategy={strategy}
-        onStrategyChange={(e) => setField('strategy', e.target.value)}
-      />
+    <form css={formContainerStyle} onSubmit={handleFormSubmit}>
+      <StrategyName strategy={strategy} onStrategyChange={(value) => setField('strategy', value)} />
 
       <div css={selectContainerStyle}>
         <section css={flexAlignStyle}>
@@ -75,6 +130,9 @@ const StrategyCreateForm = () => {
           <Select
             id='operation'
             options={strategyData.operations}
+            value={strategyData.operations.find(
+              (option) => option.label === strategyDetailData?.tradingTypeName
+            )}
             onChange={(option) => setField('operation', option.value)}
           />
         </section>
@@ -85,6 +143,9 @@ const StrategyCreateForm = () => {
           </label>
           <Select
             id='cycle'
+            value={strategyData.cycles.find(
+              (option) => option.label === strategyDetailData?.tradingCycleName
+            )}
             options={strategyData.cycles}
             onChange={(option) => setField('cycle', option.value)}
           />
@@ -98,6 +159,9 @@ const StrategyCreateForm = () => {
         <Select
           id='fund'
           options={investmentFunds}
+          value={investmentFunds.find(
+            (option) => option.label === strategyDetailData?.minInvestmentAmount
+          )}
           onChange={(option) => setField('fund', option.value)}
         />
       </section>
@@ -121,6 +185,7 @@ const StrategyCreateForm = () => {
         <Select
           id='public-status'
           options={isPublic}
+          value={isPublic.find((option) => option.value === strategyDetailData?.isPosted)}
           onChange={(option) => setField('publicStatus', option.value)}
         />
       </section>
@@ -129,15 +194,17 @@ const StrategyCreateForm = () => {
 
       <div css={buttonContainerStyle}>
         <Button
-          type='submit'
+          type='button'
           variant='primary'
           size='lg'
           width={326}
           disabled={!isFormValid || isSubmitting}
+          onClick={onClickRegister}
         >
-          저장하기
+          {isEditMode ? '수정하기' : '저장하기'}
         </Button>
       </div>
+      <Modal />
     </form>
   );
 };
@@ -176,4 +243,4 @@ const buttonContainerStyle = css`
   justify-content: center;
 `;
 
-export default StrategyCreateForm;
+export default StrategyForm;
