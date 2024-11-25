@@ -19,6 +19,7 @@ export const fetchDefaultStrategyDetail = async (id: number) => {
   }
 };
 
+//전략 상세 기본 정보 삭제
 export const fetchDeleteStrategyDetail = async (id: number) => {
   try {
     const req = await apiClient.delete(`${API_ENDPOINTS.STRATEGY.CREATE}/${id}`, {
@@ -30,5 +31,47 @@ export const fetchDeleteStrategyDetail = async (id: number) => {
     return req.data;
   } catch (error) {
     console.error('faild to fetch DeleteStrategyDetail', error);
+  }
+};
+
+//일간분석 조회
+export const fetchDailyAnalysis = async (strategyId: number, page: number, pageSize: number) => {
+  try {
+    const res = await apiClient.get(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/daily-analyses`,
+      {
+        params: {
+          page,
+          pageSize,
+        },
+        headers: {
+          useMock: import.meta.env.VITE_ENABLE_MSW === 'true',
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error('fetch to failed Daily Analysis', error);
+  }
+};
+
+//월간분석 조회
+export const fetchMonthlyAnalysis = async (strategyId: number, page: number, pageSize: number) => {
+  try {
+    const res = await apiClient.get(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/monthly-analysis`,
+      {
+        params: {
+          page,
+          pageSize,
+        },
+        headers: {
+          useMock: import.meta.env.VITE_ENABLE_MSW === 'true',
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error('fetch to failed Monthly Analysis', error);
   }
 };

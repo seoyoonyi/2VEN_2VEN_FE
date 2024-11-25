@@ -82,13 +82,13 @@ const titleSectionStyle = css`
   button {
     background-color: inherit;
   }
+  margin-bottom: 8px;
 `;
 
 const titleStyle = css`
   text-align: left;
   flex: 1;
   ${theme.textStyle.subtitles.subtitle1};
-  margin-bottom: 8px;
 `;
 
 const descStyle = css`

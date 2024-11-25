@@ -26,7 +26,7 @@ apiClient.interceptors.request.use(
     }
 
     // MSW 사용 여부에 따라 useMock 헤더 추가
-    if (config.headers.useMick) {
+    if (config.headers.useMock) {
       config.baseURL = '';
       delete config.headers.useMock;
     }
