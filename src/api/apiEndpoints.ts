@@ -23,4 +23,7 @@ export const API_ENDPOINTS = {
     REGISTRATION_FORM: '/api/strategies/registration-form', // 전략 등록 옵션 조회
     UPDATE_FORM: '/api/strategies/update-form', // 전략 수정 조회
   },
+  FILES: {
+    PROFILE: (fileId: string) => `/api/files/profile/${fileId}`, // 프로필 이미지 다운로드
+  },
 };

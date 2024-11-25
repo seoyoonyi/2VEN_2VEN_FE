@@ -42,7 +42,6 @@ export const signin = async (credentials: SigninRequest): Promise<SigninResponse
       email: data.email,
       nickname: data.nickname,
       role: data.role as User['role'], // 이미 'ROLE_' 접두사가 붙어있음
-      profile_image: data.profile_image,
     };
 
     // 관리자인 경우 추가 정보처리
@@ -135,4 +134,24 @@ export const verifyCode = async (code: string): Promise<ApiResponse<{ expires_at
     }
   );
   return response.data;
+};
+
+interface ProfileImageResponse {
+  fileId: string;
+  displayName: string;
+  message: string;
+  base64Content: string;
+}
+// 프로필 이미지 가져오기
+export const fetchProfileImage = async ({
+  fileId,
+  memberId,
+}: {
+  fileId: string;
+  memberId: string;
+}): Promise<string> => {
+  const response = await apiClient.get<ProfileImageResponse>(
+    `${API_ENDPOINTS.FILES.PROFILE(fileId)}?uploaderId=${memberId}`
+  );
+  return response.data.base64Content;
 };

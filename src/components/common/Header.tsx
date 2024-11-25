@@ -8,6 +8,7 @@ import GlobalNav from '@/components/navigation/GlobalNav';
 import SearchInput from '@/components/page/search/SearchInput';
 import AdminSessionTimer from '@/components/page/signup/AdminSessionTimer';
 import { ROUTES } from '@/constants/routes';
+import { useFetchProfileImage } from '@/hooks/queries/useFetchPofileImage';
 import { useAdminAuthStore } from '@/stores/adminAuthStore';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
@@ -15,6 +16,10 @@ import { isAdminUser } from '@/types/auth';
 const Header = () => {
   const LOGO = 'SYSMETIC';
   const { user } = useAuthStore();
+  const { data: base64Image } = useFetchProfileImage(
+    user?.profile_image || null,
+    user?.member_id || null
+  );
   const { adminAuth } = useAdminAuthStore();
   const navigate = useNavigate();
   // const location = useLocation();
@@ -78,7 +83,10 @@ const Header = () => {
                 : ROUTES.MYPAGE.TRADER.STRATEGIES.LIST
             }
           >
-            <Avatar src={user.profile_image || defaultImage} alt={user.nickname} />
+            <Avatar
+              src={base64Image ? `data:image/png;base64,${base64Image}` : defaultImage}
+              alt={user.nickname}
+            />
           </Link>
         </div>
       </>
