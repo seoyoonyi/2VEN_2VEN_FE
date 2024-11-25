@@ -6,9 +6,9 @@ import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
 
 const NotFoundPage = () => (
-  <div css={NotFoundContainer}>
+  <div css={notFoundContainer}>
     <div css={leftContainer}>
-      <img src={notFoundImg} alt='' />
+      <img src={notFoundImg} alt='페이지를 찾을 수 없는 일러스트' aria-hidden='true' />
     </div>
     <div css={rightContainer}>
       <h2>페이지를 찾을 수 없습니다</h2>
@@ -22,8 +22,8 @@ const NotFoundPage = () => (
   </div>
 );
 
-const NotFoundContainer = css`
-  height: 100vh;
+const notFoundContainer = css`
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
