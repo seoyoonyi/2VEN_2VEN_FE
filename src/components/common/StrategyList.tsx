@@ -235,33 +235,4 @@ const mddStyle = (mdd: string | number | undefined) => css`
       : theme.colors.main.red};
 `;
 
-const moreMenuStyle = css`
-  position: relative;
-  cursor: pointer;
-`;
-
-const dropdownStyle = css`
-  position: absolute;
-  right: 20px;
-  width: 140px;
-  background: ${theme.colors.main.white};
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid ${theme.colors.gray[300]};
-  border-radius: 6px;
-  text-align: left;
-  padding: 8px 16px;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  div {
-    cursor: pointer;
-    padding: 4px 0;
-    &:hover {
-      color: ${theme.colors.main.primary};
-    }
-  }
-`;
-
 export default StrategyList;
