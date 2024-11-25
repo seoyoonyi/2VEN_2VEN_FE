@@ -2,10 +2,11 @@ import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import Modal from '@/components/common/Modal';
+import ChartSection from '@/components/page/strategy-detail/chart/ChartSection';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
 import IconTagSection from '@/components/page/strategy-detail/IconTagSection';
+import ReasonItem from '@/components/page/strategy-detail/ReasonItem';
 import ReviewSection from '@/components/page/strategy-detail/review/ReviewSection';
-import ChartSection from '@/components/page/strategy-detail/section/ChartSection';
 import StrategyContent from '@/components/page/strategy-detail/StrategyContent';
 import StrategyHeader from '@/components/page/strategy-detail/StrategyHeader';
 import StrategyIndicator from '@/components/page/strategy-detail/StrategyIndicator';
@@ -43,6 +44,23 @@ const imgTest = [
   { img: '/src/assets/images/domestic_present.svg' },
   { img: '/src/assets/images/domestic_present.svg' },
 ];
+
+const rejectReasonData = {
+  title: '미승인 이유는 이렇습니다',
+  admin: '나는야 관리자 룰루',
+  adminImg: '/src/assets/images/apt_trader.png',
+  content: `
+    안녕하세요, 트레이더 [내가여기서투자짱]님.
+    귀하께서 등록하신 전략을 검토한 결과, 아쉽게도 아래와 같은 사유로 인해 이번에는 승인이 어려운 점 안내드립니다.
+    1. 전략 설명 부족
+    전략의 세부적인 실행 방법이나 투자 기준에 대한 설명이 부족하여, 투자자들이 전략을 이해하는 데 어려움이 있을 것으로 판단됩니다.
+    2. 데이터 부족 또는 불명확
+    전략에 포함된 데이터의 출처나 신뢰성이 불명확합니다.
+    3. 투자 기준의 모호성
+    전략에서 사용하는 기준이 투자자들에게 혼동을 줄 수 있는 표현이 포함되어 있습니다.
+    수정 후 다시 제출해 주시면 빠르게 검토하여 안내드리겠습니다. 등록 절차와 관련해 궁금한 점이 있으시면 언제든 문의해 주세요.
+  `,
+};
 
 const StrategyDetailPage = () => {
   const { strategyId } = useParams();
@@ -111,6 +129,12 @@ const StrategyDetailPage = () => {
 
   return (
     <div css={containerStyle}>
+      <ReasonItem
+        title={rejectReasonData.title}
+        content={rejectReasonData.content}
+        admin={rejectReasonData.admin}
+        adminImg={rejectReasonData.adminImg}
+      />
       <div css={contentStyle}>
         <div css={contentWrapper}>
           <div key={strategy?.strategyId}>
@@ -166,6 +190,7 @@ const containerStyle = css`
 
 const contentStyle = css`
   margin-top: 95px;
+  border-radius: 8px;
   width: ${theme.layout.width.content};
   padding: 40px;
   box-sizing: border-box;
