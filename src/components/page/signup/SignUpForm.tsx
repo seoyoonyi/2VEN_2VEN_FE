@@ -6,6 +6,7 @@ import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { useNicknameCheck } from '@/hooks/mutations/useNicknameCheck';
 import theme from '@/styles/theme';
+import { ErrorResponse } from '@/types/error';
 import { validateNickname } from '@/utils/validation';
 
 const SignUpForm = () => {
@@ -29,13 +30,20 @@ const SignUpForm = () => {
 
     try {
       const response = await nicknameCheck.mutateAsync(nickname);
-      if (response.data.isDuplicate) {
-        setNicknameMessage('이미 사용중인 닉네임입니다.');
-      } else {
+      if (response.status === 'success') {
         setNicknameMessage('사용 가능한 닉네임입니다.');
       }
-    } catch (error) {
-      setNicknameMessage('닉네임 중복 확인에 실패했습니다.');
+    } catch (error: unknown) {
+      const err = error as ErrorResponse;
+      if (err.response?.data?.error === 'CONFLICT') {
+        setNicknameMessage('이미 사용중인 닉네임입니다.');
+      } else if (err.response?.data?.errors) {
+        setNicknameMessage(
+          err.response.data.errors['checkNickname.nickname'] || '알 수 없는 오류가 발생했습니다.'
+        );
+      } else {
+        setNicknameMessage('닉네임 중복 확인에 실패했습니다.');
+      }
     }
   };
 

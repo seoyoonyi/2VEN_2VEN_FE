@@ -12,6 +12,10 @@ export const useRequestVerificationMutation = () =>
 
 // 인증번호 검증 mutation
 export const useVerifyAdminCodeMutation = () =>
-  useMutation<ApiResponse<{ expires_at: string }>, AxiosError, { email: string; code: string }>({
-    mutationFn: ({ email, code }) => verifyCode(email, code),
+  useMutation<
+    ApiResponse<{ expires_at: string }>,
+    AxiosError,
+    { email: string; verificationCode: string }
+  >({
+    mutationFn: ({ email, verificationCode }) => verifyCode(email, verificationCode),
   });
