@@ -13,7 +13,6 @@ interface statisticsProps {
 }
 
 const getColorByValue = (value: string) => {
-  console.log(value);
   if (value.startsWith('-')) {
     return {
       backgroundColor: '#EFF6FF',
