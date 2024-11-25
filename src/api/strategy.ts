@@ -64,8 +64,6 @@ export const submitStrategyUpdate = async (strategyId: number, payload: Strategy
         },
       }
     );
-    console.log('전략수정성공!', data);
-    console.log('전략성공,,,', payload);
     return data;
   } catch (error) {
     console.error('Failed to submit strategy update', error);

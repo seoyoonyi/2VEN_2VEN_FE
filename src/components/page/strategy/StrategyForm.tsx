@@ -12,6 +12,7 @@ import StrategyIntro from '@/components/page/strategy/form-content/StrategyIntro
 import StrategyName from '@/components/page/strategy/form-content/StrategyName';
 import { investmentFunds, isPublic } from '@/constants/createOptions';
 import { useSubmitStrategyCreate } from '@/hooks/mutations/useSubmitStrategyCreate';
+import { useSubmitStrategyUpdate } from '@/hooks/mutations/useSubmitStrategyUpdate';
 import useFetchStrategyOptionData from '@/hooks/queries/useFetchStrategyOptionData';
 import useCreateFormValidation from '@/hooks/useCreateFormValidation';
 import useModalStore from '@/stores/modalStore';
@@ -19,7 +20,7 @@ import { useStrategyFormStore } from '@/stores/strategyFormStore';
 import theme from '@/styles/theme';
 import { StrategyPayload, StrategyDetailsData } from '@/types/strategy';
 
-const StrategyCreateForm = ({
+const StrategyForm = ({
   strategyDetailData,
   isEditMode,
 }: {
@@ -64,6 +65,7 @@ const StrategyCreateForm = ({
   const { openModal } = useModalStore();
   const { strategyData, loading, error } = useFetchStrategyOptionData();
   const { mutate: submitStrategy, status } = useSubmitStrategyCreate();
+  const { mutate: updateStrategy } = useSubmitStrategyUpdate();
   const isSubmitting = status === 'pending';
 
   const [file, setFile] = useState<File | null>(null);
@@ -89,9 +91,9 @@ const StrategyCreateForm = ({
 
     try {
       if (isEditMode && strategyDetailData) {
-        await submitStrategyUpdate(strategyDetailData.strategyId, payload);
+        updateStrategy({ strategyId: strategyDetailData.strategyId, payload });
       } else {
-        await submitStrategy(payload);
+        submitStrategy(payload);
       }
     } catch (error) {
       console.error('전략 등록/수정 실패:', error);
@@ -242,4 +244,4 @@ const buttonContainerStyle = css`
   justify-content: center;
 `;
 
-export default StrategyCreateForm;
+export default StrategyForm;
