@@ -11,7 +11,9 @@ const AdminLayout = () => (
     <Header />
     <main css={mainStyle}>
       <AdminNav />
-      <Outlet />
+      <div css={outletWrapperStyle}>
+        <Outlet />
+      </div>
     </main>
     <Footer />
   </div>
@@ -26,9 +28,17 @@ const wrapperStyle = css`
 `;
 
 const mainStyle = css`
-  max-width: ${theme.layout.width.content};
   display: flex;
+  justify-content: center;
   gap: 20px;
-  margin: 76px auto;
+  margin: 76px 0;
 `;
+
+const outletWrapperStyle = css`
+  width: 955px;
+  padding: 48px 40px 80px 40px;
+  background-color: ${theme.colors.main.white};
+  border-radius: 8px;
+`;
+
 export default AdminLayout;

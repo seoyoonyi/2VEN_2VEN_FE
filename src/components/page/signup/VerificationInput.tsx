@@ -12,6 +12,7 @@ interface VerificationInputProps {
   resetTimer?: number; // 타이머 리셋을 위한 상태
   onTimeEnd?: () => void; // 타이머 종료 콜백함수
   isDisabled?: boolean; // 입력창 비활성화 여부
+  startTimer?: boolean; // 타이머 시작 여부
 }
 
 // 타이머 기능있는 인증번호 입력창 컴포넌트(인증번호입력+타이머)
@@ -21,32 +22,65 @@ const VerificationInput = ({
   resetTimer = 0,
   onTimeEnd,
   isDisabled = false, // 기본값 false
+  startTimer = true, // 기본값 true
 }: VerificationInputProps) => {
   const [timeLeft, setTimeLeft] = useState<number>(179); // 초기값 3분  => 179초
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null); // 타이머 id
+  const [showTimer, setShowTimer] = useState(false); // 타이머 보이기 여부
+  const [isTimerExpired, setIsTimerExpired] = useState(false); // 타이머 만료 상태 추가
 
-  // resetTimer가 변경될 때만 타이머 시작!
-  useEffect(() => {
-    setTimeLeft(179); // 타이머 초기화
-    onChange(''); // 입력값 초기화
-  }, [resetTimer, onChange]);
-
-  // 타이머 로직
-  useEffect(() => {
-    // 타이머가 정확히 0일 때만 onTimeEnd 콜백함수 호출
-    if (timeLeft === 0) {
-      onTimeEnd?.();
-      return;
+  // 타이머 시작 함수
+  const startCountdown = () => {
+    // 이미 실행중인 타이머가 있다면 제거한다
+    if (intervalId) {
+      clearInterval(intervalId);
     }
+    setTimeLeft(179); // 타이머 초기화
+    setShowTimer(true); // 타이머 시작할 때 보이기
+    setIsTimerExpired(false); // 타이머 시작할 때 만료 상태 초기화
 
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+    // 새로운 타이머 시작
+    const newIntervalId = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(newIntervalId);
+          setIsTimerExpired(true); // 타이머 종료 시 만료 상태를 true로 설정
+          onTimeEnd?.(); // 타이머 종료 콜백함수 호출
+          return 0; // 0으로 유지하며 00:00으로 표시
+        }
+        return prevTime - 1;
+      });
     }, 1000);
+    setIntervalId(newIntervalId);
+  };
 
-    // 컴포넌트 언마운트되면 타이머 종료
-    return () => {
-      clearInterval(timer);
-    };
-  }, [timeLeft, onTimeEnd]);
+  // 컴포넌트가 언마운트되면 타이머 정리
+  useEffect(
+    () => () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    },
+    [intervalId]
+  );
+
+  // startTimer prop이 true일 때만 타이머 시작
+  useEffect(() => {
+    if (startTimer) {
+      startCountdown();
+    } else {
+      // startTimer가 false일 때 타이머 중지 및 초기화
+      if (intervalId) {
+        clearInterval(intervalId);
+        setIntervalId(null);
+      }
+      // 타이머가 만료된 상태가 아닐 때만 타이머를 숨김
+      if (!isTimerExpired) {
+        setTimeLeft(179);
+        setShowTimer(false);
+      }
+    }
+  }, [startTimer, resetTimer]);
 
   return (
     <div css={inputContainerStyle}>
@@ -59,7 +93,20 @@ const VerificationInput = ({
         css={inputStyle}
         disabled={isDisabled || timeLeft === 0} // timeLeft가 0 이거나 isDisabled가 true이면 입력창 비활성화
       />
-      <span css={timerStyle}>{timeLeft !== null ? formatTime(timeLeft) : ''}</span>
+      {/* 타이머가 시작되었거나 만료된 상태일 때 표시 */}
+      {(showTimer || isTimerExpired) && (
+        <span
+          css={[
+            timerStyle,
+            timeLeft <= 5 &&
+              css`
+                color: ${theme.colors.main.alert};
+              `,
+          ]}
+        >
+          {formatTime(timeLeft)}
+        </span>
+      )}
     </div>
   );
 };

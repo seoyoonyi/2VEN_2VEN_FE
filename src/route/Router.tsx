@@ -2,7 +2,9 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/routes';
 import AdminLayout from '@/layouts/AdminLayout';
+import InvestorMypageLayout from '@/layouts/InvestorMypageLayout';
 import RootLayout from '@/layouts/RootLayout';
+import TraderMyPageLayout from '@/layouts/TraderMyPageLayout';
 import StockTypeListPage from '@/pages/admin/stock-type/StockTypeListPage';
 import StrategyApprovalListPage from '@/pages/admin/strategy/StrategyApprovalListPage';
 import TradingTypeListPage from '@/pages/admin/trading-type/TradingTypeListPage';
@@ -22,6 +24,8 @@ import HomePage from '@/pages/HomePage';
 import InvestorFollowFolderPage from '@/pages/mypage/investor/InvestorFollowFolderPage';
 import InvestorMyPage from '@/pages/mypage/investor/InvestorMyPage';
 import InvestorProfilePage from '@/pages/mypage/investor/InvestorProfilePage';
+import MyInquiresDetailPage from '@/pages/mypage/investor/MyInquiresDetailPage';
+import MyInquiresEditPage from '@/pages/mypage/investor/MyInquiresEditPage';
 import MyInquiriesPage from '@/pages/mypage/investor/MyInquiriesPage';
 import InquiriesManagementPage from '@/pages/mypage/trader/InquiriesManagementPage';
 import StrategyCreatePage from '@/pages/mypage/trader/StrategyCreatePage';
@@ -100,6 +104,14 @@ export const router = createBrowserRouter(
           element: <StrategyListPage />, // 전략 목록 페이지
         },
         {
+          path: ROUTES.MYPAGE.TRADER.STRATEGIES.CREATE,
+          element: <StrategyCreatePage />, // 전략 등록 페이지
+        },
+        {
+          path: ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(':strategyId'),
+          element: <StrategyEditPage />, // 전략 수정 페이지
+        },
+        {
           path: ROUTES.STRATEGY.DETAIL(':strategyId'),
           element: <StrategyDetailPage />, // 전략 상세 페이지
         },
@@ -116,55 +128,17 @@ export const router = createBrowserRouter(
           path: ROUTES.TRADER.PROFILE(':traderId'),
           element: <TraderDetailPage />, // 트레이더 프로필 상세 페이지
         },
-        // -------------------------------------- 마이페이지(투자자)
-        {
-          path: ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS,
-          element: <InvestorMyPage />, // 투자자 마이페이지 - 관심전략 폴더 목록
-        },
-        {
-          path: ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(':folderId'),
-          element: <InvestorFollowFolderPage />, // 특정 폴더의 관심전략 목록
-        },
-        {
-          path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY,
-          element: <MyInquiriesPage />, // 나의 상담 게시판
-        },
-        {
-          path: ROUTES.MYPAGE.INVESTOR.PROFILE,
-          element: <InvestorProfilePage />, // 투자자 프로필 관리
-        },
-        // -------------------------------------- 마이페이지(트레이더)
-        {
-          path: ROUTES.MYPAGE.TRADER.STRATEGIES.LIST,
-          element: <TraderMyPage />, // 트레이더 마이페이지 - 나의 전략 리스트
-        },
-        {
-          path: ROUTES.MYPAGE.TRADER.STRATEGIES.CREATE,
-          element: <StrategyCreatePage />, // 전략 등록 페이지
-        },
-        {
-          path: ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(':strategyId'),
-          element: <StrategyEditPage />, // 전략 수정 페이지
-        },
-        {
-          path: ROUTES.MYPAGE.TRADER.INQUIRIES,
-          element: <InquiriesManagementPage />, // 문의 관리 페이지
-        },
-        {
-          path: ROUTES.MYPAGE.TRADER.PROFILE,
-          element: <TraderProfilePage />, // 트레이더 프로필 관리
-        },
         // -------------------------------------- 검색
         {
-          path: ROUTES.SEARCH.ROOT.WITH_KEYWORD(':keyword'),
+          path: ROUTES.SEARCH.ROOT,
           element: <SearchTotalResultsPage />, // 통합검색결과 페이지(전략과 트레이더 검색결과)
         },
         {
-          path: ROUTES.SEARCH.TRADER.WITH_KEYWORD(':keyword'),
+          path: ROUTES.SEARCH.TRADER,
           element: <SearchResultsInTrader />, // 트레이더 내 검색결과 페이지
         },
         {
-          path: ROUTES.SEARCH.STRATEGY.WITH_KEYWORD(':keyword'),
+          path: ROUTES.SEARCH.STRATEGY,
           element: <SearchResultsInStrategy />, // 전략 내 검색결과 페이지
         },
       ],
@@ -186,6 +160,58 @@ export const router = createBrowserRouter(
         {
           path: ROUTES.ADMIN.STRATEGY.APPROVAL,
           element: <StrategyApprovalListPage />, // 전략 승인 관리 페이지
+        },
+      ],
+    },
+    {
+      path: ROUTES.HOME.PATH,
+      element: <InvestorMypageLayout />,
+      errorElement: <NotFoundPage />,
+      children: [
+        // -------------------------------------- 마이페이지(투자자)
+        {
+          path: ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS,
+          element: <InvestorMyPage />, // 투자자 마이페이지 - 관심전략 폴더 목록
+        },
+        {
+          path: ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(':folderId'),
+          element: <InvestorFollowFolderPage />, // 특정 폴더의 관심전략 목록
+        },
+        {
+          path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST,
+          element: <MyInquiriesPage />, // 나의 문의 목록 게시판
+        },
+        {
+          path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(':inquiryId'),
+          element: <MyInquiresDetailPage />, // 나의 문의 상세 게시판
+        },
+        {
+          path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY.EDIT(':inquiryId'),
+          element: <MyInquiresEditPage />, // 나의 문의 수정 게시판
+        },
+        {
+          path: ROUTES.MYPAGE.INVESTOR.PROFILE,
+          element: <InvestorProfilePage />, // 투자자 프로필 관리
+        },
+      ],
+    },
+    {
+      path: ROUTES.HOME.PATH,
+      element: <TraderMyPageLayout />,
+      errorElement: <NotFoundPage />,
+      children: [
+        // -------------------------------------- 마이페이지(트레이더)
+        {
+          path: ROUTES.MYPAGE.TRADER.STRATEGIES.LIST,
+          element: <TraderMyPage />, // 트레이더 마이페이지 - 나의 전략 리스트
+        },
+        {
+          path: ROUTES.MYPAGE.TRADER.INQUIRIES,
+          element: <InquiriesManagementPage />, // 문의 관리 페이지
+        },
+        {
+          path: ROUTES.MYPAGE.TRADER.PROFILE,
+          element: <TraderProfilePage />, // 트레이더 프로필 관리
         },
       ],
     },

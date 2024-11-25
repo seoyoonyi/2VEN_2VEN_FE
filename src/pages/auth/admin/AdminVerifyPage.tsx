@@ -15,24 +15,14 @@ const AdminVerifyPage = () => {
   const [verificationCode, setVerificationCode] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [resetTimer, setResetTimer] = useState<number>(0); // 타이머 리셋을 위한 상태
-  const [shouldReset, setShouldReset] = useState(false);
   const [isInputDisabled, setIsInputDisabled] = useState(false);
   const [serverVerificationCode, setServerVerificationCode] = useState<string>(''); // 서버에서 받은 인증번호 저장
+  const [isVerificationRequested, setIsVerificationRequested] = useState(false); // 추가된 상태
 
   // 페이지 마운트 시 최초 인증번호 요청
   useEffect(() => {
     handleResend();
   }, []);
-
-  // 재전송 처리를 위한 useEffect
-  useEffect(() => {
-    if (shouldReset) {
-      setErrorMessage('');
-      setResetTimer((prev) => prev + 1);
-      setIsInputDisabled(false); // 입력창 활성화
-      setShouldReset(false);
-    }
-  }, [shouldReset]);
 
   // verificationCode가 변경될 때마다 실행
   useEffect(() => {
@@ -42,17 +32,20 @@ const AdminVerifyPage = () => {
     }
   }, [verificationCode]);
 
-  // 인증번호 재요청
+  // 인증번호 요청/재요청
   const handleResend = () => {
-    setShouldReset(true);
     // setState는 비동기이므로, 이 시점에서는 아직 errorMessage가 변경되지 않았음
     try {
       // const response = await requestVerificationEmail();
       // setServerVerificationCode(response.verificationCode); // 서버 응답에서 인증번호 저장
       // 테스트용 코드
       setServerVerificationCode('123456'); // 테스트를 위해 하드코딩
+      setIsVerificationRequested(true); // 인증 요청 상태 활성화
       // 인증번호 요청 성공 시, isVerificationActive를 토글 => 타이머 재시작!
       setResetTimer((prev) => prev + 1); // 타이머 리셋
+      setIsInputDisabled(false);
+      setErrorMessage('');
+      setVerificationCode('');
     } catch (error) {
       setErrorMessage('인증번호 발송에 실패했습니다.');
     }
@@ -102,8 +95,10 @@ const AdminVerifyPage = () => {
             value={verificationCode}
             onChange={setVerificationCode}
             resetTimer={resetTimer}
+            startTimer={isVerificationRequested} // startTimer prop 추가
             onTimeEnd={() => {
               setIsInputDisabled(true); // 입력창 비활성화
+              setIsVerificationRequested(false); // 타이머 종료 시 인증 요청 상태도 false로
               setErrorMessage('인증 시간이 만료되었습니다. 다시 시도해주세요.');
             }}
             isDisabled={isInputDisabled}

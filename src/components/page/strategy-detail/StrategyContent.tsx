@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
 
-const StrategyContent = ({ content }: { content: string }) => (
+const StrategyContent = ({ content }: { content?: string }) => (
   <div css={contentWrapper}>
     <div css={contentStyle}>{content}</div>
   </div>

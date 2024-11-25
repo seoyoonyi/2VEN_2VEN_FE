@@ -1,9 +1,7 @@
 import { useState } from 'react';
 
 import { css } from '@emotion/react';
-import { useNavigate } from 'react-router-dom';
 
-import { submitStrategyCreate, StrategyPayload } from '@/api/strategyCreate';
 import Button from '@/components/common/Button';
 import Select from '@/components/common/Select';
 import FileUpload from '@/components/page/strategy-create/form-content/FileUpload';
@@ -11,10 +9,12 @@ import ProductType from '@/components/page/strategy-create/form-content/ProductT
 import StrategyIntro from '@/components/page/strategy-create/form-content/StrategyIntro';
 import StrategyName from '@/components/page/strategy-create/form-content/StrategyName';
 import { investmentFunds, isPublic } from '@/constants/createOptions';
+import { useSubmitStrategyCreate } from '@/hooks/mutations/useSubmitStrategyCreate';
+import useFetchStrategyOptionData from '@/hooks/queries/useFetchStrategyOptionData';
 import useCreateFormValidation from '@/hooks/useCreateFormValidation';
-import useFetchStrategyOptionData from '@/hooks/useFetchStrategyOptionData';
 import { useStrategyFormStore } from '@/stores/strategyFormStore';
 import theme from '@/styles/theme';
+import { StrategyPayload } from '@/types/strategyForm';
 
 const StrategyCreateForm = () => {
   const {
@@ -27,13 +27,12 @@ const StrategyCreateForm = () => {
     selectedProducts,
     setField,
     checkProduct,
-    clearForm,
   } = useStrategyFormStore();
   const { strategyData, loading, error } = useFetchStrategyOptionData();
+  const { mutate: submitStrategy, status } = useSubmitStrategyCreate();
+  const isSubmitting = status === 'pending';
 
   const [file, setFile] = useState<File | null>(null);
-
-  const navigate = useNavigate();
 
   const formState = { strategy, text, operation, cycle, fund, publicStatus, selectedProducts };
   const isFormValid = useCreateFormValidation(formState);
@@ -55,16 +54,7 @@ const StrategyCreateForm = () => {
       investmentAssetClassesIdList: selectedProducts.map((v) => Number(v)),
     };
 
-    try {
-      const res = await submitStrategyCreate(payload);
-      if (res.status === 201) {
-        clearForm;
-        navigate('/strategies/1');
-        window.scrollTo(0, 0);
-      }
-    } catch (err) {
-      console.error('전략 등록 실패:', err);
-    }
+    submitStrategy(payload);
   };
 
   if (loading) return <p>Loading.....</p>;
@@ -138,7 +128,13 @@ const StrategyCreateForm = () => {
       <FileUpload onFileSelect={handleFileSelect} />
 
       <div css={buttonContainerStyle}>
-        <Button type='submit' variant='primary' size='lg' width={326} disabled={!isFormValid}>
+        <Button
+          type='submit'
+          variant='primary'
+          size='lg'
+          width={326}
+          disabled={!isFormValid || isSubmitting}
+        >
           저장하기
         </Button>
       </div>

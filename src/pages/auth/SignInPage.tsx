@@ -1,44 +1,146 @@
+import { useRef, useState } from 'react';
+
 import { css } from '@emotion/react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
+import { AUTH_TEXT } from '@/constants/auth';
 import { ROUTES } from '@/constants/routes';
+import { useSigninMutation } from '@/hooks/mutations/useAuthMutation';
 import theme from '@/styles/theme';
+import { isValidPassword, validateEmail } from '@/utils/validation';
 
-const SignInPage: React.FC = () => (
-  <div css={containerStyle}>
-    <h3 css={pageHeadingStyle}>로그인</h3>
-    <form css={formStyle}>
-      <div>
-        <Input type='email' inputSize='lg' leftIcon='mail' placeholder='이메일' showClearButton />
-      </div>
-      <div>
-        <Input
-          type='password'
-          inputSize='lg'
-          leftIcon='key'
-          rightIcon='eye'
-          placeholder='비밀번호'
-        />
-        <Button width={400} css={buttonStyle} disabled>
-          로그인
-        </Button>
-      </div>
-    </form>
-    <ul css={signinLinkStyle}>
-      <li>
-        <Link to={ROUTES.AUTH.FIND.EMAIL}>아이디 찾기</Link>
-      </li>
-      <li>
-        <Link to={ROUTES.AUTH.FIND.PASSWORD}>비밀번호 찾기</Link>
-      </li>
-      <li>
-        <Link to={ROUTES.AUTH.SIGNUP.FORM}>회원가입</Link>
-      </li>
-    </ul>
-  </div>
-);
+const SignInPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorField, setErrorField] = useState<'email' | 'password' | null>(null);
+
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+
+  const { mutateAsync: signin } = useSigninMutation();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    setErrorMessage(''); // 에러메시지 초기화
+    setErrorField(null); // 에러필드 초기화
+
+    const emailValidation = validateEmail(email);
+    const passwordValidation = isValidPassword(password);
+
+    if (!emailValidation.isValid) {
+      setErrorMessage(emailValidation.message);
+      setErrorField('email');
+      emailInputRef.current?.focus();
+      return;
+    }
+
+    if (!passwordValidation.isValid) {
+      setErrorMessage(passwordValidation.message);
+      setErrorField('password');
+      passwordInputRef.current?.focus();
+      return;
+    }
+    try {
+      // 콘솔에서 확인
+      console.log('Submitting login form with:', { email, password });
+      const result = await signin({ email, password });
+      console.log('Login result:', result);
+      if (result.status === 'success' && result.data) {
+        // 로그인 성공 시
+        // role을 state로 전달하지 않고, 단순 홈으로 이동
+        navigate(ROUTES.HOME.PATH, { replace: true });
+        // replace: true로 설정하여 뒤로가기 시 로그인 페이지로 돌아가지 않도록 설정
+      } else {
+        console.error('Login successful but missing data:', result);
+        setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      console.error('Signin error: ', error);
+      if (error instanceof Error) {
+        // 구체적인 에러 메시지 처리
+        setErrorMessage(error.message || AUTH_TEXT.error.auth);
+      } else {
+        setErrorMessage(AUTH_TEXT.error.auth);
+      }
+      setErrorField(null);
+    }
+  };
+
+  // 입력값 변경되면 에러메시지 제거
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    if (errorField === 'email') {
+      const validation = validateEmail(e.target.value);
+      if (validation.isValid) {
+        setErrorMessage('');
+        setErrorField(null);
+      }
+    }
+  };
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    if (errorField === 'password') {
+      const validation = isValidPassword(e.target.value);
+      if (validation.isValid) {
+        setErrorMessage('');
+        setErrorField(null);
+      }
+    }
+  };
+  return (
+    <div css={containerStyle}>
+      <h3 css={pageHeadingStyle}>{AUTH_TEXT.title}</h3>
+      <form css={formStyle} onSubmit={handleSubmit}>
+        <div css={divStyle}>
+          <Input
+            ref={emailInputRef}
+            type='text'
+            inputSize='lg'
+            leftIcon='mail'
+            placeholder={AUTH_TEXT.input.email.placeholder}
+            showClearButton
+            value={email}
+            onChange={handleEmailChange}
+            status={errorField === 'email' ? 'error' : 'default'}
+          />
+        </div>
+        <div>
+          <Input
+            ref={passwordInputRef}
+            type='password'
+            inputSize='lg'
+            leftIcon='key'
+            rightIcon='eye'
+            placeholder={AUTH_TEXT.input.password.placeholder}
+            value={password}
+            onChange={handlePasswordChange}
+            status={errorField === 'password' ? 'error' : 'default'}
+          />
+          <Button type='submit' width={400} css={buttonStyle} disabled={!email || !password}>
+            {AUTH_TEXT.button.submit}
+          </Button>
+        </div>
+      </form>
+      {errorMessage && <p css={messageStyle}>{errorMessage}</p>}
+      <ul css={signinLinkStyle}>
+        <li>
+          <Link to={ROUTES.AUTH.FIND.EMAIL}>{AUTH_TEXT.links.findEmail}</Link>
+        </li>
+        <li>
+          <Link to={ROUTES.AUTH.FIND.PASSWORD}>{AUTH_TEXT.links.findPassword}</Link>
+        </li>
+        <li>
+          <Link to={ROUTES.AUTH.SIGNUP.SELECT_TYPE}>{AUTH_TEXT.links.signup}</Link>
+        </li>
+      </ul>
+    </div>
+  );
+};
 const containerStyle = css`
   display: flex;
   flex-direction: column;
@@ -57,13 +159,13 @@ const pageHeadingStyle = css`
 const formStyle = css`
   flex-direction: column;
 
-  & > div:first-child {
-    margin-bottom: 12px;
-  }
   input {
     width: 400px;
     text-indent: 10px;
   }
+`;
+const divStyle = css`
+  margin-bottom: 12px;
 `;
 const buttonStyle = css`
   margin-top: 24px;
@@ -99,5 +201,11 @@ const signinLinkStyle = css`
     }
   }
 `;
-
+const messageStyle = css`
+  margin-top: 16px;
+  text-align: center;
+  color: ${theme.colors.main.alert};
+  font-size: ${theme.typography.fontSizes.caption};
+  line-height: ${theme.typography.lineHeights.sm};
+`;
 export default SignInPage;

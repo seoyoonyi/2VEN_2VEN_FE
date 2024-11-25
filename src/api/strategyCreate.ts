@@ -1,27 +1,20 @@
-import axios from 'axios';
+import apiClient from '@/api/apiClient';
+import { API_ENDPOINTS } from '@/api/apiEndpoints';
+import { StrategyPayload } from '@/types/strategyForm';
 
-export interface StrategyPayload {
-  strategyTitle: string;
-  tradingTypeId: number;
-  tradingCycleId: number;
-  minInvestmentAmount: string;
-  strategyOverview: string;
-  isPosted: string;
-  investmentAssetClassesIdList: number[];
-}
-
-// 전략 등록 조회
+// 전략 등록 옵션 조회
 export const fetchStrategyRegistration = async () => {
   try {
-    const res = await axios.get(`/api/strategies/registration-form`, {
+    const res = await apiClient.get(API_ENDPOINTS.STRATEGY.REGISTRATION_FORM, {
       headers: {
         'Content-Type': 'application/json',
         Auth: 'trader',
       },
     });
-    return res.data;
+    console.log('옵션들,,', res.data.data);
+    return res.data.data;
   } catch (error) {
-    console.error('failed to fetch strategy registration data', error);
+    console.error('Failed to fetch strategy registration data:', error);
     throw error;
   }
 };
@@ -29,16 +22,16 @@ export const fetchStrategyRegistration = async () => {
 // 전략 등록
 export const submitStrategyCreate = async (payload: StrategyPayload) => {
   try {
-    const res = await axios.post('/api/strategies', payload, {
+    const { data } = await apiClient.post(API_ENDPOINTS.STRATEGY.CREATE, payload, {
       headers: {
         'Content-Type': 'application/json',
         Auth: 'trader',
       },
     });
-    console.log(payload);
-    return res;
+    console.log('전략 등록 데이터,,', payload);
+    return data;
   } catch (error) {
-    console.error('Failed to submit strategy create', error);
+    console.error('Failed to submit strategy create:', error);
     throw error;
   }
 };
