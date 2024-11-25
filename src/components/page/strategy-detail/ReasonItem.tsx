@@ -13,7 +13,7 @@ const ReasonItem = ({ title, admin, adminImg, content }: RejectReasonProps) => (
     <div css={headerStyle}>
       <div css={titleStyle}>{title}</div>
       <div css={adminStyle}>
-        <img src={adminImg} alt={admin} width={24} height={24} />
+        <img src={adminImg} alt={admin} css={imgStyle} />
         <div>{admin}</div>
       </div>
     </div>
@@ -47,6 +47,12 @@ const adminStyle = css`
   display: flex;
   gap: 8px;
   ${theme.textStyle.body.body2};
+`;
+
+const imgStyle = css`
+  width: 24px;
+  height: 24px;
+  border-radius: 24px;
 `;
 
 const contentStyle = css`
