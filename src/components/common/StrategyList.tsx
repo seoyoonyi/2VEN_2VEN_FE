@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import { AiOutlineMore } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 
 import theme from '@/styles/theme';
@@ -23,6 +24,7 @@ interface StrategyListProps {
   startRank?: number;
   containerWidth?: string;
   gridTemplate?: string;
+  moreMenu?: boolean;
 }
 
 const StrategyList = ({
@@ -31,6 +33,7 @@ const StrategyList = ({
   startRank = 1,
   containerWidth = theme.layout.width.content,
   gridTemplate = '64px 278px 278px 160px 160px 100px 100px',
+  moreMenu = false,
 }: StrategyListProps) => (
   <div css={containerStyle(containerWidth)}>
     <div css={headerStyle(gridTemplate)}>
@@ -41,6 +44,11 @@ const StrategyList = ({
       <div>MDD</div>
       <div>SM Score</div>
       <div>팔로워</div>
+      {moreMenu && (
+        <div>
+          <AiOutlineMore size={20} />
+        </div>
+      )}
     </div>
     {strategies.map((strategy, idx) => (
       <Link to={`/strategies/${strategy.strategyId}`} key={strategy.strategyId}>
@@ -63,7 +71,7 @@ const StrategyList = ({
           </div>
           <div css={graphStyle}>
             {strategy.analytics_graph ? (
-              <img src={strategy.analytics_graph} alt='분석 그래프' />
+              <img src={strategy.analytics_graph} alt='분석 그래프' width={150} />
             ) : (
               '-'
             )}
@@ -93,6 +101,11 @@ const StrategyList = ({
           </div>
           <div>{strategy.smscore !== undefined ? strategy.smscore : '-'}</div>
           <div>{strategy.followers_count !== undefined ? strategy.followers_count : '0'}</div>
+          {moreMenu && (
+            <div>
+              <AiOutlineMore size={20} />
+            </div>
+          )}
         </div>
       </Link>
     ))}

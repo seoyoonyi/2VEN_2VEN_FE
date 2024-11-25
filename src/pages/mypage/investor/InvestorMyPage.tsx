@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Pagination from '@/components/common/Pagination';
+import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
 
 interface folderDataProps {
@@ -99,7 +100,10 @@ const InvestorMyPage = () => (
           </div>
         </div>
         {folderData.map((folder) => (
-          <Link to={`/mypage/investor/1`} key={folder.folderId}>
+          <Link
+            to={ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(String(folder.folderId))}
+            key={folder.folderId}
+          >
             <div css={rowStyle}>
               <div css={folderNameStyle}>
                 <VscFolder size={20} color={theme.colors.gray[400]} />
@@ -108,7 +112,7 @@ const InvestorMyPage = () => (
               <div>{folder.strategyCount}</div>
               <div>{folder.updatedAt}</div>
               <div>
-                <AiOutlineMore />
+                <AiOutlineMore size={20} />
               </div>
             </div>
           </Link>
@@ -181,6 +185,10 @@ const headerStyle = css`
   color: ${theme.colors.gray[700]};
   border-bottom: 1px solid ${theme.colors.gray[500]};
   font-weight: ${theme.typography.fontWeight.bold};
+
+  &:hover {
+    background-color: ${theme.colors.gray[100]};
+  }
 `;
 
 const folderNameStyle = css`
