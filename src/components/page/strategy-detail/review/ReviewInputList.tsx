@@ -68,7 +68,7 @@ const ReviewInputList = ({
           css={inputStyle}
         />
         <Button
-          variant='primary'
+          variant='accent'
           size='sm'
           width={110}
           disabled={!inputValue.trim()}
