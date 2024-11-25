@@ -87,6 +87,7 @@ const VerificationInput = ({
       <Input
         type='text'
         inputSize='lg'
+        width='100%'
         placeholder='메일로 받은 인증번호 입력'
         onChange={(e) => onChange(e.target.value)}
         value={value}
@@ -114,7 +115,6 @@ const inputContainerStyle = css`
   position: relative;
 `;
 const inputStyle = css`
-  width: 288px;
   padding-right: 60px;
 
   &:hover:not(:disabled) {

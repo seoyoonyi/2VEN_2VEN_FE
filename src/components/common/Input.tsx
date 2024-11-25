@@ -29,7 +29,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const {
     inputSize = 'md',
-    width = '100%',
+    width = 'auto',
     status = 'default',
     leftIcon,
     rightIcon,
