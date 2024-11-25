@@ -1,6 +1,8 @@
 import { apiClient } from './apiClient';
 import { API_ENDPOINTS } from './apiEndpoints';
 
+import { InputDailyAnalysisProps } from '@/types/strategyDetail';
+
 //전략 상세 기본 정보 조회
 export const fetchDefaultStrategyDetail = async (id: number) => {
   if (!id) {
@@ -34,7 +36,7 @@ export const fetchDeleteStrategyDetail = async (id: number) => {
   }
 };
 
-//일간분석 조회(MSW)
+//일간분석 조회
 export const fetchDailyAnalysis = async (strategyId: number, page: number, pageSize: number) => {
   try {
     const res = await apiClient.get(
@@ -45,7 +47,7 @@ export const fetchDailyAnalysis = async (strategyId: number, page: number, pageS
           pageSize,
         },
         headers: {
-          useMock: import.meta.env.VITE_ENABLE_MSW === 'true',
+          auth: 'admin',
         },
       }
     );
@@ -56,6 +58,28 @@ export const fetchDailyAnalysis = async (strategyId: number, page: number, pageS
 };
 
 //일간분석 등록
+export const fetchPostDailyAnalysis = async (
+  strategyId: number,
+  { payload }: InputDailyAnalysisProps,
+  authRole: 'admin' | 'trader'
+) => {
+  const body = { payload };
+  try {
+    const req = await apiClient.post(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/daily-data`,
+      body,
+      {
+        headers: {
+          Auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to fetch Post DailyAnalysis', error);
+  }
+};
+
 //일간분석 수정
 //일간분석 삭제
 export const fetchDeleteDailyAnalysis = async (strategyId: number[], analysisId: number) => {

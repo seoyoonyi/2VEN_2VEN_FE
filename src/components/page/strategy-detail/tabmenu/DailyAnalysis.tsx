@@ -10,18 +10,20 @@ import TableModal from '../table/TableModal';
 import { fetchDailyAnalysis } from '@/api/strategyDetail';
 import Button from '@/components/common/Button';
 import Pagination from '@/components/common/Pagination';
+import { usePostDailyAnalysis } from '@/hooks/mutations/useDailyAnalysis';
 import usePagination from '@/hooks/usePagination';
 import useTableModalStore from '@/stores/tableModalStore';
+import { DailyAnalysisProps } from '@/types/strategyDetail';
 
 export interface AnalysisDataProps {
-  daily_strategic_statistics_id: number;
-  input_date: string;
+  dailyStrategicStatisticsId: number;
+  inputDate: string;
   principal: number;
-  dep_wd_price: number;
-  daily_profit_loss: number;
-  daily_pl_rate: number;
-  cumulative_profit_loss: number;
-  cumulative_profit_loss_rate: number;
+  depWdPrice: number;
+  dailyProfitLoss: number;
+  dailyPlRate: number;
+  cumulativeProfitLoss: number;
+  cumulativeProfitLossRate: number;
 }
 
 const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
@@ -29,23 +31,29 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
   const [analysis, setAnalysis] = useState<AnalysisDataProps[]>([]);
   const { pagination, setPage, setPaginatedData } = usePagination(1, 5);
   const { openTableModal } = useTableModalStore();
+  const { mutate: postDailyAnalysis } = usePostDailyAnalysis();
+
   const normalizedData = useMemo(
     () =>
       analysis.map((data) => ({
-        dataId: data.daily_strategic_statistics_id,
-        date: data.input_date,
+        dataId: data.dailyStrategicStatisticsId,
+        date: data.inputDate,
         principal: data.principal,
-        dep_wd_price: data.dep_wd_price,
-        profit_loss: data.daily_profit_loss,
-        pl_rate: data.daily_pl_rate,
-        cumulative_profit_loss: data.cumulative_profit_loss,
-        cumulative_profit_loss_rate: data.cumulative_profit_loss_rate,
+        dep_wd_price: data.depWdPrice,
+        profit_loss: data.dailyProfitLoss,
+        pl_rate: data.dailyPlRate,
+        cumulative_profit_loss: data.cumulativeProfitLoss,
+        cumulative_profit_loss_rate: data.cumulativeProfitLossRate,
       })),
     [analysis]
   );
 
   const handleOpenModal = () => {
-    const initalData = Array(5).fill({ date: '', trade: '', day: '' });
+    const initalData: InputTableProps[] = Array(5).fill({
+      date: '',
+      dailyProfitLoss: '',
+      depWdPrice: '',
+    });
     openTableModal({
       type: 'insert',
       title: '일간분석 데이터 직접 입력',
@@ -59,9 +67,18 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
   };
 
   const handleSaveData = () => {
-    setTableData((prevData) => {
-      const updatedData = [...prevData, ...tableData];
-      return updatedData;
+    if (!strategyId) return;
+
+    const payload: DailyAnalysisProps[] = tableData.map((data) => ({
+      date: data.date,
+      dailyProfitLoss: data.dailyProfitLoss,
+      depWdPrice: data.depWdPrice,
+    }));
+
+    postDailyAnalysis({
+      strategyId: Number(strategyId),
+      payload,
+      authRole: 'admin',
     });
   };
 

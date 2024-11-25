@@ -137,9 +137,9 @@ const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) 
                       onClick={() =>
                         handleUpdateModal(
                           {
-                            input_date: values.date,
-                            dep_wd_price: values.dep_wd_price,
-                            daily_profit_loss: values.profit_loss,
+                            date: values.date,
+                            depWdPrice: values.dep_wd_price,
+                            dailyProfitLoss: values.profit_loss,
                           },
                           values.dataId
                         )

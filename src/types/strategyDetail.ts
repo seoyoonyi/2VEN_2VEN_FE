@@ -18,3 +18,13 @@ export interface StrategyDetailProps {
   isPosted: 'Y' | 'N';
   isGranted: 'Y' | 'N';
 }
+
+export interface DailyAnalysisProps {
+  date: string;
+  dailyProfitLoss: number;
+  depWdPrice: number;
+}
+
+export interface InputDailyAnalysisProps {
+  payload: DailyAnalysisProps[];
+}
