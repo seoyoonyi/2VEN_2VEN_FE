@@ -7,6 +7,7 @@ import { fetchUpdateStrategy } from '@/api/strategy';
 import PageHeader from '@/components/common/PageHeader';
 import StrategyForm from '@/components/page/strategy/StrategyForm';
 import theme from '@/styles/theme';
+import { StrategyDetailsData } from '@/types/strategy';
 
 const desc = [
   {
@@ -17,7 +18,7 @@ const desc = [
 
 const StrategyEditPage = () => {
   const { strategyId } = useParams<{ strategyId: string }>();
-  const [strategyData, setStrategyData] = useState(null);
+  const [strategyData, setStrategyData] = useState<StrategyDetailsData | undefined>(undefined);
 
   useEffect(() => {
     const fetchData = async () => {

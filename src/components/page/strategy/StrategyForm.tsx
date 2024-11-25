@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 
-import { submitStrategyUpdate } from '@/api/strategy';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 import Select from '@/components/common/Select';

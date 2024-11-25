@@ -27,7 +27,6 @@ export const submitStrategyCreate = async (payload: StrategyPayload) => {
         Auth: 'trader',
       },
     });
-    console.log(payload);
     return data;
   } catch (error) {
     console.error('Failed to submit strategy create:', error);
