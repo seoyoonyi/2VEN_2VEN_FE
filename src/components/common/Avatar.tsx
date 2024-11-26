@@ -16,13 +16,16 @@ const Avatar = ({ src, alt, size = 40, customStyle, ...props }: AvatarProps) => 
 const avatarContainer = (size: string | number) => css`
   width: ${typeof size === 'number' ? `${size}px` : size};
   aspect-ratio: 1;
-  border-radius: 50%;
+  border-radius: 100%;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const avatarStyle = css`
-  width: 100%;
-  height: 100%;
+  width: 102%;
+  height: 102%;
   object-fit: cover;
 `;
 
