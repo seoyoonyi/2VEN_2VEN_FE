@@ -4,7 +4,6 @@ import { css } from '@emotion/react';
 
 import Input from '@/components/common/Input';
 import theme from '@/styles/theme';
-import { formatDate } from '@/utils/dateFormat';
 
 export interface InputTableProps {
   date: string;

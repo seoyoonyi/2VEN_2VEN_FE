@@ -111,8 +111,8 @@ const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) 
                   </td>
                 )}
                 <td css={tableCellStyle}>{values.date}</td>
-                <td css={tableCellStyle}>{values.principal}</td>
-                <td css={tableCellStyle}>{values.dep_wd_price}</td>
+                <td css={tableCellStyle}>{values.principal.toLocaleString()}</td>
+                <td css={tableCellStyle}>{values.dep_wd_price.toLocaleString()}</td>
                 <td
                   css={[
                     tableCellStyle,
@@ -123,10 +123,10 @@ const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) 
                         : defaultTextStyle,
                   ]}
                 >
-                  {values.profit_loss}
+                  {values.profit_loss.toLocaleString()}
                 </td>
                 <td css={tableCellStyle}>{values.pl_rate}</td>
-                <td css={tableCellStyle}>{values.cumulative_profit_loss}</td>
+                <td css={tableCellStyle}>{values.cumulative_profit_loss.toLocaleString()}</td>
                 <td css={tableCellStyle}>{values.cumulative_profit_loss_rate}</td>
                 {mode === 'write' && (
                   <td css={tableCellStyle}>

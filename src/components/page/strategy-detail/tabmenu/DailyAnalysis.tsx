@@ -7,10 +7,10 @@ import AnalysisTable, { AnalysisProps } from '../table/AnalysisTable';
 import InputTable, { InputTableProps } from '../table/InputTable';
 import TableModal from '../table/TableModal';
 
-import { fetchDailyAnalysis } from '@/api/strategyDetail';
 import Button from '@/components/common/Button';
 import Pagination from '@/components/common/Pagination';
 import { usePostDailyAnalysis } from '@/hooks/mutations/useDailyAnalysis';
+import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
 import usePagination from '@/hooks/usePagination';
 import useTableModalStore from '@/stores/tableModalStore';
 import { DailyAnalysisProps } from '@/types/strategyDetail';
@@ -28,52 +28,61 @@ export interface AnalysisDataProps {
 
 const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
   const [tableData, setTableData] = useState<InputTableProps[]>([]);
-  const [analysis, setAnalysis] = useState<AnalysisDataProps[]>([]);
-  const { pagination, setPage, setPaginatedData } = usePagination(1, 5);
+  const { pagination, setPage } = usePagination(1, 5);
   const { openTableModal } = useTableModalStore();
+  const { dailyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchDailyAnalysis(
+    Number(strategyId),
+    pagination.currentPage - 1,
+    pagination.pageSize
+  );
   const { mutate: postDailyAnalysis } = usePostDailyAnalysis();
 
-  const normalizedData = useMemo(
-    () =>
-      analysis.map((data) => ({
-        dataId: data.dailyStrategicStatisticsId,
-        date: data.inputDate,
-        principal: data.principal,
-        dep_wd_price: data.depWdPrice,
-        profit_loss: data.dailyProfitLoss,
-        pl_rate: data.dailyPlRate,
-        cumulative_profit_loss: data.cumulativeProfitLoss,
-        cumulative_profit_loss_rate: data.cumulativeProfitLossRate,
-      })),
-    [analysis]
-  );
-
-  const handleOpenModal = () => {
-    const initalData: InputTableProps[] = Array(5).fill({
-      date: '',
-      dailyProfitLoss: '',
-      depWdPrice: '',
-    });
-    openTableModal({
-      type: 'insert',
-      title: '일간분석 데이터 직접 입력',
-      data: <InputTable data={initalData} onChange={handleInputChange} />,
-      onAction: handleSaveData,
-    });
-  };
+  const normalizedData = useMemo(() => {
+    if (!dailyAnalysis) return [];
+    return dailyAnalysis.map((data: AnalysisDataProps) => ({
+      dataId: data.dailyStrategicStatisticsId,
+      date: data.inputDate,
+      principal: data.principal,
+      dep_wd_price: data.depWdPrice,
+      profit_loss: data.dailyProfitLoss,
+      pl_rate: data.dailyPlRate,
+      cumulative_profit_loss: data.cumulativeProfitLoss,
+      cumulative_profit_loss_rate: data.cumulativeProfitLossRate,
+    }));
+  }, [dailyAnalysis]);
 
   const handleInputChange = (updatedData: InputTableProps[]) => {
     setTableData(updatedData);
   };
 
+  const handleOpenModal = () => {
+    const initalData: InputTableProps[] = Array.from({ length: 5 }, () => ({
+      date: '',
+      dailyProfitLoss: 0,
+      depWdPrice: 0,
+    }));
+    setTableData(initalData);
+
+    openTableModal({
+      type: 'insert',
+      title: '일간분석 데이터 직접 입력',
+      data: <InputTable data={initalData} onChange={handleInputChange} />,
+      onAction: () => {
+        handleSaveData();
+      },
+    });
+  };
+
   const handleSaveData = () => {
     if (!strategyId) return;
 
-    const payload: DailyAnalysisProps[] = tableData.map((data) => ({
-      date: data.date,
-      dailyProfitLoss: data.dailyProfitLoss,
-      depWdPrice: data.depWdPrice,
-    }));
+    const payload: DailyAnalysisProps[] = tableData
+      .filter((data) => data.date && data.dailyProfitLoss && data.depWdPrice)
+      .map((data) => ({
+        date: data.date,
+        dailyProfitLoss: Number(data.dailyProfitLoss),
+        depWdPrice: Number(data.depWdPrice),
+      }));
 
     postDailyAnalysis({
       strategyId: Number(strategyId),
@@ -82,27 +91,13 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
     });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetchDailyAnalysis(
-        Number(strategyId),
-        pagination.currentPage,
-        pagination.pageSize
-      );
-      setAnalysis(res.data);
-      setPaginatedData({
-        currentPage: res.page,
-        totalPage: res.totalPages,
-        totalElements: res.totalItems,
-        pageSize: res.pageSize,
-      });
-    };
-    fetchData();
-  }, [strategyId, pagination.currentPage, pagination.pageSize, setPaginatedData]);
+  if (isLoading) {
+    return <div>로딩중...</div>;
+  }
 
   return (
     <div css={dailyStyle}>
-      {analysis.length > 0 && (
+      {dailyAnalysis.length > 0 && (
         <div css={editArea}>
           <div css={addArea}>
             <Button
@@ -133,9 +128,9 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
       />
       <div css={PaginationArea}>
         <Pagination
-          totalPage={pagination.totalPage}
-          limit={pagination.pageSize}
-          page={pagination.currentPage}
+          totalPage={totalPages}
+          limit={pageSize}
+          page={currentPage + 1}
           setPage={setPage}
         />
       </div>
