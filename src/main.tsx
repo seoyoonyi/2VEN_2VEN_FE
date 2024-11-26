@@ -29,11 +29,9 @@ if (!rootElement) {
 const root = createRoot(rootElement);
 initMocks().then(() => {
   root.render(
-    <StrictMode>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <App />
-      </ThemeProvider>
-    </StrictMode>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <App />
+    </ThemeProvider>
   );
 });
