@@ -1,10 +1,7 @@
-import { useState } from 'react';
-
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
-import { useNicknameCheck } from '@/hooks/mutations/useNicknameCheck';
 import { useNicknameValidation } from '@/hooks/mutations/useNicknameValidation';
 import { useSignupStore } from '@/stores/signupStore';
 import theme from '@/styles/theme';
