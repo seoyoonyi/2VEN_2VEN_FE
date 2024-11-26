@@ -1,12 +1,50 @@
+import { useEffect, useState } from 'react';
+
 import { css } from '@emotion/react';
+import { AxiosError } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
+import VerificationInput from '@/components/page/signup/VerificationInput';
+import { ROUTES } from '@/constants/routes';
 import { useNicknameValidation } from '@/hooks/mutations/useNicknameValidation';
+import { UseSignupEmailVerification } from '@/hooks/mutations/useSignupEmailVerification';
+import { useVerifyAdminCodeMutation } from '@/hooks/mutations/useVerifacationMutation';
 import { useSignupStore } from '@/stores/signupStore';
 import theme from '@/styles/theme';
+import { validateCode, validateEmail } from '@/utils/validation';
 
 const SignUpForm = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState<string>('');
+  const [verificationCode, setVerificationCode] = useState<string>('');
+  const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
+  const [verifyErrorMessage, setVerifyErrorMessage] = useState<string>('');
+  const [resetTimer, setResetTimer] = useState<number>(0); // 타이머 리셋을 위한 상태
+  const [isInputDisabled, setIsInputDisabled] = useState(true); // 페이지 로드 시 입력창 비활성화
+  const [isVerificationActive, setIsVerificationActive] = useState(true);
+  // 인증 요청버튼 클릭했는지 여부 추적하는 NEW 상태
+  const [isVerficationRequested, setIsVerificationRequested] = useState(false);
+
+  const { mutate: requestEmailVerification } = UseSignupEmailVerification({
+    onSuccess: () => {
+      setVerificationCode('');
+      setEmailErrorMessage('');
+      setIsVerificationActive(true);
+      setResetTimer((prev) => prev + 1);
+      setIsInputDisabled(false);
+      setIsVerificationRequested(true);
+    },
+    onError: (error) => {
+      setEmailErrorMessage(error.message);
+      setIsVerificationActive(false);
+      setIsVerificationRequested(false);
+    },
+  });
+
+  const { mutate: verifyCode } = useVerifyAdminCodeMutation();
+
   const { nickname, nicknameMessage, actions } = useSignupStore();
   const { nicknameCheck, handleNicknameCheck } = useNicknameValidation();
 
@@ -23,25 +61,122 @@ const SignUpForm = () => {
     }
   };
 
+  // verificationCode가 변경될 때마다 실행
+  useEffect(() => {
+    // 입력값이 비어있다면 에러메시지 제거
+    if (!verificationCode) {
+      setVerifyErrorMessage('');
+    }
+  }, [verificationCode]);
+
+  const handleEmailVerification = () => {
+    console.log(isVerificationActive);
+    // 이메일 입력값 확인
+    if (!email) {
+      setEmailErrorMessage('이메일을 입력해주세요.');
+      return;
+    }
+    // 이메일 유효성 검사
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      setEmailErrorMessage(emailValidation.message);
+      return;
+    }
+
+    // 이메일 인증 요청 로직
+    requestEmailVerification(email);
+  };
+
+  const handleCodeVerification = (e: React.FormEvent<HTMLFormElement>) => {
+    // 이메일 인증코드 확인
+    e.preventDefault();
+    const validationResult = validateCode(verificationCode); // 인증번호 유효성 검증
+
+    if (isInputDisabled) {
+      setVerifyErrorMessage('인증 시간이 만료되었습니다. 다시 시도해주세요.');
+      return;
+    }
+    if (!validationResult.isValid) {
+      setVerifyErrorMessage(validationResult.message);
+      return;
+    }
+    verifyCode(
+      { email, verificationCode },
+      {
+        onSuccess: (response) => {
+          if (response.status === 'success') {
+            navigate(ROUTES.AUTH.FIND.PASSWORD_RESET, { replace: true });
+          } else {
+            setVerifyErrorMessage('인증에 실패했습니다. 다시 시도해주세요.');
+          }
+        },
+        onError: (error: AxiosError) => {
+          if (error.response?.status === 401) {
+            setVerifyErrorMessage('올바른 인증번호가 아닙니다.');
+          } else {
+            setVerifyErrorMessage('인증 처리 중 오류가 발생했습니다.');
+          }
+        },
+      }
+    );
+  };
+
   return (
     <div>
       <div css={inputGroupStyle}>
         <label htmlFor='email' css={labelStyle}>
           이메일
         </label>
-        <Input id='email' inputSize='md' placeholder='1234@naver.com' />
-        <Button variant='primary' size='sm' width={100}>
-          인증요청
-        </Button>
+        <div css={emailVerifyContainer}>
+          <div css={divGroupStyle}>
+            <Input
+              id='email'
+              type='text'
+              inputSize='md'
+              required
+              name='email'
+              placeholder='1234@naver.com'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {emailErrorMessage && <p css={messageStyle}>{emailErrorMessage}</p>}
+          </div>
+          <Button
+            type='button'
+            variant='primary'
+            size='sm'
+            width={100}
+            onClick={handleEmailVerification} // 인증요청
+          >
+            인증요청
+          </Button>
+        </div>
       </div>
       <div css={inputGroupStyle}>
         <label htmlFor='auth_code' css={labelStyle}>
           인증번호
         </label>
-        <Input id='auth_code' inputSize='md' placeholder='인증번호 6자리' />
-        <Button variant='primary' size='sm' width={100}>
-          확인
-        </Button>
+        <div css={divGroupStyle}>
+          <form css={formStyle} onSubmit={handleCodeVerification}>
+            <VerificationInput
+              id='auth_code'
+              value={verificationCode}
+              onChange={setVerificationCode}
+              resetTimer={resetTimer}
+              startTimer={isVerficationRequested} // 인증요청이 있을 때만 타이머 시작
+              onTimeEnd={() => {
+                setIsInputDisabled(true); // 입력창 비활성화
+                setIsVerificationRequested(false); // 타이머 종료하면 인증요청상태도 리셋!
+                setVerifyErrorMessage('인증 시간이 만료되었습니다. 다시 시도해주세요.');
+              }}
+              isDisabled={isInputDisabled}
+            />
+            <Button type='submit' size='sm' width={100} disabled={isInputDisabled}>
+              확인
+            </Button>
+          </form>
+          {verifyErrorMessage && <p css={messageStyle}>{verifyErrorMessage}</p>}
+        </div>
       </div>
       <div css={inputGroupStyle}>
         <label htmlFor='password' css={labelStyle}>
@@ -131,6 +266,23 @@ const inputGroupStyle = css`
     margin-left: 12px;
   }
 `;
+
+const emailVerifyContainer = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const formStyle = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  input {
+    width: 444px;
+    padding: 12px;
+    height: 48px;
+  }
+`;
+
 const labelStyle = css`
   display: inline-block;
   width: 109px;
