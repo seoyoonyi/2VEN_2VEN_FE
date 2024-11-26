@@ -6,8 +6,8 @@ import { BiCheck, BiErrorCircle } from 'react-icons/bi';
 import theme from '@/styles/theme';
 
 interface ToastButton {
-  label: string; // 버튼에 표시될 텍스트
-  onClick: () => void; // 버튼 클릭 시 동작
+  label: string;
+  onClick: () => void;
 }
 
 interface ToastProps {
@@ -15,8 +15,8 @@ interface ToastProps {
   onClose: () => void;
   duration?: number;
   isVisible: boolean;
-  type?: 'basic' | 'action' | 'error'; // type 추가
-  buttons?: ToastButton[]; // 버튼 목록 추가
+  type?: 'basic' | 'action' | 'error';
+  buttons?: ToastButton[];
 }
 
 const Toast: React.FC<ToastProps> = ({
@@ -25,7 +25,7 @@ const Toast: React.FC<ToastProps> = ({
   duration = 3000,
   isVisible,
   type = 'basic',
-  buttons = [], // 기본값: 빈 배열
+  buttons = [],
   ...props
 }) => {
   useEffect(() => {
@@ -111,13 +111,13 @@ const iconStyle = (color: string) => css`
 
 const messageStyle = css`
   ${theme.textStyle.body.body2};
-  flex: 1; /* 메시지를 최대한 넓게 차지 */
-  margin-right: 18px; /* 메시지와 버튼 그룹 간 간격 */
+  flex: 1;
+  margin-right: 18px;
 `;
 
 const buttonGroupStyle = css`
   display: flex;
-  gap: 8px; /* 버튼 간 간격 */
+  gap: 8px;
 `;
 
 const buttonWrapperStyle = css`
