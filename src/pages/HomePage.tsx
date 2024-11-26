@@ -14,6 +14,7 @@ import SMScoreGraphImage from '@/assets/images/SMScore_graph.png';
 import TraderMainImage from '@/assets/images/trader_main.png';
 import Button from '@/components/common/Button';
 import { ROUTES } from '@/constants/routes';
+import ToastTestPage from '@/pages/test-page/ToastTestPage';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
@@ -114,6 +115,7 @@ const HomePage = () => {
   return (
     <>
       {/* 투자자Main */}
+      <ToastTestPage />
       <section css={investorSectionStyle}>
         <div css={contentStyle}>
           {/* 왼쪽 영역 */}
