@@ -1,3 +1,5 @@
+import { StrictMode } from 'react';
+
 import { ThemeProvider } from '@emotion/react';
 import { createRoot } from 'react-dom/client';
 
@@ -27,9 +29,11 @@ if (!rootElement) {
 const root = createRoot(rootElement);
 initMocks().then(() => {
   root.render(
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      <App />
-    </ThemeProvider>
+    <StrictMode>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <App />
+      </ThemeProvider>
+    </StrictMode>
   );
 });
