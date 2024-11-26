@@ -1,20 +1,21 @@
 import { css, SerializedStyles } from '@emotion/react';
 
-interface AvatarProps {
+interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   src: string;
   alt: string;
+  size?: string | number;
   customStyle?: SerializedStyles;
 }
 
-const Avatar = ({ src, alt }: AvatarProps) => (
-  <div css={avatarContainer}>
+const Avatar = ({ src, alt, size = 40, customStyle, ...props }: AvatarProps) => (
+  <div css={[avatarContainer(size), customStyle]} {...props}>
     <img src={src} alt={alt} css={avatarStyle} />
   </div>
 );
 
-const avatarContainer = css`
-  width: 40px;
-  height: 40px;
+const avatarContainer = (size: string | number) => css`
+  width: ${typeof size === 'number' ? `${size}px` : size};
+  aspect-ratio: 1;
   border-radius: 50%;
   overflow: hidden;
 `;

@@ -19,6 +19,15 @@ const TraderProfilePage = () => {
   const [nickname, setNickname] = useState('');
   const [nicknameMessage, setNicknameMessage] = useState('');
   const nicknameCheck = useNicknameCheck();
+  const [text, setText] = useState('');
+  const maxLength = 300;
+
+  const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (event.target.value.length <= maxLength) {
+      setText(event.target.value);
+      console.log(event.target.value);
+    }
+  };
 
   // 단일 체크박스 상태
   const [singleChecked, setSingleChecked] = useState(false);
@@ -136,15 +145,26 @@ const TraderProfilePage = () => {
             <label htmlFor='introduction' css={labelStyle}>
               소개
             </label>
-            <Input id='introduction' inputSize='md' placeholder='01012345678' width='100%' />
+            <textarea
+              css={textareaStyle}
+              placeholder='내용을 입력하세요'
+              value={text}
+              onChange={handleTextChange}
+            />
+            <div css={lengthStyle}>
+              <span>{text.length}</span>/{maxLength}
+            </div>
           </div>
           <Checkbox checked={singleChecked} onChange={setSingleChecked}>
-            기본 체크박스
+            [선택] 정보성 마케팅 정보 알림에 수신 동의합니다
           </Checkbox>
-          <div>현재 상태: {singleChecked ? '체크됨' : '체크 해제됨'}</div>
         </div>
         <div css={rightContainer}>
-          <Avatar src={userImage || defaultImage} alt='사용자' />
+          <Avatar src={userImage || defaultImage} alt='사용자' size='100%' />
+          <div className='button-container'>
+            <Button variant='secondaryGray'>사진업로드</Button>
+            <Button variant='ghostGray'>사진삭제</Button>
+          </div>
         </div>
       </div>
     </div>
@@ -173,16 +193,15 @@ const profileContainer = css`
 
 const leftContainer = css`
   width: 518px;
-  // outline: 1px solid tomato;
 `;
 
 const inputGroupStyle = css`
   width: 100%;
-  outline: 1px solid lime;
+  margin-bottom: 16px;
 
-  // input {
-  //   width: 100%;
-  // }
+  textarea {
+    width: 100%;
+  }
 `;
 
 const inputItemStyle = css`
@@ -190,18 +209,73 @@ const inputItemStyle = css`
   gap: 12px;
 `;
 
-const rightContainer = css`
-  width: 305px;
-  outline: 1px solid tomato;
-`;
-
 const labelStyle = css`
   display: block;
   width: 109px;
+  margin-bottom: 8px;
   text-align: left;
   font-size: ${theme.typography.fontSizes.caption};
   font-weight: ${theme.typography.fontWeight.regular};
   line-height: ${theme.typography.lineHeights.lg};
+`;
+
+const textareaStyle = css`
+  height: 200px;
+  padding: 12px;
+  margin-bottom: 8px;
+  resize: none;
+  border: 1px solid ${theme.colors.gray[300]};
+  background-color: ${theme.colors.main.white};
+  ${theme.textStyle.body.body3}
+  line-height: ${theme.typography.lineHeights.lg};
+  outline: none;
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: ${theme.colors.gray[700] + '4a'};
+    font-weight: ${theme.typography.fontWeight.regular};
+  }
+
+  &:hover {
+    border-color: ${theme.colors.main.primary};
+  }
+
+  &:focus {
+    border-color: ${theme.colors.main.primary};
+  }
+`;
+
+const lengthStyle = css`
+  text-align: right;
+  color: ${theme.colors.gray[400]};
+  ${theme.textStyle.captions.caption2}
+
+  span {
+    color: ${theme.colors.main.primary};
+  }
+`;
+
+const rightContainer = css`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 300px;
+  padding: 0 50px;
+
+  div.button-container {
+    // width: 200px;
+
+    button {
+      width: 100%;
+
+      & + & {
+        margin-bottom: 12px;
+      }
+    }
+  }
+
+  outline: 1px solid tomato;
 `;
 
 const messageStyle = css`
