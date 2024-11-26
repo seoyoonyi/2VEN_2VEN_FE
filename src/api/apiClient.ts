@@ -14,13 +14,15 @@ export const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
+    // store에서 jwt 토큰 가져오기
+    const { token } = useAuthStore.getState();
+
     // 요청 URL과 메서드 로깅(개발환경에서만!)
     if (import.meta.env.MODE === 'development') {
       console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
     }
 
     // JWT 토큰이 있으면, Authorization 헤더에 추가
-    const { token } = useAuthStore.getState();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
