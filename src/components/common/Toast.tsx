@@ -134,7 +134,7 @@ const buttonStyle = css`
   cursor: pointer;
 
   &:hover {
-    text-decoration: underline;
+    color: ${theme.colors.main.white};
   }
 `;
 
