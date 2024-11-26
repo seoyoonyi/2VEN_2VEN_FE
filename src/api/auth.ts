@@ -108,7 +108,7 @@ export const findEmail = async (phone: string) => {
   return data;
 };
 
-// 이메일로 인증번호를 요청하는 API
+// 관리자 이메일로 인증번호를 요청하는 API
 export const requestVerificationCode = async (email: string): Promise<ApiResponse<null>> => {
   console.log('Request body:', { email }); // 요청 바디 로깅
   const response = await apiClient.post<ApiResponse<null>>(
@@ -122,23 +122,30 @@ export const requestVerificationCode = async (email: string): Promise<ApiRespons
   );
   return response.data;
 };
-
-// 입력한 인증번호 검증 API (기존 코드)
-export const verifyCode = async (
-  email: string,
-  code: string
-): Promise<ApiResponse<{ expires_at: string }>> => {
-  console.log('Request body:', { email, code });
-  const response = await apiClient.post<ApiResponse<{ expires_at: string }>>(
-    API_ENDPOINTS.AUTH.EMAIL.CHECK_VERIFICATION, // 이메일 인증 API 경로(사용자, 관리자 공통)
-    { email, code },
-    {
-      headers: {
-        useMock: import.meta.env.VITE_ENABLE_MSW === 'true', // MSW 사용 시 true
-      },
+// 관리자 이메일로 인증번호 확인하는 API
+export const verifyAdminCode = async ({
+  email,
+  verificationCode,
+}: {
+  email: string;
+  verificationCode: string;
+}): Promise<ApiResponse<{ expires_at: string }>> => {
+  try {
+    // 불필요한 헤더나 설정 없이 심플하게
+    const response = await apiClient.post<ApiResponse<{ expires_at: string }>>(
+      API_ENDPOINTS.AUTH.EMAIL.CHECK_VERIFICATION,
+      { email, verificationCode } // 요청 바디만 단순하게
+    );
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      console.error('Verification error:', {
+        status: error.response?.status,
+        data: error.response?.data,
+      });
     }
-  );
-  return response.data;
+    throw error;
+  }
 };
 
 interface ProfileImageResponse {
