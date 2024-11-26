@@ -11,9 +11,13 @@ export const useAdminVerifyMutation = () => {
   const { setAdminAuth } = useAdminAuthStore();
   const { user } = useAuthStore();
 
-  return useMutation<ApiResponse<{ expires_at: string }>, AxiosError, string>({
-    mutationFn: async (code: string) => {
-      const response = await verifyCode(code);
+  return useMutation<
+    ApiResponse<{ expires_at: string }>,
+    AxiosError,
+    { email: string; code: string }
+  >({
+    mutationFn: async ({ email, code }) => {
+      const response = await verifyCode(email, code);
       if (response.status === 'success' && user && isAdminUser(user)) {
         // 기존 adminAuth 상태를 업데이트
         setAdminAuth({

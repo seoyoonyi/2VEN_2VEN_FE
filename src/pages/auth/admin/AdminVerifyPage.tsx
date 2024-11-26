@@ -12,11 +12,15 @@ import {
   useRequestVerificationMutation,
   useVerifyAdminCodeMutation,
 } from '@/hooks/mutations/useVerifacationMutation';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 import { validateCode } from '@/utils/validation';
 
 const AdminVerifyPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  // 관리자 이메일
+  const email = user?.email || '';
   const [verificationCode, setVerificationCode] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [resetTimer, setResetTimer] = useState<number>(0); // 타이머 리셋을 위한 상태
@@ -57,7 +61,7 @@ const AdminVerifyPage = () => {
     // setState는 비동기이므로, 이 시점에서는 아직 errorMessage가 변경되지 않았음
     try {
       // 이메일로 인증번호 요청 API 호출
-      requestVerificationCode(undefined, {
+      requestVerificationCode(email, {
         onSuccess: () => {
           setVerificationCode(''); // 인증번호 초기화
           setErrorMessage(''); // 에러메시지 초기화
@@ -90,22 +94,25 @@ const AdminVerifyPage = () => {
       setErrorMessage(validationResult.message);
       return;
     }
-    verifyCode(verificationCode, {
-      onSuccess: (response) => {
-        if (response.status === 'success') {
-          navigate(ROUTES.ADMIN.STRATEGY.APPROVAL, { replace: true });
-        } else {
-          setErrorMessage('인증에 실패했습니다. 다시 시도해주세요.');
-        }
-      },
-      onError: (error: AxiosError) => {
-        if (error.response?.status === 401) {
-          setErrorMessage('올바른 인증번호가 아닙니다.');
-        } else {
-          setErrorMessage('인증 처리 중 오류가 발생했습니다.');
-        }
-      },
-    });
+    verifyCode(
+      { email, verificationCode },
+      {
+        onSuccess: (response) => {
+          if (response.status === 'success') {
+            navigate(ROUTES.ADMIN.STRATEGY.APPROVAL, { replace: true });
+          } else {
+            setErrorMessage('인증에 실패했습니다. 다시 시도해주세요.');
+          }
+        },
+        onError: (error: AxiosError) => {
+          if (error.response?.status === 401) {
+            setErrorMessage('올바른 인증번호가 아닙니다.');
+          } else {
+            setErrorMessage('인증 처리 중 오류가 발생했습니다.');
+          }
+        },
+      }
+    );
   };
   return (
     <div css={containerStyle}>

@@ -55,7 +55,7 @@ const FindPasswordPage = () => {
     // 이메일 인증 요청 로직
     try {
       // 이메일로 인증번호 요청 API 호출
-      requestVerificationCode(undefined, {
+      requestVerificationCode(email, {
         onSuccess: () => {
           setVerificationCode(''); // 인증번호 초기화
           setErrorMessage(''); // 에러메시지 초기화
@@ -87,22 +87,25 @@ const FindPasswordPage = () => {
       setErrorMessage(validationResult.message);
       return;
     }
-    verifyCode(verificationCode, {
-      onSuccess: (response) => {
-        if (response.status === 'success') {
-          navigate(ROUTES.AUTH.FIND.PASSWORD_RESET, { replace: true });
-        } else {
-          setErrorMessage('인증에 실패했습니다. 다시 시도해주세요.');
-        }
-      },
-      onError: (error: AxiosError) => {
-        if (error.response?.status === 401) {
-          setErrorMessage('올바른 인증번호가 아닙니다.');
-        } else {
-          setErrorMessage('인증 처리 중 오류가 발생했습니다.');
-        }
-      },
-    });
+    verifyCode(
+      { email, verificationCode },
+      {
+        onSuccess: (response) => {
+          if (response.status === 'success') {
+            navigate(ROUTES.AUTH.FIND.PASSWORD_RESET, { replace: true });
+          } else {
+            setErrorMessage('인증에 실패했습니다. 다시 시도해주세요.');
+          }
+        },
+        onError: (error: AxiosError) => {
+          if (error.response?.status === 401) {
+            setErrorMessage('올바른 인증번호가 아닙니다.');
+          } else {
+            setErrorMessage('인증 처리 중 오류가 발생했습니다.');
+          }
+        },
+      }
+    );
   };
 
   // 확인버튼 활성화 조건을 검사하는 함수

@@ -109,10 +109,11 @@ export const findEmail = async (phone: string) => {
 };
 
 // 이메일로 인증번호를 요청하는 API
-export const requestVerificationCode = async (): Promise<ApiResponse<null>> => {
+export const requestVerificationCode = async (email: string): Promise<ApiResponse<null>> => {
+  console.log('Request body:', { email }); // 요청 바디 로깅
   const response = await apiClient.post<ApiResponse<null>>(
     API_ENDPOINTS.AUTH.EMAIL.REQUEST_VERIFICATION,
-    {},
+    { email },
     {
       headers: {
         useMock: import.meta.env.VITE_ENABLE_MSW === 'true', // MSW 사용 시 true
@@ -123,10 +124,14 @@ export const requestVerificationCode = async (): Promise<ApiResponse<null>> => {
 };
 
 // 입력한 인증번호 검증 API (기존 코드)
-export const verifyCode = async (code: string): Promise<ApiResponse<{ expires_at: string }>> => {
+export const verifyCode = async (
+  email: string,
+  code: string
+): Promise<ApiResponse<{ expires_at: string }>> => {
+  console.log('Request body:', { email, code });
   const response = await apiClient.post<ApiResponse<{ expires_at: string }>>(
     API_ENDPOINTS.AUTH.EMAIL.CHECK_VERIFICATION, // 이메일 인증 API 경로(사용자, 관리자 공통)
-    { code },
+    { email, code },
     {
       headers: {
         useMock: import.meta.env.VITE_ENABLE_MSW === 'true', // MSW 사용 시 true
