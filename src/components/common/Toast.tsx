@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { css, keyframes } from '@emotion/react';
-import { BiCheck } from 'react-icons/bi';
+import { BiCheck, BiErrorCircle } from 'react-icons/bi';
 
 import theme from '@/styles/theme';
 
@@ -15,6 +15,7 @@ interface ToastProps {
   onClose: () => void;
   duration?: number;
   isVisible: boolean;
+  type?: 'basic' | 'action' | 'error'; // type 추가
   buttons?: ToastButton[]; // 버튼 목록 추가
 }
 
@@ -23,6 +24,7 @@ const Toast: React.FC<ToastProps> = ({
   onClose,
   duration = 3000,
   isVisible,
+  type = 'basic',
   buttons = [], // 기본값: 빈 배열
   ...props
 }) => {
@@ -33,12 +35,24 @@ const Toast: React.FC<ToastProps> = ({
     }
   }, [duration, onClose, isVisible]);
 
+  const toastStyleByType = {
+    basic: { icon: <BiCheck css={iconStyle(theme.colors.teal[400])} /> },
+    error: { icon: <BiErrorCircle css={iconStyle(theme.colors.main.red)} /> },
+    action: { icon: <BiCheck css={iconStyle(theme.colors.teal[400])} /> },
+  };
+
+  const { icon } = toastStyleByType[type];
+
   // 버튼 핸들러 함수 정의
-  const handleButtonClick = (onClick: () => void) => () => onClick && onClick();
+  const handleButtonClick = (onClick: () => void) => () => {
+    if (onClick) {
+      onClick();
+    }
+  };
 
   return isVisible ? (
     <div css={toastStyles(isVisible)} {...props}>
-      <BiCheck css={iconStyle} />
+      {icon}
       <span css={messageStyle}>{message}</span>
       <div css={buttonGroupStyle}>
         {buttons.map((button, index) => (
@@ -88,11 +102,11 @@ const toastStyles = (isVisible: boolean) => css`
   opacity: ${isVisible ? 1 : 0};
 `;
 
-const iconStyle = css`
+const iconStyle = (color: string) => css`
   width: 24px;
   height: 24px;
-  color: ${theme.colors.teal[400]};
-  margin-right: 8px; /* 아이콘과 메시지 사이 간격 */
+  color: ${color};
+  margin-right: 8px;
 `;
 
 const messageStyle = css`

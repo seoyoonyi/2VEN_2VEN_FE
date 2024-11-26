@@ -5,25 +5,26 @@ import Toast from '@/components/common/Toast';
 import useToastStore from '@/stores/toastStore';
 
 const ToastTestPage = () => {
-  const { isToastVisible, showToast, hideToast, message } = useToastStore();
+  const { isToastVisible, showToast, hideToast, message, type, buttons } = useToastStore();
 
   // 기본 토스트
-  const handleShowBasicToast = () => {
-    console.log('기본 토스트 버튼 클릭');
-    showToast('링크가 복사되었습니다!');
-  };
+  const handleShowBasicToast = () => showToast('링크가 복사되었습니다', 'basic');
 
   // action(선택지가 있는) 메시지
-  const handleShowActionToast = () => {
-    console.log('이동/취소 버튼 토스트 클릭');
-    showToast('폴더 이동이 완료되었습니다!');
-  };
+  const handleShowActionToast = () =>
+    showToast('폴더 이동이 완료되었습니다', 'action', [
+      { label: '이동', onClick: () => console.log('이동 클릭') },
+      { label: '취소', onClick: () => console.log('취소 클릭') },
+    ]);
 
   // action 메시지
-  const handleShowUndoToast = () => {
-    console.log('실행 취소 버튼 토스트 클릭');
-    showToast('전략을 언팔로우했습니다.');
-  };
+  const handleShowUndoToast = () =>
+    showToast('전략을 언팔로우했습니다', 'action', [
+      { label: '실행 취소', onClick: () => console.log('실행 취소 클릭') },
+    ]);
+
+  // 에러 메시지
+  const handleShowErrorToast = () => showToast('오류가 발생했습니다', 'error');
 
   return (
     <div css={containerStyle}>
@@ -44,24 +45,20 @@ const ToastTestPage = () => {
       <Button variant='secondary' size='sm' width={200} onClick={handleShowUndoToast}>
         실행 취소 버튼 토스트
       </Button>
+
+      {/* 에러 버튼 토스트 */}
+      <h2>action</h2>
+      <Button variant='accent' size='sm' width={200} onClick={handleShowErrorToast}>
+        오류 토스트
+      </Button>
       {/* 토스트 컴포넌트 렌더링 */}
       {isToastVisible && (
         <Toast
           message={message}
+          type={type}
           isVisible={isToastVisible}
           onClose={hideToast}
-          // 버튼 추가
-          buttons={[
-            ...(message === '폴더 이동이 완료되었습니다'
-              ? [
-                  { label: '이동', onClick: () => console.log('이동 버튼 클릭') },
-                  { label: '취소', onClick: () => console.log('취소 버튼 클릭') },
-                ]
-              : []),
-            ...(message === '전략을 언팔로우했습니다'
-              ? [{ label: '실행 취소', onClick: () => console.log('실행 취소 클릭') }]
-              : []),
-          ]}
+          buttons={buttons}
         />
       )}
     </div>
