@@ -10,21 +10,21 @@ const MOCK_USER = [
     email: 'user1@example.com',
     password: 'asdf1234!',
     nickname: 'investor11',
-    role: 'MEMBER_ROLE_INVESTOR', // role 형식 통일
+    role: 'ROLE_INVESTOR', // role 형식 통일
   },
   {
     member_id: '2',
     email: 'user4@example.com',
     password: 'asdf1234!',
     nickname: 'trader444',
-    role: 'MEMBER_ROLE_TRADER',
+    role: 'ROLE_TRADER',
   },
   {
     member_id: '3',
     email: 'admin@example.com',
     password: 'asdf1234!',
     nickname: 'adminking',
-    role: 'MEMBER_ROLE_ADMIN',
+    role: 'ROLE_ADMIN',
     admin_info: {
       is_authorized: true,
       authorization_status: 'AUTHORIZED' as const,
@@ -37,7 +37,7 @@ const MOCK_USER = [
     email: 'admin2@example.com',
     password: 'asdf1234!',
     nickname: 'newadmin',
-    role: 'MEMBER_ROLE_ADMIN',
+    role: 'ROLE_ADMIN',
     admin_info: {
       is_authorized: false,
       authorization_status: 'PENDING' as const,

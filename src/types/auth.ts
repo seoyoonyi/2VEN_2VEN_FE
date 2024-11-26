@@ -10,7 +10,7 @@ export interface User {
 }
 // 관리자 전용 확장 인터페이스
 export interface AdminUser extends User {
-  role: 'MEMBER_ROLE_ADMIN';
+  role: 'ROLE_ADMIN';
   is_authorized: boolean;
   authorization_status: 'PENDING' | 'AUTHORIZED' | 'EXPIRED';
   authorized_at?: string;
@@ -24,6 +24,7 @@ export interface BackendSigninResponse {
     email: string;
     nickname: string;
     role: string;
+    profile_image?: string | null;
     admin_info?: {
       // role이 'ROLE_ADMIN'일 때만 포함
       is_authorized: boolean;
@@ -57,4 +58,4 @@ export interface ApiResponse<T> {
 }
 
 // 관리자 여부 확인 함수(타입 가드 함수)
-export const isAdminUser = (user: User): user is AdminUser => user.role === 'MEMBER_ROLE_ADMIN';
+export const isAdminUser = (user: User): user is AdminUser => user.role === 'ROLE_ADMIN';

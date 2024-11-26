@@ -45,10 +45,10 @@ export const signin = async (credentials: SigninRequest): Promise<SigninResponse
     };
 
     // 관리자인 경우 추가 정보처리
-    if (data.role === 'MEMBER_ROLE_ADMIN' && data.admin_info) {
+    if (data.role === 'ROLE_ADMIN' && data.admin_info) {
       const adminUser: AdminUser = {
         ...baseUser,
-        role: 'MEMBER_ROLE_ADMIN',
+        role: 'ROLE_ADMIN',
         is_authorized: data.admin_info?.is_authorized ?? false,
         authorization_status: data.admin_info?.authorization_status ?? 'PENDING',
         authorized_at: data.admin_info?.authorized_at,
@@ -155,8 +155,10 @@ export const fetchProfileImage = async ({
   fileId: string;
   memberId: string;
 }): Promise<string> => {
+  console.log('API call params:', { fileId, memberId });
   const response = await apiClient.get<ProfileImageResponse>(
     `${API_ENDPOINTS.FILES.PROFILE(fileId)}?uploaderId=${memberId}`
   );
+  console.log('API response:', response.data);
   return response.data.base64Content;
 };
