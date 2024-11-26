@@ -22,6 +22,7 @@ const useFetchDailyAnalysis = (strategyId: number, page: number, pageSize: numbe
       };
     },
     enabled: !!strategyId,
+    placeholderData: keepPreviousData,
   });
 
   return {

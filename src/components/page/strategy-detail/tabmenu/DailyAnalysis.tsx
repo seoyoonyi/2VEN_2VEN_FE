@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
@@ -9,10 +9,13 @@ import TableModal from '../table/TableModal';
 
 import Button from '@/components/common/Button';
 import Pagination from '@/components/common/Pagination';
+import Toast from '@/components/common/Toast';
 import { usePostDailyAnalysis } from '@/hooks/mutations/useDailyAnalysis';
 import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
 import usePagination from '@/hooks/usePagination';
+import useModalStore from '@/stores/modalStore';
 import useTableModalStore from '@/stores/tableModalStore';
+import useToastStore from '@/stores/toastStore';
 import { DailyAnalysisProps } from '@/types/strategyDetail';
 
 export interface AnalysisDataProps {
@@ -27,15 +30,17 @@ export interface AnalysisDataProps {
 }
 
 const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
-  const [tableData, setTableData] = useState<InputTableProps[]>([]);
+  const [selectedData, setSelectedData] = useState<number[]>([]);
   const { pagination, setPage } = usePagination(1, 5);
+  const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
+  const { openModal } = useModalStore();
   const { openTableModal } = useTableModalStore();
+  const { mutate: postDailyAnalysis } = usePostDailyAnalysis();
   const { dailyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchDailyAnalysis(
     Number(strategyId),
     pagination.currentPage - 1,
     pagination.pageSize
   );
-  const { mutate: postDailyAnalysis } = usePostDailyAnalysis();
 
   const normalizedData = useMemo(() => {
     if (!dailyAnalysis) return [];
@@ -45,49 +50,71 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
       principal: data.principal,
       dep_wd_price: data.depWdPrice,
       profit_loss: data.dailyProfitLoss,
-      pl_rate: data.dailyPlRate,
+      pl_rate: Math.round(data.dailyPlRate * 100) / 100,
       cumulative_profit_loss: data.cumulativeProfitLoss,
-      cumulative_profit_loss_rate: data.cumulativeProfitLossRate,
+      cumulative_profit_loss_rate: Math.round(data.cumulativeProfitLossRate * 100) / 100,
     }));
   }, [dailyAnalysis]);
 
-  const handleInputChange = (updatedData: InputTableProps[]) => {
-    setTableData(updatedData);
-  };
-
   const handleOpenModal = () => {
+    let modalData: InputTableProps[] = [];
     const initalData: InputTableProps[] = Array.from({ length: 5 }, () => ({
       date: '',
-      dailyProfitLoss: 0,
       depWdPrice: 0,
+      dailyProfitLoss: 0,
     }));
-    setTableData(initalData);
 
     openTableModal({
       type: 'insert',
       title: '일간분석 데이터 직접 입력',
-      data: <InputTable data={initalData} onChange={handleInputChange} />,
+      data: (
+        <InputTable
+          data={initalData}
+          onChange={(newData) => {
+            modalData = newData;
+          }}
+        />
+      ),
       onAction: () => {
-        handleSaveData();
+        if (modalData.length < 1) {
+          showToast('올바른 데이터를 입력하세요.', 'error');
+          return;
+        }
+        handleSaveData(modalData);
       },
     });
   };
 
-  const handleSaveData = () => {
+  const handleSaveData = (modalData: InputTableProps[]) => {
     if (!strategyId) return;
 
-    const payload: DailyAnalysisProps[] = tableData
+    const payload: DailyAnalysisProps[] = modalData
       .filter((data) => data.date && data.dailyProfitLoss && data.depWdPrice)
       .map((data) => ({
         date: data.date,
-        dailyProfitLoss: Number(data.dailyProfitLoss),
         depWdPrice: Number(data.depWdPrice),
+        dailyProfitLoss: Number(data.dailyProfitLoss),
       }));
 
     postDailyAnalysis({
       strategyId: Number(strategyId),
       payload,
       authRole: 'admin',
+    });
+
+    modalData = [];
+  };
+
+  const handleSelectChange = (selectedIdx: number[]) => {
+    setSelectedData(selectedIdx);
+  };
+
+  const handleDelete = () => {
+    openModal({
+      type: 'warning',
+      title: '일간분석 삭제',
+      desc: '일간 분석 데이터를 삭제하시겠습니까?',
+      onAction: () => {},
     });
   };
 
@@ -115,7 +142,7 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
               엑셀추가
             </Button>
           </div>
-          <Button variant='neutral' size='xs' width={89}>
+          <Button variant='neutral' size='xs' width={89} onClick={handleDelete}>
             삭제
           </Button>
         </div>
@@ -124,7 +151,9 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
         attributes={attributes}
         analysis={normalizedData}
         mode={'write'}
+        selectedItems={selectedData}
         onUpload={handleOpenModal}
+        onSelectChange={handleSelectChange}
       />
       <div css={PaginationArea}>
         <Pagination
@@ -135,6 +164,7 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
         />
       </div>
       <TableModal />
+      <Toast type={type} message={message} onClose={hideToast} isVisible={isToastVisible} />
     </div>
   );
 };

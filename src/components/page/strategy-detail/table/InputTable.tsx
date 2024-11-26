@@ -52,19 +52,19 @@ const InputTable = ({ data, onChange }: InputAnalysisProps) => {
               </td>
               <td css={tableCellStyle}>
                 <Input
-                  type='text'
-                  value={row.dailyProfitLoss}
+                  type='number'
+                  value={row.depWdPrice}
                   placeholder='예)123,456,789'
-                  onChange={(e) => handleInputChange(idx, 'dailyProfitLoss', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'depWdPrice', e.target.value)}
                   css={inputStyle}
                 />
               </td>
               <td css={tableCellStyle}>
                 <Input
-                  type='text'
-                  value={row.depWdPrice}
+                  type='number'
+                  value={row.dailyProfitLoss}
                   placeholder='예)+123,456'
-                  onChange={(e) => handleInputChange(idx, 'depWdPrice', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'dailyProfitLoss', e.target.value)}
                   css={inputStyle}
                 />
               </td>
@@ -124,6 +124,17 @@ const tableCellStyle = css`
 const inputStyle = css`
   width: 100%;
   border-radius: 4px;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  & {
+    -moz-appearance: textfield;
+    appearance: none;
+  }
 `;
 
 export default InputTable;
