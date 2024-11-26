@@ -69,8 +69,28 @@ const SignUpForm = () => {
     }
   }, [verificationCode]);
 
+  // email 값이 변경될 때마다 실행되는 함수
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setEmail(newValue);
+
+    // 입력값이 비어있으면 에러 상태와 메시지 초기화
+    if (!newValue) {
+      setEmailErrorMessage('');
+    }
+  };
+
+  // email 값이 변경될 때마다 실행되는 useEffect
+  useEffect(() => {
+    // 입력값이 비어있다면 에러 상태 초기화
+    if (!email) {
+      setEmailErrorMessage('');
+    }
+  }, [email]);
+
   const handleEmailVerification = () => {
     console.log(isVerificationActive);
+
     // 이메일 입력값 확인
     if (!email) {
       setEmailErrorMessage('이메일을 입력해주세요.');
@@ -137,7 +157,8 @@ const SignUpForm = () => {
               name='email'
               placeholder='1234@naver.com'
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
+              status={emailErrorMessage ? 'error' : 'default'}
             />
             {emailErrorMessage && <p css={messageStyle}>{emailErrorMessage}</p>}
           </div>
@@ -209,7 +230,6 @@ const SignUpForm = () => {
             id='nickname'
             inputSize='md'
             placeholder='사용할 닉네임을 입력해주세요.'
-            showClearButton
             value={nickname}
             onChange={handleNicknameChange}
             onBlur={handleNicknameBlur}
@@ -280,6 +300,9 @@ const formStyle = css`
     width: 444px;
     padding: 12px;
     height: 48px;
+    &::placeholder {
+      font-size: ${theme.typography.fontSizes.body};
+    }
   }
 `;
 

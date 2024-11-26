@@ -18,6 +18,9 @@ export default defineConfig({
         target: 'https://2ven.shop',
         changeOrigin: true,
         secure: false, // https를 사용하는 경우 인증서 검증을 skip
+        cookieDomainRewrite: {
+          '*': '', // 모든 도메인의 쿠키를 로컬호스트로 재작성
+        },
       },
     },
   },
