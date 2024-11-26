@@ -169,3 +169,53 @@ export const fetchProfileImage = async ({
   console.log('API response:', response.data);
   return response.data.base64Content;
 };
+
+// 회원가입 시, 이메일 확인 + 이메일 인증 코드 요청
+export interface EmailVerificationResponse {
+  status: 'success' | 'error';
+  message: string;
+}
+
+export const requestSignupEmailVerification = async (
+  email: string
+): Promise<EmailVerificationResponse> => {
+  try {
+    // 세션 생성을 위한 요청
+    const response = await apiClient.post<EmailVerificationResponse>(
+      API_ENDPOINTS.AUTH.EMAIL.REQUEST_VERIFICATION_FOR_SIGNUP,
+      { email },
+      {
+        withCredentials: true, // 세션 쿠키를 받기 위해 다시 한번 명시
+      }
+    );
+
+    // 응답 헤더에서 세션 ID 확인 (디버깅용)
+    const sessionId = response.headers['set-cookie']?.find((cookie) =>
+      cookie.startsWith('JSESSIONID=')
+    );
+    if (sessionId) {
+      console.log('Session established:', sessionId);
+    }
+
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      const errorData = error.response?.data;
+
+      // 이미 존재하는 이메일
+      if (error.response?.status === 409) {
+        throw new Error('이미 사용중인 이메일입니다.');
+      }
+      // 이메일 형식 불일치
+      if (error.response?.status === 400) {
+        const validationMessage = errorData?.errors?.['checkEmail.email'];
+        throw new Error(validationMessage || '이메일 형식이 올바르지 않습니다.');
+      }
+      // 메일 전송 실패
+      if (error.response?.status === 500) {
+        throw new Error('이메일 전송에 실패했습니다.');
+      }
+    }
+    throw error;
+  }
+};
