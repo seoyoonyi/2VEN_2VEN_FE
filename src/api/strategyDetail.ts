@@ -5,6 +5,7 @@ import {
   FileUploadOptions,
   FileUploadResponse,
   InputDailyAnalysisProps,
+  DailyAnalysisProps,
 } from '@/types/strategyDetail';
 
 //전략 상세 기본 정보 조회
@@ -86,6 +87,30 @@ export const fetchPostDailyAnalysis = async (
 };
 
 //일간분석 수정
+export const fetchPutDailyAnalysis = async (
+  strategyId: number,
+  payload: DailyAnalysisProps,
+  authRole: 'admin' | 'trader',
+  dailyDataId: number
+) => {
+  const body = payload;
+  try {
+    const req = await apiClient.put(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/daily-data/${dailyDataId}`,
+      body,
+      {
+        headers: {
+          Auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to fetch Put DailyAnalysis', error);
+    throw error;
+  }
+};
+
 //일간분석 삭제
 export const fetchDeleteDailyAnalysis = async (strategyId: number[], analysisId: number) => {
   try {
@@ -125,7 +150,7 @@ export const fetchMonthlyAnalysis = async (strategyId: number, page: number, pag
   }
 };
 
-//전략 상세 통계 조회 (MSW)
+//전략 상세 통계 조회
 export const fetchStatistics = async (strategyId: number) => {
   try {
     const res = await apiClient.get(`${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/statistics`, {

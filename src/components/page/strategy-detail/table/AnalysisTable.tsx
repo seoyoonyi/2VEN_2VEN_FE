@@ -3,12 +3,11 @@ import { useState } from 'react';
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
 
-import InputTable, { InputTableProps } from './InputTable';
+import { InputTableProps } from './InputTable';
 import TableModal from './TableModal';
 
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
-import useTableModalStore from '@/stores/tableModalStore';
 import theme from '@/styles/theme';
 
 export interface AnalysisAttribuesProps {
@@ -33,6 +32,7 @@ export interface AnalysisProps {
   analysis?: NormalizedAnalysProps[];
   selectedItems?: number[];
   onUpload?: () => void;
+  onEdit?: (rowId: number, data: InputTableProps) => void;
   onSelectChange?: (selectIdx: number[]) => void;
 }
 
@@ -42,11 +42,10 @@ const AnalysisTable = ({
   mode,
   selectedItems,
   onUpload,
+  onEdit,
   onSelectChange,
 }: AnalysisProps) => {
   const [selectAll, setSelectAll] = useState(false);
-  const [tableData, setTableData] = useState<InputTableProps[]>([]);
-  const { openTableModal } = useTableModalStore();
 
   const handleAllChecked = () => {
     const newSelectAll = !selectAll;
@@ -62,27 +61,6 @@ const AnalysisTable = ({
       : [...(selectedItems ?? []), idx];
 
     onSelectChange?.(updatedSelected);
-  };
-
-  const handleInputChange = (updatedData: InputTableProps[]) => {
-    setTableData(updatedData);
-  };
-
-  const handleUpdateData = (data: InputTableProps, idx: number) => {
-    const updatedTableData = [...tableData];
-    updatedTableData[idx] = { ...updatedTableData[idx], ...data };
-    setTableData(updatedTableData);
-  };
-
-  const handleUpdateModal = (data: InputTableProps, idx: number) => {
-    openTableModal({
-      type: 'update',
-      title: '일간분석 데이터 수정',
-      data: <InputTable data={[data]} onChange={handleInputChange} />,
-      onAction: () => {
-        handleUpdateData(data, idx);
-      },
-    });
   };
 
   const getColorValue = (item: number) => {
@@ -146,14 +124,11 @@ const AnalysisTable = ({
                       size='xs'
                       width={65}
                       onClick={() =>
-                        handleUpdateModal(
-                          {
-                            date: values.date,
-                            depWdPrice: values.dep_wd_price,
-                            dailyProfitLoss: values.profit_loss,
-                          },
-                          values.dataId
-                        )
+                        onEdit?.(values.dataId, {
+                          date: values.date,
+                          depWdPrice: values.dep_wd_price,
+                          dailyProfitLoss: values.profit_loss,
+                        })
                       }
                     >
                       수정

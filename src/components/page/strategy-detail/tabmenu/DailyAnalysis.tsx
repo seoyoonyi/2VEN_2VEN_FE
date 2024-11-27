@@ -10,7 +10,7 @@ import TableModal from '../table/TableModal';
 import Button from '@/components/common/Button';
 import Pagination from '@/components/common/Pagination';
 import Toast from '@/components/common/Toast';
-import { usePostDailyAnalysis } from '@/hooks/mutations/useDailyAnalysis';
+import { usePostDailyAnalysis, usePutDailyAnalysis } from '@/hooks/mutations/useDailyAnalysis';
 import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
 import usePagination from '@/hooks/usePagination';
 import useModalStore from '@/stores/modalStore';
@@ -25,6 +25,7 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
   const { openModal } = useModalStore();
   const { openTableModal } = useTableModalStore();
   const { mutate: postDailyAnalysis, isError } = usePostDailyAnalysis();
+  const { mutate: putDailyAnalysis } = usePutDailyAnalysis();
   const { dailyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchDailyAnalysis(
     Number(strategyId),
     pagination.currentPage - 1,
@@ -97,6 +98,37 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
     modalData = [];
   };
 
+  const handleUpdateModal = (rowId: number, data: DailyAnalysisProps) => {
+    if (!strategyId) return;
+    let updatedData: DailyAnalysisProps | null = null;
+    openTableModal({
+      type: 'update',
+      title: '일간분석 데이터 수정',
+      data: (
+        <InputTable
+          data={[data]}
+          onChange={(newData) =>
+            (updatedData = {
+              date: newData[0].date,
+              dailyProfitLoss: newData[0].dailyProfitLoss,
+              depWdPrice: Number(newData[0].depWdPrice),
+            })
+          }
+        />
+      ),
+      onAction: () => {
+        updatedData &&
+          putDailyAnalysis({
+            strategyId,
+            payload: updatedData,
+            authRole: 'admin',
+            dailyDataId: rowId,
+          });
+        updatedData = null;
+      },
+    });
+  };
+
   const handleSelectChange = (selectedIdx: number[]) => {
     setSelectedData(selectedIdx);
   };
@@ -146,6 +178,7 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
         selectedItems={selectedData}
         onUpload={handleOpenModal}
         onSelectChange={handleSelectChange}
+        onEdit={handleUpdateModal}
       />
       <div css={PaginationArea}>
         <Pagination
