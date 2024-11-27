@@ -126,7 +126,6 @@ export const fetchStatistics = async (strategyId: number) => {
     const res = await apiClient.get(`${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/statistics`, {
       headers: {
         auth: 'admin',
-        useMock: import.meta.env.VITE_ENABLE_MSW === 'true',
       },
     });
     return res.data;

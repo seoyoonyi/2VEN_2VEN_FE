@@ -4,7 +4,7 @@ import theme from '@/styles/theme';
 
 interface DataRowProps {
   label: string;
-  value: string;
+  value: number | string;
   colSpan?: number;
 }
 
@@ -12,13 +12,13 @@ interface statisticsProps {
   data: DataRowProps[];
 }
 
-const getColorByValue = (value: string) => {
-  if (value.startsWith('-')) {
+const getColorByValue = (value: number) => {
+  if (String(value).startsWith('-')) {
     return {
       backgroundColor: '#EFF6FF',
       color: theme.colors.main.blue,
     };
-  } else if (value.startsWith('+')) {
+  } else if (String(value).startsWith('+')) {
     return {
       color: theme.colors.main.red,
     };
@@ -31,7 +31,7 @@ const getColorByValue = (value: string) => {
 };
 
 const DataRow = ({ label, value, colSpan = 1 }: DataRowProps) => {
-  const { backgroundColor, color } = getColorByValue(value);
+  const { backgroundColor, color } = getColorByValue(Number(value));
   return (
     <tr css={rowStyle}>
       <td css={labelStyle} colSpan={colSpan}>

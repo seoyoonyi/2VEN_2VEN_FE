@@ -17,12 +17,13 @@ import DailyAnalysis from '@/components/page/strategy-detail/tabmenu/DailyAnalys
 import MonthlyAnalysis from '@/components/page/strategy-detail/tabmenu/MonthlyAnalysis';
 import StatisticsTable from '@/components/page/strategy-detail/tabmenu/StatisticsTable';
 import { ROUTES } from '@/constants/routes';
-import { monthlyAttribues, dailyAttribues, statisticsLabels } from '@/constants/strategyAnalysis';
+import { monthlyAttribues, dailyAttribues, statisticsMapping } from '@/constants/strategyAnalysis';
 import useStrategyDetailDelete from '@/hooks/mutations/useStrategyDetailDelete';
 import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
 import useStatistics from '@/hooks/queries/useStatistics';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
+import { StatisticsProps } from '@/types/strategyDetail';
 import { formatDate } from '@/utils/dateFormat';
 
 const strategyDummy = {
@@ -39,10 +40,8 @@ const strategyDummy = {
 };
 
 const imgTest = [
-  { img: '/src/assets/images/domestic_present.svg' },
-  { img: '/src/assets/images/domestic_present.svg' },
-  { img: '/src/assets/images/domestic_present.svg' },
-  { img: '/src/assets/images/domestic_present.svg' },
+  { img: '/src/assets/images/producttype_stock.png' },
+  { img: '/src/assets/images/producttype_stock.png' },
 ];
 
 const rejectReasonData = {
@@ -66,23 +65,51 @@ const StrategyDetailPage = () => {
   const { strategyId } = useParams();
   const navigate = useNavigate();
   const { strategy } = useFetchStrategyDetail(strategyId || '');
-  const { statistics, isLoading } = useStatistics(Number(strategyId));
+  const { statistics, writedAt } = useStatistics(Number(strategyId));
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { openModal } = useModalStore();
 
-  if (isLoading) {
+  if (!strategy) {
     return <div>로딩중....</div>;
   }
 
-  const statisticsTableData = statisticsLabels.map((label, idx) => ({
-    label,
-    value: Object.values(statistics)[idx] as string,
-  }));
+  const formatLoss = (value: number) => value.toString();
+  const formatRate = (value: number) => Math.round(value * 100) / 100;
+
+  const formatValue = (key: string, value: string | number) => {
+    if (typeof value === 'number') {
+      if (key.endsWith('Rate')) {
+        return Math.round(value * 100) / 100 + '%';
+      } else {
+        return formatLoss(value);
+      }
+    } else {
+      return value;
+    }
+  };
+
+  const statisticsTableData = (
+    mapping: { label: string; key: string }[],
+    statistics: StatisticsProps
+  ) =>
+    mapping.map(({ label, key }) => {
+      const value = statistics[key as keyof StatisticsProps];
+      const formattedValue = formatValue(key, value);
+
+      return {
+        label,
+        value: formattedValue,
+      };
+    });
 
   const tabMenu = [
     {
       title: '통계',
-      component: <StatisticsTable data={statisticsTableData} />,
+      component: !statistics ? (
+        <div css={noneStaticsStyle}>통계 데이터가 없습니다. 일간분석 데이터를 입력해주세요.</div>
+      ) : (
+        <StatisticsTable data={statisticsTableData(statisticsMapping, statistics)} />
+      ),
     },
     {
       title: '실계좌인증',
@@ -154,16 +181,18 @@ const StrategyDetailPage = () => {
               date={formatDate(strategy?.writedAt || '', 'withDayTime')}
               followers={strategy?.followersCount}
               minimumInvestment={strategy?.minInvestmentAmount}
-              lastUpdatedDate={'통계쪽입력날짜'}
+              lastUpdatedDate={writedAt ? formatDate(writedAt) : ''}
             />
             <StrategyContent content={strategy?.strategyOverview} />
             <FileDownSection fileUrl={strategyDummy.file.url} />
             <StrategyIndicator
-              cumulativeRate={strategyDummy.indicator.cumulativeRate}
-              maximumRate={strategyDummy.indicator.maximumRate}
-              avgProfit={strategyDummy.indicator.avgProfit}
-              profitFactor={strategyDummy.indicator.profitFactor}
-              winRate={strategyDummy.indicator.winRate}
+              cumulativeRate={
+                statistics && formatRate(statistics.maxCumulativeProfitLossRatio) + '%'
+              }
+              maximumRate={statistics && formatRate(statistics.maxDrawdownRate) + '%'}
+              avgProfit={statistics && formatRate(statistics.averageProfitLossRate) + '%'}
+              profitFactor={statistics && statistics.profitFactor}
+              winRate={statistics && formatRate(statistics.winRate) + '%'}
             />
             <ChartSection />
             <StrategyTab tabs={tabMenu} />
@@ -203,6 +232,16 @@ const contentWrapper = css`
   display: flex;
   align-items: left;
   flex-direction: column;
+`;
+
+const noneStaticsStyle = css`
+  background-color: ${theme.colors.gray[100]};
+  color: ${theme.colors.gray[400]};
+  ${theme.textStyle.subtitles.subtitle4};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
 `;
 
 const reviewSectionWrapper = css`
