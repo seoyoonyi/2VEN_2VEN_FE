@@ -45,14 +45,14 @@ export const signin = async (credentials: SigninRequest): Promise<SigninResponse
     };
 
     // 관리자인 경우 추가 정보처리
-    if (data.role === 'ROLE_ADMIN' && data.admin_info) {
+    if (data.role === 'ROLE_ADMIN') {
       const adminUser: AdminUser = {
         ...baseUser,
         role: 'ROLE_ADMIN',
-        is_authorized: data.admin_info?.is_authorized ?? false,
-        authorization_status: data.admin_info?.authorization_status ?? 'PENDING',
-        authorized_at: data.admin_info?.authorized_at,
-        expires_at: data.admin_info?.expires_at,
+        is_authorized: data.is_authorized ?? false,
+        authorization_status: data.authorization_status ?? 'PENDING',
+        authorized_at: data.authorized_at,
+        expires_at: data.expires_at,
       };
 
       return {
