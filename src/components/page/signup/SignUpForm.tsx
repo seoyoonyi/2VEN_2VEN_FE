@@ -28,13 +28,17 @@ const SignUpForm = () => {
   const [isVerficationRequested, setIsVerificationRequested] = useState(false);
 
   const { mutate: requestEmailVerification } = UseSignupEmailVerification({
+    onMutate: () => {
+      // 요청 시작 시점에 타이머 시작
+      setIsVerificationRequested(true);
+    },
     onSuccess: () => {
       setVerificationCode('');
       setEmailErrorMessage('');
       setIsVerificationActive(true);
       setResetTimer((prev) => prev + 1);
       setIsInputDisabled(false);
-      setIsVerificationRequested(true);
+      // setIsVerificationRequested(true);
     },
     onError: (error) => {
       // 에러 발생 시 타이머 중지

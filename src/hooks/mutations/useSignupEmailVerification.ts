@@ -5,6 +5,7 @@ import { EmailVerificationResponse, requestSignupEmailVerification } from '@/api
 interface UseSignupEmailVerificationOptions {
   onSuccess?: (data: EmailVerificationResponse) => void;
   onError?: (error: Error) => void;
+  onMutate?: () => void;
 }
 
 export const UseSignupEmailVerification = (
@@ -12,6 +13,11 @@ export const UseSignupEmailVerification = (
 ): UseMutationResult<EmailVerificationResponse, Error, string> =>
   useMutation<EmailVerificationResponse, Error, string>({
     mutationFn: requestSignupEmailVerification,
+    onMutate: () => {
+      // 요청이 시작되는 시점에 실행
+      console.log('Email verification started');
+      options?.onMutate?.();
+    },
     onSuccess: (data) => {
       console.log('Email verification success:', data);
       options?.onSuccess?.(data);
