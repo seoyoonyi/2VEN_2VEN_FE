@@ -25,15 +25,9 @@ import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 import { StatisticsProps } from '@/types/strategyDetail';
 import { formatDate } from '@/utils/dateFormat';
+import { formatValue, formatRate } from '@/utils/statistics';
 
 const strategyDummy = {
-  indicator: {
-    cumulativeRate: 53.81,
-    maximumRate: -13.6,
-    avgProfit: 5.69,
-    profitFactor: '1.54 : 1',
-    winRate: 60.36,
-  },
   file: {
     url: `/file.txt`,
   },
@@ -73,21 +67,6 @@ const StrategyDetailPage = () => {
     return <div>로딩중....</div>;
   }
 
-  const formatLoss = (value: number) => value.toLocaleString();
-  const formatRate = (value: number) => Math.round(value * 100) / 100;
-
-  const formatValue = (key: string, value: string | number) => {
-    if (typeof value === 'number') {
-      if (key.endsWith('Rate') || key.endsWith('Ratio')) {
-        return Math.round(value * 100) / 100 + '%';
-      } else {
-        return formatLoss(value);
-      }
-    } else {
-      return value;
-    }
-  };
-
   const statisticsTableData = (
     mapping: { label: string; key: string }[],
     statistics: StatisticsProps
@@ -95,7 +74,6 @@ const StrategyDetailPage = () => {
     mapping.map(({ label, key }) => {
       const value = statistics[key as keyof StatisticsProps];
       const formattedValue = formatValue(key, value);
-
       return {
         label,
         value: formattedValue,

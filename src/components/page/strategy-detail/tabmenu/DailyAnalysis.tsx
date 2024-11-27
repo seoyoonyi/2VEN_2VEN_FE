@@ -70,7 +70,6 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
           return;
         }
         handleSaveData(modalData);
-
         if (isError) {
           showToast('이미 등록된 일자입니다.', 'error');
         }
