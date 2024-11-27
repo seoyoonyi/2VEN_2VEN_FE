@@ -2,21 +2,21 @@ import apiClient from './apiClient';
 import { API_ENDPOINTS } from './apiEndpoints';
 
 export interface UploadFileProps {
+  role: string | null;
+  token: string | null;
   fileItem: File;
-  uploaderId: string;
 }
 
-export const fetchUploadIconFile = async ({ fileItem, uploaderId }: UploadFileProps) => {
+export const fetchUploadIconFile = async ({ role, token, fileItem }: UploadFileProps) => {
   const formData = new FormData();
   formData.append('file', fileItem);
-  formData.append('fileCategory', 'ICON');
-  formData.append('uploaderId', uploaderId);
 
   try {
-    const res = await apiClient.post(API_ENDPOINTS.ADMIN.ICON_FILES, formData, {
+    const res = await apiClient.post(`${API_ENDPOINTS.FILES.ICON}/upload`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        Auth: 'admin',
+        Auth: role,
+        Authorization: `Bearer ${token}`,
       },
     });
     return res.data;
@@ -25,15 +25,26 @@ export const fetchUploadIconFile = async ({ fileItem, uploaderId }: UploadFilePr
   }
 };
 
-export const fetchFileUrl = async (id: number) => {
+export const fetchPutIconFile = async (
+  fileUrl: string,
+  { role, token, fileItem }: UploadFileProps
+) => {
+  const formData = new FormData();
+  formData.append('file', fileItem);
+
   try {
-    const res = await apiClient.get(`${API_ENDPOINTS.FILES.GET}/${id}`, {
+    const res = await apiClient.post(`${API_ENDPOINTS.FILES.ICON}/modify`, formData, {
+      params: {
+        fileUrl,
+      },
       headers: {
-        Auth: 'anyone',
+        'Content-Type': 'multipart/form-data',
+        Auth: role,
+        Authorization: `Bearer ${token}`,
       },
     });
     return res.data;
   } catch (error) {
-    console.error('failed to fetch file', error);
+    console.error('failed to upload icon image');
   }
 };

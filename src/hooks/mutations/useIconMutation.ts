@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { fetchUploadIconFile, UploadFileProps } from '@/api/uploadFile';
+import { fetchPutIconFile, fetchUploadIconFile, UploadFileProps } from '@/api/uploadFile';
 
-const useIconMutation = () => {
+export const useIconMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -13,4 +13,14 @@ const useIconMutation = () => {
   });
 };
 
-export default useIconMutation;
+export const usePutIconMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ fileUrl, data }: { fileUrl: string; data: UploadFileProps }) =>
+      await fetchPutIconFile(fileUrl, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fetchFile'] });
+    },
+  });
+};
