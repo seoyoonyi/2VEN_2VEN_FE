@@ -15,6 +15,7 @@ import {
   useDeleteTradingType,
   usePutTradingType,
 } from '@/hooks/mutations/useTradingType';
+import { useAuthStore } from '@/stores/authStore';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
@@ -33,6 +34,7 @@ const tradeAttributes = [
 ];
 
 const TradingTypeListPage = () => {
+  const { token, user } = useAuthStore();
   const { openModal } = useModalStore();
   const { openContentModal } = useContentModalStore();
   const { mutate: deleteTradingType } = useDeleteTradingType();
@@ -90,7 +92,7 @@ const TradingTypeListPage = () => {
     if (selectedItems.length > 0) {
       openModal({
         type: 'warning',
-        title: '이미지 삭제',
+        title: '매매유형 삭제',
         desc: `선택하신 ${selectedItems.length}개의 유형을 삭제하시겠습니까?`,
         onAction: () => {
           selectedItems.forEach((id) => deleteTradingType(id));
@@ -108,6 +110,7 @@ const TradingTypeListPage = () => {
   };
 
   const handleEdit = (id: number) => {
+    if (!user) return;
     const selectedType = data?.find((item) => item.tradingTypeId === id);
     if (selectedType) {
       let updatedName = selectedType.tradingTypeName;
@@ -116,6 +119,9 @@ const TradingTypeListPage = () => {
         title: '매매유형 수정',
         content: (
           <FileInput
+            mode='update'
+            role={user.role}
+            token={token}
             title='매매유형'
             file={null}
             fname={selectedType.tradingTypeName}
@@ -143,12 +149,16 @@ const TradingTypeListPage = () => {
   };
 
   const handleUpload = () => {
+    if (!user) return;
     let newName: string = '';
     let newIcon: string = '';
     openContentModal({
       title: '매매유형 등록',
       content: (
         <FileInput
+          mode='upload'
+          role={user.role}
+          token={token}
           title='매매유형'
           file={null}
           fname={''}

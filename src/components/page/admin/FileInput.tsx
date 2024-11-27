@@ -2,12 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
 
-import { fetchFileUrl } from '@/api/uploadFile';
 import Button from '@/components/common/Button';
-import useIconMutation from '@/hooks/mutations/useIconMutation';
+import { useIconMutation, usePutIconMutation } from '@/hooks/mutations/useIconMutation';
 import theme from '@/styles/theme';
+import { UserRole } from '@/types/route';
 
 interface FileInputProps {
+  mode: 'upload' | 'update';
+  role: UserRole;
+  token: string | null;
   title: string;
   file: File | null;
   fname: string;
@@ -15,32 +18,57 @@ interface FileInputProps {
   onNameChange: (name: string) => void;
   onFileIconUrl: (url: string) => void;
 }
-const FileInput = ({ title, file, fname, icon, onNameChange, onFileIconUrl }: FileInputProps) => {
+const FileInput = ({
+  mode,
+  role,
+  token,
+  title,
+  file,
+  fname,
+  icon,
+  onNameChange,
+  onFileIconUrl,
+}: FileInputProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File>();
   const [fileName, setFileName] = useState(fname);
-  const [iconName, setIconName] = useState(icon);
-  const [iconUrl, setIconUrl] = useState('');
-  const { mutate } = useIconMutation();
+  const [iconUrl, setIconUrl] = useState(icon);
+  const [displayName, setDisplayName] = useState(selectedFile?.name);
+  const { mutate: uploadIcon } = useIconMutation();
+  const { mutate: updateIcon } = usePutIconMutation();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    //TODO:사용자 Id 가져와서 넣어야함 ^^ props에 추가해줘야함
     if (e.target.files) {
       setSelectedFile(e.target.files[0]);
-      setIconName(e.target.files[0].name);
+      setIconUrl(e.target.files[0].name);
 
-      if (selectedFile) {
-        mutate(
+      if (mode === 'upload') {
+        uploadIcon(
           {
+            role,
             fileItem: e.target.files[0],
-            uploaderId: 'admintest123',
+            token,
           },
           {
             onSuccess: async (data) => {
-              if (data.fileId) {
-                const fileUrl = await fetchFileUrl(data.fileId);
-                setIconUrl(fileUrl);
-                onFileIconUrl(fileUrl);
+              if (data) {
+                onFileIconUrl(data.fileUrl);
+                setDisplayName(data.displayName);
+              }
+            },
+          }
+        );
+      } else if (mode === 'update') {
+        updateIcon(
+          {
+            fileUrl: icon,
+            data: { role, fileItem: e.target.files[0], token },
+          },
+          {
+            onSuccess: async (data) => {
+              if (data.fileUrl) {
+                onFileIconUrl(data.fileUrl);
+                setDisplayName(data.displayName);
               }
             },
           }
@@ -85,14 +113,14 @@ const FileInput = ({ title, file, fname, icon, onNameChange, onFileIconUrl }: Fi
       )}
       {icon && !selectedFile && <img src={iconUrl} alt={icon} css={imageStyle} />}
       <div css={inputAndButtonContainerStyle}>
-        <input type='text' value={iconName} readOnly css={inputStyleOverride} />
+        <input type='text' value={displayName} readOnly css={inputStyleOverride} />
         <Button variant='secondary' size='sm' onClick={handleFileUpload} width={115}>
           찾아보기
         </Button>
         <input
           ref={fileInputRef}
           type='file'
-          accept='.jpg, .svg, .jpeg, .png'
+          accept='.jpg, .jpeg, .png'
           onChange={handleFileChange}
           css={fileInputStyle}
         />

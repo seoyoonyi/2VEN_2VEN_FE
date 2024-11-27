@@ -15,6 +15,7 @@ import {
   usePostInvestmentAssets,
   usePutInvestmentAssets,
 } from '@/hooks/mutations/useStockType';
+import { useAuthStore } from '@/stores/authStore';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
@@ -33,6 +34,7 @@ const stockAttributes = [
 ];
 
 const StockTypeListPage = () => {
+  const { token, user } = useAuthStore();
   const [paginationData, setPaginationData] = useState({
     currentPage: 1,
     totalPage: 0,
@@ -120,12 +122,16 @@ const StockTypeListPage = () => {
   };
 
   const handleUpload = () => {
+    if (!user) return;
     let newName: string = '';
     let selectedIcon: string = '';
     openContentModal({
       title: '상품유형 등록',
       content: (
         <FileInput
+          mode='upload'
+          role={user.role}
+          token={token}
           title='상품유형'
           file={null}
           fname={''}
@@ -162,6 +168,7 @@ const StockTypeListPage = () => {
   };
 
   const handleEdit = (id: number) => {
+    if (!user) return;
     const selectedType = data?.find((item) => item.investmentAssetClassesId === id);
     if (selectedType) {
       let updatedName = selectedType.investmentAssetClassesName;
@@ -170,6 +177,9 @@ const StockTypeListPage = () => {
         title: '상품유형 수정',
         content: (
           <FileInput
+            mode='update'
+            role={user.role}
+            token={token}
             title='상품유형'
             file={file}
             fname={selectedType.investmentAssetClassesName}
