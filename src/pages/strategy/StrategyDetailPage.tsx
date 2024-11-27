@@ -1,6 +1,9 @@
+import { useEffect, useState } from 'react';
+
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import Loading from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import ChartSection from '@/components/page/strategy-detail/chart/ChartSection';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
@@ -66,12 +69,31 @@ const StrategyDetailPage = () => {
   const { strategyId } = useParams();
   const navigate = useNavigate();
   const { strategy } = useFetchStrategyDetail(strategyId || '');
-  const { statistics, isLoading } = useStatistics(Number(strategyId));
+  // const { statistics, isLoading } = useStatistics(Number(strategyId));
+  const { statistics, isLoading: isStatisticsLoading } = useStatistics(Number(strategyId));
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { openModal } = useModalStore();
 
-  if (isLoading) {
-    return <div>로딩중....</div>;
+  // if (isLoading) {
+  //   return <div>로딩중....</div>;
+  // }
+
+  // 로딩 상태 관리
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // 10초 후 로딩 상태 해제
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 10000);
+
+    // 컴포넌트 언마운트 시 타이머 정리
+    return () => clearTimeout(timer);
+  }, []);
+
+  // 로딩 상태에서 Loading 컴포넌트 렌더링
+  if (isLoading || isStatisticsLoading) {
+    return <Loading />;
   }
 
   const statisticsTableData = statisticsLabels.map((label, idx) => ({
