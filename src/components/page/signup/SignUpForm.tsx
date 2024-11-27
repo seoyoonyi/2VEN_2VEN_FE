@@ -37,9 +37,10 @@ const SignUpForm = () => {
       setIsVerificationRequested(true);
     },
     onError: (error) => {
+      // 에러 발생 시 타이머 중지
+      setIsVerificationRequested(false);
       setEmailErrorMessage(error.message);
       setIsVerificationActive(false);
-      setIsVerificationRequested(false);
     },
   });
 
@@ -103,6 +104,8 @@ const SignUpForm = () => {
       return;
     }
 
+    // 요청 전에 먼저 UI 표시
+    setIsVerificationRequested(true);
     // 이메일 인증 요청 로직
     requestEmailVerification(email);
   };
