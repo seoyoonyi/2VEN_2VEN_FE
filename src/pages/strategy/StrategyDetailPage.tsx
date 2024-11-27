@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import Loading from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import ChartSection from '@/components/page/strategy-detail/chart/ChartSection';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
@@ -64,13 +63,8 @@ const StrategyDetailPage = () => {
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { openModal } = useModalStore();
 
-  // if (!strategy) {
-  //   return <div>로딩중....</div>;
-  // }
-
-  // 테스트 로딩
   if (!strategy) {
-    return <Loading />;
+    return <div>로딩중....</div>;
   }
 
   const statisticsTableData = (

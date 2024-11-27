@@ -29,8 +29,6 @@ const loaderWrapperStyle = css`
   display: flex;
   width: 100%;
   height: calc(100vh - 335px);
-  // height: 100vh;
-  // height: 100%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
