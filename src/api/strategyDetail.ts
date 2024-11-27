@@ -77,6 +77,7 @@ export const fetchPostDailyAnalysis = async (
     return req.data;
   } catch (error) {
     console.error('failed to fetch Post DailyAnalysis', error);
+    throw error;
   }
 };
 

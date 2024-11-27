@@ -24,15 +24,15 @@ const StrategyIndicator = ({
       <>
         <div css={rateAreaStyle}>
           <div css={titleStyle}>누적수익률</div>
-          <div css={rateContentStyle}>{cumulativeRate}</div>
+          <div css={rateContentStyle}>{cumulativeRate}%</div>
         </div>
         <div css={rateAreaStyle}>
           <div css={titleStyle}>최대자본인하율</div>
-          <div css={rateContentStyle}>{maximumRate}</div>
+          <div css={rateContentStyle}>{maximumRate}%</div>
         </div>
         <div css={rateAreaStyle}>
           <div css={titleStyle}>평균손익률</div>
-          <div css={rateContentStyle}>{avgProfit}</div>
+          <div css={rateContentStyle}>{avgProfit}%</div>
         </div>
         <div css={rateAreaStyle}>
           <div css={titleStyle}>Profit Factor</div>
@@ -40,7 +40,7 @@ const StrategyIndicator = ({
         </div>
         <div css={rateAreaStyle}>
           <div css={titleStyle}>승률</div>
-          <div css={winRateStyle}>{winRate}</div>
+          <div css={winRateStyle}>{winRate}%</div>
         </div>
       </>
     )}

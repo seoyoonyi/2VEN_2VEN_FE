@@ -29,6 +29,17 @@ export interface InputDailyAnalysisProps {
   payload: DailyAnalysisProps[];
 }
 
+export interface AnalysisDataProps {
+  dailyStrategicStatisticsId: number;
+  inputDate: string;
+  principal: number;
+  depWdPrice: number;
+  dailyProfitLoss: number;
+  dailyPlRate: number;
+  cumulativeProfitLoss: number;
+  cumulativeProfitLossRate: number;
+}
+
 export interface StatisticsProps {
   [key: string]: number | string;
   balance: number;

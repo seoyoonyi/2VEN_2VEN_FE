@@ -16,6 +16,7 @@ export const usePostDailyAnalysis = () => {
       payload: DailyAnalysisProps[];
       authRole: 'admin' | 'trader';
     }) => fetchPostDailyAnalysis(strategyId, { payload }, authRole),
+    onError: (error) => error.message,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
     },

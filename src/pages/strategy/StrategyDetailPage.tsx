@@ -181,18 +181,16 @@ const StrategyDetailPage = () => {
               date={formatDate(strategy?.writedAt || '', 'withDayTime')}
               followers={strategy?.followersCount}
               minimumInvestment={strategy?.minInvestmentAmount}
-              lastUpdatedDate={writedAt ? formatDate(writedAt) : ''}
+              lastUpdatedDate={writedAt ? formatDate(writedAt) : '데이터없음'}
             />
             <StrategyContent content={strategy?.strategyOverview} />
             <FileDownSection fileUrl={strategyDummy.file.url} />
             <StrategyIndicator
-              cumulativeRate={
-                statistics && formatRate(statistics.maxCumulativeProfitLossRatio) + '%'
-              }
-              maximumRate={statistics && formatRate(statistics.maxDrawdownRate) + '%'}
-              avgProfit={statistics && formatRate(statistics.averageProfitLossRate) + '%'}
+              cumulativeRate={statistics && formatRate(statistics.maxCumulativeProfitLossRatio)}
+              maximumRate={statistics && formatRate(statistics.maxDrawdownRate)}
+              avgProfit={statistics && formatRate(statistics.averageProfitLossRate)}
               profitFactor={statistics && statistics.profitFactor}
-              winRate={statistics && formatRate(statistics.winRate) + '%'}
+              winRate={statistics && formatRate(statistics.winRate)}
             />
             <ChartSection />
             <StrategyTab tabs={tabMenu} />

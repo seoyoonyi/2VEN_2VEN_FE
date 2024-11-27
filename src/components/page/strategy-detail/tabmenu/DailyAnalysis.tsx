@@ -16,18 +16,7 @@ import usePagination from '@/hooks/usePagination';
 import useModalStore from '@/stores/modalStore';
 import useTableModalStore from '@/stores/tableModalStore';
 import useToastStore from '@/stores/toastStore';
-import { DailyAnalysisProps } from '@/types/strategyDetail';
-
-export interface AnalysisDataProps {
-  dailyStrategicStatisticsId: number;
-  inputDate: string;
-  principal: number;
-  depWdPrice: number;
-  dailyProfitLoss: number;
-  dailyPlRate: number;
-  cumulativeProfitLoss: number;
-  cumulativeProfitLossRate: number;
-}
+import { DailyAnalysisProps, AnalysisDataProps } from '@/types/strategyDetail';
 
 const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
   const [selectedData, setSelectedData] = useState<number[]>([]);
@@ -35,7 +24,7 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
   const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
   const { openModal } = useModalStore();
   const { openTableModal } = useTableModalStore();
-  const { mutate: postDailyAnalysis } = usePostDailyAnalysis();
+  const { mutate: postDailyAnalysis, isError } = usePostDailyAnalysis();
   const { dailyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchDailyAnalysis(
     Number(strategyId),
     pagination.currentPage - 1,
@@ -81,6 +70,10 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
           return;
         }
         handleSaveData(modalData);
+
+        if (isError) {
+          showToast('이미 등록된 일자입니다.', 'error');
+        }
       },
     });
   };
