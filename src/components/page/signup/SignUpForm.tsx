@@ -1,22 +1,18 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { AxiosError } from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import VerificationInput from '@/components/page/signup/VerificationInput';
-import { ROUTES } from '@/constants/routes';
 import { useNicknameValidation } from '@/hooks/mutations/useNicknameValidation';
 import { UseSignupEmailVerification } from '@/hooks/mutations/useSignupEmailVerification';
-import { useVerifyAdminCodeMutation } from '@/hooks/mutations/useVerifacationMutation';
+import { useSignupVerification } from '@/hooks/mutations/useSignupVerification';
 import { useSignupStore } from '@/stores/signupStore';
 import theme from '@/styles/theme';
 import { validateCode, validateEmail } from '@/utils/validation';
 
 const SignUpForm = () => {
-  const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [verificationCode, setVerificationCode] = useState<string>('');
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
@@ -48,7 +44,7 @@ const SignUpForm = () => {
     },
   });
 
-  const { mutate: verifyCode } = useVerifyAdminCodeMutation();
+  const { mutate: verifySignupCode } = useSignupVerification();
 
   const { nickname, nicknameMessage, actions } = useSignupStore();
   const { nicknameCheck, handleNicknameCheck } = useNicknameValidation();
@@ -115,8 +111,21 @@ const SignUpForm = () => {
   };
 
   const handleCodeVerification = (e: React.FormEvent<HTMLFormElement>) => {
-    // 이메일 인증코드 확인
+    // 실제 쿠키 확인
+    const cookies = document.cookie.split(';').reduce(
+      (acc, cookie) => {
+        const [name, value] = cookie.trim().split('=');
+        acc[name] = value;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+
+    console.log('Cookies available:', cookies);
+    console.log('JSESSIONID:', cookies['JSESSIONID']);
+
     e.preventDefault();
+    // 이메일 인증코드 확인
     const validationResult = validateCode(verificationCode); // 인증번호 유효성 검증
 
     if (isInputDisabled) {
@@ -127,22 +136,26 @@ const SignUpForm = () => {
       setVerifyErrorMessage(validationResult.message);
       return;
     }
-    verifyCode(
+
+    // 디버깅을 위한 로그 추가
+    console.log('Verification Request:', {
+      email,
+      verificationCode,
+      sessionId: document.cookie, // 현재 쿠키 확인
+    });
+
+    verifySignupCode(
       { email, verificationCode },
       {
         onSuccess: (response) => {
           if (response.status === 'success') {
-            navigate(ROUTES.AUTH.FIND.PASSWORD_RESET, { replace: true });
+            console.log('야호! 인증 성공!');
           } else {
             setVerifyErrorMessage('인증에 실패했습니다. 다시 시도해주세요.');
           }
         },
-        onError: (error: AxiosError) => {
-          if (error.response?.status === 401) {
-            setVerifyErrorMessage('올바른 인증번호가 아닙니다.');
-          } else {
-            setVerifyErrorMessage('인증 처리 중 오류가 발생했습니다.');
-          }
+        onError: (error) => {
+          setVerifyErrorMessage(error.message);
         },
       }
     );
