@@ -3,11 +3,11 @@ import { css } from '@emotion/react';
 import theme from '@/styles/theme';
 
 interface IndicatorProps {
-  cumulativeRate: number;
-  maximumRate: number;
-  avgProfit: number;
+  cumulativeRate: string;
+  maximumRate: string;
+  avgProfit: string;
   profitFactor: string;
-  winRate: number;
+  winRate: string;
 }
 
 const StrategyIndicator = ({
@@ -18,26 +18,32 @@ const StrategyIndicator = ({
   winRate,
 }: IndicatorProps) => (
   <div css={indicatorWrapperStyle}>
-    <div css={rateAreaStyle}>
-      <div css={titleStyle}>누적수익률</div>
-      <div css={rateContentStyle}>{cumulativeRate}</div>
-    </div>
-    <div css={rateAreaStyle}>
-      <div css={titleStyle}>최대자본인하율</div>
-      <div css={rateContentStyle}>{maximumRate}</div>
-    </div>
-    <div css={rateAreaStyle}>
-      <div css={titleStyle}>평균손익률</div>
-      <div css={rateContentStyle}>{avgProfit}</div>
-    </div>
-    <div css={rateAreaStyle}>
-      <div css={titleStyle}>Profit Factor</div>
-      <div css={rateContentStyle}>{profitFactor}</div>
-    </div>
-    <div css={rateAreaStyle}>
-      <div css={titleStyle}>승률</div>
-      <div css={winRateStyle}>{winRate}</div>
-    </div>
+    {!cumulativeRate && !maximumRate && !avgProfit && !profitFactor ? (
+      <div>주요지표 데이터가 없습니다.</div>
+    ) : (
+      <>
+        <div css={rateAreaStyle}>
+          <div css={titleStyle}>누적수익률</div>
+          <div css={rateContentStyle}>{cumulativeRate}%</div>
+        </div>
+        <div css={rateAreaStyle}>
+          <div css={titleStyle}>최대자본인하율</div>
+          <div css={rateContentStyle}>{maximumRate}%</div>
+        </div>
+        <div css={rateAreaStyle}>
+          <div css={titleStyle}>평균손익률</div>
+          <div css={rateContentStyle}>{avgProfit}%</div>
+        </div>
+        <div css={rateAreaStyle}>
+          <div css={titleStyle}>Profit Factor</div>
+          <div css={rateContentStyle}>{profitFactor}</div>
+        </div>
+        <div css={rateAreaStyle}>
+          <div css={titleStyle}>승률</div>
+          <div css={winRateStyle}>{winRate}%</div>
+        </div>
+      </>
+    )}
   </div>
 );
 

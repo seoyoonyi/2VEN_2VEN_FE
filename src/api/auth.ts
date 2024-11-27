@@ -45,10 +45,10 @@ export const signin = async (credentials: SigninRequest): Promise<SigninResponse
     };
 
     // 관리자인 경우 추가 정보처리
-    if (data.role === 'MEMBER_ROLE_ADMIN' && data.admin_info) {
+    if (data.role === 'ROLE_ADMIN' && data.admin_info) {
       const adminUser: AdminUser = {
         ...baseUser,
-        role: 'MEMBER_ROLE_ADMIN',
+        role: 'ROLE_ADMIN',
         is_authorized: data.admin_info?.is_authorized ?? false,
         authorization_status: data.admin_info?.authorization_status ?? 'PENDING',
         authorized_at: data.admin_info?.authorized_at,
@@ -108,7 +108,7 @@ export const findEmail = async (phone: string) => {
   return data;
 };
 
-// 이메일로 인증번호를 요청하는 API
+// 관리자 이메일로 인증번호를 요청하는 API
 export const requestVerificationCode = async (email: string): Promise<ApiResponse<null>> => {
   console.log('Request body:', { email }); // 요청 바디 로깅
   const response = await apiClient.post<ApiResponse<null>>(
@@ -122,23 +122,30 @@ export const requestVerificationCode = async (email: string): Promise<ApiRespons
   );
   return response.data;
 };
-
-// 입력한 인증번호 검증 API (기존 코드)
-export const verifyCode = async (
-  email: string,
-  code: string
-): Promise<ApiResponse<{ expires_at: string }>> => {
-  console.log('Request body:', { email, code });
-  const response = await apiClient.post<ApiResponse<{ expires_at: string }>>(
-    API_ENDPOINTS.AUTH.EMAIL.CHECK_VERIFICATION, // 이메일 인증 API 경로(사용자, 관리자 공통)
-    { email, code },
-    {
-      headers: {
-        useMock: import.meta.env.VITE_ENABLE_MSW === 'true', // MSW 사용 시 true
-      },
+// 관리자 이메일로 인증번호 확인하는 API
+export const verifyAdminCode = async ({
+  email,
+  verificationCode,
+}: {
+  email: string;
+  verificationCode: string;
+}): Promise<ApiResponse<{ expires_at: string }>> => {
+  try {
+    // 불필요한 헤더나 설정 없이 심플하게
+    const response = await apiClient.post<ApiResponse<{ expires_at: string }>>(
+      API_ENDPOINTS.AUTH.EMAIL.CHECK_VERIFICATION,
+      { email, verificationCode } // 요청 바디만 단순하게
+    );
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      console.error('Verification error:', {
+        status: error.response?.status,
+        data: error.response?.data,
+      });
     }
-  );
-  return response.data;
+    throw error;
+  }
 };
 
 interface ProfileImageResponse {
@@ -155,8 +162,10 @@ export const fetchProfileImage = async ({
   fileId: string;
   memberId: string;
 }): Promise<string> => {
+  console.log('API call params:', { fileId, memberId });
   const response = await apiClient.get<ProfileImageResponse>(
     `${API_ENDPOINTS.FILES.PROFILE(fileId)}?uploaderId=${memberId}`
   );
+  console.log('API response:', response.data);
   return response.data.base64Content;
 };
