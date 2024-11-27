@@ -13,6 +13,7 @@ import TraderUserImage2 from '@/assets/images/nimo_trader.png';
 import SMScoreGraphImage from '@/assets/images/SMScore_graph.png';
 import TraderMainImage from '@/assets/images/trader_main.png';
 import Button from '@/components/common/Button';
+import Loading from '@/components/common/Loading';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
@@ -114,6 +115,7 @@ const HomePage = () => {
   return (
     <>
       {/* 투자자Main */}
+      <Loading />
       <section css={investorSectionStyle}>
         <div css={contentStyle}>
           {/* 왼쪽 영역 */}
