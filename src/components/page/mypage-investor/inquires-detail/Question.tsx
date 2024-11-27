@@ -1,33 +1,23 @@
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
-import { QuestionProps } from '@/types/myinquires';
+import { InquiryDetailData, Status } from '@/types/myinquires';
 
-const Question = ({
-  title,
-  investorName,
-  investorProfileUrl,
-  createdAt,
-  content,
-  strategyName,
-  investmentAmount,
-  investmentDate,
-  status,
-}: QuestionProps) => (
+const Question = ({ data }: { data: InquiryDetailData }) => (
   <div css={questionWrapper}>
     <header css={questionHeaderWrapper}>
-      <span css={statusStyle(status)}>
-        {status === 'PENDING' && <span className='dot' />}
-        {status === 'PENDING' ? '대기' : '완료'}
+      <span css={statusStyle(data.status)}>
+        {data.status === 'PENDING' && <span className='dot' />}
+        {data.status === 'PENDING' ? '대기' : '완료'}
       </span>
-      <h1 css={titleStyle}>{title}</h1>
+      <h1 css={titleStyle}>{data.title}</h1>
       <div css={infoWrapper}>
         <div css={infoStyle}>
-          <img src={investorProfileUrl} alt={`${investorName}'s profile`} />
-          <h2>{investorName}</h2>
-          <span>{createdAt.slice(0, 10).replace(/-/g, '.')}</span>
+          <img src={data.investorProfileUrl} alt={`${data.investorName}'s profile`} />
+          <h2>{data.investorName}</h2>
+          <span>{data.createdAt.slice(0, 10).replace(/-/g, '.')}</span>
         </div>
-        {status === 'PENDING' && (
+        {data.status === 'PENDING' && (
           <div css={editWrapper}>
             <button type='button'>수정</button>
             <div></div>
@@ -40,21 +30,21 @@ const Question = ({
     <section css={strategyInfoWrapper}>
       <div css={strategyInfoStyle}>
         <h3>관심전략명</h3>
-        <div>{strategyName}</div>
+        <div>{data.strategyName}</div>
       </div>
       <div>
         <div css={strategyInfoStyle}>
           <h3>투자개시금액</h3>
-          <span>{investmentAmount.toLocaleString()}</span>
+          <span>{data.investmentAmount.toLocaleString()}</span>
         </div>
         <div css={strategyInfoStyle}>
           <h3>투자개시시점</h3>
-          <span>{investmentDate.slice(0, 10).replace(/-/g, '.')}</span>
+          <span>{data.investmentDate.slice(0, 10).replace(/-/g, '.')}</span>
         </div>
       </div>
     </section>
 
-    <section css={questionStyle}>{content}</section>
+    <section css={questionStyle}>{data.content}</section>
   </div>
 );
 
@@ -125,7 +115,7 @@ const editWrapper = css`
   }
 `;
 
-const statusStyle = (status: string) => css`
+const statusStyle = (status: Status) => css`
   display: flex;
   align-items: center;
   gap: 6px;

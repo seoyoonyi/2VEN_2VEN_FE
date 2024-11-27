@@ -5,20 +5,22 @@ export interface InquiryDetailData {
   investorId: string;
   investorName: string;
   investorProfileUrl: string;
-  title: string;
-  content: string;
-  strategyName: string;
-  investmentAmount: number;
-  investmentDate: string;
-  status: Status;
   traderId: string;
   traderName: string;
   traderProfileUrl: string;
-  traderAnswer: string;
-  answerDate: string;
   strategyId: number;
+  strategyName: string;
+  investmentAmount: number;
+  investmentDate: string;
+  title: string;
+  content: string;
+  status: Status;
   createdAt: string;
   updatedAt: string;
+  replyContent: string;
+  answerDate: string;
+  replyCreatedAt: string;
+  replyUpdatedAt: string;
 }
 
 export interface myInquirieListData {

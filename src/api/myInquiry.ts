@@ -29,14 +29,14 @@ export const fetchMyInquiryDetail = async (id: number) => {
   }
 
   try {
-    const res = await apiClient.get(`${API_ENDPOINTS.INQUIRY}/${id}`, {
+    const { data } = await apiClient.get(`${API_ENDPOINTS.INQUIRY}/${id}`, {
       headers: {
         'Content-Type': 'application/json',
         Auth: 'investor',
       },
     });
-    console.log('나의 문의 상세:', res);
-    return res.data.data;
+    console.log('나의 문의 상세:', data);
+    return data;
   } catch (error) {
     console.error('Failed to fetch my inquiry detail data:', error);
     throw error;

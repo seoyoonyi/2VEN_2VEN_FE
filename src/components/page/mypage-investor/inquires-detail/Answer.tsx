@@ -1,21 +1,21 @@
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
-import { AnswerProps } from '@/types/myinquires';
+import { InquiryDetailData } from '@/types/myinquires';
 
-const Answer = ({ traderName, traderProfileUrl, traderAnswer, answerDate }: AnswerProps) => (
+const Answer = ({ data }: { data: InquiryDetailData }) => (
   <div css={answerWrapper}>
     <header css={headerWrapper}>
       <h1>트레이더 답변</h1>
       <div css={infoWrapper}>
-        <img src={traderProfileUrl} alt={`${traderName}'s profile`} />
-        <h2>{traderName}</h2>
+        <img src={data.traderProfileUrl} alt={`${data.traderName}'s profile`} />
+        <h2>{data.traderName}</h2>
       </div>
     </header>
 
     <section css={traderAnswerWrapper}>
-      <div css={answerStyle}>{traderAnswer}</div>
-      <span>{answerDate.slice(0, 10).replace(/-/g, '.')}</span>
+      <div css={answerStyle}>{data.replyContent}</div>
+      <span>{data.answerDate.slice(0, 10).replace(/-/g, '.')}</span>
     </section>
   </div>
 );

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { fetchMyInquiryList } from '@/api/myInquiry';
 import Pagination from '@/components/common/Pagination';
@@ -13,6 +13,7 @@ import { myInquirieListData, Status } from '@/types/myinquires';
 const MyInquiriesPage = () => {
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -32,12 +33,17 @@ const MyInquiriesPage = () => {
     queryFn: () => fetchMyInquiryList(page - 1, pageSize),
   });
 
+  const onClickInquiryList = (inquiryId: string) => {
+    navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(inquiryId));
+    window.scrollTo(0, 0);
+  };
+
   if (isLoading) {
-    return <div>로딩 중...</div>;
+    return <div css={myPageWrapperStyle}>로딩 중...</div>;
   }
 
   if (isError) {
-    return <div>문의 목록 데이터를 불러오는 데 실패했습니다.</div>;
+    return <div css={myPageWrapperStyle}>문의 목록 데이터를 불러오는 데 실패했습니다.</div>;
   }
 
   const myInquiries = data?.content || [];
@@ -65,8 +71,16 @@ const MyInquiriesPage = () => {
             <div>날짜</div>
           </div>
           {myInquiries.map((inquiry) => (
-            <Link
-              to={`${ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(inquiry.id.toString())}`}
+            <div
+              role='button'
+              tabIndex={0}
+              onClick={() => onClickInquiryList(String(inquiry.id))}
+              onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onClickInquiryList(String(inquiry.id));
+                }
+              }}
               key={inquiry.id}
             >
               <div css={rowStyle}>
@@ -87,7 +101,7 @@ const MyInquiriesPage = () => {
                 </div>
                 <div>{inquiry.createdAt.slice(0, 10).replace(/-/g, '.')}</div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
         <Pagination totalPage={totalPages} limit={data?.size || 10} page={page} setPage={setPage} />
@@ -137,6 +151,11 @@ const rowStyle = css`
   border-bottom: 1px solid ${theme.colors.gray[300]};
   text-align: center;
   line-height: ${theme.typography.lineHeights.lg};
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${theme.colors.teal[50]};
+  }
 `;
 
 const headerStyle = css`
@@ -146,6 +165,11 @@ const headerStyle = css`
   color: ${theme.colors.gray[700]};
   border-bottom: 1px solid ${theme.colors.gray[500]};
   font-weight: ${theme.typography.fontWeight.bold};
+  cursor: default;
+
+  &:hover {
+    background-color: ${theme.colors.gray[100]};
+  }
 `;
 
 const inquiriesTitleStyle = css`
