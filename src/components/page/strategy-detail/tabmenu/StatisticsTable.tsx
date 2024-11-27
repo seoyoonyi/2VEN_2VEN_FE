@@ -4,7 +4,7 @@ import theme from '@/styles/theme';
 
 interface DataRowProps {
   label: string;
-  value: string;
+  value: number | string;
   colSpan?: number;
 }
 
@@ -12,13 +12,13 @@ interface statisticsProps {
   data: DataRowProps[];
 }
 
-const getColorByValue = (value: string) => {
-  if (value.startsWith('-')) {
+const getColorByValue = (value: string | number) => {
+  if (String(value).startsWith('-')) {
     return {
       backgroundColor: '#EFF6FF',
       color: theme.colors.main.blue,
     };
-  } else if (value.startsWith('+')) {
+  } else if (String(value).startsWith('+')) {
     return {
       color: theme.colors.main.red,
     };
