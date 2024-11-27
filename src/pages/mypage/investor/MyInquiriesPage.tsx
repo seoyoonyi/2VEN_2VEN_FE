@@ -1,157 +1,100 @@
+import { useState, useEffect } from 'react';
+
 import { css } from '@emotion/react';
+import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 
+import { fetchMyInquiryList } from '@/api/myInquiry';
 import Pagination from '@/components/common/Pagination';
 import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
+import { myInquirieListData, Status } from '@/types/myinquires';
 
-type Status = '대기' | '완료';
+const MyInquiriesPage = () => {
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
-interface myInquiriesData {
-  id: number;
-  inqurieTitle: string;
-  profileImg: string;
-  nickName: string;
-  inqurieStatus: Status;
-  date: string;
-}
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [page]);
 
-const myInquiries: myInquiriesData[] = [
-  {
-    id: 1,
-    inqurieTitle: '이거 믿을만한 전략인가요?',
-    profileImg: 'https://i.pinimg.com/736x/56/cd/db/56cddb00efcd9cec66ce5474092f3328.jpg',
-    nickName: '내가여기서투자짱',
-    inqurieStatus: '대기',
-    date: '2024.11.16',
-  },
-  {
-    id: 2,
-    inqurieTitle: '안녕하세요. 이 전략에 대해 궁금한 점이 있어 문의드립니다. 어쩌구저쩌구',
-    profileImg: 'https://i.pinimg.com/474x/f5/56/15/f55615edf4217032bea9ce9cb6242053.jpg',
-    nickName: '저희닉네임길이제한이얼마나있을까요?',
-    inqurieStatus: '대기',
-    date: '2024.11.16',
-  },
-  {
-    id: 3,
-    inqurieTitle: '이거 제안서가 이상한데 자세히 설명 가능할까요?',
-    profileImg: 'https://i.pinimg.com/474x/6f/6d/ff/6f6dffbfa8c99f4963f5c4b0d814ae22.jpg',
-    nickName: 'imnotningning',
-    inqurieStatus: '완료',
-    date: '2024.11.16',
-  },
-  {
-    id: 4,
-    inqurieTitle: '이거 믿을만한 전략인가요?',
-    profileImg: 'https://i.pinimg.com/736x/56/cd/db/56cddb00efcd9cec66ce5474092f3328.jpg',
-    nickName: '내가여기서투자짱',
-    inqurieStatus: '대기',
-    date: '2024.11.16',
-  },
-  {
-    id: 5,
-    inqurieTitle: '안녕하세요. 이 전략에 대해 궁금한 점이 있어 문의드립니다. 어쩌구저쩌구',
-    profileImg: 'https://i.pinimg.com/474x/f5/56/15/f55615edf4217032bea9ce9cb6242053.jpg',
-    nickName: '저희닉네임길이제한이얼마나있을까요?',
-    inqurieStatus: '대기',
-    date: '2024.11.16',
-  },
-  {
-    id: 6,
-    inqurieTitle: '이거 제안서가 이상한데 자세히 설명 가능할까요?',
-    profileImg: 'https://i.pinimg.com/474x/6f/6d/ff/6f6dffbfa8c99f4963f5c4b0d814ae22.jpg',
-    nickName: 'imnotningning',
-    inqurieStatus: '완료',
-    date: '2024.11.16',
-  },
-  {
-    id: 7,
-    inqurieTitle: '이거 믿을만한 전략인가요?',
-    profileImg: 'https://i.pinimg.com/736x/56/cd/db/56cddb00efcd9cec66ce5474092f3328.jpg',
-    nickName: '내가여기서투자짱',
-    inqurieStatus: '대기',
-    date: '2024.11.16',
-  },
-  {
-    id: 8,
-    inqurieTitle: '안녕하세요. 이 전략에 대해 궁금한 점이 있어 문의드립니다. 어쩌구저쩌구',
-    profileImg: 'https://i.pinimg.com/474x/f5/56/15/f55615edf4217032bea9ce9cb6242053.jpg',
-    nickName: '저희닉네임길이제한이얼마나있을까요?',
-    inqurieStatus: '대기',
-    date: '2024.11.16',
-  },
-  {
-    id: 9,
-    inqurieTitle: '이거 제안서가 이상한데 자세히 설명 가능할까요?',
-    profileImg: 'https://i.pinimg.com/474x/6f/6d/ff/6f6dffbfa8c99f4963f5c4b0d814ae22.jpg',
-    nickName: 'imnotningning',
-    inqurieStatus: '완료',
-    date: '2024.11.16',
-  },
-  {
-    id: 10,
-    inqurieTitle: '이거 제안서가 이상한데 자세히 설명 가능할까요?',
-    profileImg: 'https://i.pinimg.com/474x/6f/6d/ff/6f6dffbfa8c99f4963f5c4b0d814ae22.jpg',
-    nickName: 'imnotningning',
-    inqurieStatus: '완료',
-    date: '2024.11.16',
-  },
-];
+  const { data, isLoading, isError, isFetching } = useQuery<
+    {
+      content: myInquirieListData[];
+      page: number;
+      size: number;
+      totalElements: number;
+      totalPages: number;
+    },
+    Error
+  >({
+    queryKey: ['myInquiries', page, pageSize],
+    queryFn: () => fetchMyInquiryList(page - 1, pageSize),
+  });
 
-const MyInquiriesPage = () => (
-  <div css={myPageWrapperStyle}>
-    {/* <div css={titleWrapper}>
-      <h1>나의 문의</h1>
-      <span>
-        총 <strong>50</strong>개의 문의 내역이 있습니다.
-      </span>
-    </div> */}
+  if (isLoading) {
+    return <div>로딩 중...</div>;
+  }
 
-    <div css={myPageHeaderStyle}>
-      <div>
-        <h2>나의 문의</h2>
-        <p>
-          총 <span>50</span>개의 문의 내역이 있습니다
-        </p>
-      </div>
-    </div>
+  if (isError) {
+    return <div>문의 목록 데이터를 불러오는 데 실패했습니다.</div>;
+  }
 
-    <div css={tableWrapper}>
-      <div>
-        <div css={headerStyle}>
-          <div>제목</div>
-          <div>트레이더</div>
-          <div>답변상태</div>
-          <div>날짜</div>
+  const myInquiries = data?.content || [];
+  const totalPages = data?.totalPages || 1;
+  const totalElements = data?.totalElements || 0;
+
+  return (
+    <div css={myPageWrapperStyle}>
+      <div css={myPageHeaderStyle}>
+        <div>
+          <h2>나의 문의</h2>
+          <p>
+            총 <span>{totalElements}</span>개의 문의 내역이 있습니다
+          </p>
         </div>
-        {myInquiries.map((inquirie) => (
-          <Link
-            to={`${ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(inquirie.id.toString())}`}
-            key={inquirie.id}
-          >
-            <div css={rowStyle}>
-              <div css={inquiriesTitleStyle}>
-                <span>Q.</span>
-                <div>{inquirie.inqurieTitle}</div>
-              </div>
-              <div css={traderInfoStyle}>
-                <img src={inquirie.profileImg} alt={`${inquirie.nickName}s profile`} />
-                <span>{inquirie.nickName}</span>
-              </div>
-              <div css={statusStyle(inquirie.inqurieStatus)}>
-                {inquirie.inqurieStatus === '대기' && <span className='dot' />}
-                {inquirie.inqurieStatus}
-              </div>
-              <div>{inquirie.date}</div>
-            </div>
-          </Link>
-        ))}
       </div>
-      <Pagination totalPage={5} limit={10} page={1} setPage={() => {}} />
+
+      <div css={tableWrapper}>
+        {isFetching && <div>새로운 데이터를 불러오는 중...</div>}
+        <div>
+          <div css={headerStyle}>
+            <div>제목</div>
+            <div>트레이더</div>
+            <div>답변상태</div>
+            <div>날짜</div>
+          </div>
+          {myInquiries.map((inquiry) => (
+            <Link
+              to={`${ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(inquiry.id.toString())}`}
+              key={inquiry.id}
+            >
+              <div css={rowStyle}>
+                <div css={inquiriesTitleStyle}>
+                  <span>Q.</span>
+                  <div>{inquiry.title}</div>
+                </div>
+                <div css={traderInfoStyle}>
+                  <img
+                    src={inquiry.traderProfileUrl || '/default-profile.png'}
+                    alt={`${inquiry.traderName}의 프로필`}
+                  />
+                  <span>{inquiry.traderName}</span>
+                </div>
+                <div css={statusStyle(inquiry.status)}>
+                  {inquiry.status === 'PENDING' && <span className='dot' />}
+                  {inquiry.status === 'COMPLETED' ? '완료' : '대기'}
+                </div>
+                <div>{inquiry.createdAt.slice(0, 10).replace(/-/g, '.')}</div>
+              </div>
+            </Link>
+          ))}
+        </div>
+        <Pagination totalPage={totalPages} limit={data?.size || 10} page={page} setPage={setPage} />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const myPageWrapperStyle = css`
   width: 955px;
@@ -165,10 +108,12 @@ const myPageHeaderStyle = css`
 
   h2 {
     ${theme.textStyle.headings.h3}
+    margin-bottom: 8px;
   }
 
   p {
     ${theme.textStyle.body.body3}
+
     span {
       color: ${theme.colors.main.primary};
     }
@@ -247,14 +192,14 @@ const statusStyle = (status: Status) => css`
   justify-content: center;
   gap: 6px;
   font-size: 14px;
-  color: ${status === '완료' ? theme.colors.gray[400] : theme.colors.gray[900]};
+  color: ${status === 'COMPLETED' ? theme.colors.gray[400] : theme.colors.gray[900]};
 
   .dot {
     width: 8px;
     height: 8px;
     background-color: ${theme.colors.teal[400]};
     border-radius: 50%;
-    display: ${status === '대기' ? 'block' : 'none'};
+    display: ${status === 'PENDING' ? 'block' : 'none'};
   }
 `;
 
