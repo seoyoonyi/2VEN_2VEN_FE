@@ -219,3 +219,48 @@ export const requestSignupEmailVerification = async (
     throw error;
   }
 };
+
+export interface SignupVerificationResponse {
+  status: 'success' | 'error';
+  message: string;
+}
+// 회원가입 시, 비회원 이메일 인증번호 검증 API
+export const verifySignupCode = async ({
+  email,
+  verificationCode,
+}: {
+  email: string;
+  verificationCode: string;
+}): Promise<SignupVerificationResponse> => {
+  try {
+    const response = await apiClient.post<SignupVerificationResponse>(
+      API_ENDPOINTS.AUTH.EMAIL.CHECK_VERIFICATION_FOR_USERS,
+      { email, verificationCode },
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      const errorData = error.response?.data;
+
+      // 400 에러 처리 추가
+      if (error.response?.status === 400) {
+        throw new Error(errorData?.message || '이메일 인증에 실패하였습니다.');
+      }
+
+      // 인증번호 불일치
+      if (error.response?.status === 404) {
+        throw new Error('인증번호가 일치하지 않습니다.');
+      }
+      // 인증번호 만료
+      if (error.response?.status === 410) {
+        throw new Error('인증번호가 만료되었습니다. 다시 요청해주세요.');
+      }
+
+      throw new Error(errorData?.message || '인증번호 확인에 실패했습니다.');
+    }
+    throw error;
+  }
+};
