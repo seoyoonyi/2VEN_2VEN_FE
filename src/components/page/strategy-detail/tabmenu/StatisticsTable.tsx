@@ -12,7 +12,7 @@ interface statisticsProps {
   data: DataRowProps[];
 }
 
-const getColorByValue = (value: number) => {
+const getColorByValue = (value: string | number) => {
   if (String(value).startsWith('-')) {
     return {
       backgroundColor: '#EFF6FF',
@@ -31,7 +31,7 @@ const getColorByValue = (value: number) => {
 };
 
 const DataRow = ({ label, value, colSpan = 1 }: DataRowProps) => {
-  const { backgroundColor, color } = getColorByValue(Number(value));
+  const { backgroundColor, color } = getColorByValue(value);
   return (
     <tr css={rowStyle}>
       <td css={labelStyle} colSpan={colSpan}>

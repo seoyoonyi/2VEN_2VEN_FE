@@ -73,12 +73,12 @@ const StrategyDetailPage = () => {
     return <div>로딩중....</div>;
   }
 
-  const formatLoss = (value: number) => value.toString();
+  const formatLoss = (value: number) => value.toLocaleString();
   const formatRate = (value: number) => Math.round(value * 100) / 100;
 
   const formatValue = (key: string, value: string | number) => {
     if (typeof value === 'number') {
-      if (key.endsWith('Rate')) {
+      if (key.endsWith('Rate') || key.endsWith('Ratio')) {
         return Math.round(value * 100) / 100 + '%';
       } else {
         return formatLoss(value);
