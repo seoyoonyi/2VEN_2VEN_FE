@@ -17,6 +17,20 @@ const StrategyInfo = ({
 
   const formattedDate = data.investmentDate.slice(0, 10);
 
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/,/g, '');
+    const numericValue = rawValue.replace(/[^0-9]/g, '');
+
+    if (numericValue) {
+      const formattedValue = parseInt(numericValue, 10).toLocaleString();
+      onChange('investmentAmount', parseInt(numericValue, 10));
+      e.target.value = formattedValue;
+    } else {
+      onChange('investmentAmount', 0);
+      e.target.value = '';
+    }
+  };
+
   return (
     <div css={strategyInfoWrapper}>
       <div css={infoWrapper}>
@@ -29,10 +43,7 @@ const StrategyInfo = ({
           <Input
             id='investment-amount'
             value={data.investmentAmount.toLocaleString()}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const value = parseFloat(e.target.value.replace(/,/g, ''));
-              onChange('investmentAmount', isNaN(value) ? 0 : value);
-            }}
+            onInput={handleAmountChange}
             css={inputStyle}
           />
         </div>

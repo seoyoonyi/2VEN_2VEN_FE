@@ -15,6 +15,11 @@ const InquiresInput = ({
     return null;
   }
 
+  const handleInputChange = (field: keyof InquiryDetailData, value: string, maxLength: number) => {
+    const trimValue = value.slice(0, maxLength);
+    onChange(field, trimValue);
+  };
+
   return (
     <div css={inquiresInputWrapper}>
       <div css={flexStyle}>
@@ -22,9 +27,10 @@ const InquiresInput = ({
         <Input
           id='inquire-title'
           value={data.title}
-          onChange={(e) => onChange('title', e.target.value)}
+          onChange={(e) => handleInputChange('title', e.target.value, 80)}
           placeholder='문의 제목을 입력해주세요.'
           css={titleInputStyle}
+          maxLength={80}
         />
         <div css={lengthStyle}>
           <span>{data.title.length}</span>/80
@@ -35,9 +41,10 @@ const InquiresInput = ({
         <textarea
           id='inquire-content'
           value={data.content}
-          onChange={(e) => onChange('content', e.target.value)}
+          onChange={(e) => handleInputChange('content', e.target.value, 800)}
           placeholder='텍스트를 입력해주세요'
           css={textareaStyle}
+          maxLength={800}
         />
         <div css={lengthStyle}>
           <span>{data.content.length}</span>/800
