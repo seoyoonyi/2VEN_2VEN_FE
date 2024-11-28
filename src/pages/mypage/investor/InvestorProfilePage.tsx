@@ -1,31 +1,32 @@
 import { css } from '@emotion/react';
+import { MdOutlineNoAccounts } from 'react-icons/md';
 
-import theme from '@/styles/theme';
+import Button from '@/components/common/Button';
+import PasswordChange from '@/components/page/mypage/PasswordChange';
+import ProfileManager from '@/components/page/mypage/ProfileManager';
 
 const InvestorProfilePage = () => (
   <div css={myPageWrapperStyle}>
-    <div css={myPageHeaderStyle}>
-      <div>
-        <h2>프로필 관리</h2>
-      </div>
-    </div>
-    <div></div>
+    <ProfileManager />
+    <PasswordChange />
+    <Button variant='ghostGray' customStyle={logoutStyle} size='sm'>
+      <MdOutlineNoAccounts size={16} />
+      <span>회원 탈퇴</span>
+    </Button>
   </div>
 );
 
 const myPageWrapperStyle = css`
   width: 955px;
-  padding: 48px 40px 80px 40px;
-  background-color: ${theme.colors.main.white};
   border-radius: 8px;
 `;
 
-const myPageHeaderStyle = css`
-  margin-bottom: 40px;
-
-  h2 {
-    ${theme.textStyle.headings.h3}
-  }
+const logoutStyle = css`
+  width: auto;
+  justify-content: flex-start;
+  margin-top: 16px;
+  padding: 8px 20px;
+  gap: 4px;
 `;
 
 export default InvestorProfilePage;

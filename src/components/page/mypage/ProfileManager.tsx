@@ -32,9 +32,9 @@ const mockPersonalDetails: PersonalDetailsResponse = {
   data: {
     fileId: '1234',
     email: 'test@test.com',
-    nickname: '투자왕',
+    nickname: '나는야투자자',
     phoneNumber: '01012345678',
-    introduction: '저는 차세대 투자왕입니다!',
+    introduction: '투자 잘해서 부자가 되는 그날까지 아자아자 화이팅이닷!!',
     marketingOptional: false,
   },
 };
