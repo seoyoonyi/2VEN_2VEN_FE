@@ -34,5 +34,6 @@ export const API_ENDPOINTS = {
   INQUIRY: '/api/consultations', // 나의 문의
   FILES: {
     PROFILE: (fileId: string) => `/api/files/profile/${fileId}`, // 프로필 이미지 다운로드
+    PROPOSAL: '/api/files/proposal', // 제안서 파일 업로드
   },
 };

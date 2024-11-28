@@ -13,10 +13,44 @@ export const apiClient = axios.create({
   withCredentials: true, // 세션 쿠키를 주고받기 위해 필수
 });
 
+// FormData에 들어갈 수 있는 값들의 타입 정의
+type FormDataValue = string | File | File[] | Blob | Date | number | boolean;
+
+// FormData 요청 데이터의 타입 정의
+interface FormDataRequest {
+  [key: string]: FormDataValue;
+}
+
+// 폼데이터 요청을 위한 헬퍼 함수
+export const createFormDataRequest = (data: FormDataRequest): FormData => {
+  const formData = new FormData();
+
+  Object.entries(data).forEach(([key, value]) => {
+    if (value instanceof File) {
+      formData.append(key, value);
+    } else if (Array.isArray(value) && value[0] instanceof File) {
+      value.forEach((file) => formData.append(key, file));
+    } else if (value instanceof Date) {
+      formData.append(key, value.toISOString());
+    } else if (value instanceof Blob) {
+      formData.append(key, value);
+    } else if (value !== null && value !== undefined) {
+      formData.append(key, String(value));
+    }
+  });
+
+  return formData;
+};
+
 apiClient.interceptors.request.use(
   (config) => {
     // store에서 jwt 토큰 가져오기
     const { token } = useAuthStore.getState();
+
+    // FormData인 경우 Content-Type 헤더 자동 설정
+    if (config.data instanceof FormData) {
+      config.headers['Content-Type'] = 'multipart/form-data';
+    }
 
     // 요청 URL과 메서드 로깅(개발환경에서만!)
     if (import.meta.env.MODE === 'development') {

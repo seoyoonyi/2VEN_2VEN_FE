@@ -1,7 +1,11 @@
-import { apiClient } from './apiClient';
+import { apiClient, createFormDataRequest } from './apiClient';
 import { API_ENDPOINTS } from './apiEndpoints';
 
-import { InputDailyAnalysisProps } from '@/types/strategyDetail';
+import {
+  FileUploadOptions,
+  FileUploadResponse,
+  InputDailyAnalysisProps,
+} from '@/types/strategyDetail';
 
 //전략 상세 기본 정보 조회
 export const fetchDefaultStrategyDetail = async (id: number) => {
@@ -132,5 +136,31 @@ export const fetchStatistics = async (strategyId: number) => {
     return res.data;
   } catch (error) {
     console.error('fetch to failed Monthly Analysis', error);
+  }
+};
+
+// 제안서 파일 업로드 전용 함수
+export const uploadProposalFile = async (
+  options: FileUploadOptions
+): Promise<FileUploadResponse> => {
+  const formData = createFormDataRequest({
+    file: options.file,
+  });
+
+  try {
+    const response = await apiClient.post<FileUploadResponse>(
+      API_ENDPOINTS.FILES.PROPOSAL,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Auth: options.authType,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('제안서 업로드 실패:', error);
+    throw error;
   }
 };
