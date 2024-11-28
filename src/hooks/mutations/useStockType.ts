@@ -7,12 +7,14 @@ import {
 } from '@/api/stockType';
 import { fetchDeleteIcon } from '@/api/uploadFile';
 import { InvestmentAssetProps } from '@/types/admin';
+import { UserRole } from '@/types/route';
 
 export const usePostInvestmentAssets = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<{ msg: string }, Error, InvestmentAssetProps>({
-    mutationFn: (data: InvestmentAssetProps) => fetchPostInvestmentType(data),
+  return useMutation({
+    mutationFn: ({ data, role }: { data: InvestmentAssetProps; role: UserRole }) =>
+      fetchPostInvestmentType({ ...data, role }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['investmentTypes'] });
     },
@@ -22,8 +24,9 @@ export const usePostInvestmentAssets = () => {
 export const usePutInvestmentAssets = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<{ msg: string }, Error, InvestmentAssetProps>({
-    mutationFn: (data: InvestmentAssetProps) => fetchPutInvestmentType(data),
+  return useMutation({
+    mutationFn: ({ data, role }: { data: InvestmentAssetProps; role: UserRole }) =>
+      fetchPutInvestmentType({ ...data, role }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['investmentTypes'] });
     },
@@ -40,7 +43,7 @@ export const useDeleteInvestmentAssets = () => {
       fileUrl,
     }: {
       investmentTypeId: number;
-      role: string | null;
+      role: UserRole;
       fileUrl: string;
     }) => {
       await fetchDeleteInvestmentType(investmentTypeId, role, fileUrl);

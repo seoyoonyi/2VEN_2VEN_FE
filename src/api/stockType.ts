@@ -3,9 +3,10 @@ import { API_ENDPOINTS } from './apiEndpoints';
 import { fetchDeleteIcon } from './uploadFile';
 
 import { InvestmentAssetProps } from '@/types/admin';
+import { UserRole } from '@/types/route';
 
 //투자자산유형 목록 조회
-export const fetchInvestmentTypes = async (page: number, pageSize: number) => {
+export const fetchInvestmentTypes = async (page: number, pageSize: number, role: UserRole) => {
   try {
     const res = await apiClient.get(API_ENDPOINTS.ADMIN.STOCK_TYPES, {
       params: {
@@ -13,8 +14,7 @@ export const fetchInvestmentTypes = async (page: number, pageSize: number) => {
         pageSize,
       },
       headers: {
-        'Content-Type': 'application/json',
-        Auth: 'admin',
+        Auth: role,
       },
     });
     return res.data;
@@ -24,12 +24,11 @@ export const fetchInvestmentTypes = async (page: number, pageSize: number) => {
 };
 
 //투자자산유형 상세 조회
-export const fetchInvestmentTypeDetail = async (id: number) => {
+export const fetchInvestmentTypeDetail = async (id: number, role: UserRole) => {
   try {
     const res = await apiClient.get(`${API_ENDPOINTS.ADMIN.STOCK_TYPES}/${id}`, {
       headers: {
-        'Content-Type': 'application/json',
-        Auth: 'admin',
+        Auth: role,
       },
     });
     return res.data;
@@ -39,19 +38,14 @@ export const fetchInvestmentTypeDetail = async (id: number) => {
 };
 
 //투자자산유형 삭제
-export const fetchDeleteInvestmentType = async (
-  id: number,
-  role: string | null,
-  fileUrl: string
-) => {
+export const fetchDeleteInvestmentType = async (id: number, role: UserRole, fileUrl: string) => {
   try {
     if (fileUrl) {
       await fetchDeleteIcon(role, fileUrl);
     }
     const req = await apiClient.delete(`${API_ENDPOINTS.ADMIN.STOCK_TYPES}/${id}`, {
       headers: {
-        'Content-Type': 'application/json',
-        Auth: 'admin',
+        Auth: role,
       },
     });
     return req.data;
@@ -65,7 +59,8 @@ export const fetchPostInvestmentType = async ({
   investmentAssetClassesName,
   investmentAssetClassesIcon,
   isActive,
-}: InvestmentAssetProps) => {
+  role,
+}: InvestmentAssetProps & { role: UserRole }) => {
   const body = {
     investmentAssetClassesName,
     investmentAssetClassesIcon,
@@ -74,8 +69,7 @@ export const fetchPostInvestmentType = async ({
   try {
     const req = await apiClient.post(`${API_ENDPOINTS.ADMIN.STOCK_TYPES}`, body, {
       headers: {
-        'Content-Type': 'application/json',
-        Auth: 'admin',
+        Auth: role,
       },
     });
     return req.data;
@@ -91,12 +85,14 @@ export const fetchPutInvestmentType = async ({
   investmentAssetClassesName,
   investmentAssetClassesIcon,
   isActive,
-}: InvestmentAssetProps) => {
+  role,
+}: InvestmentAssetProps & { role: UserRole }) => {
   const body = {
     order,
     investmentAssetClassesName,
     investmentAssetClassesIcon,
     isActive,
+    role,
   };
   try {
     const req = await apiClient.put(
@@ -104,8 +100,7 @@ export const fetchPutInvestmentType = async ({
       body,
       {
         headers: {
-          'Content-Type': 'application/json',
-          Auth: 'admin',
+          Auth: role,
         },
       }
     );

@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
-import { fetchInvestmentTypes } from '@/api/stockType';
 import Button from '@/components/common/Button';
 import ContentModal from '@/components/common/ContentModal';
 import Modal from '@/components/common/Modal';
@@ -15,12 +13,17 @@ import {
   usePostInvestmentAssets,
   usePutInvestmentAssets,
 } from '@/hooks/mutations/useStockType';
-import { useFetchDetailInvestmentType } from '@/hooks/queries/useFetchStockType';
+import {
+  useFetchDetailInvestmentType,
+  useFetchInvestmentList,
+} from '@/hooks/queries/useFetchStockType';
+import usePagination from '@/hooks/usePagination';
 import { useAuthStore } from '@/stores/authStore';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 import { InvestmentAssetProps } from '@/types/admin';
+import { UserRole } from '@/types/route';
 
 const stockAttributes = [
   {
@@ -36,59 +39,33 @@ const stockAttributes = [
 
 const StockTypeListPage = () => {
   const { token, user } = useAuthStore();
-  const [paginationData, setPaginationData] = useState({
-    currentPage: 1,
-    totalPage: 0,
-    totalElements: 0,
-    pageSize: 10,
-  });
+  const { pagination, setPage } = usePagination(1, 10);
   const [selectedStocks, setSelectedStocks] = useState<number[]>([]);
   const [stockId, setStockId] = useState<number | null>(null);
+  const { investmentList, currentPage, totalPages, pageSize, isLoading } = useFetchInvestmentList(
+    pagination.currentPage - 1,
+    pagination.pageSize,
+    user?.role as UserRole
+  );
   const { mutate: addInvestmentAssets } = usePostInvestmentAssets();
   const { mutate: deleteInvestmentAssets } = useDeleteInvestmentAssets();
   const { mutate: updateInvestmentAssets } = usePutInvestmentAssets();
   const { openModal } = useModalStore();
   const { openContentModal } = useContentModalStore();
 
-  const { data } = useQuery<InvestmentAssetProps[], Error>({
-    queryKey: ['investmentTypes', paginationData.currentPage, paginationData.pageSize],
-    queryFn: async () => {
-      try {
-        const res = await fetchInvestmentTypes(
-          paginationData.currentPage - 1,
-          paginationData.pageSize
-        );
-        setPaginationData({
-          currentPage: paginationData.currentPage,
-          totalPage: res.totalPages,
-          totalElements: res.totalElements,
-          pageSize: res.pageSize,
-        });
-        return res.data;
-      } catch (error) {
-        console.error('failed to fetch investmentTypes', error);
-        throw error;
-      }
-    },
-    placeholderData: keepPreviousData,
-  });
-  const { investmentDetail, iconName } = useFetchDetailInvestmentType(stockId as number);
+  const { investmentDetail, iconName } = useFetchDetailInvestmentType(
+    stockId as number,
+    user?.role as UserRole
+  );
 
-  const formattedData = data?.map((item) => ({
-    id: item.investmentAssetClassesId || data.length + 1,
+  const formattedData = investmentList?.map((item: InvestmentAssetProps) => ({
+    id: item.investmentAssetClassesId || investmentList.length + 1,
     title: item.investmentAssetClassesName,
     icon: item.investmentAssetClassesIcon,
   }));
 
   const handleSelectChange = (selectedIdx: number[]) => {
     setSelectedStocks(selectedIdx);
-  };
-
-  const handlePageChange = (page: number) => {
-    setPaginationData((prev) => ({
-      ...prev,
-      currentPage: page,
-    }));
   };
 
   const handleDelete = () => {
@@ -100,7 +77,9 @@ const StockTypeListPage = () => {
         desc: `선택하신 ${selectedStocks.length}개의 유형을 삭제하시겠습니까?`,
         onAction: () => {
           selectedStocks.forEach((id) => {
-            const stockItem = formattedData?.find((item) => item.id === id);
+            const stockItem = formattedData?.find(
+              (item: InvestmentAssetProps) => item.investmentAssetClassesId === id
+            );
             if (stockItem) {
               deleteInvestmentAssets({
                 investmentTypeId: stockItem.id,
@@ -159,14 +138,17 @@ const StockTypeListPage = () => {
           alert('상품유형명이 입력되지않았습니다.');
           return;
         }
-        if (isCheckDupicateName(newName, 1, data)) {
+        if (isCheckDupicateName(newName, 1, investmentList)) {
           alert('이미 존재하는 상품유형입니다.');
           return;
         }
         addInvestmentAssets({
-          investmentAssetClassesName: newName,
-          investmentAssetClassesIcon: selectedIcon,
-          isActive: 'Y',
+          data: {
+            investmentAssetClassesName: newName,
+            investmentAssetClassesIcon: selectedIcon,
+            isActive: 'Y',
+          },
+          role: user.role,
         });
       },
     });
@@ -176,6 +158,10 @@ const StockTypeListPage = () => {
     if (!id) return;
     setStockId(id);
   };
+
+  if (isLoading) {
+    <div>로딩중</div>;
+  }
 
   useEffect(() => {
     if (!user) return;
@@ -205,10 +191,13 @@ const StockTypeListPage = () => {
             return;
           }
           updateInvestmentAssets({
-            investmentAssetClassesId: investmentDetail.investmentAssetClassesId,
-            investmentAssetClassesName: updatedName,
-            investmentAssetClassesIcon: updatedIcon,
-            isActive: 'Y',
+            data: {
+              investmentAssetClassesId: investmentDetail.investmentAssetClassesId,
+              investmentAssetClassesName: updatedName,
+              investmentAssetClassesIcon: updatedIcon,
+              isActive: 'Y',
+            },
+            role: user.role,
           });
         },
       });
@@ -237,10 +226,10 @@ const StockTypeListPage = () => {
           onEdit={handleEdit}
         />
         <Pagination
-          totalPage={paginationData.totalPage}
-          limit={paginationData.pageSize}
-          page={paginationData.currentPage}
-          setPage={handlePageChange}
+          totalPage={totalPages}
+          limit={pageSize}
+          page={currentPage + 1}
+          setPage={setPage}
         />
       </div>
       <Modal />
