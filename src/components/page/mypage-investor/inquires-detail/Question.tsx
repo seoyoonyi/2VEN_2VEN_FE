@@ -1,14 +1,36 @@
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { deleteMyInquiry } from '@/api/myInquiry';
+import Modal from '@/components/common/Modal';
 import { ROUTES } from '@/constants/routes';
+import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 import { InquiryDetailData, Status } from '@/types/myinquires';
 
 const Question = ({ data }: { data: InquiryDetailData }) => {
   const { inquiryId } = useParams<{ inquiryId: string }>();
+  const { openModal } = useModalStore();
 
   const navigate = useNavigate();
+
+  const handleDelete = () => {
+    openModal({
+      type: 'warning',
+      title: '문의 삭제',
+      desc: `작성한 문의를 삭제하시겠습니까? \n 삭제 후 복구할 수 없습니다.`,
+      onAction: async () => {
+        if (!inquiryId) return;
+
+        try {
+          await deleteMyInquiry(Number(inquiryId));
+          navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST);
+        } catch (error) {
+          console.error('Failed to delete inquiry:', error);
+        }
+      },
+    });
+  };
 
   return (
     <div css={questionWrapper}>
@@ -33,10 +55,13 @@ const Question = ({ data }: { data: InquiryDetailData }) => {
                 수정
               </button>
               <div></div>
-              <button type='button'>삭제</button>
+              <button type='button' onClick={handleDelete}>
+                삭제
+              </button>
             </div>
           )}
         </div>
+        <Modal />
       </header>
 
       <section css={strategyInfoWrapper}>
