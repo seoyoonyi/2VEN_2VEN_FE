@@ -15,12 +15,10 @@ export const useMyInquiry = () => {
       return response;
     },
     onSuccess: (data) => {
-      console.log('문의 수정 성공:', data);
-
       const inquiryId = data.id;
       if (inquiryId) {
         queryClient.invalidateQueries({ queryKey: ['myInquiry'] });
-        navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(inquiryId));
+        navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(String(inquiryId)));
         window.scrollTo(0, 0);
       } else {
         console.error('문의 ID를 가져오지 못했습니다.');
