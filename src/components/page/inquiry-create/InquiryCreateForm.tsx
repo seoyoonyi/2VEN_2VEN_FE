@@ -8,10 +8,12 @@ import InquiryContent from '@/components/page/inquiry-create/inquiry-form-conten
 import InquiryStrategyInfo from '@/components/page/inquiry-create/inquiry-form-content/InquiryStrategyInfo';
 import InquiryTitle from '@/components/page/inquiry-create/inquiry-form-content/InquiryTitle';
 import { ROUTES } from '@/constants/routes';
+// import { useSubmitInquiryCreate } from '@/hooks/mutations/useSubmitInquiryCreate';
+// import { InquiryCreateData } from '@/types/inquiryCreate';
 
 const generateInquiry = {
   strategyId: '1',
-  strategyName: '사람들이 살 때 많이 따라사는 전략',
+  strategyName: 'dkanro wjsfir',
 };
 
 const InquiryCreateForm = () => {
