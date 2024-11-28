@@ -22,6 +22,21 @@ export const fetchInvestmentTypes = async (page: number, pageSize: number) => {
   }
 };
 
+//투자자산유형 상세 조회
+export const fetchInvestmentTypeDetail = async (id: number) => {
+  try {
+    const res = await apiClient.get(`${API_ENDPOINTS.ADMIN.STOCK_TYPES}/${id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Auth: 'admin',
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error('failed to fetch InvestmentTypes', error);
+  }
+};
+
 //투자자산유형 삭제
 export const fetchDeleteInvestmentType = async (id: number) => {
   try {

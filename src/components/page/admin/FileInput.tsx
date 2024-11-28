@@ -12,7 +12,6 @@ interface FileInputProps {
   role: UserRole;
   token: string | null;
   title: string;
-  file: File | null;
   fname: string;
   icon: string;
   iconName: string;

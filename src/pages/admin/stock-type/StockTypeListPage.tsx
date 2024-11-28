@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
@@ -15,6 +15,7 @@ import {
   usePostInvestmentAssets,
   usePutInvestmentAssets,
 } from '@/hooks/mutations/useStockType';
+import { useFetchDetailInvestmentType } from '@/hooks/queries/useFetchStockType';
 import { useAuthStore } from '@/stores/authStore';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
@@ -42,7 +43,7 @@ const StockTypeListPage = () => {
     pageSize: 10,
   });
   const [selectedStocks, setSelectedStocks] = useState<number[]>([]);
-  const [file, setFile] = useState<File | null>(null);
+  const [stockId, setStockId] = useState<number | null>(null);
   const { mutate: addInvestmentAssets } = usePostInvestmentAssets();
   const { mutate: deleteInvestmentAssets } = useDeleteInvestmentAssets();
   const { mutate: updateInvestmentAssets } = usePutInvestmentAssets();
@@ -71,6 +72,7 @@ const StockTypeListPage = () => {
     },
     placeholderData: keepPreviousData,
   });
+  const { investmentDetail, iconName } = useFetchDetailInvestmentType(stockId as number);
 
   const formattedData = data?.map((item) => ({
     id: item.investmentAssetClassesId || data.length + 1,
@@ -133,9 +135,9 @@ const StockTypeListPage = () => {
           role={user.role}
           token={token}
           title='상품유형'
-          file={null}
           fname={''}
           icon={''}
+          iconName={''}
           onNameChange={(name) => {
             newName = name;
           }}
@@ -149,10 +151,6 @@ const StockTypeListPage = () => {
           alert('상품유형명이 입력되지않았습니다.');
           return;
         }
-        if (!file) {
-          alert('파일을 선택하세요');
-          return;
-        }
         if (isCheckDupicateName(newName, 1, data)) {
           alert('이미 존재하는 상품유형입니다.');
           return;
@@ -162,17 +160,20 @@ const StockTypeListPage = () => {
           investmentAssetClassesIcon: selectedIcon,
           isActive: 'Y',
         });
-        setFile(null);
       },
     });
   };
 
   const handleEdit = (id: number) => {
+    if (!id) return;
+    setStockId(id);
+  };
+
+  useEffect(() => {
     if (!user) return;
-    const selectedType = data?.find((item) => item.investmentAssetClassesId === id);
-    if (selectedType) {
-      let updatedName = selectedType.investmentAssetClassesName;
-      let updatedIcon = selectedType.investmentAssetClassesIcon;
+    if (investmentDetail) {
+      let updatedName = investmentDetail.investmentAssetClassesName;
+      let updatedIcon = investmentDetail.investmentAssetClassesIcon;
       openContentModal({
         title: '상품유형 수정',
         content: (
@@ -181,9 +182,9 @@ const StockTypeListPage = () => {
             role={user.role}
             token={token}
             title='상품유형'
-            file={file}
-            fname={selectedType.investmentAssetClassesName}
-            icon={selectedType.investmentAssetClassesIcon}
+            fname={investmentDetail.investmentAssetClassesName}
+            icon={investmentDetail.investmentAssetClassesIcon}
+            iconName={iconName}
             onNameChange={(name) => (updatedName = name)}
             onFileIconUrl={(newIcon) => {
               updatedIcon = newIcon;
@@ -196,16 +197,15 @@ const StockTypeListPage = () => {
             return;
           }
           updateInvestmentAssets({
-            investmentAssetClassesId: selectedType.investmentAssetClassesId,
+            investmentAssetClassesId: investmentDetail.investmentAssetClassesId,
             investmentAssetClassesName: updatedName,
             investmentAssetClassesIcon: updatedIcon,
             isActive: 'Y',
           });
-          setFile(null);
         },
       });
     }
-  };
+  }, [investmentDetail]);
 
   return (
     <>
