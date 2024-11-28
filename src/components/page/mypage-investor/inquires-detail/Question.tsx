@@ -1,62 +1,93 @@
 import { css } from '@emotion/react';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { deleteMyInquiry } from '@/api/myInquiry';
+import Modal from '@/components/common/Modal';
+import { ROUTES } from '@/constants/routes';
+import useModalStore from '@/stores/modalStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
-import { QuestionProps } from '@/types/myinquires';
+import { InquiryDetailData, Status } from '@/types/myinquires';
 
-const Question = ({
-  title,
-  investorName,
-  investorProfileUrl,
-  createdAt,
-  content,
-  strategyName,
-  investmentAmount,
-  investmentDate,
-  status,
-}: QuestionProps) => (
-  <div css={questionWrapper}>
-    <header css={questionHeaderWrapper}>
-      <span css={statusStyle(status)}>
-        {status === 'PENDING' && <span className='dot' />}
-        {status === 'PENDING' ? '대기' : '완료'}
-      </span>
-      <h1 css={titleStyle}>{title}</h1>
-      <div css={infoWrapper}>
-        <div css={infoStyle}>
-          <img src={investorProfileUrl} alt={`${investorName}'s profile`} />
-          <h2>{investorName}</h2>
-          <span>{createdAt.slice(0, 10).replace(/-/g, '.')}</span>
-        </div>
-        {status === 'PENDING' && (
-          <div css={editWrapper}>
-            <button type='button'>수정</button>
-            <div></div>
-            <button type='button'>삭제</button>
+const Question = ({ data }: { data: InquiryDetailData }) => {
+  const { inquiryId } = useParams<{ inquiryId: string }>();
+  const { openModal } = useModalStore();
+  const { showToast } = useToastStore();
+
+  const navigate = useNavigate();
+
+  const handleDelete = () => {
+    openModal({
+      type: 'warning',
+      title: '문의 삭제',
+      desc: `작성한 문의를 삭제하시겠습니까? \n 삭제 후 복구할 수 없습니다.`,
+      onAction: async () => {
+        if (!inquiryId) return;
+
+        try {
+          await deleteMyInquiry(Number(inquiryId));
+          navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST);
+          showToast('문의 삭제가 완료되었습니다.', 'basic');
+        } catch (error) {
+          console.error('Failed to delete inquiry:', error);
+        }
+      },
+    });
+  };
+
+  return (
+    <div css={questionWrapper}>
+      <header css={questionHeaderWrapper}>
+        <span css={statusStyle(data.status)}>
+          {data.status === 'PENDING' && <span className='dot' />}
+          {data.status === 'PENDING' ? '대기' : '완료'}
+        </span>
+        <h1 css={titleStyle}>{data.title}</h1>
+        <div css={infoWrapper}>
+          <div css={infoStyle}>
+            <img src={data.investorProfileUrl} alt={`${data.investorName}'s profile`} />
+            <h2>{data.investorName}</h2>
+            <span>{data.createdAt.slice(0, 10).replace(/-/g, '.')}</span>
           </div>
-        )}
-      </div>
-    </header>
-
-    <section css={strategyInfoWrapper}>
-      <div css={strategyInfoStyle}>
-        <h3>관심전략명</h3>
-        <div>{strategyName}</div>
-      </div>
-      <div>
-        <div css={strategyInfoStyle}>
-          <h3>투자개시금액</h3>
-          <span>{investmentAmount.toLocaleString()}</span>
+          {data.status === 'PENDING' && (
+            <div css={editWrapper}>
+              <button
+                type='button'
+                onClick={() => navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.EDIT(inquiryId || ''))}
+              >
+                수정
+              </button>
+              <div></div>
+              <button type='button' onClick={handleDelete}>
+                삭제
+              </button>
+            </div>
+          )}
         </div>
-        <div css={strategyInfoStyle}>
-          <h3>투자개시시점</h3>
-          <span>{investmentDate.slice(0, 10).replace(/-/g, '.')}</span>
-        </div>
-      </div>
-    </section>
+        <Modal />
+      </header>
 
-    <section css={questionStyle}>{content}</section>
-  </div>
-);
+      <section css={strategyInfoWrapper}>
+        <div css={strategyInfoStyle}>
+          <h3>관심전략명</h3>
+          <div>{data.strategyName}</div>
+        </div>
+        <div>
+          <div css={strategyInfoStyle}>
+            <h3>투자개시금액</h3>
+            <span>{data.investmentAmount.toLocaleString()}</span>
+          </div>
+          <div css={strategyInfoStyle}>
+            <h3>투자개시시점</h3>
+            <span>{data.investmentDate.slice(0, 10).replace(/-/g, '.')}</span>
+          </div>
+        </div>
+      </section>
+
+      <section css={questionStyle}>{data.content}</section>
+    </div>
+  );
+};
 
 const questionWrapper = css`
   display: flex;
@@ -125,7 +156,7 @@ const editWrapper = css`
   }
 `;
 
-const statusStyle = (status: string) => css`
+const statusStyle = (status: Status) => css`
   display: flex;
   align-items: center;
   gap: 6px;
@@ -159,7 +190,7 @@ const strategyInfoWrapper = css`
   border-radius: 8px;
   background: ${theme.colors.gray[50]};
 
-  div:nth-child(2) {
+  div:nth-of-type(2) {
     display: flex;
     gap: 8px;
   }
