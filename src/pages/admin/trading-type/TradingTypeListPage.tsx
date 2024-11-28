@@ -92,13 +92,23 @@ const TradingTypeListPage = () => {
   };
 
   const handleDelete = () => {
+    if (!user) return;
     if (selectedItems.length > 0) {
       openModal({
         type: 'warning',
         title: '매매유형 삭제',
         desc: `선택하신 ${selectedItems.length}개의 유형을 삭제하시겠습니까?`,
         onAction: () => {
-          selectedItems.forEach((id) => deleteTradingType(id));
+          selectedItems.forEach((id) => {
+            const tradingItem = formattedData?.find((item) => item.id === id);
+            if (tradingItem) {
+              deleteTradingType({
+                tradingTypeId: tradingItem.id,
+                role: user?.role,
+                fileUrl: tradingItem.icon,
+              });
+            }
+          });
           setSelectedItems([]);
         },
       });
@@ -156,7 +166,7 @@ const TradingTypeListPage = () => {
 
   useEffect(() => {
     if (!user) return;
-    if (tradingDetail) {
+    if (tradingDetail && tradingId !== null) {
       let updatedName = tradingDetail.tradinggTypeName;
       let updatedIcon = tradingDetail.tradingTypeIcon;
       openContentModal({
@@ -189,7 +199,7 @@ const TradingTypeListPage = () => {
         },
       });
     }
-  }, [tradingDetail]);
+  }, [tradingId, tradingDetail]);
 
   return (
     <>

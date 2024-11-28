@@ -48,3 +48,19 @@ export const fetchPutIconFile = async (
     console.error('failed to upload icon image');
   }
 };
+
+export const fetchDeleteIcon = async (role: string | null, fileUrl: string) => {
+  try {
+    const res = await apiClient.delete(`${API_ENDPOINTS.FILES.ICON}`, {
+      params: {
+        fileUrl,
+      },
+      headers: {
+        Auth: role,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error('failed to delete icon image');
+  }
+};

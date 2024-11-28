@@ -1,5 +1,6 @@
 import { apiClient } from './apiClient';
 import { API_ENDPOINTS } from './apiEndpoints';
+import { fetchDeleteIcon } from './uploadFile';
 
 import { TradingTypeProps } from '@/types/admin';
 
@@ -37,16 +38,22 @@ export const fetchTradingTypeDetail = async (id: number) => {
 };
 
 //매매유형 삭제
-export const fetchDeleteTradingType = async (
-  id: number
-): Promise<{ msg: string; timestamp: string }> => {
-  const req = await apiClient.delete(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${id}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Auth: 'admin',
-    },
-  });
-  return req.data;
+export const fetchDeleteTradingType = async (id: number, role: string | null, fileUrl: string) => {
+  try {
+    if (fileUrl) {
+      await fetchDeleteIcon(role, fileUrl);
+    }
+    const req = await apiClient.delete(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Auth: role,
+      },
+    });
+    return req.data;
+  } catch (error) {
+    console.error('Failed to delete trading type or related icon:', error);
+    throw error;
+  }
 };
 
 //매매유형 등록
