@@ -10,7 +10,6 @@ import GlobalNav from '@/components/navigation/GlobalNav';
 import SearchInput from '@/components/page/search/SearchInput';
 import AdminSessionTimer from '@/components/page/signup/AdminSessionTimer';
 import { ROUTES } from '@/constants/routes';
-import { useFetchProfileImage } from '@/hooks/queries/useFetchPofileImage';
 import { useAdminAuthStatus } from '@/hooks/useAdminAuthStatus';
 import { useAdminAuthStore } from '@/stores/adminAuthStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -21,32 +20,12 @@ const Header = () => {
   const { user } = useAuthStore(); // 사용자 정보 가져오기
   const { isAdmin, isAuthorized, hasExpired } = useAdminAuthStatus(); // 관리자 권한 상태 가져오기
   console.log('Current user:', user); // user 객체 전체 확인
-  console.log('Profile image ID:', user?.profileImage); // 프로필 이미지 ID 확인
+  console.log('Profile image ID:', user?.profilePath); // 프로필 이미지 ID 확인
   console.log('Member ID:', user?.memberId); // 회원 ID 확인
-  const {
-    data: base64Image,
-    isError,
-    error,
-    isSuccess,
-  } = useFetchProfileImage(user?.profileImage || null, user?.memberId || null);
+
   const { adminAuth } = useAdminAuthStore();
   const navigate = useNavigate();
-  // const location = useLocation();
 
-  useEffect(() => {
-    if (isError) {
-      console.error('Error fetching profile image:', error);
-    }
-  }, [isError, error]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      console.log('Profile image fetched successfully:', base64Image);
-    }
-  }, [isSuccess, base64Image]);
-  // const isAdminRoute = location.pathname.startsWith('/admin'); // /admin으로 시작하는 경로인지 확인
-  // const isAdmin = user?.role === 'MEMBER_ROLE_ADMIN'; // 사용자의 role이 ROLE_ADMIN인지 확인
-  // const isAuthorizedAdmin = isAdmin && adminAuth?.is_authorized; // 사용자가 ROLE_ADMIN이고 adminAuth의 is_authorized가 true인지 확인
   console.log('Auth user:', useAuthStore.getState().user);
   console.log('Admin auth:', useAdminAuthStore.getState().adminAuth);
   useEffect(() => {
@@ -115,10 +94,7 @@ const Header = () => {
                 : ROUTES.MYPAGE.TRADER.STRATEGIES.LIST
             }
           >
-            <Avatar
-              src={base64Image ? `data:image/png;base64,${base64Image}` : defaultImage}
-              alt={user.nickname}
-            />
+            <Avatar src={defaultImage} alt={user.nickname} />
           </Link>
         </div>
       </>
