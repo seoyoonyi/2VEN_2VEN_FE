@@ -72,3 +72,19 @@ export interface StatisticsProps {
   profitFactor: number;
   roa: number;
 }
+
+// API 응답 타입 정의
+export interface FileUploadResponse {
+  fileId: string;
+  fileUrl: string;
+  displayName: string;
+  message: string;
+}
+// Auth 타입 정의
+type AuthType = 'Admin' | 'Trader';
+
+// 파일 업로드 옵션 타입 정의
+export interface FileUploadOptions {
+  file: File;
+  authType: AuthType;
+}
