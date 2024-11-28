@@ -14,7 +14,7 @@ export type IconPosition = 'left' | 'right';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   inputSize?: InputSize;
-  width?: string;
+  width?: string | number;
   status?: InputStatus;
   leftIcon?: 'mail' | 'key' | 'search';
   rightIcon?: 'eye' | 'clear';
@@ -29,7 +29,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const {
     inputSize = 'md',
-    width = '444px',
+    width = 'auto',
     status = 'default',
     leftIcon,
     rightIcon,
@@ -99,6 +99,20 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     setShowPassword((prev) => !prev);
   };
 
+  // width 값을 처리하는 함수 추가
+  const getWidthStyle = (width: string | number) => {
+    if (typeof width === 'number') {
+      return `width: ${width}px;`;
+    }
+    return width;
+  };
+
+  // container 스타일에 width를 동적으로 적용
+  const currentContainerStyles = css`
+    ${containerStyles};
+    width: ${getWidthStyle(width)};
+  `;
+
   // input 상태에 따른 스타일 적용
   const currentInputStyles = [
     baseInputStyles, // 기본 input 스타일
@@ -111,7 +125,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   ];
 
   return (
-    <div css={containerStyles}>
+    <div css={[containerStyles, currentContainerStyles]}>
       <div css={[wrapperStyles, iconSpacingStyles[inputSize]]}>
         {leftIcon && <div css={leftIconStyles}>{getIcon(leftIcon)}</div>}
 
@@ -145,7 +159,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 Input.displayName = 'Input';
 
 const containerStyles = css`
-  display: inline-block;
+  display: block;
   position: relative;
 `;
 
@@ -153,6 +167,7 @@ const wrapperStyles = css`
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 `;
 
 const baseInputStyles = css`

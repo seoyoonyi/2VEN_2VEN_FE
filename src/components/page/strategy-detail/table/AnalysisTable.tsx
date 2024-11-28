@@ -27,15 +27,23 @@ interface NormalizedAnalysProps {
 }
 
 export interface AnalysisProps {
+  mode: 'write' | 'read';
   attributes: AnalysisAttribuesProps[];
   strategyId?: number;
   analysis?: NormalizedAnalysProps[];
-  mode: 'write' | 'read';
+  selectedItems?: number[];
   onUpload?: () => void;
+  onSelectChange?: (selectIdx: number[]) => void;
 }
 
-const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) => {
-  const [selected, setSelected] = useState<boolean[]>(new Array(analysis?.length).fill(false));
+const AnalysisTable = ({
+  attributes,
+  analysis,
+  mode,
+  selectedItems,
+  onUpload,
+  onSelectChange,
+}: AnalysisProps) => {
   const [selectAll, setSelectAll] = useState(false);
   const [tableData, setTableData] = useState<InputTableProps[]>([]);
   const { openTableModal } = useTableModalStore();
@@ -43,14 +51,17 @@ const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) 
   const handleAllChecked = () => {
     const newSelectAll = !selectAll;
     setSelectAll(newSelectAll);
-    setSelected(new Array(analysis?.length).fill(newSelectAll));
+    mode === 'write' &&
+      analysis &&
+      onSelectChange?.(newSelectAll ? analysis.map((item) => item.dataId) : []);
   };
 
   const handleSelected = (idx: number) => {
-    const updatedSelected = [...selected];
-    updatedSelected[idx] = !updatedSelected[idx];
-    setSelected(updatedSelected);
-    setSelectAll(updatedSelected.every(Boolean));
+    const updatedSelected = (selectedItems ?? []).includes(idx)
+      ? (selectedItems ?? []).filter((item) => item !== idx)
+      : [...(selectedItems ?? []), idx];
+
+    onSelectChange?.(updatedSelected);
   };
 
   const handleInputChange = (updatedData: InputTableProps[]) => {
@@ -105,14 +116,14 @@ const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) 
                 {mode === 'write' && (
                   <td css={tableCellStyle}>
                     <Checkbox
-                      checked={selected[values.dataId]}
+                      checked={!!selectedItems?.includes(values.dataId)}
                       onChange={() => handleSelected(values.dataId)}
                     />
                   </td>
                 )}
                 <td css={tableCellStyle}>{values.date}</td>
-                <td css={tableCellStyle}>{values.principal}</td>
-                <td css={tableCellStyle}>{values.dep_wd_price}</td>
+                <td css={tableCellStyle}>{values.principal.toLocaleString()}</td>
+                <td css={tableCellStyle}>{values.dep_wd_price.toLocaleString()}</td>
                 <td
                   css={[
                     tableCellStyle,
@@ -123,11 +134,11 @@ const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) 
                         : defaultTextStyle,
                   ]}
                 >
-                  {values.profit_loss}
+                  {values.profit_loss.toLocaleString()}
                 </td>
-                <td css={tableCellStyle}>{values.pl_rate}</td>
-                <td css={tableCellStyle}>{values.cumulative_profit_loss}</td>
-                <td css={tableCellStyle}>{values.cumulative_profit_loss_rate}</td>
+                <td css={tableCellStyle}>{values.pl_rate}%</td>
+                <td css={tableCellStyle}>{values.cumulative_profit_loss.toLocaleString()}</td>
+                <td css={tableCellStyle}>{values.cumulative_profit_loss_rate}%</td>
                 {mode === 'write' && (
                   <td css={tableCellStyle}>
                     <Button
@@ -137,9 +148,9 @@ const AnalysisTable = ({ attributes, analysis, mode, onUpload }: AnalysisProps) 
                       onClick={() =>
                         handleUpdateModal(
                           {
-                            input_date: values.date,
-                            dep_wd_price: values.dep_wd_price,
-                            daily_profit_loss: values.profit_loss,
+                            date: values.date,
+                            depWdPrice: values.dep_wd_price,
+                            dailyProfitLoss: values.profit_loss,
                           },
                           values.dataId
                         )

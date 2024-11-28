@@ -2,38 +2,57 @@ import { css } from '@emotion/react';
 
 import Input from '@/components/common/Input';
 import theme from '@/styles/theme';
-import { InquiresInputProps } from '@/types/myinquires';
+import { InquiryDetailData } from '@/types/myinquires';
 
-const InquiresInput = ({ title, content }: InquiresInputProps) => (
-  <div css={inquiresInputWrapper}>
-    <div css={flexStyle}>
-      <label htmlFor='inquire-title'>문의 제목</label>
-      <Input
-        id='inquire-title'
-        value={title}
-        onChange={() => {}}
-        placeholder='문의 제목을 입력해주세요.'
-        css={titleInputStyle}
-      />
-      <div css={lengthStyle}>
-        <span>{title.length}</span>/80
+const InquiresInput = ({
+  data,
+  onChange,
+}: {
+  data: InquiryDetailData | null;
+  onChange: (field: keyof InquiryDetailData, value: string | number) => void;
+}) => {
+  if (!data) {
+    return null;
+  }
+
+  const handleInputChange = (field: keyof InquiryDetailData, value: string, maxLength: number) => {
+    const trimValue = value.slice(0, maxLength);
+    onChange(field, trimValue);
+  };
+
+  return (
+    <div css={inquiresInputWrapper}>
+      <div css={flexStyle}>
+        <label htmlFor='inquire-title'>문의 제목</label>
+        <Input
+          id='inquire-title'
+          value={data.title}
+          onChange={(e) => handleInputChange('title', e.target.value, 80)}
+          placeholder='문의 제목을 입력해주세요.'
+          css={titleInputStyle}
+          maxLength={80}
+        />
+        <div css={lengthStyle}>
+          <span>{data.title.length}</span>/80
+        </div>
+      </div>
+      <div css={flexStyle}>
+        <label htmlFor='inquire-content'>문의 내용</label>
+        <textarea
+          id='inquire-content'
+          value={data.content}
+          onChange={(e) => handleInputChange('content', e.target.value, 800)}
+          placeholder='텍스트를 입력해주세요'
+          css={textareaStyle}
+          maxLength={800}
+        />
+        <div css={lengthStyle}>
+          <span>{data.content.length}</span>/800
+        </div>
       </div>
     </div>
-    <div css={flexStyle}>
-      <label htmlFor='inquire-content'>문의 내용</label>
-      <textarea
-        id='inquire-content'
-        value={content}
-        onChange={() => {}}
-        placeholder='텍스트를 입력해주세요'
-        css={textareaStyle}
-      />
-      <div css={lengthStyle}>
-        <span>{content.length}</span>/800
-      </div>
-    </div>
-  </div>
-);
+  );
+};
 
 const inquiresInputWrapper = css`
   display: flex;

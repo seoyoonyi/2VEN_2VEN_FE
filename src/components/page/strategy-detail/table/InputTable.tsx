@@ -6,9 +6,9 @@ import Input from '@/components/common/Input';
 import theme from '@/styles/theme';
 
 export interface InputTableProps {
-  input_date: string;
-  dep_wd_price: number;
-  daily_profit_loss: number;
+  date: string;
+  depWdPrice: number;
+  dailyProfitLoss: number;
 }
 
 export interface InputAnalysisProps {
@@ -45,26 +45,26 @@ const InputTable = ({ data, onChange }: InputAnalysisProps) => {
               <td css={tableCellStyle}>
                 <Input
                   type='date'
-                  value={row.input_date}
-                  onChange={(e) => handleInputChange(idx, 'input_date', e.target.value)}
+                  value={row.date}
+                  onChange={(e) => handleInputChange(idx, 'date', e.target.value)}
                   css={inputStyle}
                 />
               </td>
               <td css={tableCellStyle}>
                 <Input
-                  type='text'
-                  value={row.daily_profit_loss}
+                  type='number'
+                  value={row.depWdPrice}
                   placeholder='예)123,456,789'
-                  onChange={(e) => handleInputChange(idx, 'daily_profit_loss', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'depWdPrice', e.target.value)}
                   css={inputStyle}
                 />
               </td>
               <td css={tableCellStyle}>
                 <Input
-                  type='text'
-                  value={row.dep_wd_price}
+                  type='number'
+                  value={row.dailyProfitLoss}
                   placeholder='예)+123,456'
-                  onChange={(e) => handleInputChange(idx, 'dep_wd_price', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'dailyProfitLoss', e.target.value)}
                   css={inputStyle}
                 />
               </td>
@@ -124,6 +124,17 @@ const tableCellStyle = css`
 const inputStyle = css`
   width: 100%;
   border-radius: 4px;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  & {
+    -moz-appearance: textfield;
+    appearance: none;
+  }
 `;
 
 export default InputTable;

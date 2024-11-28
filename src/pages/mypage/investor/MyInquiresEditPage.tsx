@@ -1,47 +1,99 @@
-import { css } from '@emotion/react';
+import { useState, useEffect } from 'react';
 
+import { css } from '@emotion/react';
+import { useQuery } from '@tanstack/react-query';
+import { useParams, useNavigate } from 'react-router-dom';
+
+import { fetchMyInquiryDetail } from '@/api/myInquiry';
 import Button from '@/components/common/Button';
+import Loader from '@/components/common/Loading';
+import Modal from '@/components/common/Modal';
 import InquiresInput from '@/components/page/mypage-investor/inquires-edit/InquiresInput';
 import StrategyInfo from '@/components/page/mypage-investor/inquires-edit/StrategyInfo';
+import { useSubmitInquiryUpdate } from '@/hooks/mutations/useSubmitInquiryUpdate';
+import useModalStore from '@/stores/modalStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { InquiryDetailData } from '@/types/myinquires';
 
-const myInquiresDetailData: InquiryDetailData = {
-  id: 1,
-  investorId: 'string',
-  investorName: '내가여기서투자짱',
-  investorProfileUrl:
-    'https://i.pinimg.com/enabled_lo_mid/736x/78/04/d7/7804d73be61366364997b925a613f438.jpg',
-  traderId: 'string',
-  traderName: '나는야전략가',
-  traderProfileUrl: 'https://i.pinimg.com/736x/e1/f2/c8/e1f2c8afb9d6a5613107b4b3115b4f6c.jpg',
-  strategyId: 0,
-  strategyName: '사람들이 살 때 많이 따라사는 전략',
-  investmentAmount: 200000000000,
-  investmentDate: '2024-11-22T03:34:23.732Z',
-  title: '이거 믿을만한 전략인가요, 이거 믿을만한 전략인가요..?',
-  content: `안녕하세요. 이 전략의 최근 1년간 평균 수익률과 최대 손실률이 궁금합니다. 데이터를 확인할 수 있다면 공유 부탁드립니다. 또한, 변동성이 큰 시장 상황에서도 안정적으로 작동하는 전략인지 알고 싶습니다. 예를 들어, 최근 금리 인상기 동안 어떤 성과를 보였는지 궁금합니다.😊😊😊 이 전략에서 주로 사용하는 자산이 무엇인지도 알고 싶습니다. 제 투자 성향이 보수적인 편인데, 이 전략이 제게 적합할지 조언해주시면 감사하겠습니다. 마지막으로, 초보 투자자도 이 전략을 쉽게 따라 할 수 있는지 알고 싶습니다. 시작할 때 주의해야 할 점이나 참고할 수 있는 자료가 있다면 알려주세요. 감사합니다. 😊 안녕하세요. 이 전략의 최근 1년간 평균 수익률과 최대 손실률이 궁금합니다. 데이터를 확인할 수 있다면 공유 부탁드립니다. 또한, 변동성이 큰 시장 상황에서도 안정적으로 작동하는 전략인지 알고 싶습니다. 예를 들어, 최근 금리 인상기 동안 어떤 성과를 보였는지 궁금합니다.😊😊😊 이 전략에서 주로 사용하는 자산이 무엇인지도 알고 싶습니다. 제 투자 성향이 보수적인 편인데, 이 전략이 제게 적합할지 조언해주시면 감사하겠습니다. 마지막으로, 초보 투자자도 이 전략을 쉽게 따라 할 수 있는지 알고 싶습니다. 시작할 때 주의해야 할 점이나 참고할 수 있는 자료가 있다면 알려주세요. 감사합니다. 😊`,
-  status: 'COMPLETE',
-  createdAt: '2024-11-22T03:34:23.732Z',
-  updatedAt: '2024-11-22T03:34:23.732Z',
-  traderAnswer:
-    '안녕하세요. 문의해주셔서 감사합니다! 이 전략의 최근 1년간 평균 수익률은 약 12%이며, 최대 손실률은 5% 정도입니다. 전략의 성과 데이터는 전략 페이지에서 확인하실 수 있으니 참고 부탁드립니다. 변동성이 큰 시장에서도 안정적으로 작동하도록 설계된 전략입니다. 특히 최근 금리 인상기 동안에도 안정적인 수익률을 유지했으며, 시장 변동성에 대응하는 방식을 지속적으로 개선하고 있습니다. 이 전략은 주로 대형 우량주와 ETF를 중심으로 구성되어 있으며, 보수적인 투자 성향에도 적합합니다. 포트폴리오 리스크를 최소화하면서도 꾸준한 수익을 목표로 하고 있으니 투자 성향과 잘 맞을 거라 생각됩니다. 초보 투자자분들도 쉽게 따라 하실 수 있도록 상세한 가이드와 추천 종목 리스트를 제공하고 있습니다. 시작 시 궁금한 점이 있으시면 언제든 문의해주시면 자세히 도와드리겠습니다. 감사합니다, 좋은 하루 되세요! 😊🙇‍♀️👍',
-  answerDate: '2024-11-22T03:34:23.732Z',
-};
+const MyInquiresEditPage = () => {
+  const [formData, setFormData] = useState<InquiryDetailData | null>(null);
 
-const MyInquiresEditPage = () => (
-  <div css={editWrapper}>
-    <div css={titleStyle}>문의 수정</div>
-    <StrategyInfo {...myInquiresDetailData} />
-    <InquiresInput {...myInquiresDetailData} />
-    <div css={buttonWrapper}>
-      <Button variant='neutral' customStyle={buttonStyle}>
-        작성취소
-      </Button>
-      <Button customStyle={buttonStyle}>수정완료</Button>
+  const { openModal } = useModalStore();
+  const { showToast } = useToastStore();
+
+  const { inquiryId } = useParams<{ inquiryId: string }>();
+  const navigate = useNavigate();
+
+  const { mutate: submitInquiryUpdate } = useSubmitInquiryUpdate();
+
+  const { data, isLoading, isError } = useQuery<InquiryDetailData, Error>({
+    queryKey: ['myInquiryDetail', inquiryId],
+    queryFn: () => fetchMyInquiryDetail(Number(inquiryId)),
+  });
+
+  useEffect(() => {
+    if (data) {
+      setFormData(data);
+    }
+  }, [data]);
+
+  const handleInputChange = (field: keyof InquiryDetailData, value: string | number) => {
+    setFormData((prev) => (prev ? { ...prev, [field]: value } : null));
+  };
+
+  const handleCancel = () => {
+    openModal({
+      type: 'confirm',
+      title: '수정 취소',
+      desc: `작성을 취소하시겠습니까?`,
+      onAction: () => navigate(-1),
+    });
+  };
+
+  const handleUpdate = () => {
+    if (!formData || !inquiryId) return;
+
+    openModal({
+      type: 'confirm',
+      title: '문의 수정',
+      desc: `수정하시겠습니까?`,
+      onAction: () => {
+        submitInquiryUpdate({ id: Number(inquiryId), payload: formData });
+        showToast('문의 수정이 정상적으로 완료되었습니다.', 'basic');
+      },
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div css={editWrapper}>
+        <Loader />
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return <div css={editWrapper}>문의 데이터를 불러오는 데 실패했습니다</div>;
+  }
+
+  return (
+    <div css={editWrapper}>
+      <div css={titleStyle}>문의 수정</div>
+      <StrategyInfo data={formData} onChange={handleInputChange} />
+      <InquiresInput data={formData} onChange={handleInputChange} />
+      <div css={buttonWrapper}>
+        <Button variant='neutral' customStyle={buttonStyle} onClick={handleCancel}>
+          작성취소
+        </Button>
+        <Button customStyle={buttonStyle} onClick={handleUpdate}>
+          수정완료
+        </Button>
+      </div>
+      <Modal />
     </div>
-  </div>
-);
+  );
+};
 
 const editWrapper = css`
   width: 955px;
