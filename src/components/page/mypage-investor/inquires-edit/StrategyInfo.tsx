@@ -22,8 +22,14 @@ const StrategyInfo = ({
     const numericValue = rawValue.replace(/[^0-9]/g, '');
 
     if (numericValue) {
-      const formattedValue = parseInt(numericValue, 10).toLocaleString();
-      onChange('investmentAmount', parseInt(numericValue, 10));
+      let parsedValue = parseInt(numericValue, 10);
+
+      if (parsedValue > 10000000000) {
+        parsedValue = 10000000000;
+      }
+
+      const formattedValue = parsedValue.toLocaleString();
+      onChange('investmentAmount', parsedValue);
       e.target.value = formattedValue;
     } else {
       onChange('investmentAmount', 0);
