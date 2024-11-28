@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import ChartSection from '@/components/page/strategy-detail/chart/ChartSection';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
@@ -64,7 +65,7 @@ const StrategyDetailPage = () => {
   const { openModal } = useModalStore();
 
   if (!strategy) {
-    return <div>로딩중....</div>;
+    return <Loader />;
   }
 
   const statisticsTableData = (

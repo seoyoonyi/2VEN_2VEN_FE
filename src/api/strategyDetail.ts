@@ -1,6 +1,7 @@
 import { apiClient, createFormDataRequest } from './apiClient';
 import { API_ENDPOINTS } from './apiEndpoints';
 
+import { UserRole } from '@/types/route';
 import {
   FileUploadOptions,
   FileUploadResponse,
@@ -112,14 +113,19 @@ export const fetchPutDailyAnalysis = async (
 };
 
 //일간분석 삭제
-export const fetchDeleteDailyAnalysis = async (strategyId: number[], analysisId: number) => {
+export const fetchDeleteDailyAnalysis = async (
+  strategyId: number[],
+  analysisId: number,
+  role: UserRole
+) => {
+  const body = strategyId;
   try {
-    const req = await apiClient.delete(
+    const req = await apiClient.post(
       `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/daily-analyses/${analysisId}`,
+      body,
       {
         headers: {
-          'Content-Type': 'application/json',
-          Auth: 'admin',
+          Auth: role,
         },
       }
     );

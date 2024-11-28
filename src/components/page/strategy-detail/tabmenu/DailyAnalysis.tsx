@@ -133,7 +133,16 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
     setSelectedData(selectedIdx);
   };
 
+  //TODO: selected된 아이디들의 일간분석 날짜를 가져와서 오름차순 한 날짜를 바디로 변환해서 삭제 api로 쏴야함
   const handleDelete = () => {
+    const selectedDailyAnalysis = dailyAnalysis
+      .filter((item: AnalysisDataProps) => selectedData.includes(item.dailyStrategicStatisticsId))
+      .sort(
+        (a: AnalysisDataProps, b: AnalysisDataProps) =>
+          new Date(a.inputDate).getHours() - new Date(b.inputDate).getHours()
+      );
+
+    console.log(selectedDailyAnalysis);
     openModal({
       type: 'warning',
       title: '일간분석 삭제',
