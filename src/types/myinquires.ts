@@ -23,6 +23,23 @@ export interface InquiryDetailData {
   replyUpdatedAt: string;
 }
 
+export interface InquiryUpdateResponse {
+  id: number;
+  investorId: string;
+  investorName: string;
+  traderId: string;
+  traderName: string;
+  strategyId: number;
+  strategyName: string;
+  investmentAmount: number;
+  investmentDate: string;
+  title: string;
+  content: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface myInquirieListData {
   id: number;
   investorName: string;

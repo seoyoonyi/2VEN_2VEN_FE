@@ -1,52 +1,65 @@
 import { css } from '@emotion/react';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
 import { InquiryDetailData, Status } from '@/types/myinquires';
 
-const Question = ({ data }: { data: InquiryDetailData }) => (
-  <div css={questionWrapper}>
-    <header css={questionHeaderWrapper}>
-      <span css={statusStyle(data.status)}>
-        {data.status === 'PENDING' && <span className='dot' />}
-        {data.status === 'PENDING' ? '대기' : '완료'}
-      </span>
-      <h1 css={titleStyle}>{data.title}</h1>
-      <div css={infoWrapper}>
-        <div css={infoStyle}>
-          <img src={data.investorProfileUrl} alt={`${data.investorName}'s profile`} />
-          <h2>{data.investorName}</h2>
-          <span>{data.createdAt.slice(0, 10).replace(/-/g, '.')}</span>
-        </div>
-        {data.status === 'PENDING' && (
-          <div css={editWrapper}>
-            <button type='button'>수정</button>
-            <div></div>
-            <button type='button'>삭제</button>
+const Question = ({ data }: { data: InquiryDetailData }) => {
+  const { inquiryId } = useParams<{ inquiryId: string }>();
+
+  const navigate = useNavigate();
+
+  return (
+    <div css={questionWrapper}>
+      <header css={questionHeaderWrapper}>
+        <span css={statusStyle(data.status)}>
+          {data.status === 'PENDING' && <span className='dot' />}
+          {data.status === 'PENDING' ? '대기' : '완료'}
+        </span>
+        <h1 css={titleStyle}>{data.title}</h1>
+        <div css={infoWrapper}>
+          <div css={infoStyle}>
+            <img src={data.investorProfileUrl} alt={`${data.investorName}'s profile`} />
+            <h2>{data.investorName}</h2>
+            <span>{data.createdAt.slice(0, 10).replace(/-/g, '.')}</span>
           </div>
-        )}
-      </div>
-    </header>
-
-    <section css={strategyInfoWrapper}>
-      <div css={strategyInfoStyle}>
-        <h3>관심전략명</h3>
-        <div>{data.strategyName}</div>
-      </div>
-      <div>
-        <div css={strategyInfoStyle}>
-          <h3>투자개시금액</h3>
-          <span>{data.investmentAmount.toLocaleString()}</span>
+          {data.status === 'PENDING' && (
+            <div css={editWrapper}>
+              <button
+                type='button'
+                onClick={() => navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.EDIT(inquiryId || ''))}
+              >
+                수정
+              </button>
+              <div></div>
+              <button type='button'>삭제</button>
+            </div>
+          )}
         </div>
-        <div css={strategyInfoStyle}>
-          <h3>투자개시시점</h3>
-          <span>{data.investmentDate.slice(0, 10).replace(/-/g, '.')}</span>
-        </div>
-      </div>
-    </section>
+      </header>
 
-    <section css={questionStyle}>{data.content}</section>
-  </div>
-);
+      <section css={strategyInfoWrapper}>
+        <div css={strategyInfoStyle}>
+          <h3>관심전략명</h3>
+          <div>{data.strategyName}</div>
+        </div>
+        <div>
+          <div css={strategyInfoStyle}>
+            <h3>투자개시금액</h3>
+            <span>{data.investmentAmount.toLocaleString()}</span>
+          </div>
+          <div css={strategyInfoStyle}>
+            <h3>투자개시시점</h3>
+            <span>{data.investmentDate.slice(0, 10).replace(/-/g, '.')}</span>
+          </div>
+        </div>
+      </section>
+
+      <section css={questionStyle}>{data.content}</section>
+    </div>
+  );
+};
 
 const questionWrapper = css`
   display: flex;
