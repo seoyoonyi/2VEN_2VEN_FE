@@ -1,5 +1,6 @@
 import { apiClient } from './apiClient';
 import { API_ENDPOINTS } from './apiEndpoints';
+import { fetchDeleteIcon } from './uploadFile';
 
 import { InvestmentAssetProps } from '@/types/admin';
 
@@ -38,8 +39,15 @@ export const fetchInvestmentTypeDetail = async (id: number) => {
 };
 
 //투자자산유형 삭제
-export const fetchDeleteInvestmentType = async (id: number) => {
+export const fetchDeleteInvestmentType = async (
+  id: number,
+  role: string | null,
+  fileUrl: string
+) => {
   try {
+    if (fileUrl) {
+      await fetchDeleteIcon(role, fileUrl);
+    }
     const req = await apiClient.delete(`${API_ENDPOINTS.ADMIN.STOCK_TYPES}/${id}`, {
       headers: {
         'Content-Type': 'application/json',

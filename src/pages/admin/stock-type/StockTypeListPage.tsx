@@ -92,6 +92,7 @@ const StockTypeListPage = () => {
   };
 
   const handleDelete = () => {
+    if (!user) return;
     if (selectedStocks.length > 0) {
       openModal({
         type: 'warning',
@@ -99,7 +100,14 @@ const StockTypeListPage = () => {
         desc: `선택하신 ${selectedStocks.length}개의 유형을 삭제하시겠습니까?`,
         onAction: () => {
           selectedStocks.forEach((id) => {
-            deleteInvestmentAssets(id);
+            const stockItem = formattedData?.find((item) => item.id === id);
+            if (stockItem) {
+              deleteInvestmentAssets({
+                investmentTypeId: stockItem.id,
+                role: user?.role,
+                fileUrl: stockItem.icon,
+              });
+            }
           });
           setSelectedStocks([]);
         },
