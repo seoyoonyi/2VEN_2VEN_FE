@@ -15,7 +15,7 @@ const AdminSessionTimer = () => {
 
   useEffect(() => {
     // expires_at이 undefined일 수 있으므로 타입 가드 추가
-    const expiresAt = adminAuth?.expires_at;
+    const expiresAt = adminAuth?.expiresAt;
     if (!expiresAt) {
       return;
     }
@@ -29,9 +29,9 @@ const AdminSessionTimer = () => {
         // 세션만료
         setAdminAuth({
           ...adminAuth,
-          is_authorized: false,
-          authorization_status: 'EXPIRED',
-          expires_at: undefined, // 만료시 expires_at 제거
+          authorized: false,
+          authorizationStatus: 'EXPIRED' as const,
+          expiresAt: undefined, // 만료시 expires_at 제거
         });
         navigate(ROUTES.AUTH.ADMIN.VERIFY); // 세션만료시 인증페이지로 이동
         return '만료됨';
@@ -51,7 +51,7 @@ const AdminSessionTimer = () => {
     return () => clearInterval(timer);
   }, [adminAuth, navigate, setAdminAuth]);
 
-  if (!adminAuth?.expires_at) {
+  if (!adminAuth?.expiresAt) {
     return null;
   }
   return (

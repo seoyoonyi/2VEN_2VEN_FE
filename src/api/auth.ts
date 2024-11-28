@@ -1,9 +1,11 @@
-// auth.ts
 import { isAxiosError } from 'axios';
+
+// auth.ts
 
 import { apiClient } from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
 import {
+  AdminVerificationResponse,
   AdminUser,
   ApiResponse,
   BackendSigninResponse,
@@ -38,7 +40,7 @@ export const signin = async (credentials: SigninRequest): Promise<SigninResponse
 
     // 기본 사용자 정보(공통)
     const baseUser: User = {
-      member_id: data.member_id,
+      memberId: data.memberId,
       email: data.email,
       nickname: data.nickname,
       role: data.role as User['role'], // 이미 'ROLE_' 접두사가 붙어있음
@@ -48,11 +50,12 @@ export const signin = async (credentials: SigninRequest): Promise<SigninResponse
     if (data.role === 'ROLE_ADMIN') {
       const adminUser: AdminUser = {
         ...baseUser,
-        role: 'ROLE_ADMIN',
-        is_authorized: data.is_authorized ?? false,
-        authorization_status: data.authorization_status ?? 'PENDING',
-        authorized_at: data.authorized_at,
-        expires_at: data.expires_at,
+        adminInfo: {
+          authorized: data.adminInfo?.authorized ?? false,
+          authorizationStatus: data.adminInfo?.authorizationStatus ?? 'PENDING',
+          authorizedAt: data.adminInfo?.authorizedAt,
+          expiresAt: data.adminInfo?.expiresAt,
+        },
       };
 
       return {
@@ -122,6 +125,7 @@ export const requestVerificationCode = async (email: string): Promise<ApiRespons
   );
   return response.data;
 };
+
 // 관리자 이메일로 인증번호 확인하는 API
 export const verifyAdminCode = async ({
   email,
@@ -129,10 +133,10 @@ export const verifyAdminCode = async ({
 }: {
   email: string;
   verificationCode: string;
-}): Promise<ApiResponse<{ expires_at: string }>> => {
+}): Promise<AdminVerificationResponse> => {
   try {
     // 불필요한 헤더나 설정 없이 심플하게
-    const response = await apiClient.post<ApiResponse<{ expires_at: string }>>(
+    const response = await apiClient.post<AdminVerificationResponse>(
       API_ENDPOINTS.AUTH.EMAIL.CHECK_VERIFICATION,
       { email, verificationCode } // 요청 바디만 단순하게
     );

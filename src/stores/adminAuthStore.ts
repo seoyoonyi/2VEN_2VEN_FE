@@ -3,10 +3,10 @@ import { persist } from 'zustand/middleware';
 
 interface AdminAuthStore {
   adminAuth: {
-    is_authorized: boolean;
-    authorization_status: 'PENDING' | 'AUTHORIZED' | 'EXPIRED';
-    authorized_at?: string;
-    expires_at?: string;
+    authorized: boolean;
+    authorizationStatus: 'PENDING' | 'AUTHORIZED' | 'EXPIRED';
+    authorizedAt?: string;
+    expiresAt?: string;
   } | null;
   setAdminAuth: (auth: AdminAuthStore['adminAuth']) => void;
   clearAdminAuth: () => void;
