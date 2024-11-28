@@ -190,7 +190,7 @@ const strategyInfoWrapper = css`
   border-radius: 8px;
   background: ${theme.colors.gray[50]};
 
-  div:nth-child(2) {
+  div:nth-of-type(2) {
     display: flex;
     gap: 8px;
   }

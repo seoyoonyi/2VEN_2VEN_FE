@@ -15,7 +15,6 @@ export const fetchMyInquiryList = async (page: number, pageSize: number) => {
         Auth: 'investor',
       },
     });
-    console.log('나의 문의 목록:', data);
     return data;
   } catch (error) {
     console.error('Failed to fetch my inquiry list data:', error);
@@ -36,7 +35,6 @@ export const fetchMyInquiryDetail = async (id: number) => {
         Auth: 'investor',
       },
     });
-    console.log('나의 문의 상세:', data);
     return data;
   } catch (error) {
     console.error('Failed to fetch my inquiry detail data:', error);

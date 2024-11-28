@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { fetchMyInquiryList } from '@/api/myInquiry';
+import Loader from '@/components/common/Loading';
 import Pagination from '@/components/common/Pagination';
 import Toast from '@/components/common/Toast';
 import { ROUTES } from '@/constants/routes';
@@ -22,7 +23,7 @@ const MyInquiriesPage = () => {
     window.scrollTo(0, 0);
   }, [page]);
 
-  const { data, isLoading, isError, isFetching } = useQuery<
+  const { data, isLoading, isError } = useQuery<
     {
       content: myInquirieListData[];
       page: number;
@@ -42,7 +43,11 @@ const MyInquiriesPage = () => {
   };
 
   if (isLoading) {
-    return <div css={myPageWrapperStyle}>로딩 중...</div>;
+    return (
+      <div css={myPageWrapperStyle}>
+        <Loader />
+      </div>
+    );
   }
 
   if (isError) {
@@ -64,51 +69,62 @@ const MyInquiriesPage = () => {
         </div>
       </div>
 
-      <div css={tableWrapper}>
-        {isFetching && <div>새로운 데이터를 불러오는 중...</div>}
-        <div>
-          <div css={headerStyle}>
-            <div>제목</div>
-            <div>트레이더</div>
-            <div>답변상태</div>
-            <div>날짜</div>
-          </div>
-          {myInquiries.map((inquiry) => (
-            <div
-              role='button'
-              tabIndex={0}
-              onClick={() => onClickInquiryList(String(inquiry.id))}
-              onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  onClickInquiryList(String(inquiry.id));
-                }
-              }}
-              key={inquiry.id}
-            >
-              <div css={rowStyle}>
-                <div css={inquiriesTitleStyle}>
-                  <span>Q.</span>
-                  <div>{inquiry.title}</div>
-                </div>
-                <div css={traderInfoStyle}>
-                  <img
-                    src={inquiry.traderProfileUrl || '/default-profile.png'}
-                    alt={`${inquiry.traderName}의 프로필`}
-                  />
-                  <span>{inquiry.traderName}</span>
-                </div>
-                <div css={statusStyle(inquiry.status)}>
-                  {inquiry.status === 'PENDING' && <span className='dot' />}
-                  {inquiry.status === 'COMPLETED' ? '완료' : '대기'}
-                </div>
-                <div>{inquiry.createdAt.slice(0, 10).replace(/-/g, '.')}</div>
-              </div>
-            </div>
-          ))}
+      {totalElements === 0 ? (
+        <div css={emptyStateWrapperStyle}>
+          <p>전략에 대해 궁금한 점이 있으면, 트레이더에게 문의를 남겨보세요!</p>
+          <p>‘전략 상세’에서 ‘문의하기’를 통해 손쉽게 문의하실 수 있습니다.</p>
         </div>
-        <Pagination totalPage={totalPages} limit={data?.size || 10} page={page} setPage={setPage} />
-      </div>
+      ) : (
+        <div css={tableWrapper}>
+          <div>
+            <div css={headerStyle}>
+              <div>제목</div>
+              <div>트레이더</div>
+              <div>답변상태</div>
+              <div>날짜</div>
+            </div>
+            {myInquiries.map((inquiry) => (
+              <div
+                role='button'
+                tabIndex={0}
+                onClick={() => onClickInquiryList(String(inquiry.id))}
+                onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onClickInquiryList(String(inquiry.id));
+                  }
+                }}
+                key={inquiry.id}
+              >
+                <div css={rowStyle}>
+                  <div css={inquiriesTitleStyle}>
+                    <span>Q.</span>
+                    <div>{inquiry.title}</div>
+                  </div>
+                  <div css={traderInfoStyle}>
+                    <img
+                      src={inquiry.traderProfileUrl || '/default-profile.png'}
+                      alt={`${inquiry.traderName}의 프로필`}
+                    />
+                    <span>{inquiry.traderName}</span>
+                  </div>
+                  <div css={statusStyle(inquiry.status)}>
+                    {inquiry.status === 'PENDING' && <span className='dot' />}
+                    {inquiry.status === 'COMPLETED' ? '완료' : '대기'}
+                  </div>
+                  <div>{inquiry.createdAt.slice(0, 10).replace(/-/g, '.')}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <Pagination
+            totalPage={totalPages}
+            limit={data?.size || 10}
+            page={page}
+            setPage={setPage}
+          />
+        </div>
+      )}
       {isToastVisible && <Toast message={message} isVisible={isToastVisible} onClose={hideToast} />}
     </div>
   );
@@ -229,6 +245,16 @@ const statusStyle = (status: Status) => css`
     border-radius: 50%;
     display: ${status === 'PENDING' ? 'block' : 'none'};
   }
+`;
+
+const emptyStateWrapperStyle = css`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: ${theme.colors.gray[400]};
+  height: 200px;
+  margin-top: 40px;
 `;
 
 export default MyInquiriesPage;

@@ -6,6 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import { fetchMyInquiryDetail } from '@/api/myInquiry';
 import Button from '@/components/common/Button';
+import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import InquiresInput from '@/components/page/mypage-investor/inquires-edit/InquiresInput';
 import StrategyInfo from '@/components/page/mypage-investor/inquires-edit/StrategyInfo';
@@ -65,7 +66,11 @@ const MyInquiresEditPage = () => {
   };
 
   if (isLoading) {
-    return <div css={editWrapper}>로딩 중...</div>;
+    return (
+      <div css={editWrapper}>
+        <Loader />
+      </div>
+    );
   }
 
   if (isError || !data) {

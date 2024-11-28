@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
 import { fetchMyInquiryDetail } from '@/api/myInquiry';
+import Loader from '@/components/common/Loading';
 import Toast from '@/components/common/Toast';
 import Answer from '@/components/page/mypage-investor/inquires-detail/Answer';
 import Question from '@/components/page/mypage-investor/inquires-detail/Question';
@@ -19,7 +20,11 @@ const MyInquiresDetailPage = () => {
   });
 
   if (isLoading) {
-    return <div css={containerStyle}>로딩 중...</div>;
+    return (
+      <div css={containerStyle}>
+        <Loader />
+      </div>
+    );
   }
 
   if (isError || !data) {
