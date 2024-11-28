@@ -282,12 +282,29 @@ interface AdminSignoutResponse {
 }
 // 관리자 로그아웃 API
 export const adminSignout = async (): Promise<AdminSignoutResponse> => {
-  const response = await apiClient.post<AdminSignoutResponse>(
-    API_ENDPOINTS.AUTH.ADMIN_SIGNOUT,
-    {},
-    {
-      withCredentials: true,
-    }
-  );
-  return response.data;
+  try {
+    const response = await apiClient.post<AdminSignoutResponse>(
+      API_ENDPOINTS.AUTH.ADMIN_SIGNOUT,
+      {},
+      {
+        withCredentials: true, // JSESSIONID 쿠키를 포함하여 요청
+      }
+    );
+
+    // 모든 쿠키 삭제
+    document.cookie.split(';').forEach((cookie) => {
+      const name = cookie.split('=')[0].trim();
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Logout error:', error);
+    // 에러가 발생하더라도 쿠키는 삭제
+    document.cookie.split(';').forEach((cookie) => {
+      const name = cookie.split('=')[0].trim();
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+    });
+    throw error;
+  }
 };
