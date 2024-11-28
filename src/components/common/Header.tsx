@@ -11,22 +11,24 @@ import SearchInput from '@/components/page/search/SearchInput';
 import AdminSessionTimer from '@/components/page/signup/AdminSessionTimer';
 import { ROUTES } from '@/constants/routes';
 import { useFetchProfileImage } from '@/hooks/queries/useFetchPofileImage';
+import { useAdminAuthStatus } from '@/hooks/useAdminAuthStatus';
 import { useAdminAuthStore } from '@/stores/adminAuthStore';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 import { isAdminUser } from '@/types/auth';
 const Header = () => {
   const LOGO = 'SYSMETIC';
-  const { user } = useAuthStore();
+  const { user } = useAuthStore(); // 사용자 정보 가져오기
+  const { isAdmin, isAuthorized, hasExpired } = useAdminAuthStatus(); // 관리자 권한 상태 가져오기
   console.log('Current user:', user); // user 객체 전체 확인
-  console.log('Profile image ID:', user?.profile_image); // 프로필 이미지 ID 확인
-  console.log('Member ID:', user?.member_id); // 회원 ID 확인
+  console.log('Profile image ID:', user?.profileImage); // 프로필 이미지 ID 확인
+  console.log('Member ID:', user?.memberId); // 회원 ID 확인
   const {
     data: base64Image,
     isError,
     error,
     isSuccess,
-  } = useFetchProfileImage(user?.profile_image || null, user?.member_id || null);
+  } = useFetchProfileImage(user?.profileImage || null, user?.memberId || null);
   const { adminAuth } = useAdminAuthStore();
   const navigate = useNavigate();
   // const location = useLocation();
@@ -45,7 +47,17 @@ const Header = () => {
   // const isAdminRoute = location.pathname.startsWith('/admin'); // /admin으로 시작하는 경로인지 확인
   // const isAdmin = user?.role === 'MEMBER_ROLE_ADMIN'; // 사용자의 role이 ROLE_ADMIN인지 확인
   // const isAuthorizedAdmin = isAdmin && adminAuth?.is_authorized; // 사용자가 ROLE_ADMIN이고 adminAuth의 is_authorized가 true인지 확인
-
+  console.log('Auth user:', useAuthStore.getState().user);
+  console.log('Admin auth:', useAdminAuthStore.getState().adminAuth);
+  useEffect(() => {
+    if (user) {
+      console.log({
+        isAdmin: isAdminUser(user), // 사용자의 role이 ROLE_ADMIN인지 확인
+        adminAuthStatus: adminAuth?.authorized, // 관리자 인증 상태
+        hasExpired, // 관리자 인증이 만료되었는지 확인
+      });
+    }
+  }, [user, adminAuth]);
   const handleButtonClick = (value: string) => {
     console.log(value);
   };
@@ -76,15 +88,17 @@ const Header = () => {
       return (
         <div css={searchAndMyPageContainer}>
           <SearchInput onSearchSubmit={handleButtonClick} />
-          {!adminAuth?.is_authorized ? (
-            <Button variant='accent' size='xs' width={100} onClick={handleAdminAuthButtonClick}>
-              관리자 인증
-            </Button>
-          ) : (
-            <Link to={ROUTES.AUTH.ADMIN.VERIFY}>
+          {isAdmin &&
+            isAuthorized &&
+            !hasExpired && ( // 관리자 인증이 된 경우
               <AdminSessionTimer />
-            </Link>
-          )}
+            )}
+          {isAdmin &&
+            (!isAuthorized || hasExpired) && ( // 관리자이지만 인증이 안된 경우
+              <Button variant='accent' size='xs' width={100} onClick={handleAdminAuthButtonClick}>
+                관리자 인증
+              </Button>
+            )}
         </div>
       );
     }
