@@ -1,6 +1,6 @@
 import apiClient from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
-import { StrategyPayload } from '@/types/strategy';
+import { StrategyPayload, StrategyDetailsData, Requirements } from '@/types/strategy';
 
 // 전략 등록 옵션 조회
 export const fetchStrategyRegistration = async () => {
@@ -35,7 +35,9 @@ export const submitStrategyCreate = async (payload: StrategyPayload) => {
 };
 
 // 전략 수정 조회
-export const fetchUpdateStrategy = async (strategyId: string) => {
+export const fetchUpdateStrategy = async (
+  strategyId: string
+): Promise<{ data: StrategyDetailsData; requirements: Requirements }> => {
   try {
     const res = await apiClient.get(`${API_ENDPOINTS.STRATEGY.UPDATE_FORM}/${strategyId}`, {
       headers: {
@@ -43,7 +45,11 @@ export const fetchUpdateStrategy = async (strategyId: string) => {
         Auth: 'trader',
       },
     });
-    return res.data.Data;
+
+    return {
+      data: res.data.Data as StrategyDetailsData,
+      requirements: res.data.Requirements as Requirements,
+    };
   } catch (error) {
     console.error('Failed to fetch update strategy data:', error);
     throw error;

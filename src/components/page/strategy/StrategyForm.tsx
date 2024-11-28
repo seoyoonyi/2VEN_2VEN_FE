@@ -17,13 +17,15 @@ import useCreateFormValidation from '@/hooks/useCreateFormValidation';
 import useModalStore from '@/stores/modalStore';
 import { useStrategyFormStore } from '@/stores/strategyFormStore';
 import theme from '@/styles/theme';
-import { StrategyPayload, StrategyDetailsData } from '@/types/strategy';
+import { StrategyPayload, StrategyDetailsData, Requirements } from '@/types/strategy';
 
 const StrategyForm = ({
   strategyDetailData,
+  requirements,
   isEditMode,
 }: {
   strategyDetailData?: StrategyDetailsData;
+  requirements?: Requirements;
   isEditMode?: boolean;
 }) => {
   const {
@@ -40,11 +42,26 @@ const StrategyForm = ({
   } = useStrategyFormStore();
 
   useEffect(() => {
-    if (isEditMode && strategyDetailData) {
+    if (isEditMode && strategyDetailData && requirements) {
       setField('strategy', strategyDetailData.strategyTitle);
       setField('text', strategyDetailData.strategyOverview);
-      setField('operation', strategyDetailData.tradingTypeName);
-      setField('cycle', strategyDetailData.tradingCycleName);
+      setField(
+        'operation',
+        String(
+          requirements.tradingTypeRegistrationDtoList.find(
+            (item) => item.tradingTypeName === strategyDetailData.tradingTypeName
+          )?.tradingTypeId ?? ''
+        )
+      );
+
+      setField(
+        'cycle',
+        String(
+          requirements.tradingCycleRegistrationDtoList.find(
+            (item) => item.tradingCycleName === strategyDetailData.tradingCycleName
+          )?.tradingCycleId ?? ''
+        )
+      );
       setField('fund', strategyDetailData.minInvestmentAmount);
       setField('publicStatus', strategyDetailData.isPosted);
       setField(
@@ -52,7 +69,7 @@ const StrategyForm = ({
         strategyDetailData.strategyIACEntities.map((item) => String(item.investmentAssetClassesId))
       );
     }
-  }, [isEditMode, strategyDetailData, setField]);
+  }, [isEditMode, strategyDetailData, requirements, setField]);
 
   useEffect(
     () => () => {
@@ -87,6 +104,8 @@ const StrategyForm = ({
       isPosted: publicStatus,
       investmentAssetClassesIdList: selectedProducts.map((v) => Number(v)),
     };
+
+    console.log('payload', payload);
 
     try {
       if (isEditMode && strategyDetailData) {
