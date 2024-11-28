@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
 import ContentModal from '@/components/common/ContentModal';
+import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import FileInput from '@/components/page/admin/FileInput';
@@ -160,7 +161,7 @@ const StockTypeListPage = () => {
   };
 
   if (isLoading) {
-    <div>로딩중</div>;
+    <Loader />;
   }
 
   useEffect(() => {

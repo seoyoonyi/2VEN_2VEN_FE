@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
 
-import { fetchTradingTypes } from '@/api/tradingType';
 import Button from '@/components/common/Button';
 import ContentModal from '@/components/common/ContentModal';
+import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import FileInput from '@/components/page/admin/FileInput';
@@ -15,7 +14,11 @@ import {
   useDeleteTradingType,
   usePutTradingType,
 } from '@/hooks/mutations/useTradingType';
-import { useFetchDetailTradingType } from '@/hooks/queries/useFetchTradingType';
+import {
+  useFetchDetailTradingType,
+  useFetchtradingList,
+} from '@/hooks/queries/useFetchTradingType';
+import usePagination from '@/hooks/usePagination';
 import { useAuthStore } from '@/stores/authStore';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
@@ -36,64 +39,37 @@ const tradeAttributes = [
 ];
 
 const TradingTypeListPage = () => {
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
-  const [tradingId, setTradingId] = useState<number | null>(null);
   const { token, user } = useAuthStore();
-  const { openModal } = useModalStore();
-  const { openContentModal } = useContentModalStore();
+  const { pagination, setPage } = usePagination(1, 10);
+  const { tradingList, currentPage, totalPages, pageSize, isLoading } = useFetchtradingList(
+    pagination.currentPage - 1,
+    pagination.pageSize,
+    user?.role as UserRole
+  );
   const { mutate: deleteTradingType } = useDeleteTradingType();
   const { mutate: addTradingType } = useAddTradingType();
   const { mutate: updateTradingType } = usePutTradingType();
-  const [paginationData, setPaginationData] = useState({
-    currentPage: 1,
-    totalPage: 0,
-    totalElements: 0,
-    pageSize: 10,
-  });
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [tradingId, setTradingId] = useState<number | null>(null);
 
-  const { data } = useQuery<TradingTypeProps[], Error>({
-    queryKey: ['tradingTypes', paginationData.currentPage, paginationData.pageSize],
-    queryFn: async () => {
-      try {
-        const res = await fetchTradingTypes(
-          paginationData.currentPage - 1,
-          paginationData.pageSize,
-          user?.role as UserRole
-        );
-        setPaginationData({
-          currentPage: paginationData.currentPage,
-          totalPage: res.totalPages,
-          totalElements: res.totalElements,
-          pageSize: res.pageSize,
-        });
-        return res.data;
-      } catch (err) {
-        console.error('Error fetching trading types:', err);
-        throw err;
-      }
-    },
-    placeholderData: keepPreviousData,
-  });
+  const { openModal } = useModalStore();
+  const { openContentModal } = useContentModalStore();
+
   const { tradingDetail, iconName } = useFetchDetailTradingType(
     tradingId as number,
     user?.role as UserRole
   );
 
-  const formattedData = data?.map((item) => ({
-    id: item.tradingTypeId || data.length + 1,
+  console.log(tradingList);
+
+  const formattedData = tradingList.map((item: TradingTypeProps) => ({
+    id: item.tradingTypeId || tradingList.length + 1,
     icon: item.tradingTypeIcon,
     title: item.tradingTypeName,
   }));
 
   const handleSelectChange = (selectedIdx: number[]) => {
     setSelectedItems(selectedIdx);
-  };
-
-  const handlePageChange = (page: number) => {
-    setPaginationData((prev) => ({
-      ...prev,
-      currentPage: page,
-    }));
   };
 
   const handleDelete = () => {
@@ -105,7 +81,9 @@ const TradingTypeListPage = () => {
         desc: `선택하신 ${selectedItems.length}개의 유형을 삭제하시겠습니까?`,
         onAction: () => {
           selectedItems.forEach((id) => {
-            const tradingItem = formattedData?.find((item) => item.id === id);
+            const tradingItem = formattedData?.find(
+              (item: TradingTypeProps) => item.tradingTypeId === id
+            );
             if (tradingItem) {
               deleteTradingType({
                 tradingTypeId: tradingItem.id,
@@ -172,6 +150,10 @@ const TradingTypeListPage = () => {
     });
   };
 
+  if (isLoading) {
+    <Loader />;
+  }
+
   useEffect(() => {
     if (!user) return;
     if (tradingDetail && tradingId !== null) {
@@ -233,12 +215,7 @@ const TradingTypeListPage = () => {
           onSelectChange={handleSelectChange}
           onEdit={handleEdit}
         />
-        <Pagination
-          totalPage={paginationData.totalPage}
-          limit={paginationData.pageSize}
-          page={paginationData.currentPage}
-          setPage={handlePageChange}
-        />
+        <Pagination totalPage={totalPages} limit={pageSize} page={currentPage} setPage={setPage} />
       </div>
       <Modal />
       <ContentModal />
