@@ -7,6 +7,7 @@ import theme from '@/styles/theme';
 import { formatTime } from '@/utils/time';
 
 interface VerificationInputProps {
+  id?: string; // 인풋 id
   value: string; // 부모컴포넌트에서 관리하는 입력값
   onChange: (value: string) => void; // 입력값 변경 콜백함수
   resetTimer?: number; // 타이머 리셋을 위한 상태
@@ -24,7 +25,7 @@ const VerificationInput = ({
   isDisabled = false, // 기본값 false
   startTimer = true, // 기본값 true
 }: VerificationInputProps) => {
-  const [timeLeft, setTimeLeft] = useState<number>(179); // 초기값 3분  => 179초
+  const [timeLeft, setTimeLeft] = useState<number>(299); // 초기값 5분  => 300초
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null); // 타이머 id
   const [showTimer, setShowTimer] = useState(false); // 타이머 보이기 여부
   const [isTimerExpired, setIsTimerExpired] = useState(false); // 타이머 만료 상태 추가
@@ -35,7 +36,7 @@ const VerificationInput = ({
     if (intervalId) {
       clearInterval(intervalId);
     }
-    setTimeLeft(179); // 타이머 초기화
+    setTimeLeft(299); // 타이머 초기화
     setShowTimer(true); // 타이머 시작할 때 보이기
     setIsTimerExpired(false); // 타이머 시작할 때 만료 상태 초기화
 
@@ -76,7 +77,7 @@ const VerificationInput = ({
       }
       // 타이머가 만료된 상태가 아닐 때만 타이머를 숨김
       if (!isTimerExpired) {
-        setTimeLeft(179);
+        setTimeLeft(299);
         setShowTimer(false);
       }
     }

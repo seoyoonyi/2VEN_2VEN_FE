@@ -39,6 +39,7 @@ const AdminVerifyPage = () => {
   useEffect(() => {
     // 이미 요청했다면 다시 요청하지 않음
     if (!initialRequestRef.current) {
+      setIsVerificationRequested(true); // 초기 요청 시에도 타이머가 시작되도록 수정
       handleResend();
       initialRequestRef.current = true;
     }
@@ -66,6 +67,8 @@ const AdminVerifyPage = () => {
   const handleResend = () => {
     console.log(isVerificationActive);
     setShouldReset(true);
+    // 재전송 요청 전에 타이머 시작 상태를 true로 설정
+    setIsVerificationRequested(true);
     // setState는 비동기이므로, 이 시점에서는 아직 errorMessage가 변경되지 않았음
     try {
       // 이메일로 인증번호 요청 API 호출
@@ -76,16 +79,16 @@ const AdminVerifyPage = () => {
           setIsVerificationActive(true); // 인증 활성화
           setResetTimer((prev) => prev + 1); // 타이머 리셋
           setIsInputDisabled(false); // 입력창 활성화
-          setIsVerificationRequested(true); // 타이머 시작을 위한 상태 활성화 추가
         },
         onError: () => {
           setErrorMessage('인증번호 발송에 실패했습니다.');
           setIsVerificationActive(false); // 인증 비활성화
-          setIsVerificationRequested(false); // 타이머 시작을 위한 상태 비활성화 추가
+          setIsVerificationRequested(false); // 에러 시에만 타이머 상태 비활성화 함
         },
       });
     } catch (error) {
       setErrorMessage('인증번호 발송에 실패했습니다.');
+      setIsVerificationRequested(false); // 에러 시에만 타이머 상태 비활성화 함
     }
   };
 

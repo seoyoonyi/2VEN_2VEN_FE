@@ -8,8 +8,9 @@ export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    Accept: 'application/json', // JSON 형식으로 응답 받기
   },
-  withCredentials: true, // CORS with Credentials 설정
+  withCredentials: true, // 세션 쿠키를 주고받기 위해 필수
 });
 
 apiClient.interceptors.request.use(
@@ -38,6 +39,18 @@ apiClient.interceptors.request.use(
     if (config.headers.useMock) {
       config.baseURL = '';
       delete config.headers.useMock;
+    }
+
+    // 회원가입 관련 엔드포인트 목록
+    const publicEndpoints = [
+      '/api/members/check-email',
+      '/api/members/check-verification-code',
+      '/api/members/signup/form',
+    ];
+
+    // 회원가입 관련 엔드포인트는 토큰을 추가하지 않음
+    if (token && !publicEndpoints.includes(config.url || '')) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;

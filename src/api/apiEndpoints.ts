@@ -22,8 +22,8 @@ export const API_ENDPOINTS = {
       // 관리자 인증 (주석처리된 값으로 처리예정)
       // REQUEST_VERIFICATION: '/api/auth/admin/send-verification-code', // 관리자 인증을 위한, 이메일 인증 코드 요청
       // CHECK_VERIFICATION: '/api/auth/admin/check-verification-code', // 관리자 이메일 인증 코드를 서버에 보내 확인
-      REQUEST_VERIFICATION: '/api/auth/send-verification-code', // 관리자 인증을 위한, 이메일 인증 코드 요청
-      CHECK_VERIFICATION: '/api/auth/admin-check-verification-code', // 관리자 이메일 인증 코드를 서버에 보내 확인
+      REQUEST_VERIFICATION: '/api/auth/admin/send-verification-code', // 관리자 인증을 위한, 이메일 인증 코드 요청
+      CHECK_VERIFICATION: '/api/auth/admin/check-verification-code', // 관리자 이메일 인증 코드를 서버에 보내 확인
     },
   },
   STRATEGY: {

@@ -1,76 +1,223 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
-import { useNicknameCheck } from '@/hooks/mutations/useNicknameCheck';
+import VerificationInput from '@/components/page/signup/VerificationInput';
+import { useNicknameValidation } from '@/hooks/mutations/useNicknameValidation';
+import { UseSignupEmailVerification } from '@/hooks/mutations/useSignupEmailVerification';
+import { useSignupVerification } from '@/hooks/mutations/useSignupVerification';
+import { useSignupStore } from '@/stores/signupStore';
 import theme from '@/styles/theme';
-import { ErrorResponse } from '@/types/error';
-import { validateNickname } from '@/utils/validation';
+import { validateCode, validateEmail } from '@/utils/validation';
 
 const SignUpForm = () => {
-  const [nickname, setNickname] = useState('');
-  const [nicknameMessage, setNicknameMessage] = useState('');
-  const nicknameCheck = useNicknameCheck();
+  const [email, setEmail] = useState<string>('');
+  const [verificationCode, setVerificationCode] = useState<string>('');
+  const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
+  const [verifyErrorMessage, setVerifyErrorMessage] = useState<string>('');
+  const [resetTimer, setResetTimer] = useState<number>(0); // 타이머 리셋을 위한 상태
+  const [isInputDisabled, setIsInputDisabled] = useState(true); // 페이지 로드 시 입력창 비활성화
+  const [isVerificationActive, setIsVerificationActive] = useState(true);
+  // 인증 요청버튼 클릭했는지 여부 추적하는 NEW 상태
+  const [isVerficationRequested, setIsVerificationRequested] = useState(false);
+
+  const { mutate: requestEmailVerification } = UseSignupEmailVerification({
+    onMutate: () => {
+      // 요청 시작 시점에 타이머 시작
+      setIsVerificationRequested(true);
+    },
+    onSuccess: () => {
+      setVerificationCode('');
+      setEmailErrorMessage('');
+      setIsVerificationActive(true);
+      setResetTimer((prev) => prev + 1);
+      setIsInputDisabled(false);
+      // setIsVerificationRequested(true);
+    },
+    onError: (error) => {
+      // 에러 발생 시 타이머 중지
+      setIsVerificationRequested(false);
+      setEmailErrorMessage(error.message);
+      setIsVerificationActive(false);
+    },
+  });
+
+  const { mutate: verifySignupCode } = useSignupVerification();
+
+  const { nickname, nicknameMessage, actions } = useSignupStore();
+  const { nicknameCheck, handleNicknameCheck } = useNicknameValidation();
 
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNickname(e.target.value);
+    actions.setNickname(e.target.value);
     if (!e.target.value) {
-      setNicknameMessage('');
-    }
-  };
-
-  const handleNicknameCheck = async () => {
-    const validation = validateNickname(nickname);
-    if (!validation.isValid) {
-      setNicknameMessage(validation.message);
-      return;
-    }
-
-    try {
-      const response = await nicknameCheck.mutateAsync(nickname);
-      if (response.status === 'success') {
-        setNicknameMessage('사용 가능한 닉네임입니다.');
-      }
-    } catch (error: unknown) {
-      const err = error as ErrorResponse;
-      if (err.response?.data?.error === 'CONFLICT') {
-        setNicknameMessage('이미 사용중인 닉네임입니다.');
-      } else if (err.response?.data?.errors) {
-        setNicknameMessage(
-          err.response.data.errors['checkNickname.nickname'] || '알 수 없는 오류가 발생했습니다.'
-        );
-      } else {
-        setNicknameMessage('닉네임 중복 확인에 실패했습니다.');
-      }
+      actions.setNicknameMessage('');
     }
   };
 
   const handleNicknameBlur = () => {
     if (nicknameMessage.includes('사용 가능')) {
-      setNicknameMessage('');
+      actions.setNicknameMessage('');
     }
   };
+
+  // verificationCode가 변경될 때마다 실행
+  useEffect(() => {
+    // 입력값이 비어있다면 에러메시지 제거
+    if (!verificationCode) {
+      setVerifyErrorMessage('');
+    }
+  }, [verificationCode]);
+
+  // email 값이 변경될 때마다 실행되는 함수
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setEmail(newValue);
+
+    // 입력값이 비어있으면 에러 상태와 메시지 초기화
+    if (!newValue) {
+      setEmailErrorMessage('');
+    }
+  };
+
+  // email 값이 변경될 때마다 실행되는 useEffect
+  useEffect(() => {
+    // 입력값이 비어있다면 에러 상태 초기화
+    if (!email) {
+      setEmailErrorMessage('');
+    }
+  }, [email]);
+
+  const handleEmailVerification = () => {
+    console.log(isVerificationActive);
+
+    // 이메일 입력값 확인
+    if (!email) {
+      setEmailErrorMessage('이메일을 입력해주세요.');
+      return;
+    }
+    // 이메일 유효성 검사
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      setEmailErrorMessage(emailValidation.message);
+      return;
+    }
+
+    // 요청 전에 먼저 UI 표시
+    setIsVerificationRequested(true);
+    // 이메일 인증 요청 로직
+    requestEmailVerification(email);
+  };
+
+  const handleCodeVerification = (e: React.FormEvent<HTMLFormElement>) => {
+    // 실제 쿠키 확인
+    const cookies = document.cookie.split(';').reduce(
+      (acc, cookie) => {
+        const [name, value] = cookie.trim().split('=');
+        acc[name] = value;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+
+    console.log('Cookies available:', cookies);
+    console.log('JSESSIONID:', cookies['JSESSIONID']);
+
+    e.preventDefault();
+    // 이메일 인증코드 확인
+    const validationResult = validateCode(verificationCode); // 인증번호 유효성 검증
+
+    if (isInputDisabled) {
+      setVerifyErrorMessage('인증 시간이 만료되었습니다. 다시 시도해주세요.');
+      return;
+    }
+    if (!validationResult.isValid) {
+      setVerifyErrorMessage(validationResult.message);
+      return;
+    }
+
+    // 디버깅을 위한 로그 추가
+    console.log('Verification Request:', {
+      email,
+      verificationCode,
+      sessionId: document.cookie, // 현재 쿠키 확인
+    });
+
+    verifySignupCode(
+      { email, verificationCode },
+      {
+        onSuccess: (response) => {
+          if (response.status === 'success') {
+            console.log('야호! 인증 성공!');
+          } else {
+            setVerifyErrorMessage('인증에 실패했습니다. 다시 시도해주세요.');
+          }
+        },
+        onError: (error) => {
+          setVerifyErrorMessage(error.message);
+        },
+      }
+    );
+  };
+
   return (
     <div>
       <div css={inputGroupStyle}>
         <label htmlFor='email' css={labelStyle}>
           이메일
         </label>
-        <Input id='email' inputSize='md' placeholder='1234@naver.com' />
-        <Button variant='primary' size='sm' width={100}>
-          인증요청
-        </Button>
+        <div css={emailVerifyContainer}>
+          <div css={divGroupStyle}>
+            <Input
+              id='email'
+              type='text'
+              inputSize='md'
+              required
+              name='email'
+              placeholder='1234@naver.com'
+              value={email}
+              onChange={handleEmailChange}
+              status={emailErrorMessage ? 'error' : 'default'}
+            />
+            {emailErrorMessage && <p css={messageStyle}>{emailErrorMessage}</p>}
+          </div>
+          <Button
+            type='button'
+            variant='primary'
+            size='sm'
+            width={100}
+            onClick={handleEmailVerification} // 인증요청
+          >
+            인증요청
+          </Button>
+        </div>
       </div>
       <div css={inputGroupStyle}>
         <label htmlFor='auth_code' css={labelStyle}>
           인증번호
         </label>
-        <Input id='auth_code' inputSize='md' placeholder='인증번호 6자리' />
-        <Button variant='primary' size='sm' width={100}>
-          확인
-        </Button>
+        <div css={divGroupStyle}>
+          <form css={formStyle} onSubmit={handleCodeVerification}>
+            <VerificationInput
+              id='auth_code'
+              value={verificationCode}
+              onChange={setVerificationCode}
+              resetTimer={resetTimer}
+              startTimer={isVerficationRequested} // 인증요청이 있을 때만 타이머 시작
+              onTimeEnd={() => {
+                setIsInputDisabled(true); // 입력창 비활성화
+                setIsVerificationRequested(false); // 타이머 종료하면 인증요청상태도 리셋!
+                setVerifyErrorMessage('인증 시간이 만료되었습니다. 다시 시도해주세요.');
+              }}
+              isDisabled={isInputDisabled}
+            />
+            <Button type='submit' size='sm' width={100} disabled={isInputDisabled}>
+              확인
+            </Button>
+          </form>
+          {verifyErrorMessage && <p css={messageStyle}>{verifyErrorMessage}</p>}
+        </div>
       </div>
       <div css={inputGroupStyle}>
         <label htmlFor='password' css={labelStyle}>
@@ -103,7 +250,6 @@ const SignUpForm = () => {
             id='nickname'
             inputSize='md'
             placeholder='사용할 닉네임을 입력해주세요.'
-            showClearButton
             value={nickname}
             onChange={handleNicknameChange}
             onBlur={handleNicknameBlur}
@@ -130,7 +276,7 @@ const SignUpForm = () => {
           variant='primary'
           size='sm'
           width={100}
-          onClick={handleNicknameCheck}
+          onClick={() => handleNicknameCheck(nickname)}
           disabled={!nickname || nicknameCheck.isPending}
         >
           중복확인
@@ -160,6 +306,26 @@ const inputGroupStyle = css`
     margin-left: 12px;
   }
 `;
+
+const emailVerifyContainer = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const formStyle = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  input {
+    width: 444px;
+    padding: 12px;
+    height: 48px;
+    &::placeholder {
+      font-size: ${theme.typography.fontSizes.body};
+    }
+  }
+`;
+
 const labelStyle = css`
   display: inline-block;
   width: 109px;

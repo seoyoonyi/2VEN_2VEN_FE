@@ -2,41 +2,53 @@ import { UserRole } from '@/types/route';
 
 // 기본 User 인터페이스
 export interface User {
-  member_id: string;
+  memberId: string;
   email: string;
   nickname: string;
   role: UserRole;
-  profile_image?: string | null;
+  profileImage?: string | null;
+  authorized?: boolean; // 옵셔널 필드 추가
 }
 // 관리자 전용 확장 인터페이스
 export interface AdminUser extends User {
-  role: 'ROLE_ADMIN';
-  is_authorized: boolean;
-  authorization_status: 'PENDING' | 'AUTHORIZED' | 'EXPIRED';
-  authorized_at?: string;
-  expires_at?: string;
+  adminInfo?: {
+    authorized: boolean;
+    authorizationStatus: 'PENDING' | 'AUTHORIZED' | 'EXPIRED';
+    authorizedAt?: string;
+    expiresAt?: string;
+  };
 }
 
 // 백엔드에 제안할 응답 구조
 export interface BackendSigninResponse {
   data: {
-    member_id: string;
+    memberId: string;
     email: string;
     nickname: string;
     role: string;
-    profile_image?: string | null;
-    admin_info?: {
+    profileImage?: string | null;
+    adminInfo?: {
       // role이 'ROLE_ADMIN'일 때만 포함
-      is_authorized: boolean;
-      authorization_status: 'PENDING' | 'AUTHORIZED' | 'EXPIRED';
-      authorized_at?: string;
-      expires_at?: string;
+      authorized?: boolean;
+      authorizationStatus?: 'PENDING' | 'AUTHORIZED' | 'EXPIRED';
+      authorizedAt?: string;
+      expiresAt?: string;
     };
   };
   message: string;
   status: 'success' | 'error';
 }
 
+export interface AdminVerificationResponse {
+  adminInfo: {
+    authorized: boolean;
+    authorizationStatus: string;
+    authorizedAt: string;
+    expiresAt: string;
+  };
+  message: string;
+  status: 'success' | 'error';
+}
 export interface SigninRequest {
   email: string;
   password: string;

@@ -26,10 +26,10 @@ export const useSigninMutation = () => {
         // 관리자의 경우, 관리자 스토어도 업데이트
         if (isAdminUser(response.data.user)) {
           setAdminAuth({
-            is_authorized: response.data.user.is_authorized,
-            authorization_status: response.data.user.authorization_status,
-            authorized_at: response.data.user.authorized_at,
-            expires_at: response.data.user.expires_at,
+            authorized: response.data.user.adminInfo?.authorized ?? false,
+            authorizationStatus: response.data.user.adminInfo?.authorizationStatus ?? 'PENDING',
+            authorizedAt: response.data.user.adminInfo?.authorizedAt,
+            expiresAt: response.data.user.adminInfo?.expiresAt,
           });
         }
 
