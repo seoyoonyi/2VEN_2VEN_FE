@@ -5,12 +5,14 @@ import { deleteMyInquiry } from '@/api/myInquiry';
 import Modal from '@/components/common/Modal';
 import { ROUTES } from '@/constants/routes';
 import useModalStore from '@/stores/modalStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { InquiryDetailData, Status } from '@/types/myinquires';
 
 const Question = ({ data }: { data: InquiryDetailData }) => {
   const { inquiryId } = useParams<{ inquiryId: string }>();
   const { openModal } = useModalStore();
+  const { showToast } = useToastStore();
 
   const navigate = useNavigate();
 
@@ -25,6 +27,7 @@ const Question = ({ data }: { data: InquiryDetailData }) => {
         try {
           await deleteMyInquiry(Number(inquiryId));
           navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST);
+          showToast('문의 삭제가 완료되었습니다.', 'basic');
         } catch (error) {
           console.error('Failed to delete inquiry:', error);
         }

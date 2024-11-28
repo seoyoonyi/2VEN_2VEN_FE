@@ -6,11 +6,14 @@ import { useNavigate } from 'react-router-dom';
 
 import { fetchMyInquiryList } from '@/api/myInquiry';
 import Pagination from '@/components/common/Pagination';
+import Toast from '@/components/common/Toast';
 import { ROUTES } from '@/constants/routes';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { myInquirieListData, Status } from '@/types/myinquires';
 
 const MyInquiriesPage = () => {
+  const { isToastVisible, hideToast, message } = useToastStore();
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const navigate = useNavigate();
@@ -106,6 +109,7 @@ const MyInquiriesPage = () => {
         </div>
         <Pagination totalPage={totalPages} limit={data?.size || 10} page={page} setPage={setPage} />
       </div>
+      {isToastVisible && <Toast message={message} isVisible={isToastVisible} onClose={hideToast} />}
     </div>
   );
 };

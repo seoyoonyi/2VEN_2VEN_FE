@@ -3,12 +3,15 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
 import { fetchMyInquiryDetail } from '@/api/myInquiry';
+import Toast from '@/components/common/Toast';
 import Answer from '@/components/page/mypage-investor/inquires-detail/Answer';
 import Question from '@/components/page/mypage-investor/inquires-detail/Question';
+import useToastStore from '@/stores/toastStore';
 import { InquiryDetailData } from '@/types/myinquires';
 
 const MyInquiresDetailPage = () => {
   const { inquiryId } = useParams<{ inquiryId: string }>();
+  const { isToastVisible, hideToast, message } = useToastStore();
 
   const { data, isLoading, isError } = useQuery<InquiryDetailData, Error>({
     queryKey: ['myInquiryDetail', inquiryId],
@@ -27,6 +30,7 @@ const MyInquiresDetailPage = () => {
     <div css={containerStyle}>
       <Question data={data} />
       {data.status === 'COMPLETED' && <Answer data={data} />}
+      {isToastVisible && <Toast message={message} isVisible={isToastVisible} onClose={hideToast} />}
     </div>
   );
 };

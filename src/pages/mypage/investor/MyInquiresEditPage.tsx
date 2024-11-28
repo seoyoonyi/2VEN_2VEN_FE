@@ -11,6 +11,7 @@ import InquiresInput from '@/components/page/mypage-investor/inquires-edit/Inqui
 import StrategyInfo from '@/components/page/mypage-investor/inquires-edit/StrategyInfo';
 import { useSubmitInquiryUpdate } from '@/hooks/mutations/useSubmitInquiryUpdate';
 import useModalStore from '@/stores/modalStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { InquiryDetailData } from '@/types/myinquires';
 
@@ -18,6 +19,8 @@ const MyInquiresEditPage = () => {
   const [formData, setFormData] = useState<InquiryDetailData | null>(null);
 
   const { openModal } = useModalStore();
+  const { showToast } = useToastStore();
+
   const { inquiryId } = useParams<{ inquiryId: string }>();
   const navigate = useNavigate();
 
@@ -56,6 +59,7 @@ const MyInquiresEditPage = () => {
       desc: `수정하시겠습니까?`,
       onAction: () => {
         submitInquiryUpdate({ id: Number(inquiryId), payload: formData });
+        showToast('문의 수정이 정상적으로 완료되었습니다.', 'basic');
       },
     });
   };
