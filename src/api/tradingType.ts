@@ -7,6 +7,7 @@ import { UserRole } from '@/types/route';
 
 //매매유형 목록 조회
 export const fetchTradingTypes = async (page: number, pageSize: number, role: string | null) => {
+  console.log(page, pageSize, role);
   try {
     const res = await apiClient.get(API_ENDPOINTS.ADMIN.TRADING_TYPES, {
       params: {

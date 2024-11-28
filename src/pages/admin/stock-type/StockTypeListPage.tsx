@@ -78,14 +78,14 @@ const StockTypeListPage = () => {
         desc: `선택하신 ${selectedStocks.length}개의 유형을 삭제하시겠습니까?`,
         onAction: () => {
           selectedStocks.forEach((id) => {
-            const stockItem = formattedData?.find(
+            const stockItem = investmentList?.find(
               (item: InvestmentAssetProps) => item.investmentAssetClassesId === id
             );
             if (stockItem) {
               deleteInvestmentAssets({
-                investmentTypeId: stockItem.id,
+                investmentTypeId: stockItem.investmentAssetClassesId,
                 role: user?.role,
-                fileUrl: stockItem.icon,
+                fileUrl: stockItem.nvestmentAssetClassesIcon,
               });
             }
           });

@@ -16,7 +16,7 @@ import {
 } from '@/hooks/mutations/useTradingType';
 import {
   useFetchDetailTradingType,
-  useFetchtradingList,
+  useFetchtradingTypeList,
 } from '@/hooks/queries/useFetchTradingType';
 import usePagination from '@/hooks/usePagination';
 import { useAuthStore } from '@/stores/authStore';
@@ -41,7 +41,7 @@ const tradeAttributes = [
 const TradingTypeListPage = () => {
   const { token, user } = useAuthStore();
   const { pagination, setPage } = usePagination(1, 10);
-  const { tradingList, currentPage, totalPages, pageSize, isLoading } = useFetchtradingList(
+  const { tradingList, currentPage, totalPages, pageSize, isLoading } = useFetchtradingTypeList(
     pagination.currentPage - 1,
     pagination.pageSize,
     user?.role as UserRole
@@ -60,9 +60,11 @@ const TradingTypeListPage = () => {
     user?.role as UserRole
   );
 
-  console.log(tradingList);
+  if (isLoading) {
+    <Loader />;
+  }
 
-  const formattedData = tradingList.map((item: TradingTypeProps) => ({
+  const formattedData = tradingList?.map((item: TradingTypeProps) => ({
     id: item.tradingTypeId || tradingList.length + 1,
     icon: item.tradingTypeIcon,
     title: item.tradingTypeName,
@@ -81,14 +83,14 @@ const TradingTypeListPage = () => {
         desc: `선택하신 ${selectedItems.length}개의 유형을 삭제하시겠습니까?`,
         onAction: () => {
           selectedItems.forEach((id) => {
-            const tradingItem = formattedData?.find(
+            const tradingItem = tradingList.find(
               (item: TradingTypeProps) => item.tradingTypeId === id
             );
             if (tradingItem) {
               deleteTradingType({
-                tradingTypeId: tradingItem.id,
+                tradingTypeId: tradingItem.tradingTypeId,
                 role: user?.role,
-                fileUrl: tradingItem.icon,
+                fileUrl: tradingItem.tradingTypeIcon,
               });
             }
           });
@@ -150,13 +152,9 @@ const TradingTypeListPage = () => {
     });
   };
 
-  if (isLoading) {
-    <Loader />;
-  }
-
   useEffect(() => {
     if (!user) return;
-    if (tradingDetail && tradingId !== null) {
+    if (tradingDetail) {
       let updatedName = tradingDetail.tradinggTypeName;
       let updatedIcon = tradingDetail.tradingTypeIcon;
       openContentModal({
@@ -192,7 +190,7 @@ const TradingTypeListPage = () => {
         },
       });
     }
-  }, [tradingId, tradingDetail]);
+  }, [tradingDetail]);
 
   return (
     <>

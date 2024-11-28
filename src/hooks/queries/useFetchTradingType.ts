@@ -3,25 +3,20 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { fetchTradingTypeDetail, fetchTradingTypes } from '@/api/tradingType';
 import { UserRole } from '@/types/route';
 
-export const useFetchtradingList = (currentPage: number, pageSize: number, role: UserRole) => {
+export const useFetchtradingTypeList = (currentPage: number, pageSize: number, role: UserRole) => {
   const { data, isLoading } = useQuery({
     queryKey: ['tradingTypes', currentPage, pageSize, role],
     queryFn: async () => {
-      try {
-        const res = await fetchTradingTypes(currentPage, pageSize, role);
-        return {
-          tradingList: res.data,
-          pagination: {
-            currentPage: res.currentPage,
-            totalPages: res.totalPages,
-            pageSize: res.pageSize,
-            totalElements: res.totalElements,
-          },
-        };
-      } catch (error) {
-        console.error('failed to fetch tradingTypes', error);
-        throw error;
-      }
+      const res = await fetchTradingTypes(currentPage, pageSize, role);
+      return {
+        tradingList: res.data,
+        pagination: {
+          currentPage: res.currentPage,
+          totalPages: res.totalPages,
+          pageSize: res.pageSize,
+          totalElements: res.totalElements,
+        },
+      };
     },
     placeholderData: keepPreviousData,
   });
