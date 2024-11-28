@@ -20,7 +20,6 @@ const Header = () => {
   const { user } = useAuthStore(); // 사용자 정보 가져오기
   const { isAdmin, isAuthorized, hasExpired } = useAdminAuthStatus(); // 관리자 권한 상태 가져오기
   console.log('Current user:', user); // user 객체 전체 확인
-  console.log('Profile image ID:', user?.profilePath); // 프로필 이미지 ID 확인
   console.log('Member ID:', user?.memberId); // 회원 ID 확인
 
   const { adminAuth } = useAdminAuthStore();
