@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 
 import { ApiResponse, isAdminUser } from './../../types/auth';
 
-import { verifyCode } from '@/api/auth';
+import { verifyAdminCode } from '@/api/auth';
 import { useAdminAuthStore } from '@/stores/adminAuthStore';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -14,10 +14,10 @@ export const useAdminVerifyMutation = () => {
   return useMutation<
     ApiResponse<{ expires_at: string }>,
     AxiosError,
-    { email: string; code: string }
+    { email: string; verificationCode: string }
   >({
-    mutationFn: async ({ email, code }) => {
-      const response = await verifyCode(email, code);
+    mutationFn: async ({ email, verificationCode }) => {
+      const response = await verifyAdminCode({ email, verificationCode });
       if (response.status === 'success' && user && isAdminUser(user)) {
         // 기존 adminAuth 상태를 업데이트
         setAdminAuth({

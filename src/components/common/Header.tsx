@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { css } from '@emotion/react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -16,14 +18,30 @@ import { isAdminUser } from '@/types/auth';
 const Header = () => {
   const LOGO = 'SYSMETIC';
   const { user } = useAuthStore();
-  const { data: base64Image } = useFetchProfileImage(
-    user?.profile_image || null,
-    user?.member_id || null
-  );
+  console.log('Current user:', user); // user 객체 전체 확인
+  console.log('Profile image ID:', user?.profile_image); // 프로필 이미지 ID 확인
+  console.log('Member ID:', user?.member_id); // 회원 ID 확인
+  const {
+    data: base64Image,
+    isError,
+    error,
+    isSuccess,
+  } = useFetchProfileImage(user?.profile_image || null, user?.member_id || null);
   const { adminAuth } = useAdminAuthStore();
   const navigate = useNavigate();
   // const location = useLocation();
 
+  useEffect(() => {
+    if (isError) {
+      console.error('Error fetching profile image:', error);
+    }
+  }, [isError, error]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      console.log('Profile image fetched successfully:', base64Image);
+    }
+  }, [isSuccess, base64Image]);
   // const isAdminRoute = location.pathname.startsWith('/admin'); // /admin으로 시작하는 경로인지 확인
   // const isAdmin = user?.role === 'MEMBER_ROLE_ADMIN'; // 사용자의 role이 ROLE_ADMIN인지 확인
   // const isAuthorizedAdmin = isAdmin && adminAuth?.is_authorized; // 사용자가 ROLE_ADMIN이고 adminAuth의 is_authorized가 true인지 확인
@@ -78,7 +96,7 @@ const Header = () => {
           <SearchInput onSearchSubmit={handleButtonClick} />
           <Link
             to={
-              user.role === 'MEMBER_ROLE_INVESTOR'
+              user.role === 'ROLE_INVESTOR'
                 ? ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS
                 : ROUTES.MYPAGE.TRADER.STRATEGIES.LIST
             }

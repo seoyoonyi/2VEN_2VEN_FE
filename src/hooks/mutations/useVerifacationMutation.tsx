@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-import { requestVerificationCode, verifyCode } from '@/api/auth';
+import { requestVerificationCode, verifyAdminCode } from '@/api/auth';
 import { ApiResponse } from '@/types/auth';
 
 // 인증번호 요청 mutation
@@ -17,5 +17,5 @@ export const useVerifyAdminCodeMutation = () =>
     AxiosError,
     { email: string; verificationCode: string }
   >({
-    mutationFn: ({ email, verificationCode }) => verifyCode(email, verificationCode),
+    mutationFn: verifyAdminCode,
   });

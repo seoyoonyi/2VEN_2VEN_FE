@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { AxiosError } from 'axios';
@@ -31,9 +31,17 @@ const AdminVerifyPage = () => {
 
   const { mutate: requestVerificationCode } = useRequestVerificationMutation();
   const { mutate: verifyCode } = useVerifyAdminCodeMutation();
-  // 페이지 마운트 시 최초 인증번호 요청
+
+  const initialRequestRef = useRef(false);
+
+  // React 18의 개발 모드에서 컴포넌트 마운트를 두 번 실행
+  // 처리
   useEffect(() => {
-    handleResend();
+    // 이미 요청했다면 다시 요청하지 않음
+    if (!initialRequestRef.current) {
+      handleResend();
+      initialRequestRef.current = true;
+    }
   }, []);
 
   // 재전송 처리를 위한 useEffect
@@ -83,10 +91,18 @@ const AdminVerifyPage = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // 디버깅을 위한 로깅 추가
+    console.log('Current values:', {
+      email: user?.email,
+      verificationCode,
+      user,
+    });
+
     const validationResult = validateCode(verificationCode); // 인증번호 유효성 검증
 
     if (isInputDisabled) {
-      setErrorMessage('인증 시간이 만료되었습니다. 다시 시도해주세요.');
+      setErrorMessage('인증 시간이 만료되었s습니다. 다시 시도해주세요.');
       return;
     }
 
@@ -94,25 +110,42 @@ const AdminVerifyPage = () => {
       setErrorMessage(validationResult.message);
       return;
     }
-    verifyCode(
-      { email, verificationCode },
-      {
-        onSuccess: (response) => {
-          if (response.status === 'success') {
-            navigate(ROUTES.ADMIN.STRATEGY.APPROVAL, { replace: true });
-          } else {
-            setErrorMessage('인증에 실패했습니다. 다시 시도해주세요.');
-          }
-        },
-        onError: (error: AxiosError) => {
-          if (error.response?.status === 401) {
-            setErrorMessage('올바른 인증번호가 아닙니다.');
-          } else {
-            setErrorMessage('인증 처리 중 오류가 발생했습니다.');
-          }
-        },
-      }
-    );
+    if (!email) {
+      setErrorMessage('이메일 정보가 없습니다.');
+      return;
+    }
+
+    const requestData = {
+      email: email.trim(),
+      verificationCode: verificationCode.trim(),
+    };
+
+    // 요청 직전 데이터 확인
+    console.log('Sending verification request:', requestData);
+
+    verifyCode(requestData, {
+      onSuccess: (response) => {
+        console.log('Verification success:', response);
+        if (response.status === 'success') {
+          navigate(ROUTES.ADMIN.STRATEGY.APPROVAL, { replace: true });
+        } else {
+          setErrorMessage('인증에 실패했습니다. 다시 시도해주세요.');
+        }
+      },
+      onError: (error: AxiosError) => {
+        console.error('Verification error:', {
+          status: error.response?.status,
+          data: error.response?.data,
+        });
+        if (error.response?.status === 401) {
+          setErrorMessage('올바른 인증번호가 아닙니다.');
+        } else if (error.response?.status === 410) {
+          setErrorMessage('인증번호가 만료되었습니다. 다시 시도해주세요.');
+        } else {
+          setErrorMessage('인증 처리 중 오류가 발생했습니다.');
+        }
+      },
+    });
   };
   return (
     <div css={containerStyle}>
