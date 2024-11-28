@@ -17,7 +17,7 @@ import {
 export const signin = async (credentials: SigninRequest): Promise<SigninResponse> => {
   try {
     const response = await apiClient.post<BackendSigninResponse>(
-      API_ENDPOINTS.AUTH.LOGIN,
+      API_ENDPOINTS.AUTH.SIGNIN,
       credentials
     );
 
@@ -267,4 +267,27 @@ export const verifySignupCode = async ({
     }
     throw error;
   }
+};
+
+// 관리자 상태 확인 API
+// 관리자의 세션타이머 남은시간 확인 목적
+export const checkAdminStatus = async () => {
+  const response = await apiClient.get(API_ENDPOINTS.AUTH.ADMIN_STATUS);
+  return response.data;
+};
+
+interface AdminSignoutResponse {
+  status: 'success' | 'error';
+  message: string;
+}
+// 관리자 로그아웃 API
+export const adminSignout = async (): Promise<AdminSignoutResponse> => {
+  const response = await apiClient.post<AdminSignoutResponse>(
+    API_ENDPOINTS.AUTH.ADMIN_SIGNOUT,
+    {},
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
 };

@@ -5,8 +5,10 @@ export const API_ENDPOINTS = {
     STOCK_TYPES: '/api/admin/inv-asset-classes',
   },
   AUTH: {
-    LOGIN: '/api/members/login',
-    SIGNUP: '/api/members/signup',
+    SIGNIN: '/api/members/login', // 로그인
+    SIGNUP: '/api/members/signup', // 회원가입
+    ADMIN_STATUS: '/api/auth/admin-status', // 관리자 상태 확인
+    ADMIN_SIGNOUT: '/api/auth/logout', // 관리자 로그아웃
     CHECK_NICKNAME: '/api/members/check-nickname', // 닉네임 중복 확인
     FIND: {
       EMAIL: '/api/members/check-phone', // 이메일 찾기
