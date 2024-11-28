@@ -21,6 +21,20 @@ export const fetchTradingTypes = async (page: number, pageSize: number) => {
     console.error('failed to fetch tradingTypes', error);
   }
 };
+//매매유형 항목 상세 조회
+export const fetchTradingTypeDetail = async (id: number) => {
+  try {
+    const res = await apiClient.get(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Auth: 'admin',
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error('failed to fetch InvestmentTypes', error);
+  }
+};
 
 //매매유형 삭제
 export const fetchDeleteTradingType = async (

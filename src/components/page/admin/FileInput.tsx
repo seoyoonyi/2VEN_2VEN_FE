@@ -15,6 +15,7 @@ interface FileInputProps {
   file: File | null;
   fname: string;
   icon: string;
+  iconName: string;
   onNameChange: (name: string) => void;
   onFileIconUrl: (url: string) => void;
 }
@@ -23,9 +24,9 @@ const FileInput = ({
   role,
   token,
   title,
-  file,
   fname,
   icon,
+  iconName,
   onNameChange,
   onFileIconUrl,
 }: FileInputProps) => {
@@ -33,7 +34,7 @@ const FileInput = ({
   const [selectedFile, setSelectedFile] = useState<File>();
   const [fileName, setFileName] = useState(fname);
   const [iconUrl, setIconUrl] = useState(icon);
-  const [displayName, setDisplayName] = useState(selectedFile?.name);
+  const [iconTitle, setIconTitle] = useState(iconName);
   const { mutate: uploadIcon } = useIconMutation();
   const { mutate: updateIcon } = usePutIconMutation();
 
@@ -53,7 +54,7 @@ const FileInput = ({
             onSuccess: async (data) => {
               if (data) {
                 onFileIconUrl(data.fileUrl);
-                setDisplayName(data.displayName);
+                setIconTitle(data.displayName);
               }
             },
           }
@@ -66,9 +67,9 @@ const FileInput = ({
           },
           {
             onSuccess: async (data) => {
-              if (data.fileUrl) {
+              if (data) {
                 onFileIconUrl(data.fileUrl);
-                setDisplayName(data.displayName);
+                setIconTitle(data.displayName);
               }
             },
           }
@@ -91,11 +92,12 @@ const FileInput = ({
   };
 
   useEffect(() => {
-    if (file) {
-      setSelectedFile(file);
-      setFileName(file.name);
+    if (iconUrl && iconTitle && iconTitle) {
+      setFileName(fileName);
+      setIconTitle(iconTitle);
+      setIconUrl(iconUrl);
     }
-  }, [file]);
+  }, [iconUrl, iconTitle, iconTitle]);
 
   return (
     <div css={inputStyle}>
@@ -113,7 +115,7 @@ const FileInput = ({
       )}
       {icon && !selectedFile && <img src={iconUrl} alt={icon} css={imageStyle} />}
       <div css={inputAndButtonContainerStyle}>
-        <input type='text' value={displayName} readOnly css={inputStyleOverride} />
+        <input type='text' value={iconTitle} readOnly css={inputStyleOverride} />
         <Button variant='secondary' size='sm' onClick={handleFileUpload} width={115}>
           찾아보기
         </Button>

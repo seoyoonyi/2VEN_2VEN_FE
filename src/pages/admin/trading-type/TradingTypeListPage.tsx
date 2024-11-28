@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
@@ -15,6 +15,7 @@ import {
   useDeleteTradingType,
   usePutTradingType,
 } from '@/hooks/mutations/useTradingType';
+import { useFetchDetailTradingType } from '@/hooks/queries/useFetchTradingType';
 import { useAuthStore } from '@/stores/authStore';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
@@ -34,13 +35,14 @@ const tradeAttributes = [
 ];
 
 const TradingTypeListPage = () => {
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [tradingId, setTradingId] = useState<number | null>(null);
   const { token, user } = useAuthStore();
   const { openModal } = useModalStore();
   const { openContentModal } = useContentModalStore();
   const { mutate: deleteTradingType } = useDeleteTradingType();
   const { mutate: addTradingType } = useAddTradingType();
   const { mutate: updateTradingType } = usePutTradingType();
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [paginationData, setPaginationData] = useState({
     currentPage: 1,
     totalPage: 0,
@@ -70,6 +72,7 @@ const TradingTypeListPage = () => {
     },
     placeholderData: keepPreviousData,
   });
+  const { tradingDetail, iconName } = useFetchDetailTradingType(tradingId as number);
 
   const formattedData = data?.map((item) => ({
     id: item.tradingTypeId || data.length + 1,
@@ -110,42 +113,8 @@ const TradingTypeListPage = () => {
   };
 
   const handleEdit = (id: number) => {
-    if (!user) return;
-    const selectedType = data?.find((item) => item.tradingTypeId === id);
-    if (selectedType) {
-      let updatedName = selectedType.tradingTypeName;
-      let updatedIcon = selectedType.tradingTypeIcon;
-      openContentModal({
-        title: '매매유형 수정',
-        content: (
-          <FileInput
-            mode='update'
-            role={user.role}
-            token={token}
-            title='매매유형'
-            file={null}
-            fname={selectedType.tradingTypeName}
-            icon={selectedType.tradingTypeIcon}
-            onNameChange={(name) => (updatedName = name)}
-            onFileIconUrl={(icon) => (updatedIcon = icon)}
-          />
-        ),
-        onAction: () => {
-          if (!updatedName.trim()) {
-            alert('매매유형명이 입력되지않았습니다.');
-            return;
-          }
-          updateTradingType({
-            tradingTypeId: selectedType.tradingTypeId,
-            tradingTypeOrder: selectedType.tradingTypeOrder,
-            tradingTypeName: updatedName,
-            tradingTypeIcon: updatedIcon,
-            isActive: 'Y',
-          });
-          setSelectedItems([]);
-        },
-      });
-    }
+    if (!id) return;
+    setTradingId(id);
   };
 
   const handleUpload = () => {
@@ -160,9 +129,9 @@ const TradingTypeListPage = () => {
           role={user.role}
           token={token}
           title='매매유형'
-          file={null}
           fname={''}
           icon={''}
+          iconName={''}
           onNameChange={(name) => {
             newName = name;
           }}
@@ -184,6 +153,43 @@ const TradingTypeListPage = () => {
       },
     });
   };
+
+  useEffect(() => {
+    if (!user) return;
+    if (tradingDetail) {
+      let updatedName = tradingDetail.tradinggTypeName;
+      let updatedIcon = tradingDetail.tradingTypeIcon;
+      openContentModal({
+        title: '매매유형 수정',
+        content: (
+          <FileInput
+            mode='update'
+            role={user.role}
+            token={token}
+            title='매매유형'
+            fname={tradingDetail.tradingTypeName}
+            icon={tradingDetail.tradingTypeIcon}
+            iconName={iconName}
+            onNameChange={(name) => (updatedName = name)}
+            onFileIconUrl={(icon) => (updatedIcon = icon)}
+          />
+        ),
+        onAction: () => {
+          if (!updatedName.trim()) {
+            alert('매매유형명이 입력되지않았습니다.');
+            return;
+          }
+          updateTradingType({
+            tradingTypeId: tradingDetail.tradingTypeId,
+            tradingTypeOrder: tradingDetail.tradingTypeOrder,
+            tradingTypeName: updatedName,
+            tradingTypeIcon: updatedIcon,
+            isActive: 'Y',
+          });
+        },
+      });
+    }
+  }, [tradingDetail]);
 
   return (
     <>
