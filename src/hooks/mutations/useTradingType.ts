@@ -7,12 +7,14 @@ import {
 } from '@/api/tradingType';
 import { fetchDeleteIcon } from '@/api/uploadFile';
 import { TradingTypeProps } from '@/types/admin';
+import { UserRole } from '@/types/route';
 
 export const useAddTradingType = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<{ msg: string; timestamp: string }, Error, TradingTypeProps>({
-    mutationFn: (data: TradingTypeProps) => fetchPostTradingType(data),
+  return useMutation({
+    mutationFn: ({ data, role }: { data: TradingTypeProps; role: UserRole }) =>
+      fetchPostTradingType({ ...data, role }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tradingTypes'] });
     },
@@ -22,8 +24,9 @@ export const useAddTradingType = () => {
 export const usePutTradingType = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<{ msg: string; timestamp: string }, Error, TradingTypeProps>({
-    mutationFn: (data: TradingTypeProps) => fetchPutTradingType(data),
+  return useMutation({
+    mutationFn: ({ data, role }: { data: TradingTypeProps; role: UserRole }) =>
+      fetchPutTradingType({ ...data, role }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tradingTypes'] });
     },

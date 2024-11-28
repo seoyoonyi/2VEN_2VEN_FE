@@ -1,13 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchTradingTypeDetail } from '@/api/tradingType';
+import { UserRole } from '@/types/route';
 
-export const useFetchDetailTradingType = (id: number) => {
+export const useFetchDetailTradingType = (id: number, role: UserRole | null) => {
   const { data, isLoading } = useQuery({
     queryKey: ['tradingTypeDetail', id],
     queryFn: async () => {
       try {
-        const res = await fetchTradingTypeDetail(id);
+        const res = await fetchTradingTypeDetail(id, role);
         return {
           tradingDetail: res.data,
           iconName: res.displayName,

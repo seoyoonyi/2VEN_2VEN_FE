@@ -21,6 +21,7 @@ import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 import { TradingTypeProps } from '@/types/admin';
+import { UserRole } from '@/types/route';
 
 const tradeAttributes = [
   {
@@ -56,7 +57,8 @@ const TradingTypeListPage = () => {
       try {
         const res = await fetchTradingTypes(
           paginationData.currentPage - 1,
-          paginationData.pageSize
+          paginationData.pageSize,
+          user?.role as UserRole
         );
         setPaginationData({
           currentPage: paginationData.currentPage,
@@ -72,7 +74,10 @@ const TradingTypeListPage = () => {
     },
     placeholderData: keepPreviousData,
   });
-  const { tradingDetail, iconName } = useFetchDetailTradingType(tradingId as number);
+  const { tradingDetail, iconName } = useFetchDetailTradingType(
+    tradingId as number,
+    user?.role as UserRole
+  );
 
   const formattedData = data?.map((item) => ({
     id: item.tradingTypeId || data.length + 1,
@@ -156,9 +161,12 @@ const TradingTypeListPage = () => {
           return;
         }
         addTradingType({
-          tradingTypeName: newName,
-          tradingTypeIcon: newIcon,
-          isActive: 'Y',
+          data: {
+            tradingTypeName: newName,
+            tradingTypeIcon: newIcon,
+            isActive: 'Y',
+          },
+          role: user.role,
         });
       },
     });
@@ -190,11 +198,14 @@ const TradingTypeListPage = () => {
             return;
           }
           updateTradingType({
-            tradingTypeId: tradingDetail.tradingTypeId,
-            tradingTypeOrder: tradingDetail.tradingTypeOrder,
-            tradingTypeName: updatedName,
-            tradingTypeIcon: updatedIcon,
-            isActive: 'Y',
+            data: {
+              tradingTypeId: tradingDetail.tradingTypeId,
+              tradingTypeOrder: tradingDetail.tradingTypeOrder,
+              tradingTypeName: updatedName,
+              tradingTypeIcon: updatedIcon,
+              isActive: 'Y',
+            },
+            role: user.role,
           });
         },
       });

@@ -3,9 +3,10 @@ import { API_ENDPOINTS } from './apiEndpoints';
 import { fetchDeleteIcon } from './uploadFile';
 
 import { TradingTypeProps } from '@/types/admin';
+import { UserRole } from '@/types/route';
 
 //매매유형 목록 조회
-export const fetchTradingTypes = async (page: number, pageSize: number) => {
+export const fetchTradingTypes = async (page: number, pageSize: number, role: string | null) => {
   try {
     const res = await apiClient.get(API_ENDPOINTS.ADMIN.TRADING_TYPES, {
       params: {
@@ -13,8 +14,7 @@ export const fetchTradingTypes = async (page: number, pageSize: number) => {
         pageSize,
       },
       headers: {
-        'Content-Type': 'application/json',
-        Auth: 'admin',
+        Auth: role,
       },
     });
     return res.data;
@@ -22,13 +22,13 @@ export const fetchTradingTypes = async (page: number, pageSize: number) => {
     console.error('failed to fetch tradingTypes', error);
   }
 };
+
 //매매유형 항목 상세 조회
-export const fetchTradingTypeDetail = async (id: number) => {
+export const fetchTradingTypeDetail = async (id: number, role: string | null) => {
   try {
     const res = await apiClient.get(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${id}`, {
       headers: {
-        'Content-Type': 'application/json',
-        Auth: 'admin',
+        Auth: role,
       },
     });
     return res.data;
@@ -45,7 +45,6 @@ export const fetchDeleteTradingType = async (id: number, role: string | null, fi
     }
     const req = await apiClient.delete(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${id}`, {
       headers: {
-        'Content-Type': 'application/json',
         Auth: role,
       },
     });
@@ -61,7 +60,8 @@ export const fetchPostTradingType = async ({
   tradingTypeName,
   tradingTypeIcon,
   isActive,
-}: TradingTypeProps): Promise<{ msg: string; timestamp: string }> => {
+  role,
+}: TradingTypeProps & { role: UserRole }): Promise<{ msg: string; timestamp: string }> => {
   const body = {
     tradingTypeName,
     tradingTypeIcon,
@@ -70,8 +70,7 @@ export const fetchPostTradingType = async ({
 
   const req = await apiClient.post(API_ENDPOINTS.ADMIN.TRADING_TYPES, body, {
     headers: {
-      'Content-Type': 'application/json',
-      Auth: 'admin',
+      Auth: role,
     },
   });
   return req.data;
@@ -84,7 +83,8 @@ export const fetchPutTradingType = async ({
   tradingTypeName,
   tradingTypeIcon,
   isActive,
-}: TradingTypeProps): Promise<{ msg: string; timestamp: string }> => {
+  role,
+}: TradingTypeProps & { role: UserRole }): Promise<{ msg: string; timestamp: string }> => {
   const body = {
     tradingTypeName,
     tradingTypeOrder,
@@ -94,8 +94,7 @@ export const fetchPutTradingType = async ({
 
   const req = await apiClient.put(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${tradingTypeId}`, body, {
     headers: {
-      'Content-Type': 'application/json',
-      Auth: 'admin',
+      Auth: role,
     },
   });
   return req.data;

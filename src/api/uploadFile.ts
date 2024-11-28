@@ -1,4 +1,4 @@
-import apiClient from './apiClient';
+import { apiClient, createFormDataRequest } from './apiClient';
 import { API_ENDPOINTS } from './apiEndpoints';
 
 export interface UploadFileProps {
@@ -8,13 +8,11 @@ export interface UploadFileProps {
 }
 
 export const fetchUploadIconFile = async ({ role, token, fileItem }: UploadFileProps) => {
-  const formData = new FormData();
-  formData.append('file', fileItem);
+  const formData = createFormDataRequest({ file: fileItem });
 
   try {
     const res = await apiClient.post(`${API_ENDPOINTS.FILES.ICON}/upload`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
         Auth: role,
         Authorization: `Bearer ${token}`,
       },
@@ -29,8 +27,7 @@ export const fetchPutIconFile = async (
   fileUrl: string,
   { role, token, fileItem }: UploadFileProps
 ) => {
-  const formData = new FormData();
-  formData.append('file', fileItem);
+  const formData = createFormDataRequest({ file: fileItem });
 
   try {
     const res = await apiClient.post(`${API_ENDPOINTS.FILES.ICON}/modify`, formData, {
@@ -38,7 +35,6 @@ export const fetchPutIconFile = async (
         fileUrl,
       },
       headers: {
-        'Content-Type': 'multipart/form-data',
         Auth: role,
         Authorization: `Bearer ${token}`,
       },
