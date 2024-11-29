@@ -53,7 +53,7 @@ const TradingTypeListPage = () => {
   const [tradingId, setTradingId] = useState<number | null>(null);
 
   const { openModal } = useModalStore();
-  const { openContentModal } = useContentModalStore();
+  const { openContentModal, closeContentModal } = useContentModalStore();
 
   const { tradingDetail, iconName } = useFetchDetailTradingType(
     tradingId as number,
@@ -153,7 +153,7 @@ const TradingTypeListPage = () => {
   };
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !tradingId) return;
     if (tradingDetail) {
       let updatedName = tradingDetail.tradingTypeName;
       let updatedIcon = tradingDetail.tradingTypeIcon;
@@ -187,10 +187,14 @@ const TradingTypeListPage = () => {
             },
             role: user.role,
           });
+          setTradingId(null);
+        },
+        onCancel: () => {
+          setTradingId(null);
         },
       });
     }
-  }, [tradingDetail]);
+  }, [tradingDetail, tradingId]);
 
   return (
     <>

@@ -166,7 +166,7 @@ const StockTypeListPage = () => {
 
   useEffect(() => {
     if (!user) return;
-    if (investmentDetail) {
+    if (investmentDetail && stockId) {
       let updatedName = investmentDetail.investmentAssetClassesName;
       let updatedIcon = investmentDetail.investmentAssetClassesIcon;
       openContentModal({
@@ -200,10 +200,14 @@ const StockTypeListPage = () => {
             },
             role: user.role,
           });
+          setStockId(null);
+        },
+        onCancel: () => {
+          setStockId(null);
         },
       });
     }
-  }, [investmentDetail]);
+  }, [investmentDetail, stockId]);
 
   return (
     <>
