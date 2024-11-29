@@ -283,6 +283,7 @@ interface AdminSignoutResponse {
 // 관리자 로그아웃 API
 export const adminSignout = async (): Promise<AdminSignoutResponse> => {
   try {
+    // 1. 먼저 로그아웃 API 호출(이떄 JWT 토큰이 필요함!)
     const response = await apiClient.post<AdminSignoutResponse>(
       API_ENDPOINTS.AUTH.ADMIN_SIGNOUT,
       {},
@@ -291,11 +292,14 @@ export const adminSignout = async (): Promise<AdminSignoutResponse> => {
       }
     );
 
-    // 모든 쿠키 삭제
-    document.cookie.split(';').forEach((cookie) => {
-      const name = cookie.split('=')[0].trim();
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
-    });
+    // 2. API 호출이 성공하면, 로컬의 인증정보 제거
+    if (response.data.status === 'success') {
+      // 모든 쿠키 삭제
+      document.cookie.split(';').forEach((cookie) => {
+        const name = cookie.split('=')[0].trim();
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=2ven.shop`;
+      });
+    }
 
     return response.data;
   } catch (error) {

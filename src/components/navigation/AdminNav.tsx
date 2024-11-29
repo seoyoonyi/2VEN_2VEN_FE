@@ -33,16 +33,17 @@ const AdminNav = () => {
   ];
   const handleSignout = async () => {
     try {
-      // 관리자 로그아웃 API 호출
-      await adminSignout();
+      // 1. 관리자 로그아웃 API 호출
+      const response = await adminSignout();
 
-      // 상태 초기화
-      clearAdminAuth();
-      clearAuth();
-
-      // 메인 페이지로 리다이랙트
+      if (response.status === 'success') {
+        // 2. 로컬 상태 초기화(JWT 토큰 삭제)
+        clearAdminAuth();
+        clearAuth();
+      }
+      // 3. 메인 페이지로 리다이랙트
       navigate(ROUTES.HOME.PATH, { replace: true });
-    } catch (e) {
+    } catch (error) {
       console.error('Logout failed:', error);
       // API 호출이 실패하더라도 로컬 상태는 초기화하고 리다이렉트
       clearAdminAuth();
