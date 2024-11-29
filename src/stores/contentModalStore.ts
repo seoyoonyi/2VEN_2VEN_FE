@@ -4,6 +4,7 @@ interface ContentModalData {
   title: string;
   content: React.ReactNode;
   onAction: () => void;
+  onCancel?: () => void;
 }
 
 interface ModalStore {

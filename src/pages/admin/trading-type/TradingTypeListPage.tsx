@@ -46,16 +46,16 @@ const TradingTypeListPage = () => {
     pagination.pageSize,
     user?.role as UserRole
   );
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [tradingId, setTradingId] = useState<number | null>(null);
   const { mutate: deleteTradingType } = useDeleteTradingType();
   const { mutate: addTradingType } = useAddTradingType();
   const { mutate: updateTradingType } = usePutTradingType();
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
-  const [tradingId, setTradingId] = useState<number | null>(null);
 
   const { openModal } = useModalStore();
   const { openContentModal } = useContentModalStore();
 
-  const { tradingDetail, iconName } = useFetchDetailTradingType(
+  const { tradingDetail, refetch } = useFetchDetailTradingType(
     tradingId as number,
     user?.role as UserRole
   );
@@ -107,11 +107,6 @@ const TradingTypeListPage = () => {
     }
   };
 
-  const handleEdit = (id: number) => {
-    if (!id) return;
-    setTradingId(id);
-  };
-
   const handleUpload = () => {
     if (!user) return;
     let newName: string = '';
@@ -153,44 +148,57 @@ const TradingTypeListPage = () => {
   };
 
   useEffect(() => {
-    if (!user) return;
-    if (tradingDetail) {
-      let updatedName = tradingDetail.tradinggTypeName;
-      let updatedIcon = tradingDetail.tradingTypeIcon;
-      openContentModal({
-        title: '매매유형 수정',
-        content: (
-          <FileInput
-            mode='update'
-            role={user.role}
-            token={token}
-            title='매매유형'
-            fname={tradingDetail.tradingTypeName}
-            icon={tradingDetail.tradingTypeIcon}
-            iconName={iconName}
-            onNameChange={(name) => (updatedName = name)}
-            onFileIconUrl={(icon) => (updatedIcon = icon)}
-          />
-        ),
-        onAction: () => {
-          if (!updatedName.trim()) {
-            alert('매매유형명이 입력되지않았습니다.');
-            return;
-          }
-          updateTradingType({
-            data: {
-              tradingTypeId: tradingDetail.tradingTypeId,
-              tradingTypeOrder: tradingDetail.tradingTypeOrder,
-              tradingTypeName: updatedName,
-              tradingTypeIcon: updatedIcon,
-              isActive: 'Y',
+    if (!user || !tradingId) return;
+
+    const fetchAndOpenModal = async () => {
+      try {
+        const { data } = await refetch();
+        if (data) {
+          let updatedName = data?.tradingDetail.tradingTypeName;
+          let updatedIcon = data?.tradingDetail.tradingTypeIcon;
+          openContentModal({
+            title: '매매유형 수정',
+            content: (
+              <FileInput
+                mode='update'
+                role={user.role}
+                token={token}
+                title='매매유형'
+                fname={updatedName}
+                icon={updatedIcon}
+                iconName={data?.iconName}
+                onNameChange={(name) => (updatedName = name)}
+                onFileIconUrl={(icon) => (updatedIcon = icon)}
+              />
+            ),
+            onAction: () => {
+              if (!updatedName.trim()) {
+                alert('매매유형명이 입력되지않았습니다.');
+                return;
+              }
+              updateTradingType({
+                data: {
+                  tradingTypeId: tradingDetail.tradingTypeId,
+                  tradingTypeOrder: tradingDetail.tradingTypeOrder,
+                  tradingTypeName: updatedName,
+                  tradingTypeIcon: updatedIcon,
+                  isActive: 'Y',
+                },
+                role: user.role,
+              });
+              setTradingId(null);
             },
-            role: user.role,
+            onCancel: () => {
+              setTradingId(null);
+            },
           });
-        },
-      });
-    }
-  }, [tradingDetail]);
+        }
+      } catch (error) {
+        console.error('failed refetch tradingTypeDetail:', error);
+      }
+    };
+    fetchAndOpenModal();
+  }, [tradingDetail, tradingId]);
 
   return (
     <>
@@ -211,9 +219,14 @@ const TradingTypeListPage = () => {
           data={formattedData || []}
           selectedItems={selectedItems}
           onSelectChange={handleSelectChange}
-          onEdit={handleEdit}
+          onEdit={setTradingId}
         />
-        <Pagination totalPage={totalPages} limit={pageSize} page={currentPage} setPage={setPage} />
+        <Pagination
+          totalPage={totalPages}
+          limit={pageSize}
+          page={currentPage + 1}
+          setPage={setPage}
+        />
       </div>
       <Modal />
       <ContentModal />
