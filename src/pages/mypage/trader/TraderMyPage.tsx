@@ -140,17 +140,6 @@ const StrategyEmptyStyle = css`
   text-align: center;
 `;
 
-const folderInfoStyle = css`
-  color: ${theme.colors.gray[500]};
-  text-align: right;
-  font-weight: 400;
-  margin-bottom: 4px;
-
-  span {
-    color: ${theme.colors.gray[700]};
-  }
-`;
-
 const tableWrapperStyle = css`
   display: flex;
   flex-direction: column;
