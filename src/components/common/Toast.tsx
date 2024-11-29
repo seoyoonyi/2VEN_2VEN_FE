@@ -92,7 +92,7 @@ const toastStyles = (isVisible: boolean) => css`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 400px; /* 토스트 크기 */
+  min-width: 400px;
   height: 50px; /* 토스트 크기 */
   padding: 0 16px;
   background-color: ${theme.colors.gray[800]};

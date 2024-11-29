@@ -30,6 +30,7 @@ export interface StrategyPayload {
   minInvestmentAmount: string;
   strategyOverview: string;
   isPosted: string;
+  strategyProposalLink: string;
   investmentAssetClassesIdList: number[];
 }
 

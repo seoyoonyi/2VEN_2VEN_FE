@@ -3,14 +3,23 @@ import { useState, useRef } from 'react';
 import { css } from '@emotion/react';
 import { MdRemoveCircle } from 'react-icons/md';
 
+import { deleteProposalFile } from '@/api/strategy';
 import Button from '@/components/common/Button';
 import Toast from '@/components/common/Toast';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { isValidFileType } from '@/utils/fileHelper';
 
-const FileUpload = ({ onFileSelect }: { onFileSelect: (file: File) => void }) => {
-  const { isToastVisible, showToast, hideToast, message } = useToastStore();
+const FileUpload = ({
+  onFileSelect,
+  uploadedFileUrl,
+  setUploadedFileUrl,
+}: {
+  onFileSelect: (file: File) => void;
+  uploadedFileUrl: string | null;
+  setUploadedFileUrl: (url: string | null) => void;
+}) => {
+  const { isToastVisible, showToast, hideToast, message, type } = useToastStore();
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -20,7 +29,7 @@ const FileUpload = ({ onFileSelect }: { onFileSelect: (file: File) => void }) =>
       onFileSelect(file);
       setSelectedFileName(file.name);
     } else {
-      showToast('pdf, docs, xlsx, ppt 형식의 파일만 업로드 가능합니다.');
+      showToast('pdf, docs, xlsx, ppt 형식의 파일만 업로드 가능합니다.', 'error');
     }
   };
 
@@ -46,12 +55,26 @@ const FileUpload = ({ onFileSelect }: { onFileSelect: (file: File) => void }) =>
     if (selectedFile) handleFile(selectedFile);
   };
 
-  const handleRemoveFile = () => {
-    setSelectedFileName(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+  const handleRemoveFile = async () => {
+    if (!uploadedFileUrl) {
+      showToast('삭제할 파일이 없습니다.', 'error');
+      return;
     }
-    showToast('파일이 제거되었습니다.');
+
+    try {
+      await deleteProposalFile(uploadedFileUrl);
+
+      setSelectedFileName(null);
+      setUploadedFileUrl(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+
+      showToast('파일이 삭제되었습니다.', 'basic');
+    } catch (error) {
+      console.error('파일 삭제 중 오류:', error);
+      showToast('파일 삭제 중 오류가 발생했습니다.', 'error');
+    }
   };
 
   return (
@@ -80,12 +103,12 @@ const FileUpload = ({ onFileSelect }: { onFileSelect: (file: File) => void }) =>
           <input
             type='file'
             ref={fileInputRef}
-            accept='.xls,.xlsx,.pdf,.docx,.ppt'
+            accept='.xls,.xlsx,.pdf,.docx,.ppt,.pptx'
             onChange={handleFileSelect}
             css={fileInputStyle}
           />
         </label>
-        <Toast message={message} onClose={hideToast} isVisible={isToastVisible} />
+        <Toast message={message} type={type} onClose={hideToast} isVisible={isToastVisible} />
       </div>
     </div>
   );

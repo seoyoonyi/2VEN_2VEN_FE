@@ -12,6 +12,7 @@ import StrategyName from '@/components/page/strategy/form-content/StrategyName';
 import { investmentFunds, isPublic } from '@/constants/createOptions';
 import { useSubmitStrategyCreate } from '@/hooks/mutations/useSubmitStrategyCreate';
 import { useSubmitStrategyUpdate } from '@/hooks/mutations/useSubmitStrategyUpdate';
+import { useUploadProposalFile } from '@/hooks/mutations/useUploadProposalFile';
 import useFetchStrategyOptionData from '@/hooks/queries/useFetchStrategyOptionData';
 import useCreateFormValidation from '@/hooks/useCreateFormValidation';
 import useModalStore from '@/stores/modalStore';
@@ -81,17 +82,32 @@ const StrategyForm = ({
   const { openModal } = useModalStore();
   const { strategyData, loading, error } = useFetchStrategyOptionData();
   const { mutate: submitStrategy, status } = useSubmitStrategyCreate();
+  const { mutate: uploadFile } = useUploadProposalFile();
   const { mutate: updateStrategy } = useSubmitStrategyUpdate();
   const isSubmitting = status === 'pending';
 
   const [file, setFile] = useState<File | null>(null);
+  const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
 
   const formState = { strategy, text, operation, cycle, fund, publicStatus, selectedProducts };
   const isFormValid = useCreateFormValidation(formState);
 
-  const handleFileSelect = (selectedFile: File) => {
-    console.log(file);
+  const handleFileSelect = (selectedFile: File | null) => {
     setFile(selectedFile);
+    if (selectedFile) {
+      uploadFile(
+        { file: selectedFile, authType: 'Trader' },
+        {
+          onSuccess: (data) => {
+            setUploadedFileUrl(data.fileUrl);
+            console.log('파일 업로드 성공:', data);
+          },
+          onError: (error) => {
+            console.error('파일 업로드 실패:', error);
+          },
+        }
+      );
+    }
   };
 
   const handleSubmit = async () => {
@@ -102,10 +118,11 @@ const StrategyForm = ({
       minInvestmentAmount: fund,
       strategyOverview: text,
       isPosted: publicStatus,
+      strategyProposalLink: uploadedFileUrl ? uploadedFileUrl : '',
       investmentAssetClassesIdList: selectedProducts.map((v) => Number(v)),
     };
 
-    console.log('payload', payload);
+    console.log('최종 제출 데이터:', payload);
 
     try {
       if (isEditMode && strategyDetailData) {
@@ -209,7 +226,11 @@ const StrategyForm = ({
         />
       </section>
 
-      <FileUpload onFileSelect={handleFileSelect} />
+      <FileUpload
+        onFileSelect={handleFileSelect}
+        uploadedFileUrl={uploadedFileUrl}
+        setUploadedFileUrl={setUploadedFileUrl}
+      />
 
       <div css={buttonContainerStyle}>
         <Button
