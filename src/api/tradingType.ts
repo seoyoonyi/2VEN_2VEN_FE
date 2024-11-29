@@ -91,7 +91,6 @@ export const fetchPutTradingType = async ({
     tradingTypeIcon,
     isActive,
   };
-  console.log(body);
   const req = await apiClient.put(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${tradingTypeId}`, body, {
     headers: {
       Auth: role,
