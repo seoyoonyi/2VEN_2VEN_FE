@@ -53,7 +53,7 @@ const TradingTypeListPage = () => {
   const [tradingId, setTradingId] = useState<number | null>(null);
 
   const { openModal } = useModalStore();
-  const { openContentModal, closeContentModal } = useContentModalStore();
+  const { openContentModal } = useContentModalStore();
 
   const { tradingDetail, iconName } = useFetchDetailTradingType(
     tradingId as number,
