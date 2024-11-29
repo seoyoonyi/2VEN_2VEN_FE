@@ -66,11 +66,7 @@ const AdminNav = () => {
 const navContainerStyle = css`
   display: flex;
   flex-direction: column;
-  padding: 48px 20px;
-  width: 305px;
-  height: 285px;
-  border-radius: 8px;
-  background-color: ${theme.colors.main.white};
+  gap: 32px;
 `;
 const navWrapper = css`
   display: flex;
