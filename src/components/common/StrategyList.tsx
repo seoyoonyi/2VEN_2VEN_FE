@@ -1,28 +1,27 @@
 import { css } from '@emotion/react';
-import { Link } from 'react-router-dom';
+import { AiOutlineMore } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 
+import DropdownMenu from '@/components/common/DropdownMenu';
+import LineChart from '@/components/common/LineChart';
+import { ROUTES } from '@/constants/routes';
+import { useDropdown } from '@/hooks/useDropdown';
 import theme from '@/styles/theme';
+import { StrategyListData } from '@/types/strategy';
 
-interface StrategyData {
-  strategyId: number;
-  strategyTitle: string;
-  analytics_graph?: string;
-  tradingTypeIcon: string;
-  cycleIcon: string;
-  investmentAssetClassesIcon: string[];
-  cumulativeReturn?: number;
-  oneYearReturn?: number;
-  mdd?: number;
-  smscore?: number;
-  followers_count?: number;
+interface DropdownAction {
+  label: string;
+  onClick: (strategyId: number) => void;
 }
 
 interface StrategyListProps {
-  strategies: StrategyData[];
+  strategies: StrategyListData[];
   showRank?: boolean;
   startRank?: number;
   containerWidth?: string;
   gridTemplate?: string;
+  moreMenu?: boolean;
+  dropdownActions?: DropdownAction[];
 }
 
 const StrategyList = ({
@@ -31,39 +30,67 @@ const StrategyList = ({
   startRank = 1,
   containerWidth = theme.layout.width.content,
   gridTemplate = '64px 278px 278px 160px 160px 100px 100px',
-}: StrategyListProps) => (
-  <div css={containerStyle(containerWidth)}>
-    <div css={headerStyle(gridTemplate)}>
-      {showRank && <div>순위</div>}
-      <div>전략명</div>
-      <div>분석 그래프</div>
-      <div>수익률</div>
-      <div>MDD</div>
-      <div>SM Score</div>
-      <div>팔로워</div>
-    </div>
-    {strategies.map((strategy, idx) => (
-      <Link to={`/strategies/${strategy.strategyId}`} key={strategy.strategyId}>
-        <div css={rowStyle(gridTemplate)}>
+  moreMenu = false,
+  dropdownActions = [],
+}: StrategyListProps) => {
+  const navigate = useNavigate();
+
+  const { activeDropdown, toggleDropdown, closeDropdown } = useDropdown();
+
+  const onClickStrategyList = (strategyId: string) => {
+    navigate(ROUTES.STRATEGY.DETAIL(strategyId));
+    window.scrollTo(0, 0);
+  };
+
+  return (
+    <div css={containerStyle(containerWidth)}>
+      <div css={headerStyle(gridTemplate)}>
+        {showRank && <div>순위</div>}
+        <div>전략명</div>
+        <div>분석 그래프</div>
+        <div>수익률</div>
+        <div>MDD</div>
+        <div>SM Score</div>
+        <div>팔로워</div>
+        {moreMenu && (
+          <div>
+            <AiOutlineMore size={20} />
+          </div>
+        )}
+      </div>
+      {strategies.map((strategy, idx) => (
+        <div
+          role='button'
+          tabIndex={0}
+          onClick={() => onClickStrategyList(String(strategy.strategyId))}
+          onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onClickStrategyList(String(strategy.strategyId));
+            }
+          }}
+          css={rowStyle(gridTemplate)}
+          key={strategy.strategyId}
+        >
           {showRank && <div css={rankStyle}>{startRank + idx}</div>}
           <div css={strategyTitleContainerStyle}>
             <div css={strategyTitleStyle}>{strategy.strategyTitle}</div>
             <div css={iconStyle}>
-              <img src={strategy.tradingTypeIcon} alt='매매유형' width={18} height={18} />
-              <img src={strategy.cycleIcon} alt='주기' width={18} height={18} />
+              <img src={strategy.tradingTypeIcon} alt='매매유형' width={16} />
+              <img src={strategy.cycleIcon} alt='주기' width={16} />
               {strategy.investmentAssetClassesIcon
                 ?.slice(0, 2)
-                .map((icon) => <img key={icon} src={icon} alt={icon} height={18} />)}
+                .map((icon) => <img key={icon} src={icon} alt={icon} height={16} />)}
               <div css={countStyle}>
                 {strategy.investmentAssetClassesIcon.length > 2 && (
-                  <div css={countStyle}>+{strategy.investmentAssetClassesIcon.length - 2}</div>
+                  <span css={countStyle}>+{strategy.investmentAssetClassesIcon.length - 2}</span>
                 )}
               </div>
             </div>
           </div>
           <div css={graphStyle}>
             {strategy.analytics_graph ? (
-              <img src={strategy.analytics_graph} alt='분석 그래프' />
+              <LineChart data={[0, 180, 30, 100, 80, 200]} size='sm' colorTheme='primary' />
             ) : (
               '-'
             )}
@@ -93,11 +120,24 @@ const StrategyList = ({
           </div>
           <div>{strategy.smscore !== undefined ? strategy.smscore : '-'}</div>
           <div>{strategy.followers_count !== undefined ? strategy.followers_count : '0'}</div>
+          {moreMenu && (
+            <DropdownMenu
+              isActive={activeDropdown === strategy.strategyId}
+              toggleDropdown={() => toggleDropdown(strategy.strategyId)}
+              actions={dropdownActions.map((action) => ({
+                label: action.label,
+                handleClick: () => {
+                  action.onClick(strategy.strategyId);
+                  closeDropdown();
+                },
+              }))}
+            />
+          )}
         </div>
-      </Link>
-    ))}
-  </div>
-);
+      ))}
+    </div>
+  );
+};
 
 const containerStyle = (width: string) => css`
   display: flex;
@@ -116,6 +156,11 @@ const rowStyle = (gridTemplate: string) => css`
   border-bottom: 1px solid ${theme.colors.gray[300]};
   text-align: center;
   line-height: ${theme.typography.lineHeights.lg};
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${theme.colors.teal[50]};
+  }
 `;
 
 const headerStyle = (gridTemplate: string) => css`
@@ -125,6 +170,11 @@ const headerStyle = (gridTemplate: string) => css`
   color: ${theme.colors.gray[700]};
   border-bottom: 1px solid ${theme.colors.gray[500]};
   font-weight: ${theme.typography.fontWeight.bold};
+  cursor: default;
+
+  &:hover {
+    background-color: ${theme.colors.gray[100]};
+  }
 `;
 
 const rankStyle = css`
@@ -150,6 +200,7 @@ const iconStyle = css`
   flex-wrap: wrap;
   align-items: center;
   gap: 4px;
+  height: 22px;
 `;
 
 const countStyle = css`

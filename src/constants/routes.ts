@@ -72,7 +72,4 @@ export const ROUTES = {
       APPROVAL: '/admin/strategies/approval', // 전략 승인 관리 목록
     },
   },
-  ERROR: {
-    NOT_FOUND: '/404', // 404 Not Found
-  },
 } as const;

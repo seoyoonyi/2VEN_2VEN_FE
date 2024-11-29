@@ -2,9 +2,11 @@ import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import Modal from '@/components/common/Modal';
+import ChartSection from '@/components/page/strategy-detail/chart/ChartSection';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
 import IconTagSection from '@/components/page/strategy-detail/IconTagSection';
-import ChartSection from '@/components/page/strategy-detail/section/ChartSection';
+import ReasonItem from '@/components/page/strategy-detail/ReasonItem';
+import ReviewSection from '@/components/page/strategy-detail/review/ReviewSection';
 import StrategyContent from '@/components/page/strategy-detail/StrategyContent';
 import StrategyHeader from '@/components/page/strategy-detail/StrategyHeader';
 import StrategyIndicator from '@/components/page/strategy-detail/StrategyIndicator';
@@ -15,256 +17,99 @@ import DailyAnalysis from '@/components/page/strategy-detail/tabmenu/DailyAnalys
 import MonthlyAnalysis from '@/components/page/strategy-detail/tabmenu/MonthlyAnalysis';
 import StatisticsTable from '@/components/page/strategy-detail/tabmenu/StatisticsTable';
 import { ROUTES } from '@/constants/routes';
+import { monthlyAttribues, dailyAttribues, statisticsMapping } from '@/constants/strategyAnalysis';
 import useStrategyDetailDelete from '@/hooks/mutations/useStrategyDetailDelete';
 import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
+import useStatistics from '@/hooks/queries/useStatistics';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
+import { StatisticsProps } from '@/types/strategyDetail';
 import { formatDate } from '@/utils/dateFormat';
+import { formatValue, formatRate } from '@/utils/statistics';
 
 const strategyDummy = {
-  indicator: {
-    cumulativeRate: 53.81,
-    maximumRate: -13.6,
-    avgProfit: 5.69,
-    profitFactor: '1.54 : 1',
-    winRate: 60.36,
-  },
   file: {
     url: `/file.txt`,
   },
 };
 
-const statisticsData = [
-  { label: '잔고', value: '896,217,437' },
-  { label: '누적 입출금액', value: '866,217,437' },
-  { label: '원금', value: '238,704,360' },
-  { label: '누적 수익 금액', value: '247,525,031' },
-  { label: '최대 누적수익금액', value: '247,525,031' },
-  { label: '현재 자본인하금액', value: '-54,632,778', highlight: true },
-  { label: '최대 자본인하금액', value: '-54,632,778', highlight: true },
-  { label: '평균 손익 금액', value: '336,311' },
-  { label: '최대 일수익 금액', value: '25,257,250' },
-  { label: '최대 일손실 금액', value: '-17,465,050' },
-  { label: '총 매매 일수', value: '736일' },
-  { label: '총 이익 일수', value: '508일' },
-  { label: '총 손실 일수', value: '228일' },
-  { label: '승률', value: '69%' },
-  { label: 'Profit Factor', value: '1.48' },
-  { label: '운용기간', value: '2년 4월' },
-  { label: '시작일자', value: '2012-10-11' },
-  { label: '최종일자', value: '2015-03-11' },
-  { label: '누적 수익률(%)', value: '49.24%' },
-  { label: '최대 누적수익률', value: '49.24%' },
-  { label: '현재 자본인하율(%)', value: '0%' },
-  { label: '최대 자본인하율(%)', value: '-13.96%' },
-  { label: '평균 손익률', value: '336,311' },
-  { label: '최대 일수익율', value: '25,257,250' },
-  { label: '최대 일손실율', value: '-17,465,050' },
-  { label: '현재 연속 손익일수', value: '6일' },
-  { label: '최대 연속 이익일수', value: '22일' },
-  { label: '최대 연속 손실일수', value: '-6일' },
-  { label: '고정갱신 후 경과일', value: '0일' },
-  { label: 'ROA', value: '453' },
-];
-const dailyAnalysisData = [
-  {
-    date: '2024.10.29',
-    original: '100,000,000',
-    trade: '0',
-    day: '+332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2024.10.29',
-    original: '100,000,000',
-    trade: '100,000',
-    day: '-332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2024.10.29',
-    original: '100,000,000',
-    trade: '0',
-    day: '332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2024.10.29',
-    original: '100,000,000',
-    trade: '20,000,000',
-    day: '332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2024.10.29',
-    original: '100,000,000',
-    trade: '0',
-    day: '332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2024.10.29',
-    original: '100,000,000',
-    trade: '0',
-    day: '332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-];
-const monthlyAnalysisData = [
-  {
-    date: '2026.04',
-    original: '100,000,000',
-    trade: '0',
-    day: '+332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2026.04',
-    original: '100,000,000',
-    trade: '0',
-    day: '+332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2026.04',
-    original: '100,000,000',
-    trade: '0',
-    day: '332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2026.04',
-    original: '100,000,000',
-    trade: '0',
-    day: '332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2026.04',
-    original: '100,000,000',
-    trade: '0',
-    day: '-332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-  {
-    date: '2026.04',
-    original: '100,000,000',
-    trade: '0',
-    day: '-332,410',
-    daily: '0.33%',
-    addMoney: '332,200',
-    addRate: '0.30%',
-  },
-];
 const imgTest = [
-  { img: '/src/assets/images/domestic_present.svg' },
-  { img: '/src/assets/images/domestic_present.svg' },
-  { img: '/src/assets/images/domestic_present.svg' },
-  { img: '/src/assets/images/domestic_present.svg' },
+  { img: '/src/assets/images/producttype_stock.png' },
+  { img: '/src/assets/images/producttype_stock.png' },
 ];
 
-const dailyAttribues = [
-  {
-    title: '날짜',
-  },
-  {
-    title: '원금',
-  },
-  {
-    title: '입출금',
-  },
-  {
-    title: '일손익',
-  },
-  {
-    title: '일수익률',
-  },
-  {
-    title: '누적손익',
-  },
-  {
-    title: '누적수익률',
-  },
-  {
-    title: '수정',
-  },
-];
-const monthlyAttribues = [
-  {
-    title: '월',
-  },
-  {
-    title: '월평균 원금',
-  },
-  {
-    title: '입출금',
-  },
-  {
-    title: '월 손익',
-  },
-  {
-    title: '월 수익률',
-  },
-  {
-    title: '누적손익',
-  },
-  {
-    title: '누적수익률',
-  },
-  {
-    title: '수정',
-  },
-];
-
-const tabMenu = [
-  {
-    title: '통계',
-    component: <StatisticsTable data={statisticsData} />,
-  },
-  {
-    title: '실계좌인증',
-    component: <AccountVerify />,
-  },
-  {
-    title: '일간분석',
-    component: <DailyAnalysis attributes={dailyAttribues} data={dailyAnalysisData} mode='write' />,
-  },
-  {
-    title: '월간분석',
-    component: (
-      <MonthlyAnalysis attributes={monthlyAttribues} data={monthlyAnalysisData} mode='read' />
-    ),
-  },
-];
+const rejectReasonData = {
+  title: '미승인 이유는 이렇습니다',
+  admin: '나는야 관리자 룰루',
+  adminImg: '/src/assets/images/apt_trader.png',
+  content: `
+    안녕하세요, 트레이더 [내가여기서투자짱]님.
+    귀하께서 등록하신 전략을 검토한 결과, 아쉽게도 아래와 같은 사유로 인해 이번에는 승인이 어려운 점 안내드립니다.
+    1. 전략 설명 부족
+    전략의 세부적인 실행 방법이나 투자 기준에 대한 설명이 부족하여, 투자자들이 전략을 이해하는 데 어려움이 있을 것으로 판단됩니다.
+    2. 데이터 부족 또는 불명확
+    전략에 포함된 데이터의 출처나 신뢰성이 불명확합니다.
+    3. 투자 기준의 모호성
+    전략에서 사용하는 기준이 투자자들에게 혼동을 줄 수 있는 표현이 포함되어 있습니다.
+    수정 후 다시 제출해 주시면 빠르게 검토하여 안내드리겠습니다. 등록 절차와 관련해 궁금한 점이 있으시면 언제든 문의해 주세요.
+  `,
+};
 
 const StrategyDetailPage = () => {
   const { strategyId } = useParams();
   const navigate = useNavigate();
-  const { strategy, isLoading } = useFetchStrategyDetail(strategyId || '');
+  const { strategy } = useFetchStrategyDetail(strategyId || '');
+  const { statistics, writedAt } = useStatistics(Number(strategyId));
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { openModal } = useModalStore();
+
+  if (!strategy) {
+    return <div>로딩중....</div>;
+  }
+
+  const statisticsTableData = (
+    mapping: { label: string; key: string }[],
+    statistics: StatisticsProps
+  ) =>
+    mapping.map(({ label, key }) => {
+      const value = statistics[key as keyof StatisticsProps];
+      const formattedValue = formatValue(key, value);
+      return {
+        label,
+        value: formattedValue,
+      };
+    });
+
+  const tabMenu = [
+    {
+      title: '통계',
+      component: !statistics ? (
+        <div css={noneStaticsStyle}>통계 데이터가 없습니다. 일간분석 데이터를 입력해주세요.</div>
+      ) : (
+        <StatisticsTable data={statisticsTableData(statisticsMapping, statistics)} />
+      ),
+    },
+    {
+      title: '실계좌인증',
+      component: <AccountVerify />,
+    },
+    {
+      title: '일간분석',
+      component: (
+        <DailyAnalysis attributes={dailyAttribues} strategyId={Number(strategyId)} mode='write' />
+      ),
+    },
+    {
+      title: '월간분석',
+      component: (
+        <MonthlyAnalysis
+          attributes={monthlyAttribues}
+          strategyId={Number(strategyId)}
+          mode='read'
+        />
+      ),
+    },
+  ];
 
   const handleDeleteDetail = (id: number) => {
     openModal({
@@ -287,11 +132,14 @@ const StrategyDetailPage = () => {
     });
   };
 
-  if (isLoading) {
-    <div>로딩중....</div>;
-  }
   return (
     <div css={containerStyle}>
+      <ReasonItem
+        title={rejectReasonData.title}
+        content={rejectReasonData.content}
+        admin={rejectReasonData.admin}
+        adminImg={rejectReasonData.adminImg}
+      />
       <div css={contentStyle}>
         <div css={contentWrapper}>
           <div key={strategy?.strategyId}>
@@ -311,21 +159,24 @@ const StrategyDetailPage = () => {
               date={formatDate(strategy?.writedAt || '', 'withDayTime')}
               followers={strategy?.followersCount}
               minimumInvestment={strategy?.minInvestmentAmount}
-              lastUpdatedDate={'통계쪽입력날짜'}
+              lastUpdatedDate={writedAt ? formatDate(writedAt) : '데이터없음'}
             />
             <StrategyContent content={strategy?.strategyOverview} />
             <FileDownSection fileUrl={strategyDummy.file.url} />
             <StrategyIndicator
-              cumulativeRate={strategyDummy.indicator.cumulativeRate}
-              maximumRate={strategyDummy.indicator.maximumRate}
-              avgProfit={strategyDummy.indicator.avgProfit}
-              profitFactor={strategyDummy.indicator.profitFactor}
-              winRate={strategyDummy.indicator.winRate}
+              cumulativeRate={statistics && formatRate(statistics.maxCumulativeProfitLossRatio)}
+              maximumRate={statistics && formatRate(statistics.maxDrawdownRate)}
+              avgProfit={statistics && formatRate(statistics.averageProfitLossRate)}
+              profitFactor={statistics && statistics.profitFactor}
+              winRate={statistics && formatRate(statistics.winRate)}
             />
             <ChartSection />
             <StrategyTab tabs={tabMenu} />
           </div>
         </div>
+      </div>
+      <div css={reviewSectionWrapper}>
+        <ReviewSection />
       </div>
       <Modal />
     </div>
@@ -334,6 +185,8 @@ const StrategyDetailPage = () => {
 
 const containerStyle = css`
   display: flex;
+  flex-direction: column;
+  align-items: center;
   background-color: ${theme.colors.gray[100]};
   justify-content: center;
   flex-shrink: 0;
@@ -342,6 +195,7 @@ const containerStyle = css`
 
 const contentStyle = css`
   margin-top: 95px;
+  border-radius: 8px;
   width: ${theme.layout.width.content};
   padding: 40px;
   box-sizing: border-box;
@@ -354,6 +208,21 @@ const contentWrapper = css`
   display: flex;
   align-items: left;
   flex-direction: column;
+`;
+
+const noneStaticsStyle = css`
+  background-color: ${theme.colors.gray[100]};
+  color: ${theme.colors.gray[400]};
+  ${theme.textStyle.subtitles.subtitle4};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+`;
+
+const reviewSectionWrapper = css`
+  width: ${theme.layout.width.content};
+  margin: 16px 0 76px 0;
 `;
 
 export default StrategyDetailPage;

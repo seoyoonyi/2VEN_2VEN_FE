@@ -1,12 +1,52 @@
 import { UserRole } from '@/types/route';
 
+// 기본 User 인터페이스
 export interface User {
-  member_id: string; // number에서 string으로 변경
+  memberId: string;
   email: string;
   nickname: string;
   role: UserRole;
+  authorized?: boolean; // 옵셔널 필드 추가
+}
+// 관리자 전용 확장 인터페이스
+export interface AdminUser extends User {
+  adminInfo?: {
+    authorized: boolean;
+    authorizationStatus: 'PENDING' | 'AUTHORIZED' | 'EXPIRED';
+    authorizedAt?: string;
+    expiresAt?: string;
+  };
 }
 
+// 백엔드에 제안할 응답 구조
+export interface BackendSigninResponse {
+  data: {
+    memberId: string;
+    email: string;
+    nickname: string;
+    role: string;
+    adminInfo?: {
+      // role이 'ROLE_ADMIN'일 때만 포함
+      authorized?: boolean;
+      authorizationStatus?: 'PENDING' | 'AUTHORIZED' | 'EXPIRED';
+      authorizedAt?: string;
+      expiresAt?: string;
+    };
+  };
+  message: string;
+  status: 'success' | 'error';
+}
+
+export interface AdminVerificationResponse {
+  adminInfo: {
+    authorized: boolean;
+    authorizationStatus: string;
+    authorizedAt: string;
+    expiresAt: string;
+  };
+  message: string;
+  status: 'success' | 'error';
+}
 export interface SigninRequest {
   email: string;
   password: string;
@@ -26,3 +66,6 @@ export interface ApiResponse<T> {
   message: string;
   status: 'success' | 'error';
 }
+
+// 관리자 여부 확인 함수(타입 가드 함수)
+export const isAdminUser = (user: User): user is AdminUser => user.role === 'ROLE_ADMIN';

@@ -2,12 +2,13 @@ import { useState } from 'react';
 
 import { css } from '@emotion/react';
 
+import Input from '@/components/common/Input';
 import theme from '@/styles/theme';
 
 export interface InputTableProps {
   date: string;
-  trade: string;
-  day: string;
+  depWdPrice: number;
+  dailyProfitLoss: number;
 }
 
 export interface InputAnalysisProps {
@@ -42,29 +43,28 @@ const InputTable = ({ data, onChange }: InputAnalysisProps) => {
           {inputData.map((row, idx) => (
             <tr key={idx} css={tableRowStyle}>
               <td css={tableCellStyle}>
-                <input
-                  type='text'
+                <Input
+                  type='date'
                   value={row.date}
-                  placeholder='예)YYYY.MM.DD'
                   onChange={(e) => handleInputChange(idx, 'date', e.target.value)}
                   css={inputStyle}
                 />
               </td>
               <td css={tableCellStyle}>
-                <input
-                  type='text'
-                  value={row.trade}
+                <Input
+                  type='number'
+                  value={row.depWdPrice}
                   placeholder='예)123,456,789'
-                  onChange={(e) => handleInputChange(idx, 'trade', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'depWdPrice', e.target.value)}
                   css={inputStyle}
                 />
               </td>
               <td css={tableCellStyle}>
-                <input
-                  type='text'
-                  value={row.day}
+                <Input
+                  type='number'
+                  value={row.dailyProfitLoss}
                   placeholder='예)+123,456'
-                  onChange={(e) => handleInputChange(idx, 'day', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'dailyProfitLoss', e.target.value)}
                   css={inputStyle}
                 />
               </td>
@@ -123,8 +123,18 @@ const tableCellStyle = css`
 
 const inputStyle = css`
   width: 100%;
-  padding: 8px;
-  border: 1px solid ${theme.colors.gray[300]};
   border-radius: 4px;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  & {
+    -moz-appearance: textfield;
+    appearance: none;
+  }
 `;
+
 export default InputTable;

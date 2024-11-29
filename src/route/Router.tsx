@@ -1,8 +1,9 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/routes';
 import AdminLayout from '@/layouts/AdminLayout';
 import InvestorMypageLayout from '@/layouts/InvestorMypageLayout';
+import NotFoundLayout from '@/layouts/NotFoundLayout';
 import RootLayout from '@/layouts/RootLayout';
 import TraderMyPageLayout from '@/layouts/TraderMyPageLayout';
 import StockTypeListPage from '@/pages/admin/stock-type/StockTypeListPage';
@@ -19,6 +20,7 @@ import SignUpFormPage from '@/pages/auth/signup/SignUpPage';
 import SignUpSelectTypePage from '@/pages/auth/signup/SignUpSelectTypePage';
 import SignUpSuccessPage from '@/pages/auth/signup/SignUpSuccessPage';
 import WithdrawalSuccessPage from '@/pages/auth/WithdrawalSuccessPage';
+import ErrorPage from '@/pages/error/ErrorPage';
 import NotFoundPage from '@/pages/error/NotFoundPage';
 import HomePage from '@/pages/HomePage';
 import InvestorFollowFolderPage from '@/pages/mypage/investor/InvestorFollowFolderPage';
@@ -46,11 +48,15 @@ export const router = createBrowserRouter(
     {
       path: ROUTES.HOME.PATH,
       element: <RootLayout />,
-      errorElement: <NotFoundPage />,
+      errorElement: <ErrorPage />, // 에러 처리 페이지
       children: [
         {
           path: ROUTES.HOME.PATH,
           element: <HomePage />, // 메인 홈 페이지
+        },
+        {
+          path: '*',
+          element: <NotFoundPage />, // 존재하지 않는 경로 처리
         },
         // -------------------------------------- 인증
         {
@@ -146,8 +152,12 @@ export const router = createBrowserRouter(
     {
       path: ROUTES.HOME.PATH,
       element: <AdminLayout />,
-      errorElement: <NotFoundPage />,
+      errorElement: <ErrorPage />, // 에러 처리 페이지
       children: [
+        {
+          path: '*',
+          element: <NotFoundLayout />, // 별도의 404 레이아웃 사용
+        },
         // -------------------------------------- 관리자
         {
           path: ROUTES.ADMIN.STOCK_TYPE.LIST,
@@ -166,8 +176,12 @@ export const router = createBrowserRouter(
     {
       path: ROUTES.HOME.PATH,
       element: <InvestorMypageLayout />,
-      errorElement: <NotFoundPage />,
+      errorElement: <ErrorPage />, // 에러 처리 페이지
       children: [
+        {
+          path: '*',
+          element: <NotFoundLayout />, // 별도의 404 레이아웃 사용
+        },
         // -------------------------------------- 마이페이지(투자자)
         {
           path: ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS,
@@ -198,8 +212,12 @@ export const router = createBrowserRouter(
     {
       path: ROUTES.HOME.PATH,
       element: <TraderMyPageLayout />,
-      errorElement: <NotFoundPage />,
+      errorElement: <ErrorPage />, // 에러 처리 페이지
       children: [
+        {
+          path: '*',
+          element: <NotFoundLayout />, // 별도의 404 레이아웃 사용
+        },
         // -------------------------------------- 마이페이지(트레이더)
         {
           path: ROUTES.MYPAGE.TRADER.STRATEGIES.LIST,
@@ -214,16 +232,6 @@ export const router = createBrowserRouter(
           element: <TraderProfilePage />, // 트레이더 프로필 관리
         },
       ],
-    },
-    {
-      // 404 및 기타 리다이렉트 처리
-      path: ROUTES.ERROR.NOT_FOUND,
-      element: <NotFoundPage />, // 404 Not Found 페이지
-    },
-    {
-      // 유효하지 않은 경로로 접근했을 때 404 페이지로 리다이렉트
-      path: '*',
-      element: <Navigate to={ROUTES.ERROR.NOT_FOUND} replace />,
     },
   ],
   {
