@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetchTradingTypeDetail, fetchTradingTypes } from '@/api/tradingType';
 import { UserRole } from '@/types/route';
@@ -31,7 +31,7 @@ export const useFetchtradingTypeList = (currentPage: number, pageSize: number, r
 };
 
 export const useFetchDetailTradingType = (id: number, role: UserRole | null) => {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['tradingTypeDetail', id],
     queryFn: async () => {
       try {
@@ -46,7 +46,13 @@ export const useFetchDetailTradingType = (id: number, role: UserRole | null) => 
       }
     },
     enabled: !!id,
+    staleTime: 0,
   });
 
-  return { tradingDetail: data?.tradingDetail, iconName: data?.iconName, isLoading };
+  return {
+    tradingDetail: data?.tradingDetail,
+    iconName: data?.iconName,
+    isDetailLoading: isLoading,
+    refetch,
+  };
 };
