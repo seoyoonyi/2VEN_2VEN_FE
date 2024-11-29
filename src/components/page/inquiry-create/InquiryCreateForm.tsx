@@ -11,12 +11,14 @@ import { ROUTES } from '@/constants/routes';
 // import { useSubmitInquiryCreate } from '@/hooks/mutations/useSubmitInquiryCreate';
 // import { InquiryCreateData } from '@/types/inquiryCreate';
 
-const generateInquiry = {
-  strategyId: '1',
-  strategyName: 'dkanro wjsfir',
-};
+interface InquiryCreateFormProps {
+  strategyTitle: string;
+  strategyId: string;
+  traderId: string;
+}
 
-const InquiryCreateForm = () => {
+// const InquiryCreateForm = ({ strategyTitle, strategyId, traderId }: InquiryCreateFormProps) => {
+const InquiryCreateForm = ({ strategyTitle, strategyId }: InquiryCreateFormProps) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -28,13 +30,13 @@ const InquiryCreateForm = () => {
   };
 
   const handleStrategyDetailClick = () => {
-    navigate(ROUTES.STRATEGY.DETAIL('strategyId'));
+    navigate(ROUTES.STRATEGY.DETAIL(strategyId));
   };
 
   return (
     <form css={formContainerStyle}>
       <InquiryStrategyInfo
-        strategyName={generateInquiry.strategyName}
+        strategyName={strategyTitle}
         investmentAmount={investmentAmount}
         onAmountChange={(e) => setInvestmentAmount(e.target.value)}
         investmentDate={investmentDate}

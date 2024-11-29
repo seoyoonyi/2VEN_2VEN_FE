@@ -4,36 +4,53 @@ import { css } from '@emotion/react';
 import { MdOutlineTimer } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
+import { adminSignout } from '@/api/auth';
 import { ROUTES } from '@/constants/routes';
 import { useAdminAuthStore } from '@/stores/adminAuthStore';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
 const AdminSessionTimer = () => {
   const navigate = useNavigate();
-  const { adminAuth, setAdminAuth } = useAdminAuthStore();
+  const { adminAuth, setAdminAuth, clearAdminAuth } = useAdminAuthStore();
+  const { clearAuth } = useAuthStore();
   const [timeLeft, setTimeLeft] = useState('만료됨');
+
+  // 세션 만료처리 함수
+  const handleSessionExpiration = async () => {
+    try {
+      await adminSignout(); // 관리자 로그아웃 요청
+
+      // 상태초기화
+      clearAdminAuth(); // 관리자 인증정보 초기화(admin-auth 스토리지 제거)
+      clearAuth(); // 사용자 인증정보 초기화(auth-storage 스토리지 제거)
+
+      // 메인 페이지로 리다이렉트
+      navigate(ROUTES.HOME.PATH, { replace: true }); // replace: true로 이전 페이지를 스택에 남기지 않음
+    } catch (error) {
+      console.error('세션 만료처리 중 에러 발생!!:', error);
+      // 에러가 발생하더라도 사용자는 로그아웃되어야 하므로 초기화 진행 -> 메인페이지로 이동
+      clearAdminAuth();
+      clearAuth();
+      navigate(ROUTES.HOME.PATH, { replace: true });
+    }
+  };
 
   useEffect(() => {
     // expires_at이 undefined일 수 있으므로 타입 가드 추가
-    const expiresAt = adminAuth?.expiresAt;
+    const expiresAt = adminAuth?.expiresAt; // 만료시간
     if (!expiresAt) {
       return;
     }
 
+    // 남은 시간 계산 함수
     const calculateTimeLeft = () => {
       const now = new Date().getTime();
       const expiryTime = new Date(expiresAt).getTime();
       const difference = expiryTime - now;
 
       if (difference <= 0) {
-        // 세션만료
-        setAdminAuth({
-          ...adminAuth,
-          authorized: false,
-          authorizationStatus: 'EXPIRED' as const,
-          expiresAt: undefined, // 만료시 expires_at 제거
-        });
-        navigate(ROUTES.AUTH.ADMIN.VERIFY); // 세션만료시 인증페이지로 이동
+        handleSessionExpiration(); // 만료시간이 지나면 세션 만료처리
         return '만료됨';
       }
 
@@ -42,7 +59,7 @@ const AdminSessionTimer = () => {
       return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     };
 
-    setTimeLeft(calculateTimeLeft());
+    setTimeLeft(calculateTimeLeft()); // 초기값 설정
     const timer = setInterval(() => {
       const newTimeLeft = calculateTimeLeft();
       setTimeLeft(newTimeLeft);

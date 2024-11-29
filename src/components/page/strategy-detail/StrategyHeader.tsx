@@ -5,20 +5,48 @@ import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import { ROUTES } from '@/constants/routes';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
+import { UserRole } from '@/types/route';
 
 interface StrategyHeaderProps {
   id: number;
+  strategyTitle: string;
+  traderId: string;
   onDelete: (id: number) => void;
   onApproval: () => void;
 }
 
-export const StrategyHeader = ({ id, onDelete, onApproval }: StrategyHeaderProps) => {
+export const StrategyHeader = ({
+  id,
+  strategyTitle,
+  traderId,
+  onDelete,
+  onApproval,
+}: StrategyHeaderProps) => {
   const navigate = useNavigate();
+  const { user } = useAuthStore(); // store에서 user 정보 가져오기
 
   const handleMoveEditPage = (id: string) => {
     navigate(`${ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(id)}`);
   };
+
+  // 문의기페이지로 데이터 정보 넘김(요게 스테이트!!!)
+  const handleInquiryPage = () => {
+    navigate(`${ROUTES.STRATEGY.INQUIRIES}`, {
+      state: {
+        strategyTitle,
+        strategyId: id,
+        traderId,
+      },
+    });
+  };
+
+  const handleFollowingPage = () => {
+    navigate(`${ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS}`);
+  };
+
+  const userRole = user?.role as UserRole; // 유저 지정
 
   return (
     <div css={actionAreaStyle}>
@@ -26,24 +54,49 @@ export const StrategyHeader = ({ id, onDelete, onApproval }: StrategyHeaderProps
         <GiCircle size={40} css={circleStyle} />
         <MdOutlineShare size={16} css={shareStyle} />
       </button>
-      <div css={buttonAreaStyle}>
-        <Button size='xs' variant='secondaryGray' width={90} onClick={() => onDelete(id)}>
-          삭제
-        </Button>
-        <Button
-          size='xs'
-          variant='neutral'
-          width={90}
-          onClick={() => {
-            handleMoveEditPage(String(id));
-          }}
-        >
-          수정
-        </Button>
-        <Button size='xs' width={120} onClick={onApproval}>
-          승인요청
-        </Button>
-      </div>
+      {userRole === 'ROLE_TRADER' ? ( // 트레이더 전용 버튼
+        <div css={buttonAreaStyle}>
+          <Button size='xs' variant='secondaryGray' width={90} onClick={() => onDelete(id)}>
+            삭제
+          </Button>
+          <Button
+            size='xs'
+            variant='neutral'
+            width={90}
+            onClick={() => {
+              handleMoveEditPage(String(id));
+            }}
+          >
+            수정
+          </Button>
+          <Button size='xs' width={120} onClick={onApproval}>
+            승인요청
+          </Button>
+        </div>
+      ) : (
+        <div css={buttonAreaStyle}>
+          <Button
+            size='sm'
+            variant='accent'
+            width={114}
+            onClick={() => {
+              handleInquiryPage();
+            }}
+          >
+            문의하기
+          </Button>
+          <Button
+            size='sm'
+            variant='primary'
+            width={124}
+            onClick={() => {
+              handleFollowingPage();
+            }}
+          >
+            전략 팔로우
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

@@ -146,7 +146,7 @@ const tableCellStyle = css`
 const tableImgStyle = css`
   display: block;
   margin: 0 auto;
-  height: 20px;
+  height: 30px;
   object-fit: cover;
 `;
 

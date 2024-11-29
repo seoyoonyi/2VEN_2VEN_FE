@@ -1,28 +1,79 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
+import { useIconMutation, usePutIconMutation } from '@/hooks/mutations/useIconMutation';
 import theme from '@/styles/theme';
+import { UserRole } from '@/types/route';
 
 interface FileInputProps {
+  mode: 'upload' | 'update';
+  role: UserRole;
+  token: string | null;
   title: string;
-  file?: File | null;
   fname: string;
   icon: string;
+  iconName: string;
   onNameChange: (name: string) => void;
+  onFileIconUrl: (url: string) => void;
 }
-const FileInput = ({ title, file, fname, icon, onNameChange }: FileInputProps) => {
+const FileInput = ({
+  mode,
+  role,
+  token,
+  title,
+  fname,
+  icon,
+  iconName,
+  onNameChange,
+  onFileIconUrl,
+}: FileInputProps) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(file || null);
+  const [selectedFile, setSelectedFile] = useState<File>();
   const [fileName, setFileName] = useState(fname);
-  const [iconName, setIconName] = useState(icon);
+  const [iconUrl, setIconUrl] = useState(icon);
+  const [iconTitle, setIconTitle] = useState(iconName);
+  const { mutate: uploadIcon } = useIconMutation();
+  const { mutate: updateIcon } = usePutIconMutation();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //TODO:이거 임시임 여기에 올리는 이미지 파일을 s3에 올린 후 그 이미지 url로 가져오는 로직 들어가야함 그 Url이 아이콘임 ~
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setSelectedFile(e.target.files[0]);
-      setIconName(e.target.files[0].name);
+      setIconUrl(e.target.files[0].name);
+
+      if (mode === 'upload') {
+        uploadIcon(
+          {
+            role,
+            fileItem: e.target.files[0],
+            token,
+          },
+          {
+            onSuccess: async (data) => {
+              if (data) {
+                onFileIconUrl(data.fileUrl);
+                setIconTitle(data.displayName);
+              }
+            },
+          }
+        );
+      } else if (mode === 'update') {
+        updateIcon(
+          {
+            fileUrl: icon,
+            data: { role, fileItem: e.target.files[0], token },
+          },
+          {
+            onSuccess: async (data) => {
+              if (data) {
+                onFileIconUrl(data.fileUrl);
+                setIconTitle(data.displayName);
+              }
+            },
+          }
+        );
+      }
     }
   };
 
@@ -39,13 +90,6 @@ const FileInput = ({ title, file, fname, icon, onNameChange }: FileInputProps) =
     onNameChange(newName);
   };
 
-  useEffect(() => {
-    if (file) {
-      setSelectedFile(file);
-      setFileName(file.name);
-    }
-  }, [file]);
-
   return (
     <div css={inputStyle}>
       <div css={titleStyle}>{title}</div>
@@ -60,16 +104,16 @@ const FileInput = ({ title, file, fname, icon, onNameChange }: FileInputProps) =
       {selectedFile && (
         <img src={URL.createObjectURL(selectedFile)} alt={selectedFile.name} css={imageStyle} />
       )}
-      {icon && !selectedFile && <img src={icon} alt={icon} css={imageStyle} />}
+      {icon && !selectedFile && <img src={iconUrl} alt={icon} css={imageStyle} />}
       <div css={inputAndButtonContainerStyle}>
-        <input type='text' value={iconName} readOnly css={inputStyleOverride} />
+        <input type='text' value={iconTitle} readOnly css={inputStyleOverride} />
         <Button variant='secondary' size='sm' onClick={handleFileUpload} width={115}>
           찾아보기
         </Button>
         <input
           ref={fileInputRef}
           type='file'
-          accept='.jpg, .svg, .jpeg, .png'
+          accept='.jpg, .jpeg, .png'
           onChange={handleFileChange}
           css={fileInputStyle}
         />

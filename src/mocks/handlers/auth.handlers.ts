@@ -47,7 +47,7 @@ const MOCK_USER = [
 
 export const signinHandler = [
   // 실제 API: POST /api/members/login
-  http.post(API_ENDPOINTS.AUTH.LOGIN, async ({ request }) => {
+  http.post(API_ENDPOINTS.AUTH.SIGNIN, async ({ request }) => {
     console.log('MSW: Login request intercepted');
     // 실제 API와 구분하기 위해 경로 변경
     const { email, password } = (await request.json()) as SigninRequest;

@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
 
-import { fetchTradingTypes } from '@/api/tradingType';
 import Button from '@/components/common/Button';
 import ContentModal from '@/components/common/ContentModal';
+import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import FileInput from '@/components/page/admin/FileInput';
@@ -15,10 +14,17 @@ import {
   useDeleteTradingType,
   usePutTradingType,
 } from '@/hooks/mutations/useTradingType';
+import {
+  useFetchDetailTradingType,
+  useFetchtradingTypeList,
+} from '@/hooks/queries/useFetchTradingType';
+import usePagination from '@/hooks/usePagination';
+import { useAuthStore } from '@/stores/authStore';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 import { TradingTypeProps } from '@/types/admin';
+import { UserRole } from '@/types/route';
 
 const tradeAttributes = [
   {
@@ -33,44 +39,33 @@ const tradeAttributes = [
 ];
 
 const TradingTypeListPage = () => {
-  const { openModal } = useModalStore();
-  const { openContentModal } = useContentModalStore();
+  const { token, user } = useAuthStore();
+  const { pagination, setPage } = usePagination(1, 10);
+  const { tradingList, currentPage, totalPages, pageSize, isLoading } = useFetchtradingTypeList(
+    pagination.currentPage - 1,
+    pagination.pageSize,
+    user?.role as UserRole
+  );
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [tradingId, setTradingId] = useState<number | null>(null);
   const { mutate: deleteTradingType } = useDeleteTradingType();
   const { mutate: addTradingType } = useAddTradingType();
   const { mutate: updateTradingType } = usePutTradingType();
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
-  const [paginationData, setPaginationData] = useState({
-    currentPage: 1,
-    totalPage: 0,
-    totalElements: 0,
-    pageSize: 10,
-  });
 
-  const { data } = useQuery<TradingTypeProps[], Error>({
-    queryKey: ['tradingTypes', paginationData.currentPage, paginationData.pageSize],
-    queryFn: async () => {
-      try {
-        const res = await fetchTradingTypes(
-          paginationData.currentPage - 1,
-          paginationData.pageSize
-        );
-        setPaginationData({
-          currentPage: paginationData.currentPage,
-          totalPage: res.totalPages,
-          totalElements: res.totalElements,
-          pageSize: res.pageSize,
-        });
-        return res.data;
-      } catch (err) {
-        console.error('Error fetching trading types:', err);
-        throw err;
-      }
-    },
-    placeholderData: keepPreviousData,
-  });
+  const { openModal } = useModalStore();
+  const { openContentModal } = useContentModalStore();
 
-  const formattedData = data?.map((item) => ({
-    id: item.tradingTypeId || data.length + 1,
+  const { tradingDetail, refetch } = useFetchDetailTradingType(
+    tradingId as number,
+    user?.role as UserRole
+  );
+
+  if (isLoading) {
+    <Loader />;
+  }
+
+  const formattedData = tradingList?.map((item: TradingTypeProps) => ({
+    id: item.tradingTypeId || tradingList.length + 1,
     icon: item.tradingTypeIcon,
     title: item.tradingTypeName,
   }));
@@ -79,21 +74,26 @@ const TradingTypeListPage = () => {
     setSelectedItems(selectedIdx);
   };
 
-  const handlePageChange = (page: number) => {
-    setPaginationData((prev) => ({
-      ...prev,
-      currentPage: page,
-    }));
-  };
-
   const handleDelete = () => {
+    if (!user) return;
     if (selectedItems.length > 0) {
       openModal({
         type: 'warning',
-        title: '이미지 삭제',
+        title: '매매유형 삭제',
         desc: `선택하신 ${selectedItems.length}개의 유형을 삭제하시겠습니까?`,
         onAction: () => {
-          selectedItems.forEach((id) => deleteTradingType(id));
+          selectedItems.forEach((id) => {
+            const tradingItem = tradingList.find(
+              (item: TradingTypeProps) => item.tradingTypeId === id
+            );
+            if (tradingItem) {
+              deleteTradingType({
+                tradingTypeId: tradingItem.tradingTypeId,
+                role: user?.role,
+                fileUrl: tradingItem.tradingTypeIcon,
+              });
+            }
+          });
           setSelectedItems([]);
         },
       });
@@ -107,51 +107,26 @@ const TradingTypeListPage = () => {
     }
   };
 
-  const handleEdit = (id: number) => {
-    const selectedType = data?.find((item) => item.tradingTypeId === id);
-    if (selectedType) {
-      let updatedName = selectedType.tradingTypeName;
-      openContentModal({
-        title: '매매유형 수정',
-        content: (
-          <FileInput
-            title='매매유형'
-            file={null}
-            fname={selectedType.tradingTypeName}
-            icon={selectedType.tradingTypeIcon}
-            onNameChange={(name) => (updatedName = name)}
-          />
-        ),
-        onAction: () => {
-          if (!updatedName.trim()) {
-            alert('매매유형명이 입력되지않았습니다.');
-            return;
-          }
-          updateTradingType({
-            tradingTypeId: selectedType.tradingTypeId,
-            tradingTypeOrder: selectedType.tradingTypeOrder,
-            tradingTypeName: updatedName,
-            tradingTypeIcon: 'testIcon',
-            isActive: 'Y',
-          });
-          setSelectedItems([]);
-        },
-      });
-    }
-  };
-
   const handleUpload = () => {
+    if (!user) return;
     let newName: string = '';
+    let newIcon: string = '';
     openContentModal({
       title: '매매유형 등록',
       content: (
         <FileInput
+          mode='upload'
+          role={user.role}
+          token={token}
           title='매매유형'
-          file={null}
           fname={''}
           icon={''}
+          iconName={''}
           onNameChange={(name) => {
             newName = name;
+          }}
+          onFileIconUrl={(icon) => {
+            newIcon = icon;
           }}
         />
       ),
@@ -161,13 +136,69 @@ const TradingTypeListPage = () => {
           return;
         }
         addTradingType({
-          tradingTypeName: newName,
-          tradingTypeIcon: 'testIcon',
-          isActive: 'Y',
+          data: {
+            tradingTypeName: newName,
+            tradingTypeIcon: newIcon,
+            isActive: 'Y',
+          },
+          role: user.role,
         });
       },
     });
   };
+
+  useEffect(() => {
+    if (!user || !tradingId) return;
+
+    const fetchAndOpenModal = async () => {
+      try {
+        const { data } = await refetch();
+        if (data) {
+          let updatedName = data?.tradingDetail.tradingTypeName;
+          let updatedIcon = data?.tradingDetail.tradingTypeIcon;
+          openContentModal({
+            title: '매매유형 수정',
+            content: (
+              <FileInput
+                mode='update'
+                role={user.role}
+                token={token}
+                title='매매유형'
+                fname={updatedName}
+                icon={updatedIcon}
+                iconName={data?.iconName}
+                onNameChange={(name) => (updatedName = name)}
+                onFileIconUrl={(icon) => (updatedIcon = icon)}
+              />
+            ),
+            onAction: () => {
+              if (!updatedName.trim()) {
+                alert('매매유형명이 입력되지않았습니다.');
+                return;
+              }
+              updateTradingType({
+                data: {
+                  tradingTypeId: tradingDetail.tradingTypeId,
+                  tradingTypeOrder: tradingDetail.tradingTypeOrder,
+                  tradingTypeName: updatedName,
+                  tradingTypeIcon: updatedIcon,
+                  isActive: 'Y',
+                },
+                role: user.role,
+              });
+              setTradingId(null);
+            },
+            onCancel: () => {
+              setTradingId(null);
+            },
+          });
+        }
+      } catch (error) {
+        console.error('failed refetch tradingTypeDetail:', error);
+      }
+    };
+    fetchAndOpenModal();
+  }, [tradingDetail, tradingId]);
 
   return (
     <>
@@ -188,13 +219,13 @@ const TradingTypeListPage = () => {
           data={formattedData || []}
           selectedItems={selectedItems}
           onSelectChange={handleSelectChange}
-          onEdit={handleEdit}
+          onEdit={setTradingId}
         />
         <Pagination
-          totalPage={paginationData.totalPage}
-          limit={paginationData.pageSize}
-          page={paginationData.currentPage}
-          setPage={handlePageChange}
+          totalPage={totalPages}
+          limit={pageSize}
+          page={currentPage + 1}
+          setPage={setPage}
         />
       </div>
       <Modal />
