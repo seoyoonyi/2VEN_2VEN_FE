@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
@@ -24,6 +24,7 @@ import { DailyAnalysisProps, AnalysisDataProps } from '@/types/strategyDetail';
 
 const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
   const [selectedData, setSelectedData] = useState<number[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
   const { pagination, setPage } = usePagination(1, 5);
   const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
   const { openModal } = useModalStore();
@@ -138,6 +139,16 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
     setSelectedData(selectedIdx);
   };
 
+  const handleAllChecked = () => {
+    const newSelectAll = !selectAll;
+    setSelectAll(newSelectAll);
+    handleSelectChange(
+      newSelectAll
+        ? dailyAnalysis.map((item: AnalysisDataProps) => item.dailyStrategicStatisticsId)
+        : []
+    );
+  };
+
   const handleDelete = () => {
     if (!role || !strategyId) return;
     const selectedDailyAnalysis = dailyAnalysis
@@ -166,6 +177,11 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
       });
     }
   };
+
+  useEffect(() => {
+    setSelectedData([]);
+    setSelectAll(false);
+  }, [pagination.currentPage]);
 
   if (isLoading) {
     return <div>로딩중...</div>;
@@ -201,9 +217,11 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
         analysis={normalizedData}
         mode={'write'}
         role={role}
+        selectAll={selectAll}
         selectedItems={selectedData}
         onUpload={handleOpenModal}
         onSelectChange={handleSelectChange}
+        onSelectAll={handleAllChecked}
         onEdit={handleUpdateModal}
       />
       <div css={PaginationArea}>

@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
 
@@ -33,8 +31,10 @@ export interface AnalysisProps {
   strategyId?: number;
   analysis?: NormalizedAnalysProps[];
   selectedItems?: number[];
+  selectAll?: boolean;
   onUpload?: () => void;
   onEdit?: (rowId: number, data: InputTableProps) => void;
+  onSelectAll?: (checked: boolean) => void;
   onSelectChange?: (selectIdx: number[]) => void;
 }
 
@@ -42,21 +42,13 @@ const AnalysisTable = ({
   attributes,
   analysis,
   mode,
+  selectAll,
   selectedItems,
   onUpload,
   onEdit,
+  onSelectAll,
   onSelectChange,
 }: AnalysisProps) => {
-  const [selectAll, setSelectAll] = useState(false);
-
-  const handleAllChecked = () => {
-    const newSelectAll = !selectAll;
-    setSelectAll(newSelectAll);
-    mode === 'write' &&
-      analysis &&
-      onSelectChange?.(newSelectAll ? analysis.map((item) => item.dataId) : []);
-  };
-
   const handleSelected = (idx: number) => {
     const updatedSelected = (selectedItems ?? []).includes(idx)
       ? (selectedItems ?? []).filter((item) => item !== idx)
@@ -79,7 +71,10 @@ const AnalysisTable = ({
           <tr css={tableRowStyle}>
             {mode === 'write' && (
               <th css={tableHeadStyle}>
-                <Checkbox checked={selectAll} onChange={handleAllChecked} />
+                <Checkbox
+                  checked={selectAll ?? false}
+                  onChange={(checked) => mode === 'write' && analysis && onSelectAll?.(checked)}
+                />
               </th>
             )}
             {attributes.map((item, idx) => (
