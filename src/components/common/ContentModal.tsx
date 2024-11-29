@@ -11,7 +11,7 @@ const ContentModal = () => {
 
   if (!isOpen || !contentModalData) return null;
 
-  const { title, content, onAction } = contentModalData;
+  const { title, content, onAction, onCancel } = contentModalData;
 
   const onClickButton = () => {
     try {
@@ -19,6 +19,13 @@ const ContentModal = () => {
     } finally {
       closeContentModal();
     }
+  };
+
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    }
+    closeContentModal();
   };
 
   const modalRoot = document.getElementById('modal-root');
@@ -32,12 +39,12 @@ const ContentModal = () => {
       <div css={modalStyle}>
         <div css={titleWrapperStyle}>
           <div css={titleStyle}>{title}</div>
-          <AiOutlineClose size={36} onClick={closeContentModal} css={iconStyle} />
+          <AiOutlineClose size={36} onClick={handleCancel} css={iconStyle} />
         </div>
         <div css={contentStyle}>{content}</div>
         <div css={modalButtonStyle}>
           <Button
-            onClick={closeContentModal}
+            onClick={handleCancel}
             variant='neutral'
             size='xs'
             customStyle={css`
