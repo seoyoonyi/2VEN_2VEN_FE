@@ -9,6 +9,7 @@ import TableModal from './TableModal';
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
 import theme from '@/styles/theme';
+import { UserRole } from '@/types/route';
 
 export interface AnalysisAttribuesProps {
   title: string;
@@ -28,6 +29,7 @@ interface NormalizedAnalysProps {
 export interface AnalysisProps {
   mode: 'write' | 'read';
   attributes: AnalysisAttribuesProps[];
+  role?: UserRole;
   strategyId?: number;
   analysis?: NormalizedAnalysProps[];
   selectedItems?: number[];

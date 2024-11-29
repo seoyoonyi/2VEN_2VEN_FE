@@ -22,6 +22,7 @@ import { monthlyAttribues, dailyAttribues, statisticsMapping } from '@/constants
 import useStrategyDetailDelete from '@/hooks/mutations/useStrategyDetailDelete';
 import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
 import useStatistics from '@/hooks/queries/useStatistics';
+import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 import { StatisticsProps } from '@/types/strategyDetail';
@@ -57,6 +58,7 @@ const rejectReasonData = {
 };
 
 const StrategyDetailPage = () => {
+  const { user } = useAuthStore();
   const { strategyId } = useParams();
   const navigate = useNavigate();
   const { strategy } = useFetchStrategyDetail(strategyId || '');
@@ -97,7 +99,12 @@ const StrategyDetailPage = () => {
     {
       title: '일간분석',
       component: (
-        <DailyAnalysis attributes={dailyAttribues} strategyId={Number(strategyId)} mode='write' />
+        <DailyAnalysis
+          attributes={dailyAttribues}
+          strategyId={Number(strategyId)}
+          mode='write'
+          role={user?.role}
+        />
       ),
     },
     {
@@ -107,6 +114,7 @@ const StrategyDetailPage = () => {
           attributes={monthlyAttribues}
           strategyId={Number(strategyId)}
           mode='read'
+          role={user?.role}
         />
       ),
     },

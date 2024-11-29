@@ -10,7 +10,11 @@ import TableModal from '../table/TableModal';
 import Button from '@/components/common/Button';
 import Pagination from '@/components/common/Pagination';
 import Toast from '@/components/common/Toast';
-import { usePostDailyAnalysis, usePutDailyAnalysis } from '@/hooks/mutations/useDailyAnalysis';
+import {
+  useDeleteAnalysis,
+  usePostDailyAnalysis,
+  usePutDailyAnalysis,
+} from '@/hooks/mutations/useDailyAnalysis';
 import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
 import usePagination from '@/hooks/usePagination';
 import useModalStore from '@/stores/modalStore';
@@ -18,7 +22,7 @@ import useTableModalStore from '@/stores/tableModalStore';
 import useToastStore from '@/stores/toastStore';
 import { DailyAnalysisProps, AnalysisDataProps } from '@/types/strategyDetail';
 
-const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
+const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
   const [selectedData, setSelectedData] = useState<number[]>([]);
   const { pagination, setPage } = usePagination(1, 5);
   const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
@@ -26,6 +30,7 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
   const { openTableModal } = useTableModalStore();
   const { mutate: postDailyAnalysis, isError } = usePostDailyAnalysis();
   const { mutate: putDailyAnalysis } = usePutDailyAnalysis();
+  const { mutate: deleteDailyAnalysis } = useDeleteAnalysis();
   const { dailyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchDailyAnalysis(
     Number(strategyId),
     pagination.currentPage - 1,
@@ -133,22 +138,33 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
     setSelectedData(selectedIdx);
   };
 
-  //TODO: selected된 아이디들의 일간분석 날짜를 가져와서 오름차순 한 날짜를 바디로 변환해서 삭제 api로 쏴야함
   const handleDelete = () => {
+    if (!role || !strategyId) return;
     const selectedDailyAnalysis = dailyAnalysis
       .filter((item: AnalysisDataProps) => selectedData.includes(item.dailyStrategicStatisticsId))
       .sort(
         (a: AnalysisDataProps, b: AnalysisDataProps) =>
           new Date(a.inputDate).getHours() - new Date(b.inputDate).getHours()
-      );
+      )
+      .map((sortData: AnalysisDataProps) => sortData.dailyStrategicStatisticsId);
 
-    console.log(selectedDailyAnalysis);
-    openModal({
-      type: 'warning',
-      title: '일간분석 삭제',
-      desc: '일간 분석 데이터를 삭제하시겠습니까?',
-      onAction: () => {},
-    });
+    if (selectedDailyAnalysis.length > 0) {
+      openModal({
+        type: 'warning',
+        title: '일간분석 삭제',
+        desc: `${selectedDailyAnalysis.length}개의 일간 분석 데이터를 삭제하시겠습니까?`,
+        onAction: () => {
+          deleteDailyAnalysis({ strategyId, role, analysisIds: selectedDailyAnalysis });
+        },
+      });
+    } else {
+      openModal({
+        type: 'warning',
+        title: '알림',
+        desc: `선택 된 항목이 없습니다.`,
+        onAction: () => {},
+      });
+    }
   };
 
   if (isLoading) {
@@ -184,6 +200,7 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
         attributes={attributes}
         analysis={normalizedData}
         mode={'write'}
+        role={role}
         selectedItems={selectedData}
         onUpload={handleOpenModal}
         onSelectChange={handleSelectChange}

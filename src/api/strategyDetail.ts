@@ -114,14 +114,14 @@ export const fetchPutDailyAnalysis = async (
 
 //일간분석 삭제
 export const fetchDeleteDailyAnalysis = async (
-  strategyId: number[],
-  analysisId: number,
-  role: UserRole
+  strategyId: number,
+  role: UserRole,
+  analysisIds: number[]
 ) => {
-  const body = strategyId;
+  const body = { dailyStatisticsId: analysisIds };
   try {
     const req = await apiClient.post(
-      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/daily-analyses/${analysisId}`,
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/daily-analyses/delete`,
       body,
       {
         headers: {
