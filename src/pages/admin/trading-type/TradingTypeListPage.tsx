@@ -155,7 +155,7 @@ const TradingTypeListPage = () => {
   useEffect(() => {
     if (!user) return;
     if (tradingDetail) {
-      let updatedName = tradingDetail.tradinggTypeName;
+      let updatedName = tradingDetail.tradingTypeName;
       let updatedIcon = tradingDetail.tradingTypeIcon;
       openContentModal({
         title: '매매유형 수정',
@@ -213,7 +213,12 @@ const TradingTypeListPage = () => {
           onSelectChange={handleSelectChange}
           onEdit={handleEdit}
         />
-        <Pagination totalPage={totalPages} limit={pageSize} page={currentPage} setPage={setPage} />
+        <Pagination
+          totalPage={totalPages}
+          limit={pageSize}
+          page={currentPage + 1}
+          setPage={setPage}
+        />
       </div>
       <Modal />
       <ContentModal />

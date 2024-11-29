@@ -7,7 +7,6 @@ import { UserRole } from '@/types/route';
 
 //매매유형 목록 조회
 export const fetchTradingTypes = async (page: number, pageSize: number, role: string | null) => {
-  console.log(page, pageSize, role);
   try {
     const res = await apiClient.get(API_ENDPOINTS.ADMIN.TRADING_TYPES, {
       params: {
@@ -42,7 +41,7 @@ export const fetchTradingTypeDetail = async (id: number, role: string | null) =>
 export const fetchDeleteTradingType = async (id: number, role: string | null, fileUrl: string) => {
   try {
     if (fileUrl) {
-      await fetchDeleteIcon(role, fileUrl);
+      await fetchDeleteIcon(role, decodeURIComponent(fileUrl));
     }
     const req = await apiClient.delete(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${id}`, {
       headers: {
@@ -92,7 +91,7 @@ export const fetchPutTradingType = async ({
     tradingTypeIcon,
     isActive,
   };
-
+  console.log(body);
   const req = await apiClient.put(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${tradingTypeId}`, body, {
     headers: {
       Auth: role,
