@@ -153,10 +153,7 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
     if (!role || !strategyId) return;
     const selectedDailyAnalysis = dailyAnalysis
       .filter((item: AnalysisDataProps) => selectedData.includes(item.dailyStrategicStatisticsId))
-      .sort(
-        (a: AnalysisDataProps, b: AnalysisDataProps) =>
-          new Date(a.inputDate).getHours() - new Date(b.inputDate).getHours()
-      )
+      .sort((a: AnalysisDataProps, b: AnalysisDataProps) => a.inputDate.localeCompare(b.inputDate))
       .map((sortData: AnalysisDataProps) => sortData.dailyStrategicStatisticsId);
 
     if (selectedDailyAnalysis.length > 0) {
