@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import { useLocation } from 'react-router-dom';
 
 import PageHeader from '@/components/common/PageHeader';
 import InquiryCreateForm from '@/components/page/inquiry-create/InquiryCreateForm';
@@ -20,14 +21,24 @@ const desc = [
   },
 ];
 
-const InquiryPage = () => (
-  <>
-    <PageHeader title='문의하기' desc={desc} icon />
-    <div css={createContainerStyle}>
-      <InquiryCreateForm />
-    </div>
-  </>
-);
+const InquiryPage = () => {
+  const location = useLocation();
+  const { strategyTitle, strategyId, traderId } = location.state || {}; // 전달된 데이터 가져오기
+
+  return (
+    <>
+      <PageHeader title='문의하기' desc={desc} icon />
+      <div css={createContainerStyle}>
+        {/* 데이터를 InquiryCreateForm에 전달 */}
+        <InquiryCreateForm
+          strategyTitle={strategyTitle}
+          strategyId={strategyId}
+          traderId={traderId}
+        />
+      </div>
+    </>
+  );
+};
 
 const createContainerStyle = css`
   width: ${theme.layout.width.content};

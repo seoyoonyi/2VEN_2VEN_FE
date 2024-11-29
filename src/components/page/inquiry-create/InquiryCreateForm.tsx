@@ -9,12 +9,18 @@ import InquiryStrategyInfo from '@/components/page/inquiry-create/inquiry-form-c
 import InquiryTitle from '@/components/page/inquiry-create/inquiry-form-content/InquiryTitle';
 import { ROUTES } from '@/constants/routes';
 
-const generateInquiry = {
-  strategyId: '1',
-  strategyName: '사람들이 살 때 많이 따라사는 전략',
-};
+// const generateInquiry = {
+//   strategyId: '1',
+//   strategyName: '사람들이 살 때 많이 따라사는 전략',
+// };
 
-const InquiryCreateForm = () => {
+interface InquiryCreateFormProps {
+  strategyTitle: string;
+  strategyId: string;
+  traderId: string;
+}
+
+const InquiryCreateForm = ({ strategyTitle, strategyId, traderId }: InquiryCreateFormProps) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -32,7 +38,7 @@ const InquiryCreateForm = () => {
   return (
     <form css={formContainerStyle}>
       <InquiryStrategyInfo
-        strategyName={generateInquiry.strategyName}
+        strategyName={strategyTitle}
         investmentAmount={investmentAmount}
         onAmountChange={(e) => setInvestmentAmount(e.target.value)}
         investmentDate={investmentDate}

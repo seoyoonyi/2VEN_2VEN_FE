@@ -145,6 +145,8 @@ const StrategyDetailPage = () => {
           <div key={strategy?.strategyId}>
             <StrategyHeader
               id={strategy?.strategyId}
+              strategyTitle={strategy?.strategyTitle || ''} // 전략명
+              traderId={strategy?.traderId || ''} // 트레이드ID
               onApproval={() => {
                 handleApproval();
               }}
