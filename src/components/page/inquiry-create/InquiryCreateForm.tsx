@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +15,11 @@ interface InquiryCreateFormProps {
   traderId: string;
 }
 
-const InquiryCreateForm = ({ strategyTitle }: InquiryCreateFormProps) => {
+const InquiryCreateForm = ({
+  strategyTitle,
+  strategyId,
+  traderId = '71-88RZ_QQ65hMGknyWKLA', // 기본값 설정
+}: InquiryCreateFormProps) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -27,7 +31,7 @@ const InquiryCreateForm = ({ strategyTitle }: InquiryCreateFormProps) => {
   };
 
   const handleStrategyDetailClick = () => {
-    navigate(ROUTES.STRATEGY.DETAIL('strategyId'));
+    navigate(ROUTES.STRATEGY.DETAIL(strategyId));
   };
 
   return (

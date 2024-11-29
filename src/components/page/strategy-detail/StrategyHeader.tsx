@@ -20,7 +20,7 @@ interface StrategyHeaderProps {
 export const StrategyHeader = ({
   id,
   strategyTitle,
-  traderId = '71-88RZ_QQ65hMGknyWKLA', // 기본값으로 일단 설정하기!!!
+  traderId,
   onDelete,
   onApproval,
 }: StrategyHeaderProps) => {
