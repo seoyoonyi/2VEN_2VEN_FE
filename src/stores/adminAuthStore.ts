@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+// 관리자 인증상태 저장소
 interface AdminAuthStore {
   adminAuth: {
     authorized: boolean;

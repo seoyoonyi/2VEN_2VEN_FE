@@ -49,7 +49,7 @@ export const useSigninMutation = () => {
     onError: (error: AxiosError) => {
       console.error('Mutation onError handler:', error);
       if (error instanceof AxiosError && error.response?.status === 401) {
-        useAuthStore.getState().signout();
+        useAuthStore.getState().clearAuth();
         queryClient.invalidateQueries({ queryKey: ['user'] });
       }
     },

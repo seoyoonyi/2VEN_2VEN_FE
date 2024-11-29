@@ -124,7 +124,7 @@ apiClient.interceptors.response.use(
         }
         case 401: {
           console.error('인증 에러:', data);
-          useAuthStore.getState().signout();
+          useAuthStore.getState().clearAuth();
           break;
         }
         case 403: {

@@ -60,7 +60,6 @@ export const useVerifyAdminCodeMutation = () => {
           email: user.email,
           nickname: user.nickname,
           role: 'ROLE_ADMIN',
-          profileImage: user.profileImage,
           ...adminAuthUpdate,
         };
 
