@@ -35,23 +35,12 @@ export const StrategyHeader = ({
   const handleInquiryPage = () => {
     navigate(`${ROUTES.STRATEGY.INQUIRIES}`, {
       state: {
-        strategyTitle, // 전달할 전략 제목
-        strategyId: id, // 전달할 전략 ID
+        strategyTitle,
+        strategyId: id,
         traderId,
       },
     });
   };
-
-  // 옵셔널
-  // const handleInquiryPage = () => {
-  //   navigate(`${ROUTES.STRATEGY.INQUIRIES}`, {
-  //     state: {
-  //       strategyTitle: strategy?.strategyTitle, // 전달할 전략 제목
-  //       strategyId: strategy?.strategyId, // 전달할 전략 ID
-  //       traderId: strategy?.traderId,
-  //     },
-  //   });
-  // };
 
   const handleFollowingPage = () => {
     navigate(`${ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS}`);
