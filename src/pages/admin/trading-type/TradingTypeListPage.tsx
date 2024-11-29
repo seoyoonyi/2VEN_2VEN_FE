@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { useQueryClient } from '@tanstack/react-query';
 
 import Button from '@/components/common/Button';
 import ContentModal from '@/components/common/ContentModal';

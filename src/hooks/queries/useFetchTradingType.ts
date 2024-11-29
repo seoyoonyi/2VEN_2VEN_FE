@@ -1,4 +1,4 @@
-import { keepPreviousData, QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { fetchTradingTypeDetail, fetchTradingTypes } from '@/api/tradingType';
 import { UserRole } from '@/types/route';
