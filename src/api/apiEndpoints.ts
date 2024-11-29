@@ -35,5 +35,6 @@ export const API_ENDPOINTS = {
   FILES: {
     PROFILE: (fileId: string) => `/api/files/profile/${fileId}`, // 프로필 이미지 다운로드
     PROPOSAL: '/api/files/proposal', // 제안서 파일 업로드
+    ICON: '/api/files/icon', //아이콘 업로드
   },
 };
