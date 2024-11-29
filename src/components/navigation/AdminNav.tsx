@@ -1,5 +1,4 @@
 import { css } from '@emotion/react';
-import { error } from 'highcharts';
 import { GrLogout } from 'react-icons/gr';
 import { useNavigate } from 'react-router-dom';
 
