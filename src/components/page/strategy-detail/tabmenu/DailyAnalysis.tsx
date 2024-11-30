@@ -56,8 +56,8 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
     let modalData: InputTableProps[] = [];
     const initalData: InputTableProps[] = Array.from({ length: 5 }, () => ({
       date: '',
-      depWdPrice: 0,
-      dailyProfitLoss: 0,
+      depWdPrice: '',
+      dailyProfitLoss: '',
     }));
 
     openTableModal({
@@ -116,7 +116,7 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
           onChange={(newData) =>
             (updatedData = {
               date: newData[0].date,
-              dailyProfitLoss: newData[0].dailyProfitLoss,
+              dailyProfitLoss: Number(newData[0].dailyProfitLoss),
               depWdPrice: Number(newData[0].depWdPrice),
             })
           }
