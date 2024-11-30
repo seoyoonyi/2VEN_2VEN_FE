@@ -1,6 +1,5 @@
 import { css } from '@emotion/react';
 
-import defaultImage from '@/assets/images/default_avatar.png';
 import Avatar from '@/components/common/Avatar';
 import Modal from '@/components/common/Modal';
 import theme from '@/styles/theme';

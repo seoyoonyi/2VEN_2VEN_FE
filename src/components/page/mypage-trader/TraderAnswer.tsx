@@ -4,7 +4,6 @@ import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { createTraderReply, deleteTraderReply, updateTraderReply } from '@/api/inquiries/trader';
-import Button from '@/components/common/Button';
 import { ROUTES } from '@/constants/routes';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
