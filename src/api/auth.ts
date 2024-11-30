@@ -17,7 +17,7 @@ import {
 export const signin = async (credentials: SigninRequest): Promise<SigninResponse> => {
   try {
     const response = await apiClient.post<BackendSigninResponse>(
-      API_ENDPOINTS.AUTH.LOGIN,
+      API_ENDPOINTS.AUTH.SIGNIN,
       credentials
     );
 
@@ -265,6 +265,50 @@ export const verifySignupCode = async ({
 
       throw new Error(errorData?.message || '인증번호 확인에 실패했습니다.');
     }
+    throw error;
+  }
+};
+
+// 관리자 상태 확인 API
+// 관리자의 세션타이머 남은시간 확인 목적
+export const checkAdminStatus = async () => {
+  const response = await apiClient.get(API_ENDPOINTS.AUTH.ADMIN_STATUS);
+  return response.data;
+};
+
+interface AdminSignoutResponse {
+  status: 'success' | 'error';
+  message: string;
+}
+// 관리자 로그아웃 API
+export const adminSignout = async (): Promise<AdminSignoutResponse> => {
+  try {
+    // 1. 먼저 로그아웃 API 호출(이떄 JWT 토큰이 필요함!)
+    const response = await apiClient.post<AdminSignoutResponse>(
+      API_ENDPOINTS.AUTH.ADMIN_SIGNOUT,
+      {},
+      {
+        withCredentials: true, // JSESSIONID 쿠키를 포함하여 요청
+      }
+    );
+
+    // 2. API 호출이 성공하면, 로컬의 인증정보 제거
+    if (response.data.status === 'success') {
+      // 모든 쿠키 삭제
+      document.cookie.split(';').forEach((cookie) => {
+        const name = cookie.split('=')[0].trim();
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=2ven.shop`;
+      });
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error('Logout error:', error);
+    // 에러가 발생하더라도 쿠키는 삭제
+    document.cookie.split(';').forEach((cookie) => {
+      const name = cookie.split('=')[0].trim();
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+    });
     throw error;
   }
 };

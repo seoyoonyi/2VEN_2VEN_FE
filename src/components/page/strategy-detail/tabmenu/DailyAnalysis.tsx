@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
@@ -10,7 +10,11 @@ import TableModal from '../table/TableModal';
 import Button from '@/components/common/Button';
 import Pagination from '@/components/common/Pagination';
 import Toast from '@/components/common/Toast';
-import { usePostDailyAnalysis } from '@/hooks/mutations/useDailyAnalysis';
+import {
+  useDeleteAnalysis,
+  usePostDailyAnalysis,
+  usePutDailyAnalysis,
+} from '@/hooks/mutations/useDailyAnalysis';
 import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
 import usePagination from '@/hooks/usePagination';
 import useModalStore from '@/stores/modalStore';
@@ -18,13 +22,16 @@ import useTableModalStore from '@/stores/tableModalStore';
 import useToastStore from '@/stores/toastStore';
 import { DailyAnalysisProps, AnalysisDataProps } from '@/types/strategyDetail';
 
-const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
+const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
   const [selectedData, setSelectedData] = useState<number[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
   const { pagination, setPage } = usePagination(1, 5);
   const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
   const { openModal } = useModalStore();
   const { openTableModal } = useTableModalStore();
   const { mutate: postDailyAnalysis, isError } = usePostDailyAnalysis();
+  const { mutate: putDailyAnalysis } = usePutDailyAnalysis();
+  const { mutate: deleteDailyAnalysis } = useDeleteAnalysis();
   const { dailyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchDailyAnalysis(
     Number(strategyId),
     pagination.currentPage - 1,
@@ -97,18 +104,81 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
     modalData = [];
   };
 
+  const handleUpdateModal = (rowId: number, data: DailyAnalysisProps) => {
+    if (!strategyId) return;
+    let updatedData: DailyAnalysisProps | null = null;
+    openTableModal({
+      type: 'update',
+      title: '일간분석 데이터 수정',
+      data: (
+        <InputTable
+          data={[data]}
+          onChange={(newData) =>
+            (updatedData = {
+              date: newData[0].date,
+              dailyProfitLoss: newData[0].dailyProfitLoss,
+              depWdPrice: Number(newData[0].depWdPrice),
+            })
+          }
+        />
+      ),
+      onAction: () => {
+        updatedData &&
+          putDailyAnalysis({
+            strategyId,
+            payload: updatedData,
+            authRole: 'admin',
+            dailyDataId: rowId,
+          });
+        updatedData = null;
+      },
+    });
+  };
+
   const handleSelectChange = (selectedIdx: number[]) => {
     setSelectedData(selectedIdx);
   };
 
-  const handleDelete = () => {
-    openModal({
-      type: 'warning',
-      title: '일간분석 삭제',
-      desc: '일간 분석 데이터를 삭제하시겠습니까?',
-      onAction: () => {},
-    });
+  const handleAllChecked = () => {
+    const newSelectAll = !selectAll;
+    setSelectAll(newSelectAll);
+    handleSelectChange(
+      newSelectAll
+        ? dailyAnalysis.map((item: AnalysisDataProps) => item.dailyStrategicStatisticsId)
+        : []
+    );
   };
+
+  const handleDelete = () => {
+    if (!role || !strategyId) return;
+    const selectedDailyAnalysis = dailyAnalysis
+      .filter((item: AnalysisDataProps) => selectedData.includes(item.dailyStrategicStatisticsId))
+      .sort((a: AnalysisDataProps, b: AnalysisDataProps) => a.inputDate.localeCompare(b.inputDate))
+      .map((sortData: AnalysisDataProps) => sortData.dailyStrategicStatisticsId);
+
+    if (selectedDailyAnalysis.length > 0) {
+      openModal({
+        type: 'warning',
+        title: '일간분석 삭제',
+        desc: `${selectedDailyAnalysis.length}개의 일간 분석 데이터를 삭제하시겠습니까?`,
+        onAction: () => {
+          deleteDailyAnalysis({ strategyId, role, analysisIds: selectedDailyAnalysis });
+        },
+      });
+    } else {
+      openModal({
+        type: 'warning',
+        title: '알림',
+        desc: `선택 된 항목이 없습니다.`,
+        onAction: () => {},
+      });
+    }
+  };
+
+  useEffect(() => {
+    setSelectedData([]);
+    setSelectAll(false);
+  }, [pagination.currentPage]);
 
   if (isLoading) {
     return <div>로딩중...</div>;
@@ -143,9 +213,13 @@ const DailyAnalysis = ({ strategyId, attributes }: AnalysisProps) => {
         attributes={attributes}
         analysis={normalizedData}
         mode={'write'}
+        role={role}
+        selectAll={selectAll}
         selectedItems={selectedData}
         onUpload={handleOpenModal}
         onSelectChange={handleSelectChange}
+        onSelectAll={handleAllChecked}
+        onEdit={handleUpdateModal}
       />
       <div css={PaginationArea}>
         <Pagination

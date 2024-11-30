@@ -6,7 +6,6 @@ export interface User {
   email: string;
   nickname: string;
   role: UserRole;
-  profileImage?: string | null;
   authorized?: boolean; // 옵셔널 필드 추가
 }
 // 관리자 전용 확장 인터페이스
@@ -26,7 +25,6 @@ export interface BackendSigninResponse {
     email: string;
     nickname: string;
     role: string;
-    profileImage?: string | null;
     adminInfo?: {
       // role이 'ROLE_ADMIN'일 때만 포함
       authorized?: boolean;

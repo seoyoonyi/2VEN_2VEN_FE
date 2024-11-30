@@ -1,7 +1,13 @@
 import { apiClient } from './apiClient';
 import { API_ENDPOINTS } from './apiEndpoints';
 
-import { InputDailyAnalysisProps } from '@/types/strategyDetail';
+import { UserRole } from '@/types/route';
+import {
+  FileUploadOptions,
+  FileUploadResponse,
+  InputDailyAnalysisProps,
+  DailyAnalysisProps,
+} from '@/types/strategyDetail';
 
 //전략 상세 기본 정보 조회
 export const fetchDefaultStrategyDetail = async (id: number) => {
@@ -82,15 +88,44 @@ export const fetchPostDailyAnalysis = async (
 };
 
 //일간분석 수정
-//일간분석 삭제
-export const fetchDeleteDailyAnalysis = async (strategyId: number[], analysisId: number) => {
+export const fetchPutDailyAnalysis = async (
+  strategyId: number,
+  payload: DailyAnalysisProps,
+  authRole: 'admin' | 'trader',
+  dailyDataId: number
+) => {
+  const body = payload;
   try {
-    const req = await apiClient.delete(
-      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/daily-analyses/${analysisId}`,
+    const req = await apiClient.put(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/daily-data/${dailyDataId}`,
+      body,
       {
         headers: {
-          'Content-Type': 'application/json',
-          Auth: 'admin',
+          Auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to fetch Put DailyAnalysis', error);
+    throw error;
+  }
+};
+
+//일간분석 삭제
+export const fetchDeleteDailyAnalysis = async (
+  strategyId: number,
+  role: UserRole,
+  analysisIds: number[]
+) => {
+  const body = { dailyStatisticsId: analysisIds };
+  try {
+    const req = await apiClient.post(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/daily-analyses/delete`,
+      body,
+      {
+        headers: {
+          Auth: role,
         },
       }
     );
@@ -121,7 +156,7 @@ export const fetchMonthlyAnalysis = async (strategyId: number, page: number, pag
   }
 };
 
-//전략 상세 통계 조회 (MSW)
+//전략 상세 통계 조회
 export const fetchStatistics = async (strategyId: number) => {
   try {
     const res = await apiClient.get(`${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/statistics`, {
