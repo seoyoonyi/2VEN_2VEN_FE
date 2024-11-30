@@ -1,5 +1,18 @@
 export type Status = 'COMPLETED' | 'PENDING';
 
+export interface InquiryData {
+  id: number;
+  investorName: string;
+  investorProfileUrl: string | null;
+  traderName: string;
+  traderProfileUrl: string | null;
+  strategyName: string;
+  investmentDate: string;
+  title: string;
+  status: Status;
+  createdAt: string;
+}
+
 export interface InquiryDetailData {
   id: number;
   investorId: string;
@@ -38,20 +51,6 @@ export interface InquiryUpdateResponse {
   status: string;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface myInquirieListData {
-  id: number;
-  investorName: string;
-  investorProfileUrl: string;
-  traderName: string;
-  traderProfileUrl: string;
-  strategyId: string;
-  strategyName: string;
-  investmentDate: string;
-  title: string;
-  status: Status;
-  createdAt: string;
 }
 
 export interface QuestionProps {
