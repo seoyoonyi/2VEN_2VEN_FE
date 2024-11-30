@@ -195,3 +195,39 @@ export const uploadProposalFile = async (
     throw error;
   }
 };
+
+//전략 승인 요청
+export const fetchPostApproveStrategy = async (strategyId: number, authRole: UserRole) => {
+  try {
+    const req = await apiClient.post(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/approval-request`,
+      {
+        headers: {
+          Auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to fetch request strategyApprove', error);
+    throw error;
+  }
+};
+
+//전략 승인내역 요청
+export const fetchApproveStrategy = async (strategyId: number, authRole: UserRole) => {
+  try {
+    const res = await apiClient.get(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/rejection-info`,
+      {
+        headers: {
+          Auth: authRole,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error('failed to fetch strategyApprove', error);
+    throw error;
+  }
+};

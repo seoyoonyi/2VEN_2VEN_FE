@@ -1,0 +1,27 @@
+import { useQueryClient, useMutation } from '@tanstack/react-query';
+
+import { fetchDeleteStrategyDetail, fetchPostApproveStrategy } from '@/api/strategyDetail';
+import { UserRole } from '@/types/route';
+
+export const useStrategyDetailDelete = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<{ msg: string }, Error, number>({
+    mutationFn: (data: number) => fetchDeleteStrategyDetail(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['strategyDetail'] });
+    },
+  });
+};
+
+export const useStrategyDetailApprove = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ strategyId, role }: { strategyId: number; role: UserRole }) =>
+      fetchPostApproveStrategy(strategyId, role),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['approveStrategy'] });
+    },
+  });
+};
