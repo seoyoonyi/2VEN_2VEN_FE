@@ -1,45 +1,32 @@
-import { useState, useEffect } from 'react';
-
 import { css } from '@emotion/react';
-import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
-import { fetchMyInquiryList } from '@/api/myInquiry';
+import Avatar from '@/components/common/Avatar';
 import Loader from '@/components/common/Loading';
 import Pagination from '@/components/common/Pagination';
-import Toast from '@/components/common/Toast';
+import InquiryStatusLabel from '@/components/page/mypage/InquiryStatusLabel';
 import { ROUTES } from '@/constants/routes';
-import useToastStore from '@/stores/toastStore';
+import useFetchInquiries from '@/hooks/queries/useFetchInquiries';
+import usePagination from '@/hooks/usePagination';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
-import { myInquirieListData, Status } from '@/types/myinquires';
+import { InquiryData } from '@/types/inquiries';
 
 const MyInquiriesPage = () => {
-  const { isToastVisible, hideToast, message } = useToastStore();
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const { pagination, setPage } = usePagination(1, 10);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [page]);
+  const { inquiries, isLoading, isError, currentPage, totalPages, totalElements, pageSize } =
+    useFetchInquiries({
+      userId: user?.memberId,
+      role: user?.role,
+      page: pagination.currentPage - 1,
+      pageSize: pagination.pageSize,
+    });
 
-  const { data, isLoading, isError } = useQuery<
-    {
-      content: myInquirieListData[];
-      page: number;
-      size: number;
-      totalElements: number;
-      totalPages: number;
-    },
-    Error
-  >({
-    queryKey: ['myInquiries', page, pageSize],
-    queryFn: () => fetchMyInquiryList(page - 1, pageSize),
-  });
-
-  const onClickInquiryList = (inquiryId: string) => {
-    navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(inquiryId));
-    window.scrollTo(0, 0);
+  const handleRowClick = (id: number) => {
+    navigate(`${ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(id.toString())}`);
   };
 
   if (isLoading) {
@@ -51,82 +38,81 @@ const MyInquiriesPage = () => {
   }
 
   if (isError) {
-    return <div css={myPageWrapperStyle}>문의 목록 데이터를 불러오는 데 실패했습니다.</div>;
+    return (
+      <div css={myPageWrapperStyle}>
+        <p css={emptyStateWrapperStyle}>
+          데이터를 불러오는 데 실패했습니다. <br /> 다시 시도하거나 잠시 후에 확인해주세요.
+        </p>
+      </div>
+    );
   }
 
-  const myInquiries = data?.content || [];
-  const totalPages = data?.totalPages || 1;
-  const totalElements = data?.totalElements || 0;
-
   return (
-    <div css={myPageWrapperStyle}>
-      <div css={myPageHeaderStyle}>
-        <div>
-          <h2>나의 문의</h2>
-          <p>
-            총 <span>{totalElements}</span>개의 문의 내역이 있습니다
-          </p>
-        </div>
-      </div>
+    <section css={myPageWrapperStyle}>
+      <header css={myPageHeaderStyle}>
+        <h2>나의 문의</h2>
+        <p>
+          총 <span>{totalElements}</span>개의 문의 내역이 있습니다
+        </p>
+      </header>
 
       {totalElements === 0 ? (
-        <div css={emptyStateWrapperStyle}>
-          <p>전략에 대해 궁금한 점이 있으면, 트레이더에게 문의를 남겨보세요!</p>
-          <p>‘전략 상세’에서 ‘문의하기’를 통해 손쉽게 문의하실 수 있습니다.</p>
-        </div>
+        <p css={emptyStateWrapperStyle}>
+          전략에 대해 궁금한 점이 있으면, 트레이더에게 문의를 남겨보세요! <br /> ‘전략 상세’에서
+          ‘문의하기’를 통해 손쉽게 문의하실 수 있습니다.
+        </p>
       ) : (
-        <div css={tableWrapper}>
-          <div>
-            <div css={headerStyle}>
-              <div>제목</div>
-              <div>트레이더</div>
-              <div>답변상태</div>
-              <div>날짜</div>
-            </div>
-            {myInquiries.map((inquiry) => (
-              <div
-                role='button'
-                tabIndex={0}
-                onClick={() => onClickInquiryList(String(inquiry.id))}
-                onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    onClickInquiryList(String(inquiry.id));
-                  }
-                }}
-                key={inquiry.id}
-              >
-                <div css={rowStyle}>
-                  <div css={inquiriesTitleStyle}>
-                    <span>Q.</span>
-                    <div>{inquiry.title}</div>
-                  </div>
-                  <div css={traderInfoStyle}>
-                    <img
-                      src={inquiry.traderProfileUrl || '/default-profile.png'}
-                      alt={`${inquiry.traderName}의 프로필`}
-                    />
-                    <span>{inquiry.traderName}</span>
-                  </div>
-                  <div css={statusStyle(inquiry.status)}>
-                    {inquiry.status === 'PENDING' && <span className='dot' />}
-                    {inquiry.status === 'COMPLETED' ? '완료' : '대기'}
-                  </div>
-                  <div>{inquiry.createdAt.slice(0, 10).replace(/-/g, '.')}</div>
-                </div>
-              </div>
-            ))}
+        <div css={tableWrapperStyle}>
+          <div css={tableContainerStyle}>
+            <table>
+              <colgroup css={colgroupStyle}>
+                <col />
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>제목</th>
+                  <th>트레이더</th>
+                  <th>답변상태</th>
+                  <th>날짜</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inquiries.map((inquiry: InquiryData) => (
+                  <tr key={inquiry.id} onClick={() => handleRowClick(inquiry.id)}>
+                    <td>
+                      <span>Q.</span> {inquiry.title}
+                    </td>
+                    <td>
+                      <div>
+                        <Avatar
+                          src={inquiry.investorProfileUrl}
+                          alt={`${inquiry.investorName}'s profile`}
+                          size={24}
+                        />
+                        <span>{inquiry.investorName}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <InquiryStatusLabel status={inquiry.status} />
+                    </td>
+                    <td>{inquiry.createdAt.slice(0, 10).replace(/-/g, '.')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
           <Pagination
             totalPage={totalPages}
-            limit={data?.size || 10}
-            page={page}
+            limit={pageSize}
+            page={currentPage}
             setPage={setPage}
           />
         </div>
       )}
-      {isToastVisible && <Toast message={message} isVisible={isToastVisible} onClose={hideToast} />}
-    </div>
+    </section>
   );
 };
 
@@ -135,6 +121,14 @@ const myPageWrapperStyle = css`
   padding: 48px 40px 80px 40px;
   background-color: ${theme.colors.main.white};
   border-radius: 8px;
+
+  @media (max-width: 1180px) {
+    width: 800px;
+  }
+
+  @media (max-width: 1024px) {
+    width: 658px;
+  }
 `;
 
 const myPageHeaderStyle = css`
@@ -154,96 +148,91 @@ const myPageHeaderStyle = css`
   }
 `;
 
-const tableWrapper = css`
+const tableWrapperStyle = css`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: 56px;
 `;
 
-const rowStyle = css`
-  display: grid;
-  grid-template-columns: minmax(0, 4.8fr) minmax(0, 2.5fr) minmax(0, 1.6fr) minmax(0, 1.4fr);
-  align-items: center;
-  height: 90px;
-  background: ${theme.colors.main.white};
-  color: ${theme.colors.gray[900]};
-  border-bottom: 1px solid ${theme.colors.gray[300]};
-  text-align: center;
-  line-height: ${theme.typography.lineHeights.lg};
-  cursor: pointer;
-
-  &:hover {
-    background-color: ${theme.colors.teal[50]};
+const tableContainerStyle = css`
+  table {
+    width: 875px;
+    border-collapse: collapse;
   }
-`;
 
-const headerStyle = css`
-  ${rowStyle};
-  height: 48px;
-  background-color: ${theme.colors.gray[100]};
-  color: ${theme.colors.gray[700]};
-  border-bottom: 1px solid ${theme.colors.gray[500]};
-  font-weight: ${theme.typography.fontWeight.bold};
-  cursor: default;
-
-  &:hover {
+  thead tr {
+    height: 48px;
     background-color: ${theme.colors.gray[100]};
+    border-bottom: 1px solid ${theme.colors.gray[500]};
+  }
+
+  thead th {
+    vertical-align: middle;
+    ${theme.textStyle.body.body1}
+    color: ${theme.colors.gray[700]};
+  }
+
+  tbody tr {
+    border-bottom: 1px solid ${theme.colors.gray[300]};
+    background-color: ${theme.colors.main.white};
+
+    &:hover {
+      background-color: ${theme.colors.teal[50]};
+      cursor: pointer;
+    }
+  }
+
+  tbody td {
+    height: 90px;
+    vertical-align: middle;
+    text-align: center;
+
+    &:nth-of-type(1) {
+      text-align: left;
+      padding: 0 24px;
+
+      span {
+        color: ${theme.colors.gray[300]};
+        margin-right: 12px;
+      }
+    }
+
+    &:nth-of-type(2) {
+      div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        span {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
+    &:nth-of-type(3) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 140px;
+    }
   }
 `;
 
-const inquiriesTitleStyle = css`
-  display: flex;
-  align-items: flex-start;
-  padding: 24px;
-
-  span {
-    color: ${theme.colors.gray[300]};
-    margin-right: 12px;
+const colgroupStyle = css`
+  col:nth-of-type(1) {
+    width: 415px;
   }
-
-  div {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  col:nth-of-type(2) {
+    width: 200px;
   }
-`;
-
-const traderInfoStyle = css`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 8px;
-  padding-left: 24.5px;
-
-  img {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    object-fit: cover;
+  col:nth-of-type(3) {
+    width: 140px;
   }
-
-  span {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-`;
-
-const statusStyle = (status: Status) => css`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  font-size: 14px;
-  color: ${status === 'COMPLETED' ? theme.colors.gray[400] : theme.colors.gray[900]};
-
-  .dot {
-    width: 8px;
-    height: 8px;
-    background-color: ${theme.colors.teal[400]};
-    border-radius: 50%;
-    display: ${status === 'PENDING' ? 'block' : 'none'};
+  col:nth-of-type(4) {
+    width: 120px;
   }
 `;
 
@@ -252,9 +241,9 @@ const emptyStateWrapperStyle = css`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: ${theme.colors.gray[400]};
   height: 200px;
-  margin-top: 40px;
+  text-align: center;
+  color: ${theme.colors.gray[400]};
 `;
 
 export default MyInquiriesPage;
