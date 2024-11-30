@@ -29,7 +29,7 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
   const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
   const { openModal } = useModalStore();
   const { openTableModal } = useTableModalStore();
-  const { mutate: postDailyAnalysis, isError } = usePostDailyAnalysis();
+  const { mutate: postDailyAnalysis } = usePostDailyAnalysis();
   const { mutate: putDailyAnalysis } = usePutDailyAnalysis();
   const { mutate: deleteDailyAnalysis } = useDeleteAnalysis();
   const { dailyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchDailyAnalysis(
@@ -77,15 +77,39 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
           return;
         }
         handleSaveData(modalData);
-        if (isError) {
-          showToast('이미 등록된 일자입니다.', 'error');
-        }
       },
     });
   };
 
   const handleSaveData = (modalData: InputTableProps[]) => {
     if (!strategyId) return;
+
+    const emptyData = modalData.filter((data) => {
+      const isDateValid = !!data.date.trim();
+      const isDepWdPriceValid = !!String(data.depWdPrice).trim();
+      const isDailyProfitLossValid = !!String(data.dailyProfitLoss).trim();
+
+      if (isDateValid && isDepWdPriceValid && isDailyProfitLossValid) return false;
+
+      if (!isDateValid && !isDepWdPriceValid && !isDailyProfitLossValid) return false;
+
+      return true;
+    });
+
+    const existingDates = normalizedData.map((item: DailyAnalysisProps) => item.date);
+    const duplicateDates = modalData.filter((data) => existingDates.includes(data.date));
+
+    if (emptyData.length > 0) {
+      showToast('일자, 입출금, 일손익 모두 입력하세요.', 'error');
+      return;
+    }
+    if (duplicateDates.length > 0) {
+      showToast(
+        `일간분석에 등록된 날짜 입니다. ${duplicateDates.map((d) => d.date).join(', ')}`,
+        'error'
+      );
+      return;
+    }
 
     const payload: DailyAnalysisProps[] = modalData
       .filter((data) => data.date && data.dailyProfitLoss && data.depWdPrice)
