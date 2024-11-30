@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -19,7 +21,8 @@ import MonthlyAnalysis from '@/components/page/strategy-detail/tabmenu/MonthlyAn
 import StatisticsTable from '@/components/page/strategy-detail/tabmenu/StatisticsTable';
 import { ROUTES } from '@/constants/routes';
 import { monthlyAttribues, dailyAttribues, statisticsMapping } from '@/constants/strategyAnalysis';
-import useStrategyDetailDelete from '@/hooks/mutations/useStrategyDetailDelete';
+import { useStrategyDetailDelete } from '@/hooks/mutations/useStrategyDetailMutation';
+import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
 import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
 import useStatistics from '@/hooks/queries/useStatistics';
 import { useAuthStore } from '@/stores/authStore';
@@ -28,12 +31,6 @@ import theme from '@/styles/theme';
 import { StatisticsProps } from '@/types/strategyDetail';
 import { formatDate } from '@/utils/dateFormat';
 import { formatValue, formatRate } from '@/utils/statistics';
-
-const strategyDummy = {
-  file: {
-    url: `/file.txt`,
-  },
-};
 
 const imgTest = [
   { img: '/src/assets/images/producttype_stock.png' },
@@ -65,10 +62,9 @@ const StrategyDetailPage = () => {
   const { statistics, writedAt } = useStatistics(Number(strategyId));
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { openModal } = useModalStore();
-
-  if (!strategy) {
-    return <Loader />;
-  }
+  const { dailyAnalysis } = useFetchDailyAnalysis(Number(strategyId), 0, 5);
+  const isApproved = dailyAnalysis?.length >= 3;
+  const [approved, setApproved] = useState<boolean>(false);
 
   const statisticsTableData = (
     mapping: { label: string; key: string }[],
@@ -137,9 +133,15 @@ const StrategyDetailPage = () => {
       type: 'confirm',
       title: '승인요청',
       desc: '승인 요청을 보내면 관리자 검토 후\n 전략이 승인됩니다.',
-      onAction: () => {},
+      onAction: () => {
+        setApproved(false);
+      },
     });
   };
+
+  if (!strategy) {
+    return <Loader />;
+  }
 
   return (
     <div css={containerStyle}>
@@ -156,6 +158,7 @@ const StrategyDetailPage = () => {
               id={strategy?.strategyId}
               strategyTitle={strategy?.strategyTitle || ''}
               traderId={strategy?.traderId || ''}
+              approved={isApproved}
               onApproval={() => {
                 handleApproval();
               }}
@@ -173,7 +176,9 @@ const StrategyDetailPage = () => {
               lastUpdatedDate={writedAt ? formatDate(writedAt) : '데이터없음'}
             />
             <StrategyContent content={strategy?.strategyOverview} />
-            <FileDownSection fileUrl={strategyDummy.file.url} />
+            {strategy?.strategyProposalLink && (
+              <FileDownSection fileUrl={strategy?.strategyProposalLink} />
+            )}
             <StrategyIndicator
               cumulativeRate={statistics && formatRate(statistics.maxCumulativeProfitLossRatio)}
               maximumRate={statistics && formatRate(statistics.maxDrawdownRate)}
