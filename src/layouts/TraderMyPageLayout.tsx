@@ -11,9 +11,7 @@ const TraderMyPageLayout = () => (
     <Header />
     <main css={mainStyle}>
       <TraderMyPageNav />
-      <div>
-        <Outlet />
-      </div>
+      <Outlet />
     </main>
     <Footer />
   </div>
