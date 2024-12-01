@@ -1,17 +1,24 @@
-import { css } from '@emotion/react';
+import { useEffect, useState } from 'react';
 
-import futureIcon from '@/assets/images/producttype_futures.png';
-import StockIcon from '@/assets/images/producttype_stock.png';
-import TradeTypeHIcon from '@/assets/images/tradetype_H.png';
-import TradeTypePIcon from '@/assets/images/tradetype_P.png';
+import { css } from '@emotion/react';
+import { useNavigate } from 'react-router-dom';
+
 import Button from '@/components/common/Button';
 import ContentModal from '@/components/common/ContentModal';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import RejectTextarea from '@/components/page/admin/RejectTextarea';
-import StatusComponent from '@/components/page/admin/strategyStatusLabel';
+import StrategyStatusLabel from '@/components/page/admin/strategyStatusLabel';
+import { ROUTES } from '@/constants/routes';
+import {
+  useApproveStrategy,
+  useRejectStrategy,
+} from '@/hooks/mutations/useStrategyApprovalMutations';
+import useStrategyApprovalList from '@/hooks/queries/useStrategyApprovalList';
+import usePagination from '@/hooks/usePagination';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { formatDate } from '@/utils/dateFormat';
 import { getPostStatus } from '@/utils/statusUtils';
@@ -29,142 +36,69 @@ interface Strategy {
   investmentAssetClassesIcons: string[];
 }
 
-const data: Strategy[] = [
-  {
-    strategyApprovalRequestId: 10,
-    requestDatetime: '2024-11-22T19:05:22.521418',
-    isApproved: 'N',
-    strategyId: 2,
-    strategyTitle:
-      '사람들 많이 살 때 따라사는 전략입니다람쥐 사람들 많이 살 때 따라사는 전략입니다람쥐',
-    isPosted: 'Y',
-    strategyStatus: 'STRATEGY_OPERATION_UNDER_MANAGEMENT',
-    tradingTypeIcon: TradeTypeHIcon,
-    tradingCycleIcon: TradeTypePIcon,
-    investmentAssetClassesIcons: [StockIcon, StockIcon, StockIcon, StockIcon],
-  },
-  {
-    strategyApprovalRequestId: 11,
-    requestDatetime: '2024-11-22T20:10:30.123456',
-    isApproved: 'Y',
-    strategyId: 3,
-    strategyTitle:
-      '사람들 많이 살 때 따라사는 전략입니다람쥐 사람들 많이 살 때 따라사는 전략입니다람쥐',
-    isPosted: 'N',
-    strategyStatus: 'STRATEGY_OPERATION_COMPLETED',
-    tradingTypeIcon: TradeTypeHIcon,
-    tradingCycleIcon: TradeTypePIcon,
-    investmentAssetClassesIcons: [futureIcon, StockIcon],
-  },
-  {
-    strategyApprovalRequestId: 12,
-    requestDatetime: '2024-11-22T21:15:45.789012',
-    isApproved: 'N',
-    strategyId: 4,
-    strategyTitle:
-      '사람들 많이 살 때 따라사는 전략입니다람쥐 사람들 많이 살 때 따라사는 전략입니다람쥐',
-    isPosted: 'Y',
-    strategyStatus: 'STRATEGY_OPERATION_UNDER_MANAGEMENT',
-    tradingTypeIcon: TradeTypeHIcon,
-    tradingCycleIcon: TradeTypePIcon,
-    investmentAssetClassesIcons: [futureIcon, StockIcon],
-  },
-  {
-    strategyApprovalRequestId: 13,
-    requestDatetime: '2024-11-23T08:25:00.456789',
-    isApproved: 'Y',
-    strategyId: 5,
-    strategyTitle:
-      '사람들 많이 살 때 따라사는 전략입니다람쥐 사람들 많이 살 때 따라사는 전략입니다람쥐',
-    isPosted: 'N',
-    strategyStatus: 'STRATEGY_OPERATION_UNDER_MANAGEMENT',
-    tradingTypeIcon: TradeTypeHIcon,
-    tradingCycleIcon: TradeTypePIcon,
-    investmentAssetClassesIcons: [futureIcon, futureIcon, futureIcon, futureIcon, futureIcon],
-  },
-  {
-    strategyApprovalRequestId: 14,
-    requestDatetime: '2024-11-23T09:40:10.123456',
-    isApproved: 'N',
-    strategyId: 6,
-    strategyTitle:
-      '사람들 많이 살 때 따라사는 전략입니다람쥐 사람들 많이 살 때 따라사는 전략입니다람쥐',
-    isPosted: 'Y',
-    strategyStatus: 'STRATEGY_OPERATION_COMPLETED',
-    tradingTypeIcon: TradeTypeHIcon,
-    tradingCycleIcon: TradeTypePIcon,
-    investmentAssetClassesIcons: [futureIcon, StockIcon],
-  },
-  // 추가된 복제 데이터
-  {
-    strategyApprovalRequestId: 15,
-    requestDatetime: '2024-11-23T10:45:00.789012',
-    isApproved: 'N',
-    strategyId: 7,
-    strategyTitle: '새로운 전략입니다람쥐 새로운 전략입니다람쥐 새로운 전략입니다람쥐',
-    isPosted: 'N',
-    strategyStatus: 'STRATEGY_OPERATION_UNDER_MANAGEMENT',
-    tradingTypeIcon: TradeTypeHIcon,
-    tradingCycleIcon: TradeTypePIcon,
-    investmentAssetClassesIcons: [futureIcon, StockIcon],
-  },
-  {
-    strategyApprovalRequestId: 16,
-    requestDatetime: '2024-11-23T11:55:10.456789',
-    isApproved: 'Y',
-    strategyId: 8,
-    strategyTitle: '복제된 전략입니다람쥐 복제된 전략입니다람쥐 복제된 전략입니다람쥐',
-    isPosted: 'Y',
-    strategyStatus: 'STRATEGY_OPERATION_COMPLETED',
-    tradingTypeIcon: TradeTypeHIcon,
-    tradingCycleIcon: TradeTypePIcon,
-    investmentAssetClassesIcons: [futureIcon, futureIcon, StockIcon],
-  },
-  {
-    strategyApprovalRequestId: 17,
-    requestDatetime: '2024-11-23T12:30:30.123456',
-    isApproved: 'Y',
-    strategyId: 9,
-    strategyTitle: '복제된 데이터 입니다람쥐 복제된 데이터 입니다람쥐 복제된 데이터 입니다람쥐',
-    isPosted: 'N',
-    strategyStatus: 'STRATEGY_OPERATION_COMPLETED',
-    tradingTypeIcon: TradeTypeHIcon,
-    tradingCycleIcon: TradeTypePIcon,
-    investmentAssetClassesIcons: [futureIcon, StockIcon, StockIcon],
-  },
-  {
-    strategyApprovalRequestId: 18,
-    requestDatetime: '2024-11-23T13:10:45.789012',
-    isApproved: 'N',
-    strategyId: 10,
-    strategyTitle: '전략이 더 추가됩니다람쥐 전략이 더 추가됩니다람쥐 전략이 더 추가됩니다람쥐',
-    isPosted: 'Y',
-    strategyStatus: 'STRATEGY_OPERATION_UNDER_MANAGEMENT',
-    tradingTypeIcon: TradeTypeHIcon,
-    tradingCycleIcon: TradeTypePIcon,
-    investmentAssetClassesIcons: [futureIcon, StockIcon, futureIcon],
-  },
-];
-
 const StrategyApprovalListPage = () => {
+  const navigate = useNavigate();
   const { openModal } = useModalStore();
   const { openContentModal } = useContentModalStore();
+  const { pagination, setPage } = usePagination(1, 10);
+  const { showToast } = useToastStore();
+  const { strategies, currentPage, totalPages, totalElements, pageSize, isLoading, isError } =
+    useStrategyApprovalList({
+      page: pagination.currentPage - 1,
+      pageSize: pagination.pageSize,
+    });
+  const { mutate: approveStrategy } = useApproveStrategy();
+  const { mutate: rejectStrategy } = useRejectStrategy();
+  const [reason, setReason] = useState('');
 
-  const handleStrategyApproval = () => {
+  const onClickStrategyList = (strategyId: string) => {
+    navigate(ROUTES.STRATEGY.DETAIL(strategyId));
+    window.scrollTo(0, 0);
+  };
+
+  const handleStrategyApproval = (id: number) => {
     openModal({
       type: 'confirm',
       title: '전략 승인',
       desc: `해당 전략을 승인하시겠어요?`,
-      onAction: () => console.log('전략승인했따!당당구리'),
+      onAction: () => {
+        approveStrategy(id);
+      },
     });
   };
 
-  const handleStrategyReject = () => {
+  const handleStrategyReject = (id: number) => {
+    let localReason = ''; // 로컬 상태
+
     openContentModal({
       title: '승인거부',
-      content: <RejectTextarea />,
-      onAction: () => console.log('전략거부!'),
+      content: (
+        <RejectTextarea
+          initialValue={localReason}
+          onChange={(value: string) => {
+            localReason = value; // 로컬 상태 업데이트
+          }}
+        />
+      ),
+      onAction: () => {
+        if (!localReason.trim()) {
+          showToast('거부 사유를 입력해주세요.', 'error');
+          return;
+        }
+        rejectStrategy({ id, reason: localReason });
+        showToast('거부가 성공적으로 처리되었습니다.', 'basic');
+      },
     });
+  };
+
+  const handleApproveButtonClick = (id: number) => (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation(); // Row 클릭 이벤트 방지
+    handleStrategyApproval(id);
+  };
+
+  const handleRejectButtonClick = (id: number) => (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation(); // Row 클릭 이벤트 방지
+    handleStrategyReject(id);
   };
 
   return (
@@ -172,7 +106,7 @@ const StrategyApprovalListPage = () => {
       <div css={adminHeaderStyle}>
         <h2>전략 승인 관리</h2>
         <p>
-          <span>0</span>개의 새로운 승인요청이 있습니다
+          <span>{totalElements || 0}</span>개의 새로운 승인 요청이 있습니다
         </p>
       </div>
       <div css={tableWrapperStyle}>
@@ -197,8 +131,13 @@ const StrategyApprovalListPage = () => {
               </tr>
             </thead>
             <tbody>
-              {data.map((strategy) => (
-                <tr key={strategy.strategyApprovalRequestId}>
+              {strategies?.map((strategy: Strategy) => (
+                <tr
+                  key={strategy.strategyApprovalRequestId}
+                  onClick={() => {
+                    onClickStrategyList(String(strategy.strategyId));
+                  }}
+                >
                   <td>
                     <div>
                       <p>{strategy.strategyTitle}</p>
@@ -206,31 +145,39 @@ const StrategyApprovalListPage = () => {
                         {strategy.investmentAssetClassesIcons
                           ?.slice(0, 2)
                           .map((icon, index) => (
-                            <img key={`${icon}-${index}`} src={icon} alt={icon} height={18} />
+                            <img key={`${icon}-${index}`} src={icon} alt='icon' height={18} />
                           ))}
-
-                        <div className='count-container'>
-                          {strategy.investmentAssetClassesIcons.length > 2 && (
-                            <div className='count-container'>
-                              +{strategy.investmentAssetClassesIcons.length - 2}
-                            </div>
-                          )}
-                        </div>
+                        {strategy.investmentAssetClassesIcons.length > 2 && (
+                          <div className='count-container'>
+                            +{strategy.investmentAssetClassesIcons.length - 2}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </td>
                   <td>
-                    <StatusComponent status={strategy.strategyStatus} />
+                    <StrategyStatusLabel status={strategy.strategyStatus} />
                   </td>
                   <td>{formatDate(strategy.requestDatetime)}</td>
-                  <td>하이브리드</td>
+                  <td>
+                    <img src={strategy.tradingTypeIcon} alt='icon' />
+                  </td>
                   <td>{getPostStatus(strategy.isPosted)}</td>
                   <td>
-                    <Button variant='accent' size='sm' onClick={handleStrategyApproval}>
+                    <Button
+                      variant='accent'
+                      size='sm'
+                      onClick={handleApproveButtonClick(strategy.strategyApprovalRequestId)}
+                      disabled={strategy.isApproved === 'Y'}
+                    >
                       승인
                     </Button>
-                    <Button variant='neutral' size='sm' onClick={handleStrategyReject}>
-                      거부
+                    <Button
+                      variant='neutral'
+                      size='sm'
+                      onClick={handleRejectButtonClick(strategy.strategyApprovalRequestId)}
+                    >
+                      {strategy.isApproved === 'Y' ? '승인취소' : '거부'}
                     </Button>
                   </td>
                 </tr>
@@ -238,7 +185,7 @@ const StrategyApprovalListPage = () => {
             </tbody>
           </table>
         </div>
-        <Pagination totalPage={5} limit={10} page={1} setPage={() => {}} />
+        <Pagination totalPage={totalPages} limit={pageSize} page={currentPage} setPage={setPage} />
       </div>
       <Modal />
       <ContentModal />
@@ -343,9 +290,11 @@ const tableContainerStyle = css`
           display: flex;
           justify-content: center;
           align-items: center;
+          gap: 4px;
 
           button {
-            padding: 24px 20px;
+            width: 72px;
+            height: 40px;
           }
         }
       }

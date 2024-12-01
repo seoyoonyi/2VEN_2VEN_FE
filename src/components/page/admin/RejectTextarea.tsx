@@ -1,17 +1,26 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
 
-const RejectTextarea = () => {
-  const [text, setText] = useState('');
+interface RejectTextareaProps {
+  initialValue: string;
+  onChange: (value: string) => void;
+}
+
+const RejectTextarea = ({ initialValue, onChange }: RejectTextareaProps) => {
   const maxLength = 300;
+  const [text, setText] = useState(initialValue);
+
+  useEffect(() => {
+    onChange(text); // 부모 상태로 값 전달
+    console.log(text);
+  }, [text, onChange]);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (event.target.value.length <= maxLength) {
-      setText(event.target.value);
-      console.log(event.target.value);
+      setText(event.target.value); // 로컬 상태 업데이트
     }
   };
 
@@ -30,7 +39,6 @@ const RejectTextarea = () => {
     </div>
   );
 };
-
 const contentWrapperStyle = css`
   display: flex;
   flex-direction: column;
