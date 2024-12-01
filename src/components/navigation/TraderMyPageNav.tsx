@@ -2,14 +2,19 @@ import { useState } from 'react';
 
 import { css } from '@emotion/react';
 import { GrLogout } from 'react-icons/gr';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import NavigationMenu from '@/components/common/NavigationMenu';
 import ProfileSection from '@/components/page/mypage/ProfileSection';
 import { ROUTES } from '@/constants/routes';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
 const TraderMyPageNav = () => {
+  const navigate = useNavigate();
+  const { clearAuth } = useAuthStore();
+
   // 사진이 없을때
   // const [userImage, setUserImage] = useState(null);
   const [userImage] = useState(
@@ -31,6 +36,11 @@ const TraderMyPageNav = () => {
     },
   ];
 
+  const handleSignout = async () => {
+    clearAuth();
+    navigate(ROUTES.HOME.PATH, { replace: true });
+  };
+
   return (
     <div css={navContainerStyle}>
       <div css={navWrapper}>
@@ -42,7 +52,7 @@ const TraderMyPageNav = () => {
         />
         <NavigationMenu items={TraderMyPageNavItems} />
       </div>
-      <Button variant='ghostGray' customStyle={logoutStyle} size='sm'>
+      <Button variant='ghostGray' customStyle={logoutStyle} size='sm' onClick={handleSignout}>
         <GrLogout size={16} />
         <span>로그아웃</span>
       </Button>
