@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 import { MdRemoveCircle } from 'react-icons/md';
@@ -23,6 +23,15 @@ const FileUpload = ({
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (uploadedFileUrl) {
+      const fileName = uploadedFileUrl.split('/').pop();
+      setSelectedFileName(fileName || '');
+    } else {
+      setSelectedFileName('');
+    }
+  }, [uploadedFileUrl]);
 
   const handleFile = (file: File) => {
     if (isValidFileType(file.name)) {
@@ -64,8 +73,9 @@ const FileUpload = ({
     try {
       await deleteProposalFile(uploadedFileUrl);
 
-      setSelectedFileName(null);
       setUploadedFileUrl(null);
+      setSelectedFileName('');
+
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }

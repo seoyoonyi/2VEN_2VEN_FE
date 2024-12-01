@@ -38,7 +38,7 @@ export const fetchUpdateStrategy = async (
   strategyId: string
 ): Promise<{ data: StrategyDetailsData; requirements: Requirements }> => {
   try {
-    const res = await apiClient.get(`${API_ENDPOINTS.STRATEGY.UPDATE_FORM}/${strategyId}`, {
+    const res = await apiClient.get(`${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/update-form`, {
       headers: {
         Auth: 'trader',
       },

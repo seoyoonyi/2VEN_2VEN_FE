@@ -30,7 +30,7 @@ export interface StrategyPayload {
   minInvestmentAmount: string;
   strategyOverview: string;
   isPosted: string;
-  strategyProposalLink: string;
+  strategyProposalLink: string | null;
   investmentAssetClassesIdList: number[];
 }
 
@@ -68,6 +68,7 @@ export interface StrategyDetailsData {
   writedAt: string;
   isPosted: string;
   isApproved: string;
+  strategyProposalLink: string | null;
 }
 
 // 전략 수정 조회

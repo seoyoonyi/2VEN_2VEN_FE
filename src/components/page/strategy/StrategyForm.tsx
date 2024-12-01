@@ -17,6 +17,7 @@ import useFetchStrategyOptionData from '@/hooks/queries/useFetchStrategyOptionDa
 import useCreateFormValidation from '@/hooks/useCreateFormValidation';
 import useModalStore from '@/stores/modalStore';
 import { useStrategyFormStore } from '@/stores/strategyFormStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { StrategyPayload, StrategyDetailsData, Requirements } from '@/types/strategy';
 
@@ -69,6 +70,11 @@ const StrategyForm = ({
         'selectedProducts',
         strategyDetailData.strategyIACEntities.map((item) => String(item.investmentAssetClassesId))
       );
+
+      if (strategyDetailData.strategyProposalLink) {
+        console.log('Setting uploadedFileUrl:', strategyDetailData.strategyProposalLink);
+        setUploadedFileUrl(strategyDetailData.strategyProposalLink);
+      }
     }
   }, [isEditMode, strategyDetailData, requirements, setField]);
 
@@ -85,12 +91,14 @@ const StrategyForm = ({
   const { mutate: uploadFile } = useUploadProposalFile();
   const { mutate: updateStrategy } = useSubmitStrategyUpdate();
   const isSubmitting = status === 'pending';
+  const { showToast } = useToastStore();
 
   const [file, setFile] = useState<File | null>(null);
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
 
   const formState = { strategy, text, operation, cycle, fund, publicStatus, selectedProducts };
   const isFormValid = useCreateFormValidation(formState);
+  console.log('uploadedFileUrl========>', uploadedFileUrl);
 
   const handleFileSelect = (selectedFile: File | null) => {
     setFile(selectedFile);
@@ -118,17 +126,19 @@ const StrategyForm = ({
       minInvestmentAmount: fund,
       strategyOverview: text,
       isPosted: publicStatus,
-      strategyProposalLink: uploadedFileUrl ? uploadedFileUrl : '',
+      strategyProposalLink: uploadedFileUrl || null,
       investmentAssetClassesIdList: selectedProducts.map((v) => Number(v)),
     };
 
-    console.log('최종 제출 데이터:', payload);
+    console.log('최종 제출 데이터============>:', payload);
 
     try {
       if (isEditMode && strategyDetailData) {
         updateStrategy({ strategyId: strategyDetailData.strategyId, payload });
+        showToast('전략 수정이 성공적으로 완료되었습니다', 'basic');
       } else {
         submitStrategy(payload);
+        showToast('전략 등록이 성공적으로 완료되었습니다', 'basic');
       }
     } catch (error) {
       console.error('전략 등록/수정 실패:', error);
