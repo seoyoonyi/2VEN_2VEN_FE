@@ -17,9 +17,10 @@ export const API_ENDPOINTS = {
     },
     EMAIL: {
       REQUEST_VERIFICATION_FOR_SIGNUP: '/api/members/check-email', // 회원가입 시, 이메일 확인 + 이메일 인증 코드 요청
-      CHECK_VERIFICATION_FOR_USERS: '/api/auth/check-verification-code', // 회원가입 시 + 비밀번호 재설정 시, 이메일 인증 코드 확인
 
-      REQUEST_VERIFICATION_FOR_RESET_PASSWORD: 'api/members/check-account', // 비밀번호 재설정을 위한, 이메일 인증 코드 요청
+      REQUEST_VERIFICATION_FOR_RESET_PASSWORD: 'api/members/check-account', // 비밀번호 찾기페이지, 이메일 인증코드 요청
+
+      CHECK_VERIFICATION_FOR_USERS: '/api/auth/check-verification-code', // 회원가입 시 + 비밀번호 찾기, 이메일 인증코드 검증(공통)
 
       // 관리자 인증 (주석처리된 값으로 처리예정)
       REQUEST_ADMIN_VERIFICATION: '/api/auth/admin/send-verification-code', // 관리자 인증을 위한, 이메일 인증 코드 요청
