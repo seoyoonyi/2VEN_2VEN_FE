@@ -10,11 +10,13 @@ import GlobalNav from '@/components/navigation/GlobalNav';
 import SearchInput from '@/components/page/search/SearchInput';
 import AdminSessionTimer from '@/components/page/signup/AdminSessionTimer';
 import { ROUTES } from '@/constants/routes';
+import { useSessionTimer } from '@/hooks/\buseSesstionTimer';
 import { useAdminAuthStatus } from '@/hooks/useAdminAuthStatus';
 import { useAdminAuthStore } from '@/stores/adminAuthStore';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 import { isAdminUser } from '@/types/auth';
+
 const Header = () => {
   const LOGO = 'SYSMETIC';
   const { user } = useAuthStore(); // 사용자 정보 가져오기
@@ -24,6 +26,8 @@ const Header = () => {
 
   const { adminAuth } = useAdminAuthStore();
   const navigate = useNavigate();
+
+  useSessionTimer();
 
   console.log('Auth user:', useAuthStore.getState().user);
   console.log('Admin auth:', useAdminAuthStore.getState().adminAuth);
