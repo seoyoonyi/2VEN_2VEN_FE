@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 
 import Select from '@/components/common/Select';
+import StrategyChart from '@/components/common/StrategyChart';
 import theme from '@/styles/theme';
 
 const chartOptions = [
@@ -74,6 +75,9 @@ const chartOptions = [
   },
 ];
 
+const dailyProfitRate = [-9, 21.52, 7.21, 30, 60, 80.2];
+const principal = [1246400, 51587155, 101407866, 100000000, 20000000, 50000000];
+
 const ChartSection = () => (
   <div css={sectionStyle}>
     <div css={chartTitle}>계좌 누적 수익률</div>
@@ -94,7 +98,9 @@ const ChartSection = () => (
           width='160px'
         />
       </div>
-      <div css={chartStyle}></div>
+      <div css={chartStyle}>
+        <StrategyChart lineData={dailyProfitRate} areaData={principal} />
+      </div>
     </div>
   </div>
 );
