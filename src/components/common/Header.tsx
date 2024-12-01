@@ -12,10 +12,12 @@ import AdminSessionTimer from '@/components/page/signup/AdminSessionTimer';
 import { ROUTES } from '@/constants/routes';
 import { useProfileImage } from '@/hooks/queries/useProfileImage';
 import { useAdminAuthStatus } from '@/hooks/useAdminAuthStatus';
+import { useSessionTimer } from '@/hooks/useSesstionTimer';
 import { useAdminAuthStore } from '@/stores/adminAuthStore';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 import { isAdminUser } from '@/types/auth';
+
 const Header = () => {
   const LOGO = 'SYSMETIC';
   const { user } = useAuthStore(); // 사용자 정보 가져오기
@@ -35,6 +37,8 @@ const Header = () => {
 
   const { adminAuth } = useAdminAuthStore();
   const navigate = useNavigate();
+
+  useSessionTimer();
 
   console.log('Auth user:', useAuthStore.getState().user);
   console.log('Admin auth:', useAdminAuthStore.getState().adminAuth);
