@@ -63,6 +63,25 @@ export const fetchDailyAnalysis = async (strategyId: number, page: number, pageS
   }
 };
 
+//전략 엑셀 등록
+export const fetchUploadExcel = async (strategyId: number, fileItem: File, authRole: UserRole) => {
+  const formData = createFormDataRequest({ file: fileItem });
+  try {
+    const req = await apiClient.post(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/upload`,
+      formData,
+      {
+        headers: {
+          auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to upload excel', error);
+  }
+};
+
 //일간분석 등록
 export const fetchPostDailyAnalysis = async (
   strategyId: number,
