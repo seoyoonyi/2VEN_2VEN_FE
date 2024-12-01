@@ -75,6 +75,10 @@ export const StrategyHeader = ({
             <Button size='xs' width={120} disabled>
               승인대기
             </Button>
+          ) : isStrategyApproved === 'Y' ? (
+            <Button size='xs' width={120} onClick={() => {}} disabled={!isApprovedState}>
+              전략종료
+            </Button>
           ) : (
             <Button size='xs' width={120} onClick={onApproval} disabled={!isApprovedState}>
               승인요청
