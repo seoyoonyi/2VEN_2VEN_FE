@@ -17,6 +17,7 @@ export const useSessionTimer = () => {
     const handleSessionExpiration = () => {
       clearAuth();
       navigate(ROUTES.HOME.PATH, { replace: true });
+      window.scrollTo(0, 0);
     };
 
     const expiryTime = new Date(expiresAt).getTime();
