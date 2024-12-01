@@ -111,15 +111,7 @@ interface FindEmailResponse {
 export const findEmailByPhone = async (phone: string): Promise<FindEmailResponse> => {
   try {
     // 호출 시 phoneNumber로 요청
-    const { data } = await apiClient.post(
-      API_ENDPOINTS.AUTH.FIND.EMAIL,
-      { phoneNumber: phone },
-      {
-        headers: {
-          useMock: import.meta.env.VITE_ENABLE_MSW === 'true',
-        },
-      }
-    );
+    const { data } = await apiClient.post(API_ENDPOINTS.AUTH.FIND.EMAIL, { phoneNumber: phone });
     return data;
   } catch (error) {
     if (isAxiosError(error)) {
