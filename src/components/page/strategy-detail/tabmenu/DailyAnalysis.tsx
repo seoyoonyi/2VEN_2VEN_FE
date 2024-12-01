@@ -86,13 +86,15 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
     modalData.filter((data) => {
       const isDateValid = !!data.date.trim();
       const isDepWdPriceValid =
-        !!String(data.depWdPrice).trim() && isValidInputNumber(data.depWdPrice);
+        String(data.depWdPrice).trim() !== '' &&
+        String(data.depWdPrice).trim() !== '0' &&
+        isValidInputNumber(data.depWdPrice);
       const isDailyProfitLossValid =
-        !!String(data.dailyProfitLoss).trim() && isValidInputNumber(data.dailyProfitLoss);
+        String(data.dailyProfitLoss).trim() !== '' &&
+        String(data.dailyProfitLoss).trim() !== '0' &&
+        isValidInputNumber(data.dailyProfitLoss);
 
-      if (isDateValid && isDepWdPriceValid && isDailyProfitLossValid) return false;
-      if (!isDateValid && !isDepWdPriceValid && !isDailyProfitLossValid) return false;
-      return true;
+      return isDateValid && isDepWdPriceValid && isDailyProfitLossValid;
     });
 
   const isDuplicatedValue = (modalData: InputTableProps[]) => {
@@ -104,7 +106,7 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
     if (!strategyId) return;
     const emptyData = handleisValid(modalData);
     const duplicateDates = isDuplicatedValue(modalData);
-    if (emptyData.length > 0) {
+    if (emptyData.length === 0) {
       showToast('일자, 입출금, 일손익은 필수 입력값입니다.', 'error');
       return;
     }

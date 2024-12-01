@@ -50,8 +50,6 @@ export const StrategyHeader = ({
     navigate(`${ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS}`);
   };
 
-  console.log(isApprovedState);
-
   return (
     <div css={actionAreaStyle}>
       <button css={shareButtonStyle}>

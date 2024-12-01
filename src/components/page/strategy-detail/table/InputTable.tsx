@@ -25,19 +25,33 @@ const InputTable = ({ data, onChange }: InputAnalysisProps) => {
     field: keyof InputTableProps,
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (e.target.value.length > 10) {
+    if (e.target.value.length > 12) {
       return;
     }
+
     let passValue = e.target.value;
+
     if (field !== 'date') {
       const numericValue = e.target.value.replace(/[^-+0-9]/g, '');
-      passValue = numericValue.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, '');
+      passValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
     const updatedData = inputData.map((row, i) =>
       i === idx ? { ...row, [field]: passValue } : row
     );
     setInputData(updatedData);
-    onChange(updatedData);
+
+    const parsedData = updatedData.map((row) => ({
+      ...row,
+      depWdPrice:
+        typeof row.depWdPrice === 'string'
+          ? Number(row.depWdPrice.replace(/,/g, ''))
+          : row.depWdPrice,
+      dailyProfitLoss:
+        typeof row.dailyProfitLoss === 'string'
+          ? Number(row.dailyProfitLoss.replace(/,/g, ''))
+          : row.dailyProfitLoss,
+    }));
+    onChange(parsedData);
   };
 
   return (
