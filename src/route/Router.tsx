@@ -30,6 +30,7 @@ import MyInquiresDetailPage from '@/pages/mypage/investor/MyInquiresDetailPage';
 import MyInquiresEditPage from '@/pages/mypage/investor/MyInquiresEditPage';
 import MyInquiriesPage from '@/pages/mypage/investor/MyInquiriesPage';
 import InquiriesManagementPage from '@/pages/mypage/trader/InquiriesManagementPage';
+import InquiryDetailPage from '@/pages/mypage/trader/InquiryDetailPage';
 import StrategyCreatePage from '@/pages/mypage/trader/StrategyCreatePage';
 import StrategyEditPage from '@/pages/mypage/trader/StrategyEditPage';
 import TraderMyPage from '@/pages/mypage/trader/TraderMyPage';
@@ -224,8 +225,12 @@ export const router = createBrowserRouter(
           element: <TraderMyPage />, // 트레이더 마이페이지 - 나의 전략 리스트
         },
         {
-          path: ROUTES.MYPAGE.TRADER.INQUIRIES,
+          path: ROUTES.MYPAGE.TRADER.INQUIRIES.LIST,
           element: <InquiriesManagementPage />, // 문의 관리 페이지
+        },
+        {
+          path: ROUTES.MYPAGE.TRADER.INQUIRIES.DETAIL(':inquiryId'),
+          element: <InquiryDetailPage />, // 문의 관리 상세 게시판
         },
         {
           path: ROUTES.MYPAGE.TRADER.PROFILE,

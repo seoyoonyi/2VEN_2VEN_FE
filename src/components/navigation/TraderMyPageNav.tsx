@@ -22,7 +22,7 @@ const TraderMyPageNav = () => {
       label: '나의 전략',
     },
     {
-      to: `${ROUTES.MYPAGE.TRADER.INQUIRIES}`,
+      to: `${ROUTES.MYPAGE.TRADER.INQUIRIES.LIST}`,
       label: '문의 관리',
     },
     {

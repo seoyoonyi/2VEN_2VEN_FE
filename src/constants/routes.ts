@@ -52,7 +52,10 @@ export const ROUTES = {
         CREATE: '/mypage/trader/strategies/create', // 전략 등록(버튼클릭시 이동)
         EDIT: (strategyId: string) => `/mypage/trader/strategies/${strategyId}/edit`, // 전략 수정(버튼클릭시 이동)
       },
-      INQUIRIES: '/mypage/trader/inquiries', // 문의 관리
+      INQUIRIES: {
+        LIST: '/mypage/trader/inquiries', // 문의 관리 게시판
+        DETAIL: (inquiryId: string) => `/mypage/trader/inquiries/${inquiryId}`, // 문의 관리 상세
+      },
       PROFILE: '/mypage/trader/profile', // 프로필 관리
     },
   },

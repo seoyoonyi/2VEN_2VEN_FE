@@ -11,11 +11,19 @@ import { UserRole } from '@/types/route';
 
 interface StrategyHeaderProps {
   id: number;
+  strategyTitle: string;
+  traderId: string;
   onDelete: (id: number) => void;
   onApproval: () => void;
 }
 
-export const StrategyHeader = ({ id, onDelete, onApproval }: StrategyHeaderProps) => {
+export const StrategyHeader = ({
+  id,
+  strategyTitle,
+  traderId,
+  onDelete,
+  onApproval,
+}: StrategyHeaderProps) => {
   const navigate = useNavigate();
   const { user } = useAuthStore(); // store에서 user 정보 가져오기
 
@@ -23,8 +31,15 @@ export const StrategyHeader = ({ id, onDelete, onApproval }: StrategyHeaderProps
     navigate(`${ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(id)}`);
   };
 
+  // 문의기페이지로 데이터 정보 넘김(요게 스테이트!!!)
   const handleInquiryPage = () => {
-    navigate(`${ROUTES.STRATEGY.INQUIRIES}`);
+    navigate(`${ROUTES.STRATEGY.INQUIRIES}`, {
+      state: {
+        strategyTitle,
+        strategyId: id,
+        traderId,
+      },
+    });
   };
 
   const handleFollowingPage = () => {
@@ -39,7 +54,7 @@ export const StrategyHeader = ({ id, onDelete, onApproval }: StrategyHeaderProps
         <GiCircle size={40} css={circleStyle} />
         <MdOutlineShare size={16} css={shareStyle} />
       </button>
-      {userRole === 'ROLE_TRADER' ? ( // 사용자 역할이 'ROLE_TRADER'(트레이더)인 경우
+      {userRole === 'ROLE_TRADER' ? ( // 트레이더 전용 버튼
         <div css={buttonAreaStyle}>
           <Button size='xs' variant='secondaryGray' width={90} onClick={() => onDelete(id)}>
             삭제
@@ -59,7 +74,6 @@ export const StrategyHeader = ({ id, onDelete, onApproval }: StrategyHeaderProps
           </Button>
         </div>
       ) : (
-        // 사용자 역할이 'INVESTOR'(투자자)인 경우 -> 기본값!!!
         <div css={buttonAreaStyle}>
           <Button
             size='sm'
