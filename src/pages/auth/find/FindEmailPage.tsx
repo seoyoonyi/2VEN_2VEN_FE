@@ -40,8 +40,9 @@ const FindEmailPage = () => {
 
     try {
       const response = await emailFinder.mutateAsync(phone);
-      if (response.status === 'success') {
-        navigate(ROUTES.AUTH.FIND.EMAIL_SUCCESS, { state: { email: response.data.email } });
+
+      if (response.status === 'success' && response.data.length > 0) {
+        navigate(ROUTES.AUTH.FIND.EMAIL_SUCCESS, { state: { email: response.data[0].email } });
       }
     } catch (error) {
       setErrorMessage(FIND_EMAIL_TEXT.error.phone.notFound);
