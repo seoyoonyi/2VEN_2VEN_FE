@@ -7,7 +7,7 @@ import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import RejectTextarea from '@/components/page/admin/RejectTextarea';
-import StrategyStatusLabel from '@/components/page/admin/strategyStatusLabel';
+import StrategyStatusLabel from '@/components/page/admin/StrategyStatusLabel';
 import { ROUTES } from '@/constants/routes';
 import {
   useApproveStrategy,
