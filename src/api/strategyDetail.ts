@@ -135,7 +135,7 @@ export const fetchDeleteDailyAnalysis = async (
   }
 };
 
-//월간분석 조회(MSW)
+//월간분석 조회
 export const fetchMonthlyAnalysis = async (strategyId: number, page: number, pageSize: number) => {
   try {
     const res = await apiClient.get(
@@ -146,7 +146,7 @@ export const fetchMonthlyAnalysis = async (strategyId: number, page: number, pag
           pageSize,
         },
         headers: {
-          useMock: import.meta.env.VITE_ENABLE_MSW === 'true',
+          auth: 'admin',
         },
       }
     );
