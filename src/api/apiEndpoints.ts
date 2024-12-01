@@ -11,7 +11,7 @@ export const API_ENDPOINTS = {
     ADMIN_SIGNOUT: '/api/auth/admin/logout', // 관리자 로그아웃
     CHECK_NICKNAME: '/api/members/check-nickname', // 닉네임 중복 확인
     FIND: {
-      EMAIL: '/api/members/check-phone', // 이메일 찾기
+      EMAIL: '/api/members/find-email', // 전화번호로 이메일 찾기
       PASSWORD: '/api/members/find/password', // 비밀번호 찾기
       PASSWORD_RESET: '/api/members/find/password/reset', // 비밀번호 재설정
     },
@@ -33,7 +33,7 @@ export const API_ENDPOINTS = {
   },
   INQUIRY: '/api/consultations', // 나의 문의
   FILES: {
-    PROFILE: (fileId: string) => `/api/files/profile/${fileId}`, // 프로필 이미지 다운로드
+    PROFILE_URL: (memberId: string) => `/api/files/profile/${memberId}`, // 프로필 이미지 URL
     PROPOSAL: '/api/files/proposal', // 제안서 파일 업로드
     ICON: '/api/files/icon', //아이콘 업로드
   },

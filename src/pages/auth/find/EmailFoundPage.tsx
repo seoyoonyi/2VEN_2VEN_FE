@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 
 import SearchImage from '@/assets/images/search_image.png';
 import Button from '@/components/common/Button';
@@ -11,6 +11,10 @@ import { maskEmail } from '@/utils/validation';
 const EmailFoundPage = () => {
   const location = useLocation();
   const email = location.state?.email;
+  // state가 없으면 이메일 찾기 페이지로 리다이렉트
+  if (!location.state) {
+    return <Navigate to={ROUTES.AUTH.FIND.EMAIL} replace />;
+  }
   return (
     <div css={containerStyle}>
       <h3 css={pageHeadingStyle}>{EMAIL_FOUND_TEXT.title}</h3>

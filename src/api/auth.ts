@@ -98,17 +98,29 @@ export const checkNicknameDuplicate = async (nickname: string) => {
   return data;
 };
 
-export const findEmail = async (phone: string) => {
-  const { data } = await apiClient.post(
-    API_ENDPOINTS.AUTH.FIND.EMAIL,
-    { phone },
-    {
-      headers: {
-        useMock: import.meta.env.VITE_ENABLE_MSW === 'true',
-      },
+interface EmailData {
+  email: string;
+}
+interface FindEmailResponse {
+  message: string;
+  status: 'success' | 'error';
+  data: EmailData[];
+}
+
+// 전화번호로 이메일 찾기 API
+export const findEmailByPhone = async (phone: string): Promise<FindEmailResponse> => {
+  try {
+    // 호출 시 phoneNumber로 요청
+    const { data } = await apiClient.post(API_ENDPOINTS.AUTH.FIND.EMAIL, { phoneNumber: phone });
+    return data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        throw new Error('가입된 회원 정보가 없습니다.');
+      }
     }
-  );
-  return data;
+    throw error;
+  }
 };
 
 // 관리자 이메일로 인증번호를 요청하는 API
@@ -150,28 +162,6 @@ export const verifyAdminCode = async ({
     }
     throw error;
   }
-};
-
-interface ProfileImageResponse {
-  fileId: string;
-  displayName: string;
-  message: string;
-  base64Content: string;
-}
-// 프로필 이미지 가져오기
-export const fetchProfileImage = async ({
-  fileId,
-  memberId,
-}: {
-  fileId: string;
-  memberId: string;
-}): Promise<string> => {
-  console.log('API call params:', { fileId, memberId });
-  const response = await apiClient.get<ProfileImageResponse>(
-    `${API_ENDPOINTS.FILES.PROFILE(fileId)}?uploaderId=${memberId}`
-  );
-  console.log('API response:', response.data);
-  return response.data.base64Content;
 };
 
 // 회원가입 시, 이메일 확인 + 이메일 인증 코드 요청
