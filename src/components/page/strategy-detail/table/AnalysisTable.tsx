@@ -64,7 +64,6 @@ const AnalysisTable = ({
     return null;
   };
 
-  console.log(analysis);
   return (
     <div css={tableStyle}>
       <table css={tableVars}>
@@ -137,25 +136,31 @@ const AnalysisTable = ({
             ))
           ) : (
             <tr>
-              <td colSpan={attributes.length + 1} css={noDataStyle}>
-                내용을 추가해주세요.
-                <div css={addArea}>
-                  <Button
-                    variant='secondary'
-                    size='xs'
-                    width={116}
-                    css={buttonStyle}
-                    onClick={onUpload}
-                  >
-                    <BiPlus size={16} />
-                    직접입력
-                  </Button>
-                  <Button variant='accent' size='xs' width={116} css={buttonStyle}>
-                    <BiPlus size={16} />
-                    엑셀추가
-                  </Button>
-                </div>
-              </td>
+              {mode === 'write' ? (
+                <td colSpan={attributes.length + 1} css={noDataStyle}>
+                  일간분석 데이터를 추가해주세요.
+                  <div css={addArea}>
+                    <Button
+                      variant='secondary'
+                      size='xs'
+                      width={116}
+                      css={buttonStyle}
+                      onClick={onUpload}
+                    >
+                      <BiPlus size={16} />
+                      직접입력
+                    </Button>
+                    <Button variant='accent' size='xs' width={116} css={buttonStyle}>
+                      <BiPlus size={16} />
+                      엑셀추가
+                    </Button>
+                  </div>
+                </td>
+              ) : (
+                <td colSpan={attributes.length + 1} css={noDataStyle}>
+                  데이터가 없습니다. 일간분석 데이터를 입력하세요.
+                </td>
+              )}
             </tr>
           )}
         </tbody>
@@ -175,7 +180,7 @@ const tableStyle = css`
   .checkbox {
     cursor: pointer;
   }
-  min-height: 430px;
+  max-height: 430px;
 `;
 
 const tableVars = css`
