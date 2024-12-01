@@ -22,7 +22,7 @@ import theme from '@/styles/theme';
 import { formatDate } from '@/utils/dateFormat';
 import { getPostStatus } from '@/utils/statusUtils';
 
-interface Strategy {
+interface StrategyApprovalRequest {
   strategyApprovalRequestId: number;
   requestDatetime: string;
   isApproved: string;
@@ -147,7 +147,7 @@ const StrategyApprovalListPage = () => {
               </tr>
             </thead>
             <tbody>
-              {strategies?.map((strategy: Strategy) => (
+              {strategies?.map((strategy: StrategyApprovalRequest) => (
                 <tr
                   key={strategy.strategyApprovalRequestId}
                   onClick={() => {
