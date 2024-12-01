@@ -20,7 +20,7 @@ export const useAuthStore = create<AuthStore>()(
       user: null,
       expiresAt: null,
       setAuth: (token, user) => {
-        const expiresAt = new Date(new Date().getTime() + 1 * 60 * 1000).toISOString();
+        const expiresAt = new Date(new Date().getTime() + 60 * 60 * 1000).toISOString();
         set({ token, user, expiresAt });
       },
       clearAuth: () => set({ token: null, user: null, expiresAt: null }),
