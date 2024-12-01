@@ -11,7 +11,7 @@ export const API_ENDPOINTS = {
     ADMIN_SIGNOUT: '/api/auth/admin/logout', // 관리자 로그아웃
     CHECK_NICKNAME: '/api/members/check-nickname', // 닉네임 중복 확인
     FIND: {
-      EMAIL: '/api/members/check-phone', // 이메일 찾기
+      EMAIL: '/api/members/find-email', // 전화번호로 이메일 찾기
       PASSWORD: '/api/members/find/password', // 비밀번호 찾기
       PASSWORD_RESET: '/api/members/find/password/reset', // 비밀번호 재설정
     },
@@ -22,7 +22,7 @@ export const API_ENDPOINTS = {
       REQUEST_VERIFICATION_FOR_RESET_PASSWORD: 'api/members/check-account', // 비밀번호 재설정을 위한, 이메일 인증 코드 요청
 
       // 관리자 인증 (주석처리된 값으로 처리예정)
-      REQUEST_VERIFICATION: '/api/auth/admin/send-verification-code', // 관리자 인증을 위한, 이메일 인증 코드 요청
+      REQUEST_ADMIN_VERIFICATION: '/api/auth/admin/send-verification-code', // 관리자 인증을 위한, 이메일 인증 코드 요청
       CHECK_VERIFICATION: '/api/auth/admin/check-verification-code', // 관리자 이메일 인증 코드를 서버에 보내 확인
     },
   },
