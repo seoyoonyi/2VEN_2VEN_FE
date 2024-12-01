@@ -34,7 +34,7 @@ export const API_ENDPOINTS = {
   },
   INQUIRY: '/api/consultations', // 나의 문의
   FILES: {
-    PROFILE: (fileId: string) => `/api/files/profile/${fileId}`, // 프로필 이미지 다운로드
+    PROFILE_URL: (memberId: string) => `/api/files/profile/${memberId}`, // 프로필 이미지 URL
     PROPOSAL: '/api/files/proposal', // 제안서 파일 업로드
     ICON: '/api/files/icon', //아이콘 업로드
   },

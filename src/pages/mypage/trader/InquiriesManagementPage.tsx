@@ -1,31 +1,133 @@
 import { css } from '@emotion/react';
+import { useNavigate } from 'react-router-dom';
 
+import Avatar from '@/components/common/Avatar';
+import Loader from '@/components/common/Loading';
+import Pagination from '@/components/common/Pagination';
+import InquiryStatusLabel from '@/components/page/mypage/InquiryStatusLabel';
+import { ROUTES } from '@/constants/routes';
+import useFetchInquiries from '@/hooks/queries/useFetchInquiries';
+import usePagination from '@/hooks/usePagination';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
+import { InquiryData } from '@/types/inquiries';
 
-const InquiriesManagementPage = () => (
-  <div css={myPageWrapperStyle}>
-    <div css={myPageHeaderStyle}>
-      <div>
-        <h2>나의 문의</h2>
-        <p>
-          총 <span>0</span>개의 문의 내역이 있습니다
+const InquiriesManagementPage = () => {
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const { pagination, setPage } = usePagination(1, 10);
+
+  const { inquiries, isLoading, isError, currentPage, totalPages, totalElements, pageSize } =
+    useFetchInquiries({
+      userId: user?.memberId,
+      role: user?.role,
+      page: pagination.currentPage - 1,
+      pageSize: pagination.pageSize,
+    });
+
+  const handleRowClick = (id: number) => {
+    navigate(`${ROUTES.MYPAGE.TRADER.INQUIRIES.DETAIL(id.toString())}`);
+  };
+
+  if (isLoading) {
+    return (
+      <div css={myPageWrapperStyle}>
+        <Loader />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div css={myPageWrapperStyle}>
+        <p css={emptyStateWrapperStyle}>
+          데이터를 불러오는 데 실패했습니다. <br /> 다시 시도하거나 잠시 후에 확인해주세요.
         </p>
       </div>
-    </div>
-    <div>
-      <p css={StrategyEmptyStyle}>
-        전략에 대해 궁금한 점이 있으면, 트레이더에게 문의를 남겨보세요! <br /> &apos;전략
-        상세&apos;에서 &apos;문의하기&apos;를 통해 손쉽게 문의하실 수 있습니다.
-      </p>
-    </div>
-  </div>
-);
+    );
+  }
+
+  return (
+    <section css={myPageWrapperStyle}>
+      <header css={myPageHeaderStyle}>
+        <h2>나의 문의</h2>
+        <p>
+          총 <span>{totalElements}</span>개의 문의 내역이 있습니다
+        </p>
+      </header>
+
+      {totalElements === 0 ? (
+        <p css={emptyStateWrapperStyle}>
+          아직 받은 문의가 없습니다. <br /> 투자자들이 보낸 문의는 여기에 표시됩니다.
+        </p>
+      ) : (
+        <div css={tableWrapperStyle}>
+          <div css={tableContainerStyle}>
+            <table>
+              <colgroup css={colgroupStyle}>
+                <col />
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>제목</th>
+                  <th>작성자</th>
+                  <th>답변상태</th>
+                  <th>날짜</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inquiries.map((inquiry: InquiryData) => (
+                  <tr key={inquiry.id} onClick={() => handleRowClick(inquiry.id)}>
+                    <td>
+                      <span>Q.</span> {inquiry.title}
+                    </td>
+                    <td>
+                      <div>
+                        <Avatar
+                          src={inquiry.investorProfileUrl}
+                          alt={`${inquiry.investorName}'s profile`}
+                          size={24}
+                        />
+                        <span>{inquiry.investorName}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <InquiryStatusLabel status={inquiry.status} />
+                    </td>
+                    <td>{inquiry.createdAt.slice(0, 10).replace(/-/g, '.')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Pagination
+            totalPage={totalPages}
+            limit={pageSize}
+            page={currentPage}
+            setPage={setPage}
+          />
+        </div>
+      )}
+    </section>
+  );
+};
 
 const myPageWrapperStyle = css`
   width: 955px;
   padding: 48px 40px 80px 40px;
   background-color: ${theme.colors.main.white};
   border-radius: 8px;
+
+  @media (max-width: 1180px) {
+    width: 800px;
+  }
+
+  @media (max-width: 1024px) {
+    width: 658px;
+  }
 `;
 
 const myPageHeaderStyle = css`
@@ -33,34 +135,114 @@ const myPageHeaderStyle = css`
 
   h2 {
     ${theme.textStyle.headings.h3}
+    margin-bottom: 8px;
   }
 
   p {
     ${theme.textStyle.body.body3}
+
     span {
       color: ${theme.colors.main.primary};
     }
   }
+`;
 
-  a {
-    display: flex;
-    height: 60px;
-    padding: 20px 32px;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    color: ${theme.colors.main.white};
-    background-color: ${theme.colors.main.primary};
+const tableWrapperStyle = css`
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+`;
+
+const tableContainerStyle = css`
+  table {
+    width: 875px;
+    border-collapse: collapse;
+  }
+
+  thead tr {
+    height: 48px;
+    background-color: ${theme.colors.gray[100]};
+    border-bottom: 1px solid ${theme.colors.gray[500]};
+  }
+
+  thead th {
+    vertical-align: middle;
+    ${theme.textStyle.body.body1}
+    color: ${theme.colors.gray[700]};
+  }
+
+  tbody tr {
+    border-bottom: 1px solid ${theme.colors.gray[300]};
+    background-color: ${theme.colors.main.white};
+
+    &:hover {
+      background-color: ${theme.colors.teal[50]};
+      cursor: pointer;
+    }
+  }
+
+  tbody td {
+    height: 90px;
+    vertical-align: middle;
+    text-align: center;
+
+    &:nth-of-type(1) {
+      text-align: left;
+      padding: 0 24px;
+
+      span {
+        color: ${theme.colors.gray[300]};
+        margin-right: 12px;
+      }
+    }
+
+    &:nth-of-type(2) {
+      div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+
+        span {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
+    &:nth-of-type(3) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 140px;
+    }
   }
 `;
 
-const StrategyEmptyStyle = css`
+const colgroupStyle = css`
+  col:nth-of-type(1) {
+    width: 415px;
+  }
+  col:nth-of-type(2) {
+    width: 200px;
+  }
+  col:nth-of-type(3) {
+    width: 140px;
+  }
+  col:nth-of-type(4) {
+    width: 120px;
+  }
+`;
+
+const emptyStateWrapperStyle = css`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 200px;
-  color: ${theme.colors.gray[400]};
   text-align: center;
+  color: ${theme.colors.gray[400]};
 `;
 
 export default InquiriesManagementPage;

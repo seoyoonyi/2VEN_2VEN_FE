@@ -21,8 +21,8 @@ export interface StrategyDetailProps {
 
 export interface DailyAnalysisProps {
   date: string;
-  dailyProfitLoss: number;
-  depWdPrice: number;
+  dailyProfitLoss: number | string;
+  depWdPrice: number | string;
 }
 
 export interface InputDailyAnalysisProps {

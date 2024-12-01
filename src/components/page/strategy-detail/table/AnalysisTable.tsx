@@ -1,15 +1,13 @@
-import { useState } from 'react';
-
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
 
-import InputTable, { InputTableProps } from './InputTable';
+import { InputTableProps } from './InputTable';
 import TableModal from './TableModal';
 
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
-import useTableModalStore from '@/stores/tableModalStore';
 import theme from '@/styles/theme';
+import { UserRole } from '@/types/route';
 
 export interface AnalysisAttribuesProps {
   title: string;
@@ -29,10 +27,14 @@ interface NormalizedAnalysProps {
 export interface AnalysisProps {
   mode: 'write' | 'read';
   attributes: AnalysisAttribuesProps[];
+  role?: UserRole;
   strategyId?: number;
   analysis?: NormalizedAnalysProps[];
   selectedItems?: number[];
+  selectAll?: boolean;
   onUpload?: () => void;
+  onEdit?: (rowId: number, data: InputTableProps) => void;
+  onSelectAll?: (checked: boolean) => void;
   onSelectChange?: (selectIdx: number[]) => void;
 }
 
@@ -40,49 +42,19 @@ const AnalysisTable = ({
   attributes,
   analysis,
   mode,
+  selectAll,
   selectedItems,
   onUpload,
+  onEdit,
+  onSelectAll,
   onSelectChange,
 }: AnalysisProps) => {
-  const [selectAll, setSelectAll] = useState(false);
-  const [tableData, setTableData] = useState<InputTableProps[]>([]);
-  const { openTableModal } = useTableModalStore();
-
-  const handleAllChecked = () => {
-    const newSelectAll = !selectAll;
-    setSelectAll(newSelectAll);
-    mode === 'write' &&
-      analysis &&
-      onSelectChange?.(newSelectAll ? analysis.map((item) => item.dataId) : []);
-  };
-
   const handleSelected = (idx: number) => {
     const updatedSelected = (selectedItems ?? []).includes(idx)
       ? (selectedItems ?? []).filter((item) => item !== idx)
       : [...(selectedItems ?? []), idx];
 
     onSelectChange?.(updatedSelected);
-  };
-
-  const handleInputChange = (updatedData: InputTableProps[]) => {
-    setTableData(updatedData);
-  };
-
-  const handleUpdateData = (data: InputTableProps, idx: number) => {
-    const updatedTableData = [...tableData];
-    updatedTableData[idx] = { ...updatedTableData[idx], ...data };
-    setTableData(updatedTableData);
-  };
-
-  const handleUpdateModal = (data: InputTableProps, idx: number) => {
-    openTableModal({
-      type: 'update',
-      title: '일간분석 데이터 수정',
-      data: <InputTable data={[data]} onChange={handleInputChange} />,
-      onAction: () => {
-        handleUpdateData(data, idx);
-      },
-    });
   };
 
   const getColorValue = (item: number) => {
@@ -99,7 +71,10 @@ const AnalysisTable = ({
           <tr css={tableRowStyle}>
             {mode === 'write' && (
               <th css={tableHeadStyle}>
-                <Checkbox checked={selectAll} onChange={handleAllChecked} />
+                <Checkbox
+                  checked={selectAll ?? false}
+                  onChange={(checked) => mode === 'write' && analysis && onSelectAll?.(checked)}
+                />
               </th>
             )}
             {attributes.map((item, idx) => (
@@ -146,14 +121,11 @@ const AnalysisTable = ({
                       size='xs'
                       width={65}
                       onClick={() =>
-                        handleUpdateModal(
-                          {
-                            date: values.date,
-                            depWdPrice: values.dep_wd_price,
-                            dailyProfitLoss: values.profit_loss,
-                          },
-                          values.dataId
-                        )
+                        onEdit?.(values.dataId, {
+                          date: values.date,
+                          depWdPrice: values.dep_wd_price,
+                          dailyProfitLoss: values.profit_loss,
+                        })
                       }
                     >
                       수정
@@ -164,25 +136,31 @@ const AnalysisTable = ({
             ))
           ) : (
             <tr>
-              <td colSpan={attributes.length + 1} css={noDataStyle}>
-                내용을 추가해주세요.
-                <div css={addArea}>
-                  <Button
-                    variant='secondary'
-                    size='xs'
-                    width={116}
-                    css={buttonStyle}
-                    onClick={onUpload}
-                  >
-                    <BiPlus size={16} />
-                    직접입력
-                  </Button>
-                  <Button variant='accent' size='xs' width={116} css={buttonStyle}>
-                    <BiPlus size={16} />
-                    엑셀추가
-                  </Button>
-                </div>
-              </td>
+              {mode === 'write' ? (
+                <td colSpan={attributes.length + 1} css={noDataStyle}>
+                  일간분석 데이터를 추가해주세요.
+                  <div css={addArea}>
+                    <Button
+                      variant='secondary'
+                      size='xs'
+                      width={116}
+                      css={buttonStyle}
+                      onClick={onUpload}
+                    >
+                      <BiPlus size={16} />
+                      직접입력
+                    </Button>
+                    <Button variant='accent' size='xs' width={116} css={buttonStyle}>
+                      <BiPlus size={16} />
+                      엑셀추가
+                    </Button>
+                  </div>
+                </td>
+              ) : (
+                <td colSpan={attributes.length + 1} css={noDataStyle}>
+                  데이터가 없습니다. 일간분석 데이터를 입력하세요.
+                </td>
+              )}
             </tr>
           )}
         </tbody>
@@ -202,7 +180,7 @@ const tableStyle = css`
   .checkbox {
     cursor: pointer;
   }
-  min-height: 430px;
+  max-height: 430px;
 `;
 
 const tableVars = css`

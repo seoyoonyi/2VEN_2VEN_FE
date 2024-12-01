@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
 
@@ -89,14 +89,6 @@ const FileInput = ({
     setFileName(newName);
     onNameChange(newName);
   };
-
-  useEffect(() => {
-    if (iconUrl && iconTitle && iconTitle) {
-      setFileName(fileName);
-      setIconTitle(iconTitle);
-      setIconUrl(iconUrl);
-    }
-  }, [iconUrl, iconTitle, iconTitle]);
 
   return (
     <div css={inputStyle}>

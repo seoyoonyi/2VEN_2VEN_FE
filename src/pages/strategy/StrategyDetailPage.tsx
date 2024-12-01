@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import ChartSection from '@/components/page/strategy-detail/chart/ChartSection';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
@@ -21,6 +22,7 @@ import { monthlyAttribues, dailyAttribues, statisticsMapping } from '@/constants
 import useStrategyDetailDelete from '@/hooks/mutations/useStrategyDetailDelete';
 import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
 import useStatistics from '@/hooks/queries/useStatistics';
+import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
 import { StatisticsProps } from '@/types/strategyDetail';
@@ -56,6 +58,7 @@ const rejectReasonData = {
 };
 
 const StrategyDetailPage = () => {
+  const { user } = useAuthStore();
   const { strategyId } = useParams();
   const navigate = useNavigate();
   const { strategy } = useFetchStrategyDetail(strategyId || '');
@@ -64,7 +67,7 @@ const StrategyDetailPage = () => {
   const { openModal } = useModalStore();
 
   if (!strategy) {
-    return <div>로딩중....</div>;
+    return <Loader />;
   }
 
   const statisticsTableData = (
@@ -96,7 +99,12 @@ const StrategyDetailPage = () => {
     {
       title: '일간분석',
       component: (
-        <DailyAnalysis attributes={dailyAttribues} strategyId={Number(strategyId)} mode='write' />
+        <DailyAnalysis
+          attributes={dailyAttribues}
+          strategyId={Number(strategyId)}
+          mode='write'
+          role={user?.role}
+        />
       ),
     },
     {
@@ -106,6 +114,7 @@ const StrategyDetailPage = () => {
           attributes={monthlyAttribues}
           strategyId={Number(strategyId)}
           mode='read'
+          role={user?.role}
         />
       ),
     },
@@ -145,6 +154,8 @@ const StrategyDetailPage = () => {
           <div key={strategy?.strategyId}>
             <StrategyHeader
               id={strategy?.strategyId}
+              strategyTitle={strategy?.strategyTitle || ''}
+              traderId={strategy?.traderId || ''}
               onApproval={() => {
                 handleApproval();
               }}
@@ -153,9 +164,9 @@ const StrategyDetailPage = () => {
             <IconTagSection imgs={imgTest} />
             <StrategyTitleSection
               title={strategy?.strategyTitle}
-              traderId={strategy?.traderId}
-              traderName={strategy?.traderName}
-              imgUrl={strategy?.traderImage}
+              traderId={strategy?.memberId}
+              traderName={strategy?.nickname}
+              imgUrl={strategy?.profilePath}
               date={formatDate(strategy?.writedAt || '', 'withDayTime')}
               followers={strategy?.followersCount}
               minimumInvestment={strategy?.minInvestmentAmount}
