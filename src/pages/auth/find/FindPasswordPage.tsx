@@ -24,6 +24,8 @@ const FindPasswordPage = () => {
   // 인증 요청버튼 클릭했는지 여부 추적하는 NEW 상태
   const [isVerficationRequested, setIsVerificationRequested] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const { mutate: requestUserVerificationCode } = useRequestUserVerificationMutation(); // 회원 이메일 인증번호 요청
   const { mutate: verifyEmailCode } = useSignupVerification(); // 회원 이메일 인증번호 확인(회원가입과 공통으로 사용함)
 
@@ -48,26 +50,32 @@ const FindPasswordPage = () => {
       setErrorMessage(emailValidation.message);
       return;
     }
-    setIsVerificationRequested(true); // 타이머 시작을 위한 상태 활성화 추가
+
     // 이메일 인증 요청 로직
     try {
+      setIsLoading(true); // 로딩 상태 시작
+
       // 이메일로 인증번호 요청 API 호출
       requestUserVerificationCode(email, {
         onSuccess: () => {
+          setIsVerificationRequested(true); // 타이머 시작을 위한 상태 활성화 추가
           setVerificationCode(''); // 인증번호 초기화
           setErrorMessage(''); // 에러메시지 초기화
           setIsVerificationActive(true); // 인증 활성화
           setResetTimer((prev) => prev + 1); // 타이머 리셋
           setIsInputDisabled(false); // 입력창 활성화
+          setIsLoading(false); // 로딩 상태 종료
         },
         onError: () => {
-          setErrorMessage('인증번호 발송에 실패했습니다.');
+          setErrorMessage('가입하지 않은 이메일입니다.');
           setIsVerificationActive(false); // 인증 비활성화
           setIsVerificationRequested(false); // 타이머 시작을 위한 상태 비활성화 추가
+          setIsLoading(false); // 로딩 상태 종료
         },
       });
     } catch (error) {
       setErrorMessage('인증번호 발송에 실패했습니다.');
+      setIsLoading(false); // 로딩 상태 종료
     }
   };
   const handleCodeVerification = (e: React.FormEvent<HTMLFormElement>) => {
@@ -132,7 +140,7 @@ const FindPasswordPage = () => {
           width={100}
           onClick={handleEmailVerification} // 인증요청
         >
-          인증요청
+          {isLoading ? '전송 중...' : '인증요청'}
         </Button>
       </div>
 
