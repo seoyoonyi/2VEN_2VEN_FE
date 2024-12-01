@@ -75,8 +75,8 @@ const chartOptions = [
   },
 ];
 
-const dailyProfitRate = [-9, 21.52, 7.21, 30, 60, 80.2];
-const principal = [1246400, 51587155, 101407866, 100000000, 20000000, 50000000];
+const dailyProfitRate = [0, 21.52, 726.21, 300, 1060, 1210.2];
+const principal = [324640010, 624654000, 824640300, 824640040, 924640500, 124644000];
 
 const ChartSection = () => (
   <div css={sectionStyle}>
@@ -129,6 +129,8 @@ const showChartStyle = css`
 const chartStyle = css`
   width: 940px;
   height: 460px;
+  padding: 20px;
+  display: flex;
   border: 1px solid ${theme.colors.gray[300]};
 `;
 

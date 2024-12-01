@@ -31,19 +31,30 @@ const MAX_ACOUNT = 1000000000;
 
 const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
   const maxAreaValue = Math.max(...areaData);
+  const minAreaValue = Math.min(...areaData);
   const maxLineValue = Math.max(...lineData);
+
+  const maxArea = maxAreaValue > MAX_ACOUNT ? MAX_ACOUNT : maxAreaValue;
+  const minArea = minAreaValue < 0 ? 0 : minAreaValue;
 
   const options = {
     chart: {
       type: 'areaspline',
       backgroundColor: 'transparent',
       width: 900,
-      heigh: 450,
+      zoomType: 'x',
+      zooming: {
+        mouseWheel: {
+          enabled: true,
+        },
+      },
     },
     title: {
       text: '',
     },
-    xAxis: {},
+    xAxis: {
+      enabled: false,
+    },
     yAxis: [
       {
         labels: {
@@ -52,7 +63,8 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
         title: {
           text: 'price(원)',
         },
-        max: maxAreaValue,
+        max: maxArea,
+        min: minArea,
         gridLineWidth: 1,
         opposite: false,
       },
@@ -106,6 +118,12 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
         states: {
           hover: { enabled: false },
         },
+        Tooltip: {
+          pointFormat: `
+        <b>{point.x}</b><br/>
+        price: {point.y}원
+      `,
+        },
         yAxis: 0,
       },
       {
@@ -116,6 +134,12 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
         lineWidth: 2,
         color: colors.primary.lineColor,
         yAxis: 1,
+        tooltip: {
+          pointFormat: `
+              <b>{point.x}</b><br/>
+              percentage: {point.y}%
+            `,
+        },
       },
     ],
     tooltip: {
