@@ -203,28 +203,6 @@ export const verifyAdminCode = async ({
   }
 };
 
-interface ProfileImageResponse {
-  fileId: string;
-  displayName: string;
-  message: string;
-  base64Content: string;
-}
-// 프로필 이미지 가져오기
-export const fetchProfileImage = async ({
-  fileId,
-  memberId,
-}: {
-  fileId: string;
-  memberId: string;
-}): Promise<string> => {
-  console.log('API call params:', { fileId, memberId });
-  const response = await apiClient.get<ProfileImageResponse>(
-    `${API_ENDPOINTS.FILES.PROFILE(fileId)}?uploaderId=${memberId}`
-  );
-  console.log('API response:', response.data);
-  return response.data.base64Content;
-};
-
 // 회원가입 폼 - 이메일 인증 코드 요청
 export interface EmailVerificationResponse {
   status: 'success' | 'error';
