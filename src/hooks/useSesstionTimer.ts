@@ -14,6 +14,11 @@ export const useSessionTimer = () => {
     if (!user || !expiresAt) return;
     if (isAdminUser(user)) return;
 
+    const handleSessionExpiration = () => {
+      clearAuth();
+      navigate(ROUTES.HOME.PATH, { replace: true });
+    };
+
     const expiryTime = new Date(expiresAt).getTime();
     const currentTime = new Date().getTime();
     const timeUntilExpiry = expiryTime - currentTime;
@@ -27,10 +32,5 @@ export const useSessionTimer = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [user, expiresAt]);
-
-  const handleSessionExpiration = () => {
-    clearAuth();
-    navigate(ROUTES.HOME.PATH, { replace: true });
-  };
+  }, [user, expiresAt, clearAuth, navigate]);
 };
