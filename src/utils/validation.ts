@@ -80,7 +80,9 @@ export const isValidPhoneNumber = (phoneNumber: string): boolean => {
 };
 
 // 마스킹 이메일 변환
-export const maskEmail = (email: string): string => {
+export const maskEmail = (email?: string): string => {
+  if (!email) return '이메일을 찾을 수 없습니다.';
+
   // 이메일을 @ 기준으로 분리
   const [localPart, domain] = email.split('@');
 
