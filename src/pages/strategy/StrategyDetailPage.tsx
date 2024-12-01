@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -21,13 +19,18 @@ import MonthlyAnalysis from '@/components/page/strategy-detail/tabmenu/MonthlyAn
 import StatisticsTable from '@/components/page/strategy-detail/tabmenu/StatisticsTable';
 import { ROUTES } from '@/constants/routes';
 import { monthlyAttribues, dailyAttribues, statisticsMapping } from '@/constants/strategyAnalysis';
-import { useStrategyDetailDelete } from '@/hooks/mutations/useStrategyDetailMutation';
+import {
+  useStrategyDetailApprove,
+  useStrategyDetailDelete,
+} from '@/hooks/mutations/useStrategyDetailMutation';
+import { useFetchApproveState } from '@/hooks/queries/useFetchApprove';
 import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
 import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
 import useStatistics from '@/hooks/queries/useStatistics';
 import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import theme from '@/styles/theme';
+import { UserRole } from '@/types/route';
 import { StatisticsProps } from '@/types/strategyDetail';
 import { formatDate } from '@/utils/dateFormat';
 import { formatValue, formatRate } from '@/utils/statistics';
@@ -37,34 +40,19 @@ const imgTest = [
   { img: '/src/assets/images/producttype_stock.png' },
 ];
 
-const rejectReasonData = {
-  title: '미승인 이유는 이렇습니다',
-  admin: '나는야 관리자 룰루',
-  adminImg: '/src/assets/images/apt_trader.png',
-  content: `
-    안녕하세요, 트레이더 [내가여기서투자짱]님.
-    귀하께서 등록하신 전략을 검토한 결과, 아쉽게도 아래와 같은 사유로 인해 이번에는 승인이 어려운 점 안내드립니다.
-    1. 전략 설명 부족
-    전략의 세부적인 실행 방법이나 투자 기준에 대한 설명이 부족하여, 투자자들이 전략을 이해하는 데 어려움이 있을 것으로 판단됩니다.
-    2. 데이터 부족 또는 불명확
-    전략에 포함된 데이터의 출처나 신뢰성이 불명확합니다.
-    3. 투자 기준의 모호성
-    전략에서 사용하는 기준이 투자자들에게 혼동을 줄 수 있는 표현이 포함되어 있습니다.
-    수정 후 다시 제출해 주시면 빠르게 검토하여 안내드리겠습니다. 등록 절차와 관련해 궁금한 점이 있으시면 언제든 문의해 주세요.
-  `,
-};
-
 const StrategyDetailPage = () => {
   const { user } = useAuthStore();
   const { strategyId } = useParams();
+  const role = user?.role as UserRole;
   const navigate = useNavigate();
   const { strategy } = useFetchStrategyDetail(strategyId || '');
   const { statistics, writedAt } = useStatistics(Number(strategyId));
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
+  const { mutate: approveStrategy } = useStrategyDetailApprove();
   const { openModal } = useModalStore();
   const { dailyAnalysis } = useFetchDailyAnalysis(Number(strategyId), 0, 5);
-  const isApproved = dailyAnalysis?.length >= 3;
-  const [approved, setApproved] = useState<boolean>(false);
+  const { data: approveState } = useFetchApproveState(Number(strategyId), role) || '';
+  const isApproved = dailyAnalysis?.length >= 3 || approveState?.isApproved === 'N';
 
   const statisticsTableData = (
     mapping: { label: string; key: string }[],
@@ -128,13 +116,15 @@ const StrategyDetailPage = () => {
     });
   };
 
-  const handleApproval = () => {
+  const handleApproval = (id: number, role: UserRole) => {
     openModal({
       type: 'confirm',
       title: '승인요청',
       desc: '승인 요청을 보내면 관리자 검토 후\n 전략이 승인됩니다.',
       onAction: () => {
-        setApproved(false);
+        if (role && id) {
+          approveStrategy({ strategyId: id, role });
+        }
       },
     });
   };
@@ -145,12 +135,14 @@ const StrategyDetailPage = () => {
 
   return (
     <div css={containerStyle}>
-      <ReasonItem
-        title={rejectReasonData.title}
-        content={rejectReasonData.content}
-        admin={rejectReasonData.admin}
-        adminImg={rejectReasonData.adminImg}
-      />
+      {approveState?.isApproved === 'N' && strategy?.isApproved !== 'P' && (
+        <ReasonItem
+          title='미승인 이유는 이렇습니다'
+          content={approveState?.rejectionReason}
+          admin={approveState?.managerNickname}
+          adminImg={approveState?.profileImg}
+        />
+      )}
       <div css={contentStyle}>
         <div css={contentWrapper}>
           <div key={strategy?.strategyId}>
@@ -158,9 +150,10 @@ const StrategyDetailPage = () => {
               id={strategy?.strategyId}
               strategyTitle={strategy?.strategyTitle || ''}
               traderId={strategy?.traderId || ''}
-              approved={isApproved}
+              isStrategyApproved={strategy?.isApproved}
+              isApprovedState={isApproved}
               onApproval={() => {
-                handleApproval();
+                handleApproval(strategy.strategyId, role);
               }}
               onDelete={() => handleDeleteDetail(strategy.strategyId)}
             />
@@ -177,7 +170,10 @@ const StrategyDetailPage = () => {
             />
             <StrategyContent content={strategy?.strategyOverview} />
             {strategy?.strategyProposalLink && (
-              <FileDownSection fileUrl={strategy?.strategyProposalLink} />
+              <FileDownSection
+                fileName={strategy?.strategyProposalFileTitle}
+                fileUrl={strategy?.strategyProposalLink}
+              />
             )}
             <StrategyIndicator
               cumulativeRate={statistics && formatRate(statistics.maxCumulativeProfitLossRatio)}

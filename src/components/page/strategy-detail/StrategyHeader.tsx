@@ -13,7 +13,8 @@ interface StrategyHeaderProps {
   id: number;
   strategyTitle: string;
   traderId: string;
-  approved: boolean;
+  isStrategyApproved: string;
+  isApprovedState: boolean;
   onDelete: (id: number) => void;
   onApproval: () => void;
 }
@@ -22,7 +23,8 @@ export const StrategyHeader = ({
   id,
   strategyTitle,
   traderId,
-  approved,
+  isStrategyApproved,
+  isApprovedState,
   onDelete,
   onApproval,
 }: StrategyHeaderProps) => {
@@ -48,6 +50,8 @@ export const StrategyHeader = ({
     navigate(`${ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS}`);
   };
 
+  console.log(isApprovedState);
+
   return (
     <div css={actionAreaStyle}>
       <button css={shareButtonStyle}>
@@ -69,9 +73,15 @@ export const StrategyHeader = ({
           >
             수정
           </Button>
-          <Button size='xs' width={120} onClick={onApproval} disabled={!approved}>
-            승인요청
-          </Button>
+          {isStrategyApproved === 'P' ? (
+            <Button size='xs' width={120} disabled>
+              승인대기
+            </Button>
+          ) : (
+            <Button size='xs' width={120} onClick={onApproval} disabled={!isApprovedState}>
+              승인요청
+            </Button>
+          )}
         </div>
       ) : (
         <div css={buttonAreaStyle}>
