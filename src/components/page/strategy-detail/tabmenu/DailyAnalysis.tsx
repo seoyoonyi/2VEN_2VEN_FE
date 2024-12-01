@@ -21,6 +21,7 @@ import useModalStore from '@/stores/modalStore';
 import useTableModalStore from '@/stores/tableModalStore';
 import useToastStore from '@/stores/toastStore';
 import { DailyAnalysisProps, AnalysisDataProps } from '@/types/strategyDetail';
+import { isValidInputNumber } from '@/utils/statistics';
 
 const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
   const [selectedData, setSelectedData] = useState<number[]>([]);
@@ -29,7 +30,7 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
   const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
   const { openModal } = useModalStore();
   const { openTableModal } = useTableModalStore();
-  const { mutate: postDailyAnalysis, isError } = usePostDailyAnalysis();
+  const { mutate: postDailyAnalysis } = usePostDailyAnalysis();
   const { mutate: putDailyAnalysis } = usePutDailyAnalysis();
   const { mutate: deleteDailyAnalysis } = useDeleteAnalysis();
   const { dailyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchDailyAnalysis(
@@ -56,8 +57,8 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
     let modalData: InputTableProps[] = [];
     const initalData: InputTableProps[] = Array.from({ length: 5 }, () => ({
       date: '',
-      depWdPrice: 0,
-      dailyProfitLoss: 0,
+      depWdPrice: '',
+      dailyProfitLoss: '',
     }));
 
     openTableModal({
@@ -77,15 +78,43 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
           return;
         }
         handleSaveData(modalData);
-        if (isError) {
-          showToast('이미 등록된 일자입니다.', 'error');
-        }
       },
     });
   };
 
+  const handleisValid = (modalData: InputTableProps[]) =>
+    modalData.filter((data) => {
+      const isDateValid = !!data.date.trim();
+      const isDepWdPriceValid =
+        !!String(data.depWdPrice).trim() && isValidInputNumber(data.depWdPrice);
+      const isDailyProfitLossValid =
+        !!String(data.dailyProfitLoss).trim() && isValidInputNumber(data.dailyProfitLoss);
+
+      if (isDateValid && isDepWdPriceValid && isDailyProfitLossValid) return false;
+      if (!isDateValid && !isDepWdPriceValid && !isDailyProfitLossValid) return false;
+      return true;
+    });
+
+  const isDuplicatedValue = (modalData: InputTableProps[]) => {
+    const existingDates = normalizedData.map((item: DailyAnalysisProps) => item.date);
+    return modalData.filter((data) => existingDates.includes(data.date));
+  };
+
   const handleSaveData = (modalData: InputTableProps[]) => {
     if (!strategyId) return;
+    const emptyData = handleisValid(modalData);
+    const duplicateDates = isDuplicatedValue(modalData);
+    if (emptyData.length > 0) {
+      showToast('일자, 입출금, 일손익은 필수 입력값입니다.', 'error');
+      return;
+    }
+    if (duplicateDates.length > 0) {
+      showToast(
+        `이미 등록된 날짜 입니다. ${duplicateDates.map((d) => d.date).join(', ')}`,
+        'error'
+      );
+      return;
+    }
 
     const payload: DailyAnalysisProps[] = modalData
       .filter((data) => data.date && data.dailyProfitLoss && data.depWdPrice)
@@ -116,20 +145,31 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
           onChange={(newData) =>
             (updatedData = {
               date: newData[0].date,
-              dailyProfitLoss: newData[0].dailyProfitLoss,
+              dailyProfitLoss: Number(newData[0].dailyProfitLoss),
               depWdPrice: Number(newData[0].depWdPrice),
             })
           }
         />
       ),
       onAction: () => {
-        updatedData &&
-          putDailyAnalysis({
-            strategyId,
-            payload: updatedData,
-            authRole: 'admin',
-            dailyDataId: rowId,
-          });
+        if (!updatedData) return;
+        const duplicate = normalizedData
+          .map((item: DailyAnalysisProps) => item.date)
+          .includes(updatedData.date);
+        if (!updatedData.dailyProfitLoss || !updatedData.date || !updatedData.depWdPrice) {
+          showToast('일자, 입출금, 일손익은 필수 입력값입니다.', 'error');
+          return;
+        }
+        if (duplicate) {
+          showToast(`이미 등록된 날짜 입니다.`, 'error');
+          return;
+        }
+        putDailyAnalysis({
+          strategyId,
+          payload: updatedData,
+          authRole: 'admin',
+          dailyDataId: rowId,
+        });
         updatedData = null;
       },
     });
@@ -163,6 +203,7 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
         desc: `${selectedDailyAnalysis.length}개의 일간 분석 데이터를 삭제하시겠습니까?`,
         onAction: () => {
           deleteDailyAnalysis({ strategyId, role, analysisIds: selectedDailyAnalysis });
+          setSelectAll(false);
         },
       });
     } else {
