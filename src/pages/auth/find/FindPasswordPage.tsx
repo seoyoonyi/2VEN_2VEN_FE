@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
-import { AxiosError } from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
 import tickImage from '@/assets/images/tick.svg';
@@ -9,10 +8,8 @@ import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import VerificationInput from '@/components/page/signup/VerificationInput';
 import { ROUTES } from '@/constants/routes';
-import {
-  useRequestVerificationMutation,
-  useVerifyAdminCodeMutation,
-} from '@/hooks/mutations/useVerifacationMutation';
+import { useSignupVerification } from '@/hooks/mutations/useSignupVerification';
+import { useRequestUserVerificationMutation } from '@/hooks/mutations/useVerifacationMutation';
 import theme from '@/styles/theme';
 import { validateCode, validateEmail } from '@/utils/validation';
 
@@ -27,8 +24,8 @@ const FindPasswordPage = () => {
   // 인증 요청버튼 클릭했는지 여부 추적하는 NEW 상태
   const [isVerficationRequested, setIsVerificationRequested] = useState(false);
 
-  const { mutate: requestVerificationCode } = useRequestVerificationMutation();
-  const { mutate: verifyCode } = useVerifyAdminCodeMutation();
+  const { mutate: requestUserVerificationCode } = useRequestUserVerificationMutation(); // 회원 이메일 인증번호 요청
+  const { mutate: verifyEmailCode } = useSignupVerification(); // 회원 이메일 인증번호 확인(회원가입과 공통으로 사용함)
 
   // verificationCode가 변경될 때마다 실행
   useEffect(() => {
@@ -51,18 +48,17 @@ const FindPasswordPage = () => {
       setErrorMessage(emailValidation.message);
       return;
     }
-
+    setIsVerificationRequested(true); // 타이머 시작을 위한 상태 활성화 추가
     // 이메일 인증 요청 로직
     try {
       // 이메일로 인증번호 요청 API 호출
-      requestVerificationCode(email, {
+      requestUserVerificationCode(email, {
         onSuccess: () => {
           setVerificationCode(''); // 인증번호 초기화
           setErrorMessage(''); // 에러메시지 초기화
           setIsVerificationActive(true); // 인증 활성화
           setResetTimer((prev) => prev + 1); // 타이머 리셋
           setIsInputDisabled(false); // 입력창 활성화
-          setIsVerificationRequested(true); // 타이머 시작을 위한 상태 활성화 추가
         },
         onError: () => {
           setErrorMessage('인증번호 발송에 실패했습니다.');
@@ -87,7 +83,7 @@ const FindPasswordPage = () => {
       setErrorMessage(validationResult.message);
       return;
     }
-    verifyCode(
+    verifyEmailCode(
       { email, verificationCode },
       {
         onSuccess: (response) => {
@@ -97,12 +93,8 @@ const FindPasswordPage = () => {
             setErrorMessage('인증에 실패했습니다. 다시 시도해주세요.');
           }
         },
-        onError: (error: AxiosError) => {
-          if (error.response?.status === 401) {
-            setErrorMessage('올바른 인증번호가 아닙니다.');
-          } else {
-            setErrorMessage('인증 처리 중 오류가 발생했습니다.');
-          }
+        onError: (error) => {
+          setErrorMessage(error.message);
         },
       }
     );
