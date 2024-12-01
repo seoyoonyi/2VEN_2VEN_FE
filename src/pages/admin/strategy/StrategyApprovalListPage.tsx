@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
-
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import ContentModal from '@/components/common/ContentModal';
+import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import RejectTextarea from '@/components/page/admin/RejectTextarea';
@@ -49,7 +48,6 @@ const StrategyApprovalListPage = () => {
     });
   const { mutate: approveStrategy } = useApproveStrategy();
   const { mutate: rejectStrategy } = useRejectStrategy();
-  const [reason, setReason] = useState('');
 
   const onClickStrategyList = (strategyId: string) => {
     navigate(ROUTES.STRATEGY.DETAIL(strategyId));
@@ -68,7 +66,7 @@ const StrategyApprovalListPage = () => {
   };
 
   const handleStrategyReject = (id: number) => {
-    let localReason = ''; // 로컬 상태
+    let localReason = '';
 
     openContentModal({
       title: '승인거부',
@@ -76,7 +74,7 @@ const StrategyApprovalListPage = () => {
         <RejectTextarea
           initialValue={localReason}
           onChange={(value: string) => {
-            localReason = value; // 로컬 상태 업데이트
+            localReason = value;
           }}
         />
       ),
@@ -92,14 +90,32 @@ const StrategyApprovalListPage = () => {
   };
 
   const handleApproveButtonClick = (id: number) => (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation(); // Row 클릭 이벤트 방지
+    e.stopPropagation();
     handleStrategyApproval(id);
   };
 
   const handleRejectButtonClick = (id: number) => (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation(); // Row 클릭 이벤트 방지
+    e.stopPropagation();
     handleStrategyReject(id);
   };
+
+  if (isLoading) {
+    return (
+      <div css={adminHeaderStyle}>
+        <Loader />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div css={adminHeaderStyle}>
+        <p css={emptyStateWrapperStyle}>
+          데이터를 불러오는 데 실패했습니다. <br /> 다시 시도하거나 잠시 후에 확인해주세요.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -273,7 +289,6 @@ const tableContainerStyle = css`
             width: 100%;
 
             .count-container {
-              // margin-left: 4px;
               color: ${theme.colors.gray[400]};
               font-size: ${theme.typography.fontSizes.caption};
             }
@@ -321,6 +336,16 @@ const colgroupStyle = css`
   col:nth-of-type(6) {
     width: 160px;
   }
+`;
+
+const emptyStateWrapperStyle = css`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  text-align: center;
+  color: ${theme.colors.gray[400]};
 `;
 
 export default StrategyApprovalListPage;

@@ -14,13 +14,12 @@ const RejectTextarea = ({ initialValue, onChange }: RejectTextareaProps) => {
   const [text, setText] = useState(initialValue);
 
   useEffect(() => {
-    onChange(text); // 부모 상태로 값 전달
-    console.log(text);
+    onChange(text);
   }, [text, onChange]);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (event.target.value.length <= maxLength) {
-      setText(event.target.value); // 로컬 상태 업데이트
+      setText(event.target.value);
     }
   };
 
