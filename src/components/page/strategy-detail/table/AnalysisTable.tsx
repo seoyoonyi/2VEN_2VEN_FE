@@ -64,6 +64,7 @@ const AnalysisTable = ({
     return null;
   };
 
+  console.log(analysis);
   return (
     <div css={tableStyle}>
       <table css={tableVars}>
