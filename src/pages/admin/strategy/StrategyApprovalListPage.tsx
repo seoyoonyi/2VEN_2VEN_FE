@@ -7,7 +7,6 @@ import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import RejectTextarea from '@/components/page/admin/RejectTextarea';
-import StrategyStatusLabel from '@/components/page/admin/StrategyStatusLabel';
 import { ROUTES } from '@/constants/routes';
 import {
   useApproveStrategy,
@@ -171,9 +170,7 @@ const StrategyApprovalListPage = () => {
                       </div>
                     </div>
                   </td>
-                  <td>
-                    <StrategyStatusLabel status={strategy.strategyStatus} />
-                  </td>
+                  <td>너는 잠시 빈값으로 살아라...</td>
                   <td>{formatDate(strategy.requestDatetime)}</td>
                   <td>
                     <img src={strategy.tradingTypeIcon} alt='icon' />
