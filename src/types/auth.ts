@@ -78,7 +78,7 @@ export interface SignupRequest {
   confirmPassword: string;
   nickname: string;
   phoneNumber: string;
-  privatyRequired: boolean;
+  privacyRequired: boolean;
   serviceTermsRequired: boolean;
   promotionOptional: boolean;
   marketingOptional: boolean;
