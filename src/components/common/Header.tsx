@@ -51,9 +51,7 @@ const Header = () => {
       });
     }
   }, [user, adminAuth]);
-  const handleButtonClick = (value: string) => {
-    console.log(value);
-  };
+
   const handleLoginButtonClick = () => {
     navigate(ROUTES.AUTH.SIGNIN);
   };
