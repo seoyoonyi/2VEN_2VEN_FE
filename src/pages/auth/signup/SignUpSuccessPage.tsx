@@ -1,9 +1,10 @@
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
-import resetSuccessImage from '@/assets/images/resetpass_success.png';
+import signupSuccessImage from '@/assets/images/signup_success.png';
 import Button from '@/components/common/Button';
 import { ROUTES } from '@/constants/routes';
+import { SIGNUP_SUCCESS_TEXT } from '@/constants/signup';
 import theme from '@/styles/theme';
 
 const PasswordResetSuccessPage = () => {
@@ -14,9 +15,9 @@ const PasswordResetSuccessPage = () => {
 
   return (
     <div css={containerStyle}>
-      <h3 css={pageHeadingStyle}>비밀번호가 변경되었어요!</h3>
-      <img src={resetSuccessImage} alt='비밀번호 변경완료' />
-      <p>안전한 로그인을 위해 새 비밀번호로 다시 로그인해 주세요</p>
+      <h3 css={pageHeadingStyle}>{SIGNUP_SUCCESS_TEXT.heading}</h3>
+      <img src={signupSuccessImage} alt='비밀번호 변경완료' />
+      <p>{SIGNUP_SUCCESS_TEXT.description}</p>
       <Button width={154} onClick={handleClick}>
         로그인 하러가기
       </Button>
@@ -33,7 +34,7 @@ const containerStyle = css`
   padding: 160px 0 240px;
   margin: 0 auto;
   img {
-    width: 77px;
+    width: 228px;
     margin-bottom: 24px;
     order: 1;
   }

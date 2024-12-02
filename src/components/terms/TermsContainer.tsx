@@ -28,6 +28,7 @@ const TermsContainer = ({ userRole, terms, setTerms }: TermsContainerProps) => {
   };
   return (
     <div css={termsWrapper}>
+      {/* 개인정보 처리방침 */}
       <div css={termsContainerStyle}>
         <div css={termsTitleStyle}>
           <Checkbox checked={terms.privacyRequired} onChange={handleTermsChange('privacyRequired')}>
@@ -40,9 +41,10 @@ const TermsContainer = ({ userRole, terms, setTerms }: TermsContainerProps) => {
           </div>
         </div>
       </div>
+
+      {/* 회원유형별 약관(필수) */}
       <div css={termsContainerStyle}>
         <div css={termsTitleStyle}>
-          {/* 회원유형별 약관(필수) */}
           <Checkbox checked={terms.roleRequired} onChange={handleTermsChange('roleRequired')}>
             {userRole === 'ROLE_INVESTOR'
               ? TERMS_CHECKBOX_TITLE.INVESTOR_TERMS_REQUIRED

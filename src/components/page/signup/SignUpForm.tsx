@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { css } from '@emotion/react';
 
@@ -8,12 +8,27 @@ import VerificationInput from '@/components/page/signup/VerificationInput';
 import { useNicknameValidation } from '@/hooks/mutations/useNicknameValidation';
 import { UseSignupEmailVerification } from '@/hooks/mutations/useSignupEmailVerification';
 import { useSignupVerification } from '@/hooks/mutations/useSignupVerification';
+import { useFormValidation } from '@/hooks/useFormValidation';
 import { useSignupStore } from '@/stores/signupStore';
 import theme from '@/styles/theme';
+import { UserRole } from '@/types/route';
 import { validateCode, validateEmail } from '@/utils/validation';
 
-const SignUpForm = () => {
-  const [email, setEmail] = useState<string>('');
+interface FormData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  nickname: string;
+  phoneNumber: string;
+  isEmailVerified: boolean;
+}
+interface SignUpFormProps {
+  userRole?: UserRole;
+  formData: FormData;
+  setFormData: React.Dispatch<React.SetStateAction<FormData>>; // 폼 데이터 상태 변경 함수
+}
+const SignUpForm = ({ formData, setFormData }: SignUpFormProps) => {
+  // 인증 관련 상태
   const [verificationCode, setVerificationCode] = useState<string>('');
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('');
   const [verifyErrorMessage, setVerifyErrorMessage] = useState<string>('');
@@ -23,10 +38,10 @@ const SignUpForm = () => {
   // 인증 요청버튼 클릭했는지 여부 추적하는 NEW 상태
   const [isVerficationRequested, setIsVerificationRequested] = useState(false);
 
+  // 이메일 인증코드 요청 mutation
   const { mutate: requestEmailVerification } = UseSignupEmailVerification({
     onMutate: () => {
-      // 요청 시작 시점에 타이머 시작
-      setIsVerificationRequested(true);
+      setIsVerificationRequested(true); // 요청 시작 시점에 타이머 시작
     },
     onSuccess: () => {
       setVerificationCode('');
@@ -34,123 +49,110 @@ const SignUpForm = () => {
       setIsVerificationActive(true);
       setResetTimer((prev) => prev + 1);
       setIsInputDisabled(false);
-      // setIsVerificationRequested(true);
     },
     onError: (error) => {
-      // 에러 발생 시 타이머 중지
-      setIsVerificationRequested(false);
+      setIsVerificationRequested(false); // 에러 발생 시 타이머 중지
       setEmailErrorMessage(error.message);
       setIsVerificationActive(false);
     },
   });
 
+  // 이메일 인증코드 확인 mutation
   const { mutate: verifyEmailCode } = useSignupVerification();
 
-  const { nickname, nicknameMessage, actions } = useSignupStore();
+  // 닉네임 중복체크 상태 및 액션
+  const { nicknameMessage, actions } = useSignupStore();
+  // 닉네임 중복체크 mutation
   const { nicknameCheck, handleNicknameCheck } = useNicknameValidation();
 
-  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    actions.setNickname(e.target.value);
-    if (!e.target.value) {
-      actions.setNicknameMessage('');
+  const {
+    messages: validationMessages,
+    validatePassword,
+    validateConfirmPassword,
+    validatePhoneNumber,
+  } = useFormValidation();
+  // 입력값 변경 시 실행되는 함수
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // 각 필드별 유효성 검사
+    switch (name) {
+      case 'nickname':
+        actions.setNicknameMessage('');
+        break;
+      case 'password':
+        validatePassword(value);
+        break;
+      case 'confirmPassword':
+        console.log(isVerificationActive);
+        validateConfirmPassword(value, formData.password);
+        break;
+      case 'phoneNumber':
+        validatePhoneNumber(value);
+        break;
+      default:
+        break;
     }
   };
 
-  const handleNicknameBlur = () => {
-    if (nicknameMessage.includes('사용 가능')) {
-      actions.setNicknameMessage('');
-    }
-  };
-
-  // verificationCode가 변경될 때마다 실행
-  useEffect(() => {
-    // 입력값이 비어있다면 에러메시지 제거
-    if (!verificationCode) {
-      setVerifyErrorMessage('');
-    }
-  }, [verificationCode]);
-
-  // email 값이 변경될 때마다 실행되는 함수
+  // email 값이 변경될 때마다 실행되는 함수 ✅
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setEmail(newValue);
+    const { value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      email: value,
+      isEmailVerified: false, // 이메일 변경 시 인증상태 초기화
+    }));
 
-    // 입력값이 비어있으면 에러 상태와 메시지 초기화
-    if (!newValue) {
-      setEmailErrorMessage('');
+    if (!value) {
+      setEmailErrorMessage(''); // 이메일 입력값이 없을 때 에러메시지 초기화
     }
   };
 
-  // email 값이 변경될 때마다 실행되는 useEffect
-  useEffect(() => {
-    // 입력값이 비어있다면 에러 상태 초기화
-    if (!email) {
-      setEmailErrorMessage('');
-    }
-  }, [email]);
-
+  // 이메일 인증코드 요청 ✅
   const handleEmailVerification = () => {
-    console.log(isVerificationActive);
-
     // 이메일 입력값 확인
-    if (!email) {
+    if (!formData.email) {
       setEmailErrorMessage('이메일을 입력해주세요.');
       return;
     }
     // 이메일 유효성 검사
-    const emailValidation = validateEmail(email);
+    const emailValidation = validateEmail(formData.email);
     if (!emailValidation.isValid) {
       setEmailErrorMessage(emailValidation.message);
       return;
     }
 
-    // 요청 전에 먼저 UI 표시
-    setIsVerificationRequested(true);
-    // 이메일 인증 요청 로직
-    requestEmailVerification(email);
+    setIsVerificationRequested(true); // 요청 성공 전에 먼저 타이머 UI 표시
+    requestEmailVerification(formData.email); // 이메일 인증코드 요청 API 호출
   };
 
+  // 이메일 인증코드 확인 ✅
   const handleCodeVerification = (e: React.FormEvent<HTMLFormElement>) => {
-    // 실제 쿠키 확인
-    const cookies = document.cookie.split(';').reduce(
-      (acc, cookie) => {
-        const [name, value] = cookie.trim().split('=');
-        acc[name] = value;
-        return acc;
-      },
-      {} as Record<string, string>
-    );
-
-    console.log('Cookies available:', cookies);
-    console.log('JSESSIONID:', cookies['JSESSIONID']);
-
     e.preventDefault();
-    // 이메일 인증코드 확인
-    const validationResult = validateCode(verificationCode); // 인증번호 유효성 검증
-
+    // 이메일 인증코드 확인 전, 인증번호 입력값이 비어있는지 확인
     if (isInputDisabled) {
       setVerifyErrorMessage('인증 시간이 만료되었습니다. 다시 시도해주세요.');
       return;
     }
+    const validationResult = validateCode(verificationCode); // 인증번호 유효성 검증
     if (!validationResult.isValid) {
       setVerifyErrorMessage(validationResult.message);
       return;
     }
 
-    // 디버깅을 위한 로그 추가
-    console.log('Verification Request:', {
-      email,
-      verificationCode,
-      sessionId: document.cookie, // 현재 쿠키 확인
-    });
-
     verifyEmailCode(
-      { email, verificationCode },
+      { email: formData.email, verificationCode },
       {
         onSuccess: (response) => {
           if (response.status === 'success') {
-            console.log('야호! 인증 성공!');
             setVerifyErrorMessage('인증에 성공했습니다.');
+            setIsVerificationRequested(false); // 인증 성공하면, 타이머 종료
+            setFormData((prev) => ({ ...prev, isEmailVerified: true })); // 이메일 인증 완료 상태 변경
           } else {
             setVerifyErrorMessage('인증에 실패했습니다. 다시 시도해주세요.');
           }
@@ -177,7 +179,7 @@ const SignUpForm = () => {
               required
               name='email'
               placeholder='1234@naver.com'
-              value={email}
+              value={formData.email}
               onChange={handleEmailChange}
               status={emailErrorMessage ? 'error' : 'default'}
             />
@@ -229,28 +231,78 @@ const SignUpForm = () => {
           )}
         </div>
       </div>
+
+      {/* 비밀번호 입력 폼 */}
       <div css={inputGroupStyle}>
         <label htmlFor='password' css={labelStyle}>
           비밀번호
         </label>
-        <Input
-          id='password'
-          type='password'
-          inputSize='md'
-          placeholder='영문 숫자를 포함한 8자 이상'
-        />
+        <div css={divGroupStyle}>
+          <Input
+            id='password'
+            name='password'
+            type='password'
+            inputSize='md'
+            placeholder='영문 숫자를 포함한 8자 이상'
+            value={formData.password}
+            onChange={handleInputChange}
+            status={
+              validationMessages.password
+                ? validationMessages.password.includes('사용 가능')
+                  ? 'success'
+                  : 'error'
+                : 'default'
+            }
+          />
+          {validationMessages.password && (
+            <p
+              css={[
+                messageStyle,
+                validationMessages.password.includes('사용 가능') && successMessageStyle,
+              ]}
+            >
+              {validationMessages.password}
+            </p>
+          )}
+        </div>
       </div>
+
+      {/* 비밀번호 확인 입력 폼 */}
       <div css={inputGroupStyle}>
-        <label htmlFor='password_check' css={labelStyle}>
+        <label htmlFor='confirmPassword' css={labelStyle}>
           비밀번호 확인
         </label>
-        <Input
-          id='password_check'
-          type='password'
-          inputSize='md'
-          placeholder='비밀번호를 한번 더 입력해주세요.'
-        />
+        <div css={divGroupStyle}>
+          <Input
+            id='confirmPassword'
+            name='confirmPassword'
+            type='password'
+            inputSize='md'
+            placeholder='비밀번호를 한번 더 입력해주세요.'
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            status={
+              validationMessages.confirmPassword
+                ? validationMessages.confirmPassword.includes('일치합니다')
+                  ? 'success'
+                  : 'error'
+                : 'default'
+            }
+          />
+          {validationMessages.confirmPassword && (
+            <p
+              css={[
+                messageStyle,
+                validationMessages.confirmPassword.includes('일치합니다') && successMessageStyle,
+              ]}
+            >
+              {validationMessages.confirmPassword}
+            </p>
+          )}
+        </div>
       </div>
+
+      {/* 닉네임 입력 폼 */}
       <div css={inputGroupStyle}>
         <label htmlFor='nickname' css={labelStyle}>
           닉네임
@@ -258,11 +310,11 @@ const SignUpForm = () => {
         <div css={divGroupStyle}>
           <Input
             id='nickname'
+            name='nickname'
             inputSize='md'
             placeholder='사용할 닉네임을 입력해주세요.'
-            value={nickname}
-            onChange={handleNicknameChange}
-            onBlur={handleNicknameBlur}
+            value={formData.nickname}
+            onChange={handleInputChange}
             status={
               nicknameMessage
                 ? nicknameMessage.includes('사용 가능한 닉네임')
@@ -286,17 +338,45 @@ const SignUpForm = () => {
           variant='primary'
           size='sm'
           width={100}
-          onClick={() => handleNicknameCheck(nickname)}
-          disabled={!nickname || nicknameCheck.isPending}
+          onClick={() => handleNicknameCheck(formData.nickname)}
+          disabled={!formData.nickname || nicknameCheck.isPending}
         >
           중복확인
         </Button>
       </div>
+
+      {/* 전화번호 입력 폼 */}
       <div css={inputGroupStyle}>
-        <label htmlFor='phone' css={labelStyle}>
+        <label htmlFor='phoneNumber' css={labelStyle}>
           휴대폰번호
         </label>
-        <Input id='phone' inputSize='md' placeholder='01012345678' />
+        <div css={divGroupStyle}>
+          <Input
+            id='phoneNumber'
+            name='phoneNumber'
+            inputSize='md'
+            placeholder='01012345678'
+            value={formData.phoneNumber}
+            onChange={handleInputChange}
+            status={
+              validationMessages.phoneNumber
+                ? validationMessages.phoneNumber.includes('사용 가능')
+                  ? 'success'
+                  : 'error'
+                : 'default'
+            }
+          />
+          {validationMessages.phoneNumber && (
+            <p
+              css={[
+                messageStyle,
+                validationMessages.phoneNumber.includes('사용 가능') && successMessageStyle,
+              ]}
+            >
+              {validationMessages.phoneNumber}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
