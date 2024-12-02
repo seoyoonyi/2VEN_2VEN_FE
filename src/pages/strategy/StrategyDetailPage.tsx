@@ -84,7 +84,7 @@ const StrategyDetailPage = () => {
     },
     {
       title: '실계좌인증',
-      component: <AccountVerify />,
+      component: <AccountVerify strategyId={Number(strategyId)} role={user?.role} />,
     },
     {
       title: '일간분석',
