@@ -96,7 +96,7 @@ const FileUpload = ({
           {selectedFileName ? (
             <div css={fileNameContainerStyle}>
               <span>{`선택된 파일: ${selectedFileName}`}</span>
-              <MdRemoveCircle onClick={handleRemoveFile} size={14} css={iconStyle} />
+              <MdRemoveCircle onClick={handleRemoveFile} size={20} css={iconStyle} />
             </div>
           ) : (
             '업로드할 파일 놓기'
