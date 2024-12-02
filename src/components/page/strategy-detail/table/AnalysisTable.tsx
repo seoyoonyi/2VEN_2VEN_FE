@@ -6,6 +6,7 @@ import TableModal from './TableModal';
 
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 import { UserRole } from '@/types/route';
 
@@ -28,6 +29,7 @@ export interface AnalysisProps {
   mode: 'write' | 'read';
   attributes: AnalysisAttribuesProps[];
   role?: UserRole;
+  userId?: string;
   strategyId?: number;
   analysis?: NormalizedAnalysProps[];
   selectedItems?: number[];
@@ -44,11 +46,14 @@ const AnalysisTable = ({
   mode,
   selectAll,
   selectedItems,
+  role,
+  userId,
   onUpload,
   onEdit,
   onSelectAll,
   onSelectChange,
 }: AnalysisProps) => {
+  const { user } = useAuthStore();
   const handleSelected = (idx: number) => {
     const updatedSelected = (selectedItems ?? []).includes(idx)
       ? (selectedItems ?? []).filter((item) => item !== idx)
@@ -64,22 +69,31 @@ const AnalysisTable = ({
     return null;
   };
 
+  console.log(
+    (role === 'ROLE_TRADER' && user?.memberId === userId && mode === 'write') ||
+      (role === 'ROLE_ADMIN' && mode === 'write')
+  );
   return (
     <div css={tableStyle}>
       <table css={tableVars}>
         <thead>
           <tr css={tableRowStyle}>
-            {mode === 'write' && (
+            {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
+            role === 'ROLE_ADMIN' ? (
               <th css={tableHeadStyle}>
                 <Checkbox
                   checked={selectAll ?? false}
                   onChange={(checked) => mode === 'write' && analysis && onSelectAll?.(checked)}
                 />
               </th>
-            )}
+            ) : null}
             {attributes.map((item, idx) => (
               <th key={idx} css={tableHeadStyle}>
-                {mode === 'write' || item.title !== '수정' ? item.title : null}
+                {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
+                role === 'ROLE_ADMIN' ||
+                item.title !== '수정'
+                  ? item.title
+                  : null}
               </th>
             ))}
           </tr>
@@ -88,14 +102,15 @@ const AnalysisTable = ({
           {analysis?.length || 0 ? (
             analysis?.map((values) => (
               <tr key={values.dataId} css={tableRowStyle}>
-                {mode === 'write' && (
+                {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
+                role === 'ROLE_ADMIN' ? (
                   <td css={tableCellStyle}>
                     <Checkbox
                       checked={!!selectedItems?.includes(values.dataId)}
                       onChange={() => handleSelected(values.dataId)}
                     />
                   </td>
-                )}
+                ) : null}
                 <td css={tableCellStyle}>{values.date}</td>
                 <td css={tableCellStyle}>{values.principal.toLocaleString()}</td>
                 <td css={tableCellStyle}>{values.dep_wd_price.toLocaleString()}</td>
@@ -114,7 +129,8 @@ const AnalysisTable = ({
                 <td css={tableCellStyle}>{values.pl_rate}%</td>
                 <td css={tableCellStyle}>{values.cumulative_profit_loss.toLocaleString()}</td>
                 <td css={tableCellStyle}>{values.cumulative_profit_loss_rate}%</td>
-                {mode === 'write' && (
+                {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
+                role === 'ROLE_ADMIN' ? (
                   <td css={tableCellStyle}>
                     <Button
                       variant='secondaryGray'
@@ -131,7 +147,7 @@ const AnalysisTable = ({
                       수정
                     </Button>
                   </td>
-                )}
+                ) : null}
               </tr>
             ))
           ) : (

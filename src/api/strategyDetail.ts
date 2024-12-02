@@ -135,7 +135,7 @@ export const fetchDeleteDailyAnalysis = async (
   }
 };
 
-//월간분석 조회(MSW)
+//월간분석 조회
 export const fetchMonthlyAnalysis = async (strategyId: number, page: number, pageSize: number) => {
   try {
     const res = await apiClient.get(
@@ -146,7 +146,7 @@ export const fetchMonthlyAnalysis = async (strategyId: number, page: number, pag
           pageSize,
         },
         headers: {
-          useMock: import.meta.env.VITE_ENABLE_MSW === 'true',
+          auth: 'admin',
         },
       }
     );
@@ -193,5 +193,58 @@ export const uploadProposalFile = async (
   } catch (error) {
     console.error('제안서 업로드 실패:', error);
     throw error;
+  }
+};
+
+//전략 승인 요청
+export const fetchPostApproveStrategy = async (strategyId: number, authRole: UserRole) => {
+  try {
+    const req = await apiClient.post(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/approval-request`,
+      {
+        headers: {
+          Auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to fetch request strategyApprove', error);
+    throw error;
+  }
+};
+
+//전략 승인내역 요청
+export const fetchApproveStrategy = async (strategyId: number, authRole: UserRole) => {
+  try {
+    const res = await apiClient.get(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/rejection-info`,
+      {
+        headers: {
+          Auth: authRole,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error('failed to fetch strategyApprove', error);
+    throw error;
+  }
+};
+
+//전략 운용 종료
+export const fetchEndStrategey = async (strategyId: number, authRole: UserRole) => {
+  try {
+    const req = await apiClient.patch(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/termination`,
+      {
+        headers: {
+          auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to fetch request strategy terminated', error);
   }
 };

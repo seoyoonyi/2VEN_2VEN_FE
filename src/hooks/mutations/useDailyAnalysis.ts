@@ -24,6 +24,7 @@ export const usePostDailyAnalysis = () => {
     onError: (error) => error.message,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
+      queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
     },
   });
 };
@@ -46,6 +47,7 @@ export const usePutDailyAnalysis = () => {
     onError: (error) => error.message,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
+      queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
     },
   });
 };
@@ -65,6 +67,7 @@ export const useDeleteAnalysis = () => {
     }) => fetchDeleteDailyAnalysis(strategyId, role, analysisIds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
+      queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
     },
   });
 };

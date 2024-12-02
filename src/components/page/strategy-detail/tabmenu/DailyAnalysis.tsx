@@ -17,13 +17,15 @@ import {
 } from '@/hooks/mutations/useDailyAnalysis';
 import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
 import usePagination from '@/hooks/usePagination';
+import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useTableModalStore from '@/stores/tableModalStore';
 import useToastStore from '@/stores/toastStore';
 import { DailyAnalysisProps, AnalysisDataProps } from '@/types/strategyDetail';
-import { isValidInputNumber } from '@/utils/statistics';
+import { isValidInputNumber, isValidPossibleDate } from '@/utils/statistics';
 
-const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
+const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) => {
+  const { user } = useAuthStore();
   const [selectedData, setSelectedData] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const { pagination, setPage } = usePagination(1, 5);
@@ -86,13 +88,15 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
     modalData.filter((data) => {
       const isDateValid = !!data.date.trim();
       const isDepWdPriceValid =
-        !!String(data.depWdPrice).trim() && isValidInputNumber(data.depWdPrice);
+        String(data.depWdPrice).trim() !== '' &&
+        String(data.depWdPrice).trim() !== '0' &&
+        isValidInputNumber(data.depWdPrice);
       const isDailyProfitLossValid =
-        !!String(data.dailyProfitLoss).trim() && isValidInputNumber(data.dailyProfitLoss);
+        String(data.dailyProfitLoss).trim() !== '' &&
+        String(data.dailyProfitLoss).trim() !== '0' &&
+        isValidInputNumber(data.dailyProfitLoss);
 
-      if (isDateValid && isDepWdPriceValid && isDailyProfitLossValid) return false;
-      if (!isDateValid && !isDepWdPriceValid && !isDailyProfitLossValid) return false;
-      return true;
+      return isDateValid && isDepWdPriceValid && isDailyProfitLossValid;
     });
 
   const isDuplicatedValue = (modalData: InputTableProps[]) => {
@@ -104,7 +108,15 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
     if (!strategyId) return;
     const emptyData = handleisValid(modalData);
     const duplicateDates = isDuplicatedValue(modalData);
-    if (emptyData.length > 0) {
+    const limitDates = isValidPossibleDate(
+      modalData.map((item: DailyAnalysisProps) => item.date).filter((date) => date !== '')
+    );
+
+    if (limitDates.length > 0) {
+      showToast('주말, 공휴일, 오늘 이후 날짜는 등록할 수 없습니다.', 'error');
+      return;
+    }
+    if (emptyData.length === 0) {
       showToast('일자, 입출금, 일손익은 필수 입력값입니다.', 'error');
       return;
     }
@@ -153,15 +165,23 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
       ),
       onAction: () => {
         if (!updatedData) return;
+
         const duplicate = normalizedData
+          .filter((item: DailyAnalysisProps) => item.date !== data.date)
           .map((item: DailyAnalysisProps) => item.date)
           .includes(updatedData.date);
+        const limitDates = isValidPossibleDate(updatedData.date);
         if (!updatedData.dailyProfitLoss || !updatedData.date || !updatedData.depWdPrice) {
           showToast('일자, 입출금, 일손익은 필수 입력값입니다.', 'error');
           return;
         }
         if (duplicate) {
           showToast(`이미 등록된 날짜 입니다.`, 'error');
+          return;
+        }
+
+        if (limitDates.length > 0) {
+          showToast('주말 및 공휴일, 오늘 이후 날짜는 등록할 수 없습니다.', 'error');
           return;
         }
         putDailyAnalysis({
@@ -227,34 +247,36 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
 
   return (
     <div css={dailyStyle}>
-      {dailyAnalysis.length > 0 && (
-        <div css={editArea}>
-          <div css={addArea}>
-            <Button
-              variant='secondary'
-              size='xs'
-              width={116}
-              css={buttonStyle}
-              onClick={handleOpenModal}
-            >
-              <BiPlus size={16} />
-              직접입력
-            </Button>
-            <Button variant='accent' size='xs' width={116} css={buttonStyle}>
-              <BiPlus size={16} />
-              엑셀추가
+      {((role === 'ROLE_TRADER' && user?.memberId === userId) || role === 'ROLE_ADMIN') &&
+        dailyAnalysis.length > 0 && (
+          <div css={editArea}>
+            <div css={addArea}>
+              <Button
+                variant='secondary'
+                size='xs'
+                width={116}
+                css={buttonStyle}
+                onClick={handleOpenModal}
+              >
+                <BiPlus size={16} />
+                직접입력
+              </Button>
+              <Button variant='accent' size='xs' width={116} css={buttonStyle}>
+                <BiPlus size={16} />
+                엑셀추가
+              </Button>
+            </div>
+            <Button variant='neutral' size='xs' width={89} onClick={handleDelete}>
+              삭제
             </Button>
           </div>
-          <Button variant='neutral' size='xs' width={89} onClick={handleDelete}>
-            삭제
-          </Button>
-        </div>
-      )}
+        )}
       <AnalysisTable
         attributes={attributes}
         analysis={normalizedData}
         mode={'write'}
         role={role}
+        userId={userId}
         selectAll={selectAll}
         selectedItems={selectedData}
         onUpload={handleOpenModal}
