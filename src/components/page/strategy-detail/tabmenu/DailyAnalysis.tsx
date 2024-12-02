@@ -113,7 +113,7 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
     );
 
     if (limitDates.length > 0) {
-      showToast('주말 및 공휴일, 오늘 이후 날짜는 등록할 수 없습니다.', 'error');
+      showToast('주말, 공휴일, 오늘 이후 날짜는 등록할 수 없습니다.', 'error');
       return;
     }
     if (emptyData.length === 0) {

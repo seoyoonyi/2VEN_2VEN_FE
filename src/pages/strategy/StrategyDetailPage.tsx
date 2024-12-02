@@ -152,7 +152,8 @@ const StrategyDetailPage = () => {
 
   return (
     <div css={containerStyle}>
-      {(role === 'ROLE_ADMIN' || role === 'ROLE_TRADER') &&
+      {(role === 'ROLE_ADMIN' ||
+        (role === 'ROLE_TRADER' && user?.memberId === strategy?.memberId)) &&
         strategy?.isApproved !== 'P' &&
         approveState?.isApproved === 'N' &&
         strategy?.isApproved === 'N' && (
