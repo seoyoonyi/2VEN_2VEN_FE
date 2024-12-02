@@ -1,7 +1,4 @@
-// import { useState, useEffect } from 'react';
-
 import { css } from '@emotion/react';
-// import axios from 'axios';
 import { MdKeyboardArrowRight, MdArrowForward } from 'react-icons/md';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -423,9 +420,9 @@ const userImageStyle = css`
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 1px solid ${theme.colors.main.white}; /* 토탈공유 */
-  position: relative; /* 토탈공유 */
-  margin-left: -12px; /* 토탈공유 */
+  border: 1px solid ${theme.colors.main.white};
+  position: relative;
+  margin-left: -12px;
   &:first-of-type {
     margin-left: 0;
   }
@@ -471,8 +468,6 @@ const traderMainStyle = css`
 const leftSectionStyle = css`
   height: 520px;
 `;
-
-/* 트레이더 통계 조회 */
 
 const traderTextStyle = css`
   padding: 80px 0;
