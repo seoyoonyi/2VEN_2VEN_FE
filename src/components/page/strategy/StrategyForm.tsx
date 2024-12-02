@@ -15,7 +15,6 @@ import { useSubmitStrategyUpdate } from '@/hooks/mutations/useSubmitStrategyUpda
 import { useUploadProposalFile } from '@/hooks/mutations/useUploadProposalFile';
 import useFetchStrategyOptionData from '@/hooks/queries/useFetchStrategyOptionData';
 import useCreateFormValidation from '@/hooks/useCreateFormValidation';
-import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import { useStrategyFormStore } from '@/stores/strategyFormStore';
 import useToastStore from '@/stores/toastStore';
