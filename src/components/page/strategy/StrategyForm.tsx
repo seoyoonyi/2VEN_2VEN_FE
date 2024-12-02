@@ -86,8 +86,6 @@ const StrategyForm = ({
     [clearForm]
   );
 
-  const { token } = useAuthStore.getState();
-
   const { openModal } = useModalStore();
   const { strategyData, loading, error } = useFetchStrategyOptionData();
   const { mutate: submitStrategy, status } = useSubmitStrategyCreate();
