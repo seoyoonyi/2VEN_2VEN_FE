@@ -11,7 +11,7 @@ interface FolderListProps {
     folderId: number;
     folderName: string;
     strategyCount: number;
-    updatedAt: string;
+    modifiedAt: string;
   }>;
   onFolderClick: (folderId: string) => void;
   onEditFolder: (folderId: string) => void;
@@ -55,7 +55,7 @@ const FolderList = ({
             {folder.folderName}
           </div>
           <div>{folder.strategyCount}</div>
-          <div>{folder.updatedAt}</div>
+          <div>{folder.modifiedAt.slice(0, 10).replace(/-/g, '.')}</div>
           <DropdownMenu
             isActive={activeDropdown === folder.folderId}
             toggleDropdown={() => toggleDropdown(folder.folderId)}

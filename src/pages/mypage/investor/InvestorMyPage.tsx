@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
 import ContentModal from '@/components/common/ContentModal';
+import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import Toast from '@/components/common/Toast';
@@ -10,81 +11,12 @@ import FolderList from '@/components/page/mypage-investor/myfolder/FolderList';
 import FolderModal from '@/components/page/mypage-investor/myfolder/FolderModal';
 import { ROUTES } from '@/constants/routes';
 import { useSubmitFolder } from '@/hooks/mutations/useFollwingStrategyMutation';
+import { useFolderList } from '@/hooks/queries/useFetchFolderList';
 import { useAuthStore } from '@/stores/authStore';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
-
-interface folderDataProps {
-  folderId: number;
-  folderName: string;
-  strategyCount: number;
-  updatedAt: string;
-}
-
-const folderData: folderDataProps[] = [
-  {
-    folderId: 1,
-    folderName: '기본 폴더',
-    strategyCount: 10,
-    updatedAt: '2024.11.16',
-  },
-  {
-    folderId: 2,
-    folderName: '조금 생각해볼 전략',
-    strategyCount: 2,
-    updatedAt: '2024.11.16',
-  },
-  {
-    folderId: 3,
-    folderName: '이번주 안에 투자할 전략',
-    strategyCount: 17,
-    updatedAt: '2024.11.16',
-  },
-  {
-    folderId: 4,
-    folderName: '아무한테도 알려주기 싫은 전략',
-    strategyCount: 15,
-    updatedAt: '2024.11.16',
-  },
-  {
-    folderId: 5,
-    folderName: '아무한테도 알려주기 싫은 전략',
-    strategyCount: 15,
-    updatedAt: '2024.11.16',
-  },
-  {
-    folderId: 6,
-    folderName: '폴더가.. 이렇게 많아질까?..',
-    strategyCount: 15,
-    updatedAt: '2024.11.16',
-  },
-  {
-    folderId: 7,
-    folderName: '굳굳 전략',
-    strategyCount: 15,
-    updatedAt: '2024.11.16',
-  },
-  {
-    folderId: 8,
-    folderName: '아무한테도 알려주기 싫은 전략',
-    strategyCount: 15,
-    updatedAt: '2024.11.16',
-  },
-  {
-    folderId: 9,
-    folderName: '집에 가고싶은 전략',
-    strategyCount: 15,
-    updatedAt: '2024.11.16',
-  },
-  {
-    folderId: 10,
-    folderName: '아무한테도 알려주기 싫은 전략',
-    strategyCount: 15,
-    updatedAt: '2024.11.16',
-  },
-];
 
 const InvestorMyPage = () => {
   const { openContentModal } = useContentModalStore();
@@ -94,6 +26,7 @@ const InvestorMyPage = () => {
   const { token } = useAuthStore();
   console.log(token);
 
+  const { data, isLoading, isError } = useFolderList();
   const { mutate } = useSubmitFolder();
 
   let folderName = '';
@@ -157,12 +90,24 @@ const InvestorMyPage = () => {
     });
   };
 
+  if (isLoading) {
+    return (
+      <div css={tableWrapperStyle}>
+        <Loader />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div css={tableWrapperStyle}>Error fetching folder list...</div>;
+  }
+
   return (
     <div css={myPageWrapperStyle}>
-      <FolderHeader folderCount={folderData.length} onAddFolder={handleAddFolder} />
+      <FolderHeader folderCount={data.data.length} onAddFolder={handleAddFolder} />
       <div css={tableWrapperStyle}>
         <FolderList
-          folderData={folderData}
+          folderData={data.data}
           onFolderClick={handleFolderList}
           onEditFolder={handleUpdateFolder}
           onDeleteFolder={handleDeleteFolder}
