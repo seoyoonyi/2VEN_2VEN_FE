@@ -50,12 +50,16 @@ export const approveStrategy = async (id: number) => {
 
 export const rejectStrategy = async ({ id, reason }: RejectStrategyParams) => {
   try {
-    const res = await apiClient.put(`${API_ENDPOINTS.ADMIN.APPROVAL_REQUESTS}/${id}`, reason, {
-      headers: {
-        'Content-Type': 'application/json',
-        Auth: 'admin',
-      },
-    });
+    const res = await apiClient.put(
+      `${API_ENDPOINTS.ADMIN.APPROVAL_REQUESTS}/${id}`,
+      { reason },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Auth: 'admin',
+        },
+      }
+    );
     return res.data;
   } catch (error) {
     return handleAxiosError(error, '전략 승인 거부 중 오류가 발생했습니다.');
