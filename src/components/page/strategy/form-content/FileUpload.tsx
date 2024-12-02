@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { MdRemoveCircle } from 'react-icons/md';
 
-import { deleteProposalFile } from '@/api/strategy';
 import Button from '@/components/common/Button';
 import Toast from '@/components/common/Toast';
 import useToastStore from '@/stores/toastStore';
@@ -64,27 +63,18 @@ const FileUpload = ({
     if (selectedFile) handleFile(selectedFile);
   };
 
-  const handleRemoveFile = async () => {
+  const handleRemoveFile = () => {
     if (!uploadedFileUrl) {
       showToast('삭제할 파일이 없습니다.', 'error');
       return;
     }
-
-    try {
-      await deleteProposalFile(uploadedFileUrl);
-
-      setUploadedFileUrl(null);
-      setSelectedFileName('');
-
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-
-      showToast('파일이 삭제되었습니다.', 'basic');
-    } catch (error) {
-      console.error('파일 삭제 중 오류:', error);
-      showToast('파일 삭제 중 오류가 발생했습니다.', 'error');
+    setUploadedFileUrl(null);
+    setSelectedFileName('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
+
+    showToast('파일 삭제가 완료되었습니다.', 'basic');
   };
 
   return (

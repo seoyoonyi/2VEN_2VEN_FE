@@ -72,7 +72,6 @@ const StrategyForm = ({
       );
 
       if (strategyDetailData.strategyProposalLink) {
-        console.log('Setting uploadedFileUrl:', strategyDetailData.strategyProposalLink);
         setUploadedFileUrl(strategyDetailData.strategyProposalLink);
       }
     }
@@ -98,7 +97,6 @@ const StrategyForm = ({
 
   const formState = { strategy, text, operation, cycle, fund, publicStatus, selectedProducts };
   const isFormValid = useCreateFormValidation(formState);
-  console.log('uploadedFileUrl========>', uploadedFileUrl);
 
   const handleFileSelect = (selectedFile: File | null) => {
     setFile(selectedFile);
