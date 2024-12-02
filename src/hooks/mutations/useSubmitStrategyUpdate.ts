@@ -5,7 +5,7 @@ import { submitStrategyUpdate } from '@/api/strategy';
 import { useStrategyFormStore } from '@/stores/strategyFormStore';
 import { StrategyPayload, SubmitStrategyResponse } from '@/types/strategy';
 
-export const useSubmitStrategyUpdate = (token: string | null) => {
+export const useSubmitStrategyUpdate = () => {
   const { clearForm } = useStrategyFormStore();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -15,7 +15,7 @@ export const useSubmitStrategyUpdate = (token: string | null) => {
     Error,
     { strategyId: number; payload: StrategyPayload }
   >({
-    mutationFn: async ({ strategyId, payload }) => submitStrategyUpdate(strategyId, payload, token),
+    mutationFn: async ({ strategyId, payload }) => submitStrategyUpdate(strategyId, payload),
     onSuccess: (data) => {
       console.log('전략 수정 성공:', data);
       clearForm();

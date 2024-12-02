@@ -90,9 +90,9 @@ const StrategyForm = ({
 
   const { openModal } = useModalStore();
   const { strategyData, loading, error } = useFetchStrategyOptionData();
-  const { mutate: submitStrategy, status } = useSubmitStrategyCreate(token);
+  const { mutate: submitStrategy, status } = useSubmitStrategyCreate();
   const { mutate: uploadFile } = useUploadProposalFile();
-  const { mutate: updateStrategy } = useSubmitStrategyUpdate(token);
+  const { mutate: updateStrategy } = useSubmitStrategyUpdate();
   const isSubmitting = status === 'pending';
   const { showToast } = useToastStore();
 
