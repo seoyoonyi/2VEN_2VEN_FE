@@ -343,3 +343,41 @@ export const adminSignout = async (): Promise<AdminSignoutResponse> => {
     throw error;
   }
 };
+
+// 비밀번호 재설정 API
+interface ResetPasswordResponse {
+  status: 'success' | 'error';
+  message: string;
+}
+
+export const resetPassword = async ({
+  email,
+  newPassword,
+  confirmPassword,
+}: {
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
+}): Promise<ResetPasswordResponse> => {
+  try {
+    const response = await apiClient.patch<ResetPasswordResponse>(
+      API_ENDPOINTS.AUTH.FIND.PASSWORD_RESET,
+      { email, newPassword, confirmPassword }
+    );
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      // 비밀번호 불일치
+      if (error.response?.data?.error === 'PASSWORD_MISMATCH') {
+        throw new Error('비밀번호가 서로 일치하지 않습니다.');
+      }
+      // 비밀번호 형식 오류
+      if (error.response?.data?.error === 'INVALID_PASSWORD_FORMAT') {
+        throw new Error('비밀번호는 숫자, 문자, 특수문자를 포함한 8자리 이상 입력해야 합니다.');
+      }
+      // 기타 에러
+      throw new Error(error.response?.data?.message || '비밀번호 재설정에 실패했습니다.');
+    }
+    throw error;
+  }
+};
