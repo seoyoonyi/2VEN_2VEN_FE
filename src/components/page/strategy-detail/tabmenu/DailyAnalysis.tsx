@@ -21,7 +21,7 @@ import useModalStore from '@/stores/modalStore';
 import useTableModalStore from '@/stores/tableModalStore';
 import useToastStore from '@/stores/toastStore';
 import { DailyAnalysisProps, AnalysisDataProps } from '@/types/strategyDetail';
-import { isValidInputNumber } from '@/utils/statistics';
+import { isValidInputNumber, isValidPossibleDate } from '@/utils/statistics';
 
 const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
   const [selectedData, setSelectedData] = useState<number[]>([]);
@@ -106,6 +106,14 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
     if (!strategyId) return;
     const emptyData = handleisValid(modalData);
     const duplicateDates = isDuplicatedValue(modalData);
+    const limitDates = isValidPossibleDate(
+      modalData.map((item: DailyAnalysisProps) => item.date).filter((date) => date !== '')
+    );
+
+    if (limitDates.length > 0) {
+      showToast('주말 및 공휴일, 오늘 이후 날짜는 등록할 수 없습니다.', 'error');
+      return;
+    }
     if (emptyData.length === 0) {
       showToast('일자, 입출금, 일손익은 필수 입력값입니다.', 'error');
       return;
@@ -155,15 +163,23 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
       ),
       onAction: () => {
         if (!updatedData) return;
+
         const duplicate = normalizedData
+          .filter((item: DailyAnalysisProps) => item.date !== data.date)
           .map((item: DailyAnalysisProps) => item.date)
           .includes(updatedData.date);
+        const limitDates = isValidPossibleDate(updatedData.date);
         if (!updatedData.dailyProfitLoss || !updatedData.date || !updatedData.depWdPrice) {
           showToast('일자, 입출금, 일손익은 필수 입력값입니다.', 'error');
           return;
         }
         if (duplicate) {
           showToast(`이미 등록된 날짜 입니다.`, 'error');
+          return;
+        }
+
+        if (limitDates.length > 0) {
+          showToast('주말 및 공휴일, 오늘 이후 날짜는 등록할 수 없습니다.', 'error');
           return;
         }
         putDailyAnalysis({
