@@ -158,7 +158,7 @@ const StrategyDetailPage = () => {
             <StrategyHeader
               id={strategy?.strategyId}
               strategyTitle={strategy?.strategyTitle || ''}
-              traderId={strategy?.traderId || ''}
+              traderId={strategy?.memberId}
               onApproval={() => {
                 handleApproval();
               }}

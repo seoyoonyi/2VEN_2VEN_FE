@@ -1,15 +1,26 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-import { requestVerificationCode, verifyAdminCode } from '@/api/auth';
+import {
+  EmailVerificationResponse,
+  requestAdminVerificationCode,
+  requestUserVerificationCode,
+  verifyAdminCode,
+} from '@/api/auth';
 import { useAdminAuthStore } from '@/stores/adminAuthStore';
 import { useAuthStore } from '@/stores/authStore';
-import { AdminUser, ApiResponse } from '@/types/auth';
+import { AdminUser } from '@/types/auth';
+
+// 회원 인증번호 요청 mutation
+export const useRequestUserVerificationMutation = () =>
+  useMutation<EmailVerificationResponse, AxiosError, string>({
+    mutationFn: requestUserVerificationCode,
+  });
 
 // 관리자 인증번호 요청 mutation
 export const useRequestVerificationMutation = () =>
-  useMutation<ApiResponse<null>, AxiosError, string>({
-    mutationFn: requestVerificationCode,
+  useMutation<EmailVerificationResponse, AxiosError, string>({
+    mutationFn: requestAdminVerificationCode,
   });
 
 interface AdminVerificationResponse {

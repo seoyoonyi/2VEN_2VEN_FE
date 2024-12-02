@@ -123,17 +123,56 @@ export const findEmailByPhone = async (phone: string): Promise<FindEmailResponse
   }
 };
 
+// 비밀번호찾기
+// 이메일 인증번호 요청 API
+export const requestUserVerificationCode = async (
+  email: string
+): Promise<EmailVerificationResponse> => {
+  try {
+    console.log('Request body:', { email }); // 요청 바디 로깅
+    const response = await apiClient.post<EmailVerificationResponse>(
+      API_ENDPOINTS.AUTH.EMAIL.REQUEST_VERIFICATION_FOR_RESET_PASSWORD,
+      { email },
+      {
+        withCredentials: true, // 세션 쿠키를 받기 위해 다시 한번 명시
+      }
+    );
+    // 응답 헤더에서 세션 ID 확인 (디버깅용)
+    const sessionId = response.headers['set-cookie']?.find((cookie) =>
+      cookie.startsWith('JSESSIONID=')
+    );
+    if (sessionId) {
+      console.log('Session established:', sessionId);
+    }
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      const errorData = error.response?.data;
+
+      // 이미 존재하는 이메일
+      if (error.response?.status === 409) {
+        throw new Error('이미 사용중인 이메일입니다.');
+      }
+      // 이메일 형식 불일치
+      if (error.response?.status === 400) {
+        const validationMessage = errorData?.errors?.['checkEmail.email'];
+        throw new Error(validationMessage || '이메일 형식이 올바르지 않습니다.');
+      }
+      // 메일 전송 실패
+      if (error.response?.status === 500) {
+        throw new Error('이메일 전송에 실패했습니다.');
+      }
+    }
+    throw error;
+  }
+};
+
 // 관리자 이메일로 인증번호를 요청하는 API
-export const requestVerificationCode = async (email: string): Promise<ApiResponse<null>> => {
+export const requestAdminVerificationCode = async (email: string): Promise<ApiResponse<null>> => {
   console.log('Request body:', { email }); // 요청 바디 로깅
   const response = await apiClient.post<ApiResponse<null>>(
-    API_ENDPOINTS.AUTH.EMAIL.REQUEST_VERIFICATION,
-    { email },
-    {
-      headers: {
-        useMock: import.meta.env.VITE_ENABLE_MSW === 'true', // MSW 사용 시 true
-      },
-    }
+    API_ENDPOINTS.AUTH.EMAIL.REQUEST_ADMIN_VERIFICATION,
+    { email }
   );
   return response.data;
 };
@@ -164,7 +203,7 @@ export const verifyAdminCode = async ({
   }
 };
 
-// 회원가입 시, 이메일 확인 + 이메일 인증 코드 요청
+// 회원가입 폼 - 이메일 인증 코드 요청
 export interface EmailVerificationResponse {
   status: 'success' | 'error';
   message: string;
@@ -218,8 +257,10 @@ export interface SignupVerificationResponse {
   status: 'success' | 'error';
   message: string;
 }
-// 회원가입 시, 비회원 이메일 인증번호 검증 API
-export const verifySignupCode = async ({
+
+// 회원가입 폼, 비밀번호 찾기
+// 이메일 인증번호 검증 (공통 ✅)
+export const verifyEmailCode = async ({
   email,
   verificationCode,
 }: {
@@ -299,6 +340,44 @@ export const adminSignout = async (): Promise<AdminSignoutResponse> => {
       const name = cookie.split('=')[0].trim();
       document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
     });
+    throw error;
+  }
+};
+
+// 비밀번호 재설정 API
+interface ResetPasswordResponse {
+  status: 'success' | 'error';
+  message: string;
+}
+
+export const resetPassword = async ({
+  email,
+  newPassword,
+  confirmPassword,
+}: {
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
+}): Promise<ResetPasswordResponse> => {
+  try {
+    const response = await apiClient.patch<ResetPasswordResponse>(
+      API_ENDPOINTS.AUTH.FIND.PASSWORD_RESET,
+      { email, newPassword, confirmPassword }
+    );
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      // 비밀번호 불일치
+      if (error.response?.data?.error === 'PASSWORD_MISMATCH') {
+        throw new Error('비밀번호가 서로 일치하지 않습니다.');
+      }
+      // 비밀번호 형식 오류
+      if (error.response?.data?.error === 'INVALID_PASSWORD_FORMAT') {
+        throw new Error('비밀번호는 숫자, 문자, 특수문자를 포함한 8자리 이상 입력해야 합니다.');
+      }
+      // 기타 에러
+      throw new Error(error.response?.data?.message || '비밀번호 재설정에 실패했습니다.');
+    }
     throw error;
   }
 };
