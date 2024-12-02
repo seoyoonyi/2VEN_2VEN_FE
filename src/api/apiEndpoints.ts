@@ -13,7 +13,7 @@ export const API_ENDPOINTS = {
     FIND: {
       EMAIL: '/api/members/find-email', // 전화번호로 이메일 찾기
       PASSWORD: '/api/members/find/password', // 비밀번호 찾기
-      PASSWORD_RESET: '/api/members/find/password/reset', // 비밀번호 재설정
+      PASSWORD_RESET: '/api/members/reset-password', // 비밀번호 재설정
     },
     EMAIL: {
       REQUEST_VERIFICATION_FOR_SIGNUP: '/api/members/check-email', // 회원가입 시, 이메일 확인 + 이메일 인증 코드 요청
