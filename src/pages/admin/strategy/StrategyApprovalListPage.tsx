@@ -6,6 +6,7 @@ import ContentModal from '@/components/common/ContentModal';
 import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
+import Toast from '@/components/common/Toast';
 import RejectTextarea from '@/components/page/admin/RejectTextarea';
 import { ROUTES } from '@/constants/routes';
 import {
@@ -39,7 +40,7 @@ const StrategyApprovalListPage = () => {
   const { openModal } = useModalStore();
   const { openContentModal } = useContentModalStore();
   const { pagination, setPage } = usePagination(1, 10);
-  const { showToast } = useToastStore();
+  const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
   const { strategies, currentPage, totalPages, totalElements, pageSize, isLoading, isError } =
     useStrategyApprovalList({
       page: pagination.currentPage - 1,
@@ -60,6 +61,7 @@ const StrategyApprovalListPage = () => {
       desc: `해당 전략을 승인하시겠어요?`,
       onAction: () => {
         approveStrategy(id);
+        showToast('해당 전략이 승인되었습니다.', 'basic');
       },
     });
   };
@@ -80,10 +82,11 @@ const StrategyApprovalListPage = () => {
       onAction: () => {
         if (!localReason.trim()) {
           showToast('거부 사유를 입력해주세요.', 'error');
-          return;
+          return false;
         }
         rejectStrategy({ id, reason: localReason });
-        showToast('거부가 성공적으로 처리되었습니다.', 'basic');
+        showToast('거부 처리가 완료되었습니다.', 'basic');
+        return true;
       },
     });
   };
@@ -202,6 +205,7 @@ const StrategyApprovalListPage = () => {
       </div>
       <Modal />
       <ContentModal />
+      <Toast type={type} message={message} onClose={hideToast} isVisible={isToastVisible} />
     </>
   );
 };

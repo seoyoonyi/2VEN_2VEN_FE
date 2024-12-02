@@ -15,9 +15,12 @@ const ContentModal = () => {
 
   const onClickButton = () => {
     try {
-      onAction();
-    } finally {
-      closeContentModal();
+      const result = onAction();
+      if (result !== false) {
+        closeContentModal();
+      }
+    } catch (error) {
+      console.error('모달 액션 처리 중 오류:', error);
     }
   };
 

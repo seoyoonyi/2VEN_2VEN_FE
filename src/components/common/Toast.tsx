@@ -88,6 +88,7 @@ const toastStyles = (isVisible: boolean) => css`
   position: fixed;
   top: 120px;
   left: 50%;
+  z-index: 999;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
