@@ -13,8 +13,14 @@ const TableModal = () => {
   const { title, data, actionButton, onAction } = tableModalData;
 
   const onClickButton = () => {
-    onAction();
-    closeTableModal();
+    try {
+      const result = onAction();
+      if (result !== false) {
+        closeTableModal();
+      }
+    } catch (error) {
+      console.error('모달 액션 처리 중 오류:', error);
+    }
   };
 
   const modalRoot = document.getElementById('modal-root');

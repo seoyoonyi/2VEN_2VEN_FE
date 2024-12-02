@@ -12,7 +12,10 @@ import {
   SigninRequest,
   SigninResponse,
   User,
+  SignupRequest,
+  SignupResponse,
 } from '@/types/auth';
+import { formatRole } from '@/utils/auth';
 
 export const signin = async (credentials: SigninRequest): Promise<SigninResponse> => {
   try {
@@ -379,5 +382,80 @@ export const resetPassword = async ({
       throw new Error(error.response?.data?.message || '비밀번호 재설정에 실패했습니다.');
     }
     throw error;
+  }
+};
+
+// 회원가입 API
+export const signup = async (
+  formData: Omit<SignupRequest, 'memberType'>,
+  userRole: string
+): Promise<SignupResponse> => {
+  try {
+    // ROLE_ 접두사 제거 후 memberType으로 사용
+    const memberType = formatRole(userRole);
+
+    // 요청 데이터 로깅
+    const requestData = {
+      ...formData,
+      memberType,
+    };
+
+    console.group('회원가입 API 요청');
+    console.log('Request URL:', API_ENDPOINTS.AUTH.SIGNUP);
+    console.log('Request Headers:', {
+      'Content-Type': 'application/json',
+      ...apiClient.defaults.headers,
+    });
+    console.log('Request Data:', requestData);
+    console.groupEnd();
+
+    // 회원가입 API 호출
+    const response = await apiClient.post<SignupResponse>(API_ENDPOINTS.AUTH.SIGNUP, {
+      ...formData,
+      memberType,
+    });
+
+    // 응답 데이터 로깅
+    console.group('회원가입 API 응답');
+    console.log('Response Status:', response.status);
+    console.log('Response Data:', response.data);
+    console.groupEnd();
+
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      // 서버 응답 에러처리
+      if (error.response?.status === 400) {
+        const errorData = error.response.data;
+
+        // 유효성 검사 실패
+        if (errorData.errorType === 'MethodArgumentNotValidException') {
+          throw new Error(Object.values(errorData.errors)[0] as string);
+        }
+
+        // 비밀번호 불일치
+        if (errorData.errorType === 'ConfirmPasswordMismatchException') {
+          throw new Error(errorData.errors.confirmPassword);
+        }
+
+        // 중복 이메일/닉네임
+        if (errorData.errorType === 'MemberAlreadyExistsException') {
+          throw new Error(errorData.message);
+        }
+      }
+
+      // 서버 에러 메시지
+      if (error.response?.status === 500) {
+        throw new Error('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      }
+      throw new Error(error.response?.data?.message || '회원가입 중 오류가 발생했습니다.');
+    }
+
+    // 클라이언트 측 유효성 검사 에러
+    if (error instanceof Error && error.message.startsWith('{')) {
+      throw error;
+    }
+
+    throw new Error('알 수 없는 오류가 발생했습니다.');
   }
 };

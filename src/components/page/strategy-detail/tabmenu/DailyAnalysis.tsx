@@ -57,7 +57,7 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
 
   const handleOpenModal = () => {
     let modalData: InputTableProps[] = [];
-    const initalData: InputTableProps[] = Array.from({ length: 5 }, () => ({
+    const initialData: InputTableProps[] = Array.from({ length: 5 }, () => ({
       date: '',
       depWdPrice: '',
       dailyProfitLoss: '',
@@ -68,23 +68,20 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
       title: '일간분석 데이터 직접 입력',
       data: (
         <InputTable
-          data={initalData}
+          data={initialData}
           onChange={(newData) => {
             modalData = newData;
           }}
         />
       ),
       onAction: () => {
-        if (modalData.length < 1) {
-          showToast('올바른 데이터를 입력하세요.', 'error');
-          return;
-        }
-        handleSaveData(modalData);
+        const result = handleSaveData(modalData);
+        return result;
       },
     });
   };
 
-  const handleisValid = (modalData: InputTableProps[]) =>
+  const handleIsValid = (modalData: InputTableProps[]) =>
     modalData.filter((data) => {
       const isDateValid = !!data.date.trim();
       const isDepWdPriceValid =
@@ -104,28 +101,29 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
     return modalData.filter((data) => existingDates.includes(data.date));
   };
 
-  const handleSaveData = (modalData: InputTableProps[]) => {
-    if (!strategyId) return;
-    const emptyData = handleisValid(modalData);
+  const handleSaveData = (modalData: InputTableProps[]): boolean => {
+    if (!strategyId) return false;
+
+    const emptyData = handleIsValid(modalData);
     const duplicateDates = isDuplicatedValue(modalData);
     const limitDates = isValidPossibleDate(
       modalData.map((item: DailyAnalysisProps) => item.date).filter((date) => date !== '')
     );
 
     if (limitDates.length > 0) {
-      showToast('주말, 공휴일, 오늘 이후 날짜는 등록할 수 없습니다.', 'error');
-      return;
+      showToast('주말 및 공휴일, 오늘 이후 날짜는 등록할 수 없습니다.', 'error');
+      return false;
     }
     if (emptyData.length === 0) {
       showToast('일자, 입출금, 일손익은 필수 입력값입니다.', 'error');
-      return;
+      return false;
     }
     if (duplicateDates.length > 0) {
       showToast(
         `이미 등록된 날짜 입니다. ${duplicateDates.map((d) => d.date).join(', ')}`,
         'error'
       );
-      return;
+      return false;
     }
 
     const payload: DailyAnalysisProps[] = modalData
@@ -143,6 +141,7 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
     });
 
     modalData = [];
+    return true;
   };
 
   const handleUpdateModal = (rowId: number, data: DailyAnalysisProps) => {
@@ -164,25 +163,27 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
         />
       ),
       onAction: () => {
-        if (!updatedData) return;
+        if (!updatedData) return false;
 
         const duplicate = normalizedData
           .filter((item: DailyAnalysisProps) => item.date !== data.date)
           .map((item: DailyAnalysisProps) => item.date)
           .includes(updatedData.date);
+
         const limitDates = isValidPossibleDate(updatedData.date);
+
         if (!updatedData.dailyProfitLoss || !updatedData.date || !updatedData.depWdPrice) {
           showToast('일자, 입출금, 일손익은 필수 입력값입니다.', 'error');
-          return;
+          return false;
         }
         if (duplicate) {
           showToast(`이미 등록된 날짜 입니다.`, 'error');
-          return;
+          return false;
         }
 
         if (limitDates.length > 0) {
           showToast('주말 및 공휴일, 오늘 이후 날짜는 등록할 수 없습니다.', 'error');
-          return;
+          return false;
         }
         putDailyAnalysis({
           strategyId,
@@ -191,6 +192,7 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
           dailyDataId: rowId,
         });
         updatedData = null;
+        return true;
       },
     });
   };
