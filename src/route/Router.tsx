@@ -137,16 +137,16 @@ export const router = createBrowserRouter(
         },
         // -------------------------------------- 검색
         {
-          path: ROUTES.SEARCH.ROOT,
+          path: ROUTES.SEARCH.TOTAL,
           element: <SearchTotalResultsPage />, // 통합검색결과 페이지(전략과 트레이더 검색결과)
         },
         {
-          path: ROUTES.SEARCH.TRADER,
-          element: <SearchResultsInTrader />, // 트레이더 내 검색결과 페이지
+          path: ROUTES.SEARCH.TRADERS_DETAIL,
+          element: <SearchResultsInTrader />, // 트레이더 상세 검색결과 페이지
         },
         {
-          path: ROUTES.SEARCH.STRATEGY,
-          element: <SearchResultsInStrategy />, // 전략 내 검색결과 페이지
+          path: ROUTES.SEARCH.STRATEGIES_DETAIL,
+          element: <SearchResultsInStrategy />, // 전략 상세 검색결과 페이지
         },
       ],
     },

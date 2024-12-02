@@ -60,9 +60,9 @@ export const ROUTES = {
     },
   },
   SEARCH: {
-    ROOT: '/search',
-    TRADER: '/search/traders',
-    STRATEGY: '/search/strategies',
+    TOTAL: '/search', // 통합 검색 결과 페이지
+    TRADERS_DETAIL: '/search/traders/detail', // 트레이더 내 상세검색 결과 페이지
+    STRATEGIES_DETAIL: '/search/strategies/detail', // 전략 내 상세검색 결과 페이지
   },
   ADMIN: {
     STOCK_TYPE: {
