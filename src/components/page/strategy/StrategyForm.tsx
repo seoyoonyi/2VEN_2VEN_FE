@@ -96,7 +96,6 @@ const StrategyForm = ({
   const isSubmitting = status === 'pending';
   const { showToast } = useToastStore();
 
-  const [file, setFile] = useState<File | null>(null);
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 
@@ -104,7 +103,6 @@ const StrategyForm = ({
   const isFormValid = useCreateFormValidation(formState);
 
   const handleFileSelect = (selectedFile: File | null) => {
-    setFile(selectedFile);
     if (selectedFile) {
       uploadFile(
         { file: selectedFile, authType: 'Trader' },
@@ -112,7 +110,6 @@ const StrategyForm = ({
           onSuccess: (data) => {
             setUploadedFileUrl(data.fileUrl);
             setUploadedFileName(data.displayName);
-            console.log('파일 업로드 성공:', data);
           },
           onError: (error) => {
             console.error('파일 업로드 실패:', error);
@@ -138,8 +135,6 @@ const StrategyForm = ({
       strategyProposalLink: uploadedFileUrl || null,
       investmentAssetClassesIdList: selectedProducts.map((v) => Number(v)),
     };
-
-    console.log('최종 제출 데이터============>:', payload);
 
     try {
       if (isEditMode && strategyDetailData) {
