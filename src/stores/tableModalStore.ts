@@ -7,7 +7,7 @@ interface TableModalData {
   title: string;
   data: JSX.Element | null;
   actionButton?: string;
-  onAction: () => void;
+  onAction: () => boolean;
 }
 
 interface TableModalStore {
