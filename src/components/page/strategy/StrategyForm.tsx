@@ -15,6 +15,7 @@ import { useSubmitStrategyUpdate } from '@/hooks/mutations/useSubmitStrategyUpda
 import { useUploadProposalFile } from '@/hooks/mutations/useUploadProposalFile';
 import useFetchStrategyOptionData from '@/hooks/queries/useFetchStrategyOptionData';
 import useCreateFormValidation from '@/hooks/useCreateFormValidation';
+import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import { useStrategyFormStore } from '@/stores/strategyFormStore';
 import useToastStore from '@/stores/toastStore';
@@ -84,16 +85,19 @@ const StrategyForm = ({
     [clearForm]
   );
 
+  const { token } = useAuthStore.getState();
+
   const { openModal } = useModalStore();
   const { strategyData, loading, error } = useFetchStrategyOptionData();
-  const { mutate: submitStrategy, status } = useSubmitStrategyCreate();
+  const { mutate: submitStrategy, status } = useSubmitStrategyCreate(token);
   const { mutate: uploadFile } = useUploadProposalFile();
-  const { mutate: updateStrategy } = useSubmitStrategyUpdate();
+  const { mutate: updateStrategy } = useSubmitStrategyUpdate(token);
   const isSubmitting = status === 'pending';
   const { showToast } = useToastStore();
 
   const [file, setFile] = useState<File | null>(null);
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 
   const formState = { strategy, text, operation, cycle, fund, publicStatus, selectedProducts };
   const isFormValid = useCreateFormValidation(formState);
@@ -106,6 +110,7 @@ const StrategyForm = ({
         {
           onSuccess: (data) => {
             setUploadedFileUrl(data.fileUrl);
+            setUploadedFileName(data.displayName);
             console.log('파일 업로드 성공:', data);
           },
           onError: (error) => {
@@ -238,6 +243,7 @@ const StrategyForm = ({
         onFileSelect={handleFileSelect}
         uploadedFileUrl={uploadedFileUrl}
         setUploadedFileUrl={setUploadedFileUrl}
+        displayName={uploadedFileName}
       />
 
       <div css={buttonContainerStyle}>

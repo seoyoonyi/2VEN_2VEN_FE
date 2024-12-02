@@ -13,10 +13,12 @@ const FileUpload = ({
   onFileSelect,
   uploadedFileUrl,
   setUploadedFileUrl,
+  displayName,
 }: {
   onFileSelect: (file: File) => void;
   uploadedFileUrl: string | null;
   setUploadedFileUrl: (url: string | null) => void;
+  displayName: string | null;
 }) => {
   const { isToastVisible, showToast, hideToast, message, type } = useToastStore();
   const [isDragging, setIsDragging] = useState(false);
@@ -24,13 +26,15 @@ const FileUpload = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    if (uploadedFileUrl) {
+    if (displayName) {
+      setSelectedFileName(displayName);
+    } else if (uploadedFileUrl) {
       const fileName = uploadedFileUrl.split('/').pop();
       setSelectedFileName(fileName || '');
     } else {
       setSelectedFileName('');
     }
-  }, [uploadedFileUrl]);
+  }, [uploadedFileUrl, displayName]);
 
   const handleFile = (file: File) => {
     if (isValidFileType(file.name)) {
@@ -69,7 +73,7 @@ const FileUpload = ({
       return;
     }
     setUploadedFileUrl(null);
-    setSelectedFileName('');
+    setSelectedFileName(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }

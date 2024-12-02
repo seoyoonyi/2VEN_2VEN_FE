@@ -19,11 +19,12 @@ export const fetchStrategyRegistration = async () => {
 };
 
 // 전략 등록
-export const submitStrategyCreate = async (payload: StrategyPayload) => {
+export const submitStrategyCreate = async (payload: StrategyPayload, token: string | null) => {
   try {
     const { data } = await apiClient.post(API_ENDPOINTS.STRATEGY.CREATE, payload, {
       headers: {
         Auth: 'trader',
+        Authorization: `Bearer ${token}`,
       },
     });
     return data;
@@ -55,7 +56,11 @@ export const fetchUpdateStrategy = async (
 };
 
 // 전략 수정
-export const submitStrategyUpdate = async (strategyId: number, payload: StrategyPayload) => {
+export const submitStrategyUpdate = async (
+  strategyId: number,
+  payload: StrategyPayload,
+  token: string | null
+) => {
   try {
     const { data } = await apiClient.put(
       `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}`,
@@ -63,6 +68,7 @@ export const submitStrategyUpdate = async (strategyId: number, payload: Strategy
       {
         headers: {
           Auth: 'trader',
+          Authorization: `Bearer ${token}`,
         },
       }
     );

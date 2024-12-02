@@ -5,13 +5,13 @@ import { submitStrategyCreate } from '@/api/strategy';
 import { useStrategyFormStore } from '@/stores/strategyFormStore';
 import { StrategyPayload, SubmitStrategyResponse } from '@/types/strategy';
 
-export const useSubmitStrategyCreate = () => {
+export const useSubmitStrategyCreate = (token: string | null) => {
   const { clearForm } = useStrategyFormStore();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   return useMutation<SubmitStrategyResponse, Error, StrategyPayload>({
-    mutationFn: (payload: StrategyPayload) => submitStrategyCreate(payload),
+    mutationFn: (payload: StrategyPayload) => submitStrategyCreate(payload, token),
     onSuccess: (data: SubmitStrategyResponse) => {
       console.log('전략 등록 성공:', data);
       clearForm();
