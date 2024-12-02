@@ -39,4 +39,8 @@ export const API_ENDPOINTS = {
     PROPOSAL: '/api/files/proposal', // 제안서 파일 업로드
     ICON: '/api/files/icon', //아이콘 업로드
   },
+  FOLLOWING: {
+    FOLDERS: '/api/members/following-strategy-folders', // 나의 관심 전략
+    FOLDER_LIST: 'api/members/following-strategy-folderlist', // 폴더 목록
+  },
 };

@@ -9,6 +9,8 @@ import FolderHeader from '@/components/page/mypage-investor/myfolder/FolderHeade
 import FolderList from '@/components/page/mypage-investor/myfolder/FolderList';
 import FolderModal from '@/components/page/mypage-investor/myfolder/FolderModal';
 import { ROUTES } from '@/constants/routes';
+import { useSubmitFolder } from '@/hooks/mutations/useFollwingStrategyMutation';
+import { useAuthStore } from '@/stores/authStore';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
@@ -87,8 +89,14 @@ const folderData: folderDataProps[] = [
 const InvestorMyPage = () => {
   const { openContentModal } = useContentModalStore();
   const { openModal } = useModalStore();
-  const { isToastVisible, showToast, hideToast, message } = useToastStore();
+  const { isToastVisible, showToast, hideToast, message, type } = useToastStore();
   const navigate = useNavigate();
+  const { token } = useAuthStore();
+  console.log(token);
+
+  const { mutate } = useSubmitFolder();
+
+  let folderName = '';
 
   const handleFolderList = (folderId: string) => {
     navigate(ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(folderId));
@@ -98,9 +106,28 @@ const InvestorMyPage = () => {
   const handleAddFolder = () => {
     openContentModal({
       title: '폴더 추가',
-      content: <FolderModal />,
+      content: (
+        <FolderModal
+          onChangeFolderName={(value) => {
+            folderName = value;
+          }}
+        />
+      ),
       onAction: () => {
-        showToast('폴더 추가가 완료되었습니다.');
+        if (!folderName.trim()) {
+          showToast('폴더명을 입력해주세요.', 'error');
+          return false;
+        }
+
+        mutate(folderName, {
+          onSuccess: () => {
+            showToast('폴더 추가가 완료되었습니다.');
+          },
+          onError: () => {
+            showToast('폴더 추가에 실패했습니다.', 'error');
+          },
+        });
+
         return true;
       },
     });
@@ -144,7 +171,9 @@ const InvestorMyPage = () => {
       </div>
       <ContentModal />
       <Modal />
-      {isToastVisible && <Toast message={message} onClose={hideToast} isVisible={isToastVisible} />}
+      {isToastVisible && (
+        <Toast message={message} onClose={hideToast} isVisible={isToastVisible} type={type} />
+      )}
     </div>
   );
 };
