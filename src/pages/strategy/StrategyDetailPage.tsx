@@ -91,6 +91,7 @@ const StrategyDetailPage = () => {
           strategyId={Number(strategyId)}
           mode='write'
           role={user?.role}
+          userId={strategy?.memberId}
         />
       ),
     },

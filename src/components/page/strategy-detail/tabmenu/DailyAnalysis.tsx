@@ -17,13 +17,15 @@ import {
 } from '@/hooks/mutations/useDailyAnalysis';
 import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
 import usePagination from '@/hooks/usePagination';
+import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useTableModalStore from '@/stores/tableModalStore';
 import useToastStore from '@/stores/toastStore';
 import { DailyAnalysisProps, AnalysisDataProps } from '@/types/strategyDetail';
 import { isValidInputNumber, isValidPossibleDate } from '@/utils/statistics';
 
-const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
+const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) => {
+  const { user } = useAuthStore();
   const [selectedData, setSelectedData] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const { pagination, setPage } = usePagination(1, 5);
@@ -245,34 +247,36 @@ const DailyAnalysis = ({ strategyId, attributes, role }: AnalysisProps) => {
 
   return (
     <div css={dailyStyle}>
-      {dailyAnalysis.length > 0 && (
-        <div css={editArea}>
-          <div css={addArea}>
-            <Button
-              variant='secondary'
-              size='xs'
-              width={116}
-              css={buttonStyle}
-              onClick={handleOpenModal}
-            >
-              <BiPlus size={16} />
-              직접입력
-            </Button>
-            <Button variant='accent' size='xs' width={116} css={buttonStyle}>
-              <BiPlus size={16} />
-              엑셀추가
+      {((role === 'ROLE_TRADER' && user?.memberId === userId) || role === 'ROLE_ADMIN') &&
+        dailyAnalysis.length > 0 && (
+          <div css={editArea}>
+            <div css={addArea}>
+              <Button
+                variant='secondary'
+                size='xs'
+                width={116}
+                css={buttonStyle}
+                onClick={handleOpenModal}
+              >
+                <BiPlus size={16} />
+                직접입력
+              </Button>
+              <Button variant='accent' size='xs' width={116} css={buttonStyle}>
+                <BiPlus size={16} />
+                엑셀추가
+              </Button>
+            </div>
+            <Button variant='neutral' size='xs' width={89} onClick={handleDelete}>
+              삭제
             </Button>
           </div>
-          <Button variant='neutral' size='xs' width={89} onClick={handleDelete}>
-            삭제
-          </Button>
-        </div>
-      )}
+        )}
       <AnalysisTable
         attributes={attributes}
         analysis={normalizedData}
         mode={'write'}
         role={role}
+        userId={userId}
         selectAll={selectAll}
         selectedItems={selectedData}
         onUpload={handleOpenModal}
