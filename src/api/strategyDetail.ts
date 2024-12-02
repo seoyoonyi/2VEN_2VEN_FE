@@ -301,7 +301,6 @@ export const fetchRealAccount = async (
 //실계좌 이미지 업로드
 export const fetchUploadRealAccount = async (
   strategyId: number,
-  displayName: string,
   fileItem: File,
   authRole: UserRole
 ) => {
@@ -311,9 +310,6 @@ export const fetchUploadRealAccount = async (
       `${API_ENDPOINTS.STRATEGY.UPLOAD_ACCOUNT_IMG}/${strategyId}`,
       formData,
       {
-        params: {
-          displayName,
-        },
         headers: {
           auth: authRole,
         },
@@ -328,7 +324,7 @@ export const fetchUploadRealAccount = async (
 //실계좌 이미지 삭제
 export const fetchDeleteRealAccount = async (
   strategyId: number,
-  liveAccountId: number,
+  liveAccountId: number[],
   authRole: UserRole
 ) => {
   try {
