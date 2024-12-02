@@ -74,6 +74,7 @@ const StrategyForm = ({
 
       if (strategyDetailData.strategyProposalLink) {
         setUploadedFileUrl(strategyDetailData.strategyProposalLink);
+        setUploadedFileName(strategyDetailData.strategyProposalFileTitle);
       }
     }
   }, [isEditMode, strategyDetailData, requirements, setField]);
@@ -119,6 +120,11 @@ const StrategyForm = ({
         }
       );
     }
+  };
+
+  const handleFileRemove = () => {
+    setUploadedFileUrl(null);
+    setUploadedFileName(null);
   };
 
   const handleSubmit = async () => {
@@ -244,6 +250,7 @@ const StrategyForm = ({
         uploadedFileUrl={uploadedFileUrl}
         setUploadedFileUrl={setUploadedFileUrl}
         displayName={uploadedFileName}
+        onFileRemove={handleFileRemove}
       />
 
       <div css={buttonContainerStyle}>

@@ -14,11 +14,13 @@ const FileUpload = ({
   uploadedFileUrl,
   setUploadedFileUrl,
   displayName,
+  onFileRemove,
 }: {
   onFileSelect: (file: File) => void;
   uploadedFileUrl: string | null;
   setUploadedFileUrl: (url: string | null) => void;
   displayName: string | null;
+  onFileRemove: () => void;
 }) => {
   const { isToastVisible, showToast, hideToast, message, type } = useToastStore();
   const [isDragging, setIsDragging] = useState(false);
@@ -72,6 +74,7 @@ const FileUpload = ({
       showToast('삭제할 파일이 없습니다.', 'error');
       return;
     }
+    onFileRemove();
     setUploadedFileUrl(null);
     setSelectedFileName(null);
     if (fileInputRef.current) {

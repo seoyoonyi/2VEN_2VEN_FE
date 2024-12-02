@@ -69,6 +69,7 @@ export interface StrategyDetailsData {
   isPosted: string;
   isApproved: string;
   strategyProposalLink: string | null;
+  strategyProposalFileTitle: string | null;
 }
 
 // 전략 수정 조회
