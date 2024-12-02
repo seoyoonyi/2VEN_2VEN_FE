@@ -72,12 +72,34 @@ const InvestorMyPage = () => {
     });
   };
 
-  const handleUpdateFolder = () => {
+  const handleUpdateFolder = (folderId: number) => {
     openContentModal({
       title: '폴더 수정',
-      content: <FolderModal />,
+      content: (
+        <FolderModal
+          onChangeFolderName={(value) => {
+            folderName = value;
+          }}
+        />
+      ),
       onAction: () => {
-        showToast('폴더 수정이 완료되었습니다.');
+        if (!folderName.trim()) {
+          showToast('폴더명을 입력해주세요.', 'error');
+          return false;
+        }
+
+        updateFolder(
+          { folderName, folderId },
+          {
+            onSuccess: () => {
+              showToast('폴더명 수정이 완료되었습니다.');
+            },
+            onError: () => {
+              showToast('폴더명 수정에 실패했습니다.', 'error');
+            },
+          }
+        );
+
         return true;
       },
     });
