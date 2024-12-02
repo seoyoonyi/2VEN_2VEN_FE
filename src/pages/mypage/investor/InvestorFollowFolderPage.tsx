@@ -72,6 +72,7 @@ const InvestorFollowFolderPage = () => {
       onAction: () => {
         console.log('폴더 이동');
         showToast('폴더 이동이 완료되었습니다.');
+        return true;
       },
     });
   };
@@ -88,6 +89,7 @@ const InvestorFollowFolderPage = () => {
       onClick: () => {
         console.log('전략 언팔로우');
         showToast('전략을 언팔로우했습니다.');
+        return true;
       },
     },
   ];

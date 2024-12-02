@@ -101,6 +101,7 @@ const InvestorMyPage = () => {
       content: <FolderModal />,
       onAction: () => {
         showToast('폴더 추가가 완료되었습니다.');
+        return true;
       },
     });
   };
@@ -111,6 +112,7 @@ const InvestorMyPage = () => {
       content: <FolderModal />,
       onAction: () => {
         showToast('폴더 수정이 완료되었습니다.');
+        return true;
       },
     });
   };
@@ -123,6 +125,7 @@ const InvestorMyPage = () => {
       actionButton: '삭제',
       onAction: () => {
         showToast('폴더 삭제가 완료되었습니다.');
+        return true;
       },
     });
   };

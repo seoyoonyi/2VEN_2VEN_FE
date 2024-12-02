@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
+import Toast from '@/components/common/Toast';
 import ChartSection from '@/components/page/strategy-detail/chart/ChartSection';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
 import IconTagSection from '@/components/page/strategy-detail/IconTagSection';
@@ -30,6 +31,7 @@ import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
 import useStatistics from '@/hooks/queries/useStatistics';
 import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { UserRole } from '@/types/route';
 import { StatisticsProps } from '@/types/strategyDetail';
@@ -56,6 +58,7 @@ const StrategyDetailPage = () => {
   const { data: approveState } = useFetchApproveState(Number(strategyId), role) || '';
   const isApproved = dailyAnalysis?.length >= 3 || approveState?.isApproved === 'N';
   const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
+  const { isToastVisible, hideToast, message, type } = useToastStore();
 
   const statisticsTableData = (
     mapping: { label: string; key: string }[],
@@ -214,6 +217,9 @@ const StrategyDetailPage = () => {
         <ReviewSection />
       </div>
       <Modal />
+      {isToastVisible && (
+        <Toast message={message} type={type} isVisible={isToastVisible} onClose={hideToast} />
+      )}
     </div>
   );
 };

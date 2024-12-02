@@ -7,7 +7,7 @@ import { fetchUpdateStrategy } from '@/api/strategy';
 import PageHeader from '@/components/common/PageHeader';
 import StrategyForm from '@/components/page/strategy/StrategyForm';
 import theme from '@/styles/theme';
-import { StrategyDetailsData } from '@/types/strategy';
+import { StrategyDetailsData, Requirements } from '@/types/strategy';
 
 const desc = [
   {
@@ -19,6 +19,7 @@ const desc = [
 const StrategyEditPage = () => {
   const { strategyId } = useParams<{ strategyId: string }>();
   const [strategyData, setStrategyData] = useState<StrategyDetailsData | undefined>(undefined);
+  const [requirements, setRequirements] = useState<Requirements | undefined>(undefined);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,8 +29,9 @@ const StrategyEditPage = () => {
       }
 
       try {
-        const data = await fetchUpdateStrategy(strategyId);
+        const { data, requirements } = await fetchUpdateStrategy(strategyId);
         setStrategyData(data);
+        setRequirements(requirements);
       } catch (error) {
         console.error('전략 수정 조회 이상', error);
       }
@@ -42,7 +44,11 @@ const StrategyEditPage = () => {
     <div>
       <PageHeader title='전략수정' desc={desc} icon />
       <div css={createContainerStyle}>
-        <StrategyForm strategyDetailData={strategyData} isEditMode={true} />
+        <StrategyForm
+          strategyDetailData={strategyData}
+          requirements={requirements}
+          isEditMode={true}
+        />
       </div>
     </div>
   );

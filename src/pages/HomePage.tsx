@@ -124,9 +124,13 @@ const HomePage = () => {
               <p css={subTextStyle}>관심 전략의 레코드가 매일매일 업데이트됩니다</p>
             </div>
             <div css={buttonGroupStyle}>
-              <Button variant='primary' size='xl' width={208} onClick={handleSignUpClick}>
-                투자자 가입하기
-              </Button>
+              {!user && ( // user가 null일 때만 버튼 표시
+                <>
+                  <Button variant='primary' size='xl' width={208} onClick={handleSignUpClick}>
+                    투자자 가입하기
+                  </Button>
+                </>
+              )}
               <Button variant='secondary' size='xl' width={208} onClick={handleStrategyListClick}>
                 전략 랭킹 보기
               </Button>
@@ -206,9 +210,13 @@ const HomePage = () => {
                 <p css={subTextStyle}>투자전략 분석과 투자자 매칭서비스를 제공해드립니다</p>
               </div>
               <div css={buttonGroupStyle}>
-                <Button variant='primary' size='xl' width={208} onClick={handleSignUpClick}>
-                  트레이더 가입하기
-                </Button>
+                {!user && ( // user가 null일 때만 버튼 표시
+                  <>
+                    <Button variant='primary' size='xl' width={208} onClick={handleSignUpClick}>
+                      트레이더 가입하기
+                    </Button>
+                  </>
+                )}
                 <Button variant='secondary' size='xl' width={208} onClick={handleTraderListClick}>
                   트레이더 목록보기
                 </Button>
