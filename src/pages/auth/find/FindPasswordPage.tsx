@@ -96,7 +96,7 @@ const FindPasswordPage = () => {
       {
         onSuccess: (response) => {
           if (response.status === 'success') {
-            navigate(ROUTES.AUTH.FIND.PASSWORD_RESET, { replace: true });
+            navigate(ROUTES.AUTH.FIND.PASSWORD_RESET, { replace: true, state: { email } });
           } else {
             setErrorMessage('인증에 실패했습니다. 다시 시도해주세요.');
           }
