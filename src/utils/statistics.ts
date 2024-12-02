@@ -15,3 +15,10 @@ export const formatValue = (key: string, value: string | number) => {
     return value;
   }
 };
+
+// +-숫자 형식인지 확인
+export const isValidInputNumber = (value: string | number): boolean => {
+  const sanitizedValue = String(value).trim();
+  if (/[^-+0-9]/g.test(sanitizedValue)) return false;
+  return !isNaN(Number(sanitizedValue));
+};

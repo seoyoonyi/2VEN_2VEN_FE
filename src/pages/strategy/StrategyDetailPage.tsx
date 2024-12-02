@@ -164,9 +164,9 @@ const StrategyDetailPage = () => {
             <IconTagSection imgs={imgTest} />
             <StrategyTitleSection
               title={strategy?.strategyTitle}
-              traderId={strategy?.traderId}
-              traderName={strategy?.traderName}
-              imgUrl={strategy?.traderImage}
+              traderId={strategy?.memberId}
+              traderName={strategy?.nickname}
+              imgUrl={strategy?.profilePath}
               date={formatDate(strategy?.writedAt || '', 'withDayTime')}
               followers={strategy?.followersCount}
               minimumInvestment={strategy?.minInvestmentAmount}

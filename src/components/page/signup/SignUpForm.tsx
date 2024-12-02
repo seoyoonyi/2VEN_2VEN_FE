@@ -44,7 +44,7 @@ const SignUpForm = () => {
     },
   });
 
-  const { mutate: verifySignupCode } = useSignupVerification();
+  const { mutate: verifyEmailCode } = useSignupVerification();
 
   const { nickname, nicknameMessage, actions } = useSignupStore();
   const { nicknameCheck, handleNicknameCheck } = useNicknameValidation();
@@ -144,12 +144,13 @@ const SignUpForm = () => {
       sessionId: document.cookie, // 현재 쿠키 확인
     });
 
-    verifySignupCode(
+    verifyEmailCode(
       { email, verificationCode },
       {
         onSuccess: (response) => {
           if (response.status === 'success') {
             console.log('야호! 인증 성공!');
+            setVerifyErrorMessage('인증에 성공했습니다.');
           } else {
             setVerifyErrorMessage('인증에 실패했습니다. 다시 시도해주세요.');
           }
@@ -216,7 +217,16 @@ const SignUpForm = () => {
               확인
             </Button>
           </form>
-          {verifyErrorMessage && <p css={messageStyle}>{verifyErrorMessage}</p>}
+          {verifyErrorMessage && (
+            <p
+              css={[
+                messageStyle,
+                verifyErrorMessage.includes('인증에 성공') && successMessageStyle,
+              ]}
+            >
+              {verifyErrorMessage}
+            </p>
+          )}
         </div>
       </div>
       <div css={inputGroupStyle}>
