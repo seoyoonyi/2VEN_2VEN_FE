@@ -231,3 +231,20 @@ export const fetchApproveStrategy = async (strategyId: number, authRole: UserRol
     throw error;
   }
 };
+
+//전략 운용 종료
+export const fetchEndStrategey = async (strategyId: number, authRole: UserRole) => {
+  try {
+    const req = await apiClient.patch(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/termination`,
+      {
+        headers: {
+          auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to fetch request strategy terminated', error);
+  }
+};

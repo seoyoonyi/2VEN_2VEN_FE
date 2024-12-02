@@ -22,6 +22,7 @@ import { monthlyAttribues, dailyAttribues, statisticsMapping } from '@/constants
 import {
   useStrategyDetailApprove,
   useStrategyDetailDelete,
+  useStrategyDetailTerminate,
 } from '@/hooks/mutations/useStrategyDetailMutation';
 import { useFetchApproveState } from '@/hooks/queries/useFetchApprove';
 import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
@@ -49,10 +50,12 @@ const StrategyDetailPage = () => {
   const { statistics, writedAt } = useStatistics(Number(strategyId));
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { mutate: approveStrategy } = useStrategyDetailApprove();
+  const { mutate: terminateStrategy } = useStrategyDetailTerminate();
   const { openModal } = useModalStore();
   const { dailyAnalysis } = useFetchDailyAnalysis(Number(strategyId), 0, 5);
   const { data: approveState } = useFetchApproveState(Number(strategyId), role) || '';
   const isApproved = dailyAnalysis?.length >= 3 || approveState?.isApproved === 'N';
+  const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
 
   const statisticsTableData = (
     mapping: { label: string; key: string }[],
@@ -129,13 +132,27 @@ const StrategyDetailPage = () => {
     });
   };
 
+  const handleDetailEnd = (id: number, role: UserRole) => {
+    openModal({
+      type: 'confirm',
+      title: '운용종료',
+      desc: '전략 운용 종료 시 수정 및 삭제가 불가능합니다.',
+      onAction: () => {
+        if (role && id) {
+          terminateStrategy({ strategyId: id, role });
+        }
+      },
+    });
+  };
+
   if (!strategy) {
     return <Loader />;
   }
 
   return (
     <div css={containerStyle}>
-      {strategy?.isApproved !== 'P' &&
+      {(role === 'ROLE_ADMIN' || role === 'ROLE_TRADER') &&
+        strategy?.isApproved !== 'P' &&
         approveState?.isApproved === 'N' &&
         strategy?.isApproved === 'N' && (
           <ReasonItem
@@ -154,10 +171,12 @@ const StrategyDetailPage = () => {
               traderId={strategy?.traderId || ''}
               isStrategyApproved={strategy?.isApproved}
               isApprovedState={isApproved}
+              isTerminated={isTerminated}
               onApproval={() => {
                 handleApproval(strategy.strategyId, role);
               }}
               onDelete={() => handleDeleteDetail(strategy.strategyId)}
+              onEnd={() => handleDetailEnd(strategy.strategyId, role)}
             />
             <IconTagSection imgs={imgTest} />
             <StrategyTitleSection

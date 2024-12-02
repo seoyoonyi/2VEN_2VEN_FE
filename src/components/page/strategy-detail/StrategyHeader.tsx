@@ -17,7 +17,9 @@ interface StrategyHeaderProps {
   traderId: string;
   isStrategyApproved: string;
   isApprovedState: boolean;
+  isTerminated: boolean;
   onDelete: (id: number) => void;
+  onEnd: () => void;
   onApproval: () => void;
 }
 
@@ -27,6 +29,8 @@ export const StrategyHeader = ({
   traderId,
   isStrategyApproved,
   isApprovedState,
+  isTerminated,
+  onEnd,
   onDelete,
   onApproval,
 }: StrategyHeaderProps) => {
@@ -64,7 +68,6 @@ export const StrategyHeader = ({
     }
   };
 
-  //TODO:승인요청하고 바로 전략대기로 안바뀜 승인요청 후 기본 정보 다시 가져오게 쿼리 넣어야하나
   return (
     <div css={actionAreaStyle}>
       <button
@@ -76,26 +79,30 @@ export const StrategyHeader = ({
       </button>
       {userRole === 'ROLE_ADMIN' || (userRole === 'ROLE_TRADER' && user?.memberId === traderId) ? ( // 트레이더 전용 버튼
         <div css={buttonAreaStyle}>
-          <Button size='xs' variant='secondaryGray' width={90} onClick={() => onDelete(id)}>
-            삭제
-          </Button>
-          <Button
-            size='xs'
-            variant='neutral'
-            width={90}
-            onClick={() => {
-              handleMoveEditPage(String(id));
-            }}
-          >
-            수정
-          </Button>
+          {!isTerminated && (
+            <>
+              <Button size='xs' variant='secondaryGray' width={90} onClick={() => onDelete(id)}>
+                삭제
+              </Button>
+              <Button
+                size='xs'
+                variant='neutral'
+                width={90}
+                onClick={() => {
+                  handleMoveEditPage(String(id));
+                }}
+              >
+                수정
+              </Button>
+            </>
+          )}
           {isStrategyApproved === 'P' ? (
             <Button size='xs' width={120} disabled>
               승인대기
             </Button>
           ) : isStrategyApproved === 'Y' ? (
-            <Button size='xs' width={120} onClick={() => {}} disabled={!isApprovedState}>
-              전략종료
+            <Button size='xs' width={120} onClick={onEnd} disabled={isTerminated}>
+              운용종료
             </Button>
           ) : (
             <Button size='xs' width={120} onClick={onApproval} disabled={!isApprovedState}>
