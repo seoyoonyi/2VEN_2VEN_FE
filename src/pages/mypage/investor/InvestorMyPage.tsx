@@ -10,7 +10,11 @@ import FolderHeader from '@/components/page/mypage-investor/myfolder/FolderHeade
 import FolderList from '@/components/page/mypage-investor/myfolder/FolderList';
 import FolderModal from '@/components/page/mypage-investor/myfolder/FolderModal';
 import { ROUTES } from '@/constants/routes';
-import { useSubmitFolder } from '@/hooks/mutations/useFollwingStrategyMutation';
+import {
+  useDeleteFolder,
+  useSubmitFolder,
+  useUpdateFolderName,
+} from '@/hooks/mutations/useFollwingStrategyMutation';
 import { useFolderList } from '@/hooks/queries/useFetchFolderList';
 import { useAuthStore } from '@/stores/authStore';
 import useContentModalStore from '@/stores/contentModalStore';
@@ -24,15 +28,17 @@ const InvestorMyPage = () => {
   const { isToastVisible, showToast, hideToast, message, type } = useToastStore();
   const navigate = useNavigate();
   const { token } = useAuthStore();
-  console.log(token);
+  // console.log(token);
 
   const { data, isLoading, isError } = useFolderList();
-  const { mutate } = useSubmitFolder();
+  const { mutate: submitFolder } = useSubmitFolder();
+  const { mutate: updateFolder } = useUpdateFolderName();
+  const { mutate: deleteFolder } = useDeleteFolder();
 
   let folderName = '';
 
-  const handleFolderList = (folderId: string) => {
-    navigate(ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(folderId));
+  const handleFolderList = (folderId: number) => {
+    navigate(ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(String(folderId)));
     window.scrollTo(0, 0);
   };
 
@@ -52,7 +58,7 @@ const InvestorMyPage = () => {
           return false;
         }
 
-        mutate(folderName, {
+        submitFolder(folderName, {
           onSuccess: () => {
             showToast('폴더 추가가 완료되었습니다.');
           },
@@ -77,14 +83,22 @@ const InvestorMyPage = () => {
     });
   };
 
-  const handleDeleteFolder = () => {
+  const handleDeleteFolder = (folderId: number) => {
     openModal({
       type: 'warning',
       title: '폴더 삭제',
       desc: `폴더를 삭제하면 내부 전략들도 삭제됩니다.`,
       actionButton: '삭제',
       onAction: () => {
-        showToast('폴더 삭제가 완료되었습니다.');
+        deleteFolder(folderId, {
+          onSuccess: () => {
+            showToast('폴더 삭제가 완료되었습니다.');
+          },
+          onError: () => {
+            showToast('폴더 삭제에 실패했습니다.', 'error');
+          },
+        });
+
         return true;
       },
     });
