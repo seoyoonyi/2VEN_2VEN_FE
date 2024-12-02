@@ -252,11 +252,11 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
     role: UserRole
   ) => {
     const file = e.target.files?.[0];
-    if (file) {
-      uploadExcel({ strategyId: strategyId as number, file, role: role as UserRole });
-    } else {
+    if (!file) {
       showToast('엑셀 파일을 선택해주세요', 'error');
+      return;
     }
+    uploadExcel({ strategyId: strategyId as number, file, role: role as UserRole });
   };
 
   useEffect(() => {
