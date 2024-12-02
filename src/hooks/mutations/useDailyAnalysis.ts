@@ -82,6 +82,7 @@ export const useUploadExcel = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
+      queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
     },
   });
 };
