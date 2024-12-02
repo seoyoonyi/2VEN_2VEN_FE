@@ -3,6 +3,7 @@ export const API_ENDPOINTS = {
   ADMIN: {
     TRADING_TYPES: '/api/admin/trading-types',
     STOCK_TYPES: '/api/admin/inv-asset-classes',
+    APPROVAL_REQUESTS: '/api/admin/approval-requests',
   },
   AUTH: {
     SIGNIN: '/api/members/login', // 로그인

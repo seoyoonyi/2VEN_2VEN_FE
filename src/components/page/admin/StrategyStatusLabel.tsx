@@ -5,10 +5,9 @@ import theme from '@/styles/theme';
 const STATUS_LABELS: Record<string, string> = {
   STRATEGY_OPERATION_UNDER_MANAGEMENT: '운용 중',
   STRATEGY_OPERATION_COMPLETED: '운용 종료',
-  STRATEGY_OPERATION_PENDING: '운용 대기',
 };
 
-const strategyStatusLabel = ({ status }: { status: string }) => (
+const StrategyStatusLabel = ({ status }: { status: string }) => (
   <div css={getStatusStyle(status)}>{STATUS_LABELS[status] || '알 수 없는 상태'}</div>
 );
 
@@ -49,17 +48,8 @@ const getStatusStyle = (status: string) => {
         display: flex;
         align-items: center;
         ${theme.textStyle.captions.caption1};
-
-        &::before {
-          content: '';
-          width: 8px;
-          height: 8px;
-          background-color: ${theme.colors.gray[200]};
-          border-radius: 50%;
-          margin-right: 6px;
-        }
       `;
   }
 };
 
-export default strategyStatusLabel;
+export default StrategyStatusLabel;
