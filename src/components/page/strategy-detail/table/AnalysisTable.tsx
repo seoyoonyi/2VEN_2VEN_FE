@@ -10,11 +10,11 @@ import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 import { UserRole } from '@/types/route';
 
-export interface AnalysisAttribuesProps {
+export interface AnalysisAttributesProps {
   title: string;
 }
 
-interface NormalizedAnalysProps {
+interface NormalizedAnalysisProps {
   dataId: number;
   date: string;
   principal: number;
@@ -27,11 +27,11 @@ interface NormalizedAnalysProps {
 
 export interface AnalysisProps {
   mode: 'write' | 'read';
-  attributes: AnalysisAttribuesProps[];
+  attributes: AnalysisAttributesProps[];
   role?: UserRole;
   userId?: string;
   strategyId?: number;
-  analysis?: NormalizedAnalysProps[];
+  analysis?: NormalizedAnalysisProps[];
   selectedItems?: number[];
   selectAll?: boolean;
   onUpload?: () => void;
