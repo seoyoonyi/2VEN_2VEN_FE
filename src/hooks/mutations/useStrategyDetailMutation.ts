@@ -22,6 +22,7 @@ export const useStrategyDetailApprove = () => {
       fetchPostApproveStrategy(strategyId, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['approveStrategy'] });
+      queryClient.invalidateQueries({ queryKey: ['strategyDetail'] });
     },
   });
 };

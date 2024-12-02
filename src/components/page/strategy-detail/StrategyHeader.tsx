@@ -1,11 +1,13 @@
 import { css } from '@emotion/react';
 import { GiCircle } from 'react-icons/gi';
 import { MdOutlineShare } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
+import Toast from '@/components/common/Toast';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/stores/authStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { UserRole } from '@/types/route';
 
@@ -29,8 +31,10 @@ export const StrategyHeader = ({
   onApproval,
 }: StrategyHeaderProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuthStore();
   const userRole = user?.role as UserRole; // 유저 지정
+  const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
 
   const handleMoveEditPage = (id: string) => {
     navigate(`${ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(id)}`);
@@ -50,9 +54,23 @@ export const StrategyHeader = ({
     navigate(`${ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS}`);
   };
 
+  const handleCopy = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('클립보드에 링크가 복사되었습니다!', 'basic');
+    } catch (error) {
+      console.error('failed to copy currentPage');
+      showToast('링크 복사에 실패했습니다.', 'error');
+    }
+  };
+
+  //TODO:승인요청하고 바로 전략대기로 안바뀜 승인요청 후 기본 정보 다시 가져오게 쿼리 넣어야하나
   return (
     <div css={actionAreaStyle}>
-      <button css={shareButtonStyle}>
+      <button
+        css={shareButtonStyle}
+        onClick={() => handleCopy(`${import.meta.env.VITE_FRONT_URL}${location.pathname}`)}
+      >
         <GiCircle size={40} css={circleStyle} />
         <MdOutlineShare size={16} css={shareStyle} />
       </button>
@@ -109,6 +127,7 @@ export const StrategyHeader = ({
           </Button>
         </div>
       )}
+      <Toast type={type} message={message} onClose={hideToast} isVisible={isToastVisible} />
     </div>
   );
 };

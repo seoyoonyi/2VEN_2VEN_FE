@@ -135,15 +135,16 @@ const StrategyDetailPage = () => {
 
   return (
     <div css={containerStyle}>
-      {(approveState?.isApproved === 'N' && strategy?.isApproved !== 'P') ||
-        (strategy?.isApproved !== 'Y' && (
+      {strategy?.isApproved !== 'P' &&
+        approveState?.isApproved === 'N' &&
+        strategy?.isApproved === 'N' && (
           <ReasonItem
             title='미승인 이유는 이렇습니다'
             content={approveState?.rejectionReason}
             admin={approveState?.managerNickname}
             adminImg={approveState?.profileImg}
           />
-        ))}
+        )}
       <div css={contentStyle}>
         <div css={contentWrapper}>
           <div key={strategy?.strategyId}>
