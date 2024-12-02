@@ -22,7 +22,7 @@ interface InquiryCreateFormProps {
 }
 
 // const InquiryCreateForm = ({ strategyTitle, strategyId, traderId }: InquiryCreateFormProps) => {
-const InquiryCreateForm = ({ strategyTitle, strategyId }: InquiryCreateFormProps) => {
+const InquiryCreateForm = ({ strategyTitle, strategyId, traderId }: InquiryCreateFormProps) => {
   const { openModal } = useModalStore();
   const { isToastVisible, hideToast, message, showToast } = useToastStore();
 
@@ -38,13 +38,12 @@ const InquiryCreateForm = ({ strategyTitle, strategyId }: InquiryCreateFormProps
   const handleCreateSubmit = () => {
     if (!title || !content || !investmentAmount || !investmentDate || !user?.memberId) {
       showToast('모든필드를 입력해주세요.', 'error');
-
       return;
     }
 
     const payload = {
       investorId: user.memberId, // 로그인된 사용자의 ID
-      traderId: '71-88RZ_QQ65hMGknyWKLA', // 지금은 트레이더ID 값 고정
+      traderId,
       strategyId: Number(strategyId),
       strategyName: strategyTitle,
       investmentAmount: Number(investmentAmount),
@@ -53,6 +52,8 @@ const InquiryCreateForm = ({ strategyTitle, strategyId }: InquiryCreateFormProps
       content,
       status: 'PENDING' as const,
     };
+
+    console.log('traderId:', traderId);
 
     openModal({
       type: 'confirm',
