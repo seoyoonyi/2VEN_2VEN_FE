@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { MdOutlineArrowForwardIos } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
+import Loader from '@/components/common/Loading';
 import TraderList from '@/components/common/TraderList';
 import SearchedStrategyList from '@/components/page/search/SearchedStrategyList';
 import { ROUTES } from '@/constants/routes';
@@ -12,11 +13,15 @@ import { mapToStrategyData, mapToTraderData } from '@/utils/mappers';
 
 const SearchTotalResultsPage = () => {
   const { keyword } = useSearchStore(); // 검색어 상태
-  const { data: traderResults } = useSearchTraders(keyword); // 트레이더 검색 결과
-  const { data: strategyResults } = useSearchStrategies(keyword); // 전략 검색 결과
+  const { data: traderResults, isLoading: isLoadingTraders } = useSearchTraders(keyword); // 트레이더 검색 결과
+  const { data: strategyResults, isLoading: isLoadingStrategies } = useSearchStrategies(keyword); // 전략 검색 결과
 
   const mappedTraders = traderResults?.data.map(mapToTraderData) ?? [];
   const mappedStrategies = strategyResults?.data.map(mapToStrategyData) ?? [];
+
+  if (isLoadingTraders || isLoadingStrategies) {
+    return <Loader />;
+  }
   return (
     <div>
       <h2 css={pageHeadingStyle}>
