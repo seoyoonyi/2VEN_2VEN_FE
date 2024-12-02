@@ -262,6 +262,11 @@ const tableContainerStyle = css`
     tbody {
       tr {
         border-bottom: 1px solid ${theme.colors.gray[200]};
+
+        &:hover {
+          background-color: ${theme.colors.teal[50]};
+          cursor: pointer;
+        }
       }
       td {
         height: 100px;
