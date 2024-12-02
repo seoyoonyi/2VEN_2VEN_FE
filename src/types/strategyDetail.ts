@@ -88,3 +88,9 @@ export interface FileUploadOptions {
   file: File;
   authType: AuthType;
 }
+
+export interface FileDeletedResponse {
+  fileId: string;
+  strategyId: string;
+  message: string;
+}

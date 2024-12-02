@@ -13,6 +13,7 @@ import PageHeader from '@/components/common/PageHeader';
 import Pagination from '@/components/common/Pagination';
 import Select from '@/components/common/Select';
 import StrategyList from '@/components/common/StrategyList';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
 const cycles = [
@@ -87,6 +88,7 @@ const StrategyListPage = () => {
   const startRank = (page - 1) * limit + 1;
 
   const navigate = useNavigate();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -115,16 +117,18 @@ const StrategyListPage = () => {
               type='sm'
               width='160px'
             />
-            <Button
-              variant='primary'
-              size='xs'
-              customStyle={css`
-                padding: 20px 32px;
-              `}
-              onClick={() => navigate('/mypage/trader/strategies/create')}
-            >
-              전략등록
-            </Button>
+            {user?.role === 'ROLE_TRADER' && (
+              <Button
+                variant='primary'
+                size='xs'
+                customStyle={css`
+                  padding: 20px 32px;
+                `}
+                onClick={() => navigate('/mypage/trader/strategies/create')}
+              >
+                전략등록
+              </Button>
+            )}
           </div>
         </div>
         <div css={listContainerStyle}>
