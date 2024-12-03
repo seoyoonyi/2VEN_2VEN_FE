@@ -62,15 +62,14 @@ const AccountVerify = ({ strategyId, isSelfed, role }: AccountProps) => {
         e.target.value = '';
         return;
       }
-      if (isValidDateFormat(imgFiles.name)) {
-        uploadAccount({ strategyId, authRole: role as UserRole, fileItem: imgFiles });
-        showToast('실계좌 이미지가 등록되었습니다.');
-        e.target.value = '';
-      } else {
+      if (!isValidDateFormat(imgFiles.name)) {
         showToast('파일명은 YYYY.MM.DD 형식으로 입력하세요.', 'error');
         e.target.value = '';
         return;
       }
+      uploadAccount({ strategyId, authRole: role as UserRole, fileItem: imgFiles });
+      showToast('실계좌 이미지가 등록되었습니다.');
+      e.target.value = '';
     }
   };
 
