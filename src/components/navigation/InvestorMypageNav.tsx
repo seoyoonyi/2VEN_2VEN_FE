@@ -18,7 +18,7 @@ const InvestorMypageNav = () => {
   const { user, clearAuth } = useAuthStore();
   const { data: profileImageData } = useProfileImage(user?.memberId || ''); // 프로필 이미지 가져오기
   const imageSrc = profileImageData?.fileUrl;
-  const { data: profileData, isLoading } = useSidebarProfileQuery();
+  const { data: profileData } = useSidebarProfileQuery();
 
   const [userImage] = useState(
     'https://i.pinimg.com/474x/78/04/d7/7804d73be61366364997b925a613f438.jpg'

@@ -18,7 +18,7 @@ const TraderMyPageNav = () => {
   const { user, clearAuth } = useAuthStore();
   const { data: profileImageData } = useProfileImage(user?.memberId || ''); // 프로필 이미지 가져오기
   const imageSrc = profileImageData?.fileUrl;
-  const { data: profileData, isLoading } = useSidebarProfileQuery();
+  const { data: profileData } = useSidebarProfileQuery();
   const [userImage] = useState(
     'https://i.pinimg.com/736x/2b/4c/91/2b4c913711c4a8be893aa873b3b23193.jpg'
   );
