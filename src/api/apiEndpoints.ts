@@ -45,4 +45,8 @@ export const API_ENDPOINTS = {
     TRADERS: '/api/traders/search', // 트레이더 검색
     STRATEGIES: '/api/strategies/search', // 전략 검색
   },
+  // 개인정보관리(프로필)
+  MEMBERS: {
+    SIDEBAR_PROFILE: (memberId: string) => `/api/members/${memberId}/sidebar-profile`, // 사이드바 프로필 정보 조회
+  },
 };
