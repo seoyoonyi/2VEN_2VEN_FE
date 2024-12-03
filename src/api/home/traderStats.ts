@@ -10,7 +10,6 @@ export const fetchTraderStats = async (): Promise<TraderStatsParams> => {
   try {
     const res = await apiClient.get<TraderStatsParams>(API_ENDPOINTS.STRATEGY.TRADER_STATS);
 
-    console.log('API Response:', res.data);
     return res.data;
   } catch (error) {
     console.error('Failed to fetch trader stats:', error);

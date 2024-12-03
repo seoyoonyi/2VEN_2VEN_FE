@@ -1,98 +1,38 @@
 import { css } from '@emotion/react';
 import { MdKeyboardArrowRight, MdArrowForward } from 'react-icons/md';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import TraderUserImage3 from '@/assets/images/ani_trader.png';
 import TraderUserImage1 from '@/assets/images/apt_trader.png';
 import EverageMetricsChartImage from '@/assets/images/everage_metrics_chart.png';
 import InvestorMainImage from '@/assets/images/investor_main.png';
 import TraderUserImage2 from '@/assets/images/nimo_trader.png';
-import SMScoreGraphImage from '@/assets/images/SMScore_graph.png';
 import TraderMainImage from '@/assets/images/trader_main.png';
 import Button from '@/components/common/Button';
 import Loader from '@/components/common/Loading';
+import TopStrategyList from '@/components/page/home/TopStrategyList';
 import TraderStats from '@/components/page/home/TraderStats';
 import { ROUTES } from '@/constants/routes';
 import { useFetchStrategyTraderCount } from '@/hooks/queries/useFetchStrategyTraderCount';
-import DatePickerTest from '@/pages/test-page/DatepickerTestPage';
+import { useFetchTopStrategy } from '@/hooks/queries/useFetchTopStrategy';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { user } = useAuthStore(); // store에서 user 정보 가져오기
-  const { data, isLoading, isError } = useFetchStrategyTraderCount();
+  const { user } = useAuthStore();
+  // 훅 호출
+  const { data: strategyData, isLoading: isLoadingStrategy } = useFetchStrategyTraderCount();
+  const { data: rankingData, isLoading: isLoadingRanking } = useFetchTopStrategy();
 
-  // 트레이더 및 전략 수 표시를 위한 데이터 처리
-  const traderCount = Number(data?.traderCnt ?? 0);
-  const strategyCount = Number(data?.strategyCnt ?? 0);
-
-  console.log('HomePage Data:', { traderCount, strategyCount });
-
-  if (isLoading) {
+  // 로딩 처리
+  if (isLoadingStrategy || isLoadingRanking) {
     return <Loader />;
   }
-  if (isError) {
-    console.error('Error loading data...');
-  }
 
-  const rankingData = [
-    {
-      rank: 1,
-      strategyId: 101,
-      strategyName: '따라사는 전략',
-      traderNickname: 'MACS',
-      traderImage: TraderUserImage1,
-      graph: SMScoreGraphImage,
-      dailyChange: '0%',
-      cumulativeReturn: '37%',
-      smScore: 85, // SM SCORE 추가
-    },
-    {
-      rank: 2,
-      strategyId: 102,
-      strategyName: 'EFT레버리지/인버스',
-      traderNickname: 'NIMO',
-      traderImage: TraderUserImage2,
-      graph: SMScoreGraphImage,
-      dailyChange: '1%',
-      cumulativeReturn: '40%',
-      smScore: 82,
-    },
-    {
-      rank: 3,
-      strategyId: 103,
-      strategyName: '인플레이션 방어 전략',
-      traderNickname: 'AniHelp',
-      traderImage: TraderUserImage3,
-      graph: SMScoreGraphImage,
-      dailyChange: '-1%',
-      cumulativeReturn: '33%',
-      smScore: 78,
-    },
-    {
-      rank: 4,
-      strategyId: 104,
-      strategyName: 'S&P500 추종 전략',
-      traderNickname: 'AptHunter',
-      traderImage: TraderUserImage1,
-      graph: SMScoreGraphImage,
-      dailyChange: '2%',
-      cumulativeReturn: '50%',
-      smScore: 75,
-    },
-    {
-      rank: 5,
-      strategyId: 105,
-      strategyName: '유동성 높은 ETF 전략',
-      traderNickname: 'SmartInvestor',
-      traderImage: TraderUserImage2,
-      graph: SMScoreGraphImage,
-      dailyChange: '0%',
-      cumulativeReturn: '45%',
-      smScore: 70,
-    },
-  ];
+  // 트레이더 및 전략 수 표시를 위한 데이터 처리
+  const traderCount = Number(strategyData?.traderCnt ?? 0);
+  const strategyCount = Number(strategyData?.strategyCnt ?? 0);
 
   const handleSignUpClick = () => {
     navigate(ROUTES.AUTH.SIGNUP.SELECT_TYPE);
@@ -108,7 +48,6 @@ const HomePage = () => {
 
   return (
     <>
-      <DatePickerTest />
       {/* 투자자Main */}
       <section css={investorSectionStyle}>
         <div css={contentStyle}>
@@ -230,47 +169,7 @@ const HomePage = () => {
               css={metricsImageStyle}
             />
             {/* SMScore */}
-            <div css={scoreContentStyle}>
-              <div>
-                <h1 css={scoreTitleStyle}>SM SCORE 랭킹 TOP 5</h1>
-              </div>
-              <div css={tableStyle}>
-                <div css={headerStyle}>
-                  <div>순위</div>
-                  <div>전략명</div>
-                  <div>그래프</div>
-                  <div>전일대비</div>
-                  <div>누적수익률</div>
-                </div>
-                {rankingData.map((data) => (
-                  <Link to={`/strategies/${data.strategyId}`} key={data.rank} css={rowStyle}>
-                    <div css={rankStyle}>{data.rank}</div>
-                    <div css={strategyStyle}>
-                      <div css={strategyTitleStyle}>{data.strategyName}</div>
-                      <div css={traderInfoStyle}>
-                        <img
-                          src={data.traderImage}
-                          alt={`${data.traderNickname} 이미지`}
-                          css={traderImageStyle}
-                        />
-                        <span css={traderNicknameStyle}>{data.traderNickname}</span>
-                      </div>
-                    </div>
-                    <div css={graphStyle}>
-                      <img src={data.graph} alt='그래프' />
-                    </div>
-                    <div css={dailyChangeStyle}>
-                      <span className='value'>{data.dailyChange.split('%')[0]}</span>
-                      <span className='percent'>%</span>
-                    </div>
-                    <div css={cumulativeReturnStyle}>
-                      <span className='value'>{data.cumulativeReturn.split('%')[0]}</span>
-                      <span className='percent'>%</span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
+            <TopStrategyList rankingData={rankingData || []} />
           </div>
         </div>
       </section>
@@ -487,127 +386,7 @@ const metricsImageStyle = css`
   width: 100%;
 `;
 
-/*SM Score*/
-const scoreContentStyle = css`
-  max-width: ${theme.layout.width.content};
-  margin: 0 auto;
-`;
-
-const scoreTitleStyle = css`
-  ${theme.textStyle.headings.h1}
-  color: ${theme.colors.gray[900]};
-  text-align: center;
-  padding: 56px;
-`;
-
-const tableStyle = css``;
-
-const headerStyle = css`
-  background-color: ${theme.colors.gray[800]};
-  ${theme.textStyle.subtitles.subtitle3};
-  color: ${theme.colors.main.white};
-  display: grid;
-  height: 56px;
-  grid-template-columns: 64px 378px 378px 160px 160px;
-  align-items: center;
-  text-align: center;
-`;
-
-const rowStyle = css`
-  display: grid;
-  grid-template-columns: 64px 378px 378px 160px 160px;
-  height: 200px;
-  align-items: center;
-  text-align: center;
-  border-bottom: 1px solid ${theme.colors.gray[400]};
-  &:last-child {
-    border-bottom: 0;
-  }
-`;
-
-const rankStyle = css`
-  ${theme.textStyle.headings.h3};
-  color: ${theme.colors.teal[600]};
-  padding: 36px 0;
-`;
-
-const strategyStyle = css`
-  align-items: flex-start;
-  padding: 24px;
-`;
-
-const strategyTitleStyle = css`
-  ${theme.textStyle.headings.h3};
-  color: ${theme.colors.gray[900]};
-  text-align: start;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1; /* 최대 1줄까지만 보여줌 */
-  overflow: hidden; /* 넘치는 글자를 숨김 */
-  text-overflow: ellipsis; /* ... 처리 */
-`;
-
-const traderInfoStyle = css`
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  text-align: center;
-  align-items: center;
-`;
-
-const traderImageStyle = css`
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-`;
-
-const traderNicknameStyle = css`
-  ${theme.textStyle.subtitles.subtitle2};
-  color: ${theme.colors.gray[900]};
-`;
-
-const graphStyle = css`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  img {
-    width: 90%;
-  }
-`;
-
-const dailyChangeStyle = css`
-  color: ${theme.colors.gray[900]};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-
-  .value {
-    ${theme.textStyle.headings.h2};
-  }
-
-  .percent {
-    ${theme.textStyle.headings.h3};
-  }
-`;
-
-const cumulativeReturnStyle = css`
-  color: ${theme.colors.main.red};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-
-  .value {
-    ${theme.textStyle.headings.h2};
-  }
-
-  .percent {
-    ${theme.textStyle.headings.h3};
-  }
-`;
-
+/*마지막섹션*/
 const lastSectionStyle = css`
   position: relative;
   height: 2098px;
