@@ -14,6 +14,7 @@ import SMScoreGraphImage from '@/assets/images/SMScore_graph.png';
 import TraderMainImage from '@/assets/images/trader_main.png';
 import Button from '@/components/common/Button';
 import { ROUTES } from '@/constants/routes';
+import DatePickerTest from '@/pages/test-page/DatepickerTestPage';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
@@ -113,6 +114,7 @@ const HomePage = () => {
 
   return (
     <>
+      <DatePickerTest />
       {/* 투자자Main */}
       <section css={investorSectionStyle}>
         <div css={contentStyle}>
