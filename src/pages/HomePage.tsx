@@ -14,7 +14,6 @@ import Loader from '@/components/common/Loading';
 import TraderStats from '@/components/page/home/TraderStats';
 import { ROUTES } from '@/constants/routes';
 import { useFetchStrategyTraderCount } from '@/hooks/queries/useFetchStrategyTraderCount';
-import DatePickerTest from '@/pages/test-page/DatepickerTestPage';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
@@ -108,7 +107,6 @@ const HomePage = () => {
 
   return (
     <>
-      <DatePickerTest />
       {/* 투자자Main */}
       <section css={investorSectionStyle}>
         <div css={contentStyle}>

@@ -77,34 +77,38 @@ const StrategyList = ({
             <div css={strategyTitleStyle}>{strategy.strategyTitle}</div>
             <div css={iconStyle}>
               <img src={strategy.tradingTypeIcon} alt='매매유형' width={16} />
-              <img src={strategy.cycleIcon} alt='주기' width={16} />
-              {strategy.investmentAssetClassesIcon
+              <img src={strategy.tradingCycleIcon} alt='주기' width={16} />
+              {strategy.investmentAssetClassesIcons
                 ?.slice(0, 2)
                 .map((icon) => <img key={icon} src={icon} alt={icon} height={16} />)}
               <div css={countStyle}>
-                {strategy.investmentAssetClassesIcon.length > 2 && (
-                  <span css={countStyle}>+{strategy.investmentAssetClassesIcon.length - 2}</span>
+                {strategy.investmentAssetClassesIcons.length > 2 && (
+                  <span css={countStyle}>+{strategy.investmentAssetClassesIcons.length - 2}</span>
                 )}
               </div>
             </div>
           </div>
           <div css={graphStyle}>
-            {strategy.analytics_graph ? (
-              <LineChart data={[0, 180, 30, 100, 80, 200]} size='sm' colorTheme='primary' />
+            {strategy.cumulativeProfitLossRateList.length !== 0 ? (
+              <LineChart
+                data={strategy.cumulativeProfitLossRateList}
+                size='sm'
+                colorTheme='primary'
+              />
             ) : (
               '-'
             )}
           </div>
           <div css={yieldStyle}>
-            {strategy.cumulativeReturn !== undefined ? (
+            {strategy.cumulativeProfitLossRate !== undefined ? (
               <>
                 <div>
                   <span>누적</span>
-                  {strategy.cumulativeReturn}%
+                  {strategy.cumulativeProfitLossRate}%
                 </div>
                 <div>
                   <span>최근 1년</span>
-                  {strategy.oneYearReturn}%
+                  {strategy.recentOneYearReturn}%
                 </div>
               </>
             ) : (
@@ -118,8 +122,8 @@ const StrategyList = ({
                 : strategy.mdd.toLocaleString()
               : '-'}
           </div>
-          <div>{strategy.smscore !== undefined ? strategy.smscore : '-'}</div>
-          <div>{strategy.followers_count !== undefined ? strategy.followers_count : '0'}</div>
+          <div>{strategy.smScore !== undefined ? strategy.smScore : '-'}</div>
+          <div>{strategy.followersCount}</div>
           {moreMenu && (
             <DropdownMenu
               isActive={activeDropdown === strategy.strategyId}

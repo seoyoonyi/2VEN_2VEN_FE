@@ -3,11 +3,6 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
-import AnalyticsGraph from '@/assets/images/analytics_graph.png';
-import futureIcon from '@/assets/images/producttype_futures.png';
-import StockIcon from '@/assets/images/producttype_stock.png';
-import TradeTypeHIcon from '@/assets/images/tradetype_H.png';
-import TradeTypePIcon from '@/assets/images/tradetype_P.png';
 import Button from '@/components/common/Button';
 import Loader from '@/components/common/Loading';
 import PageHeader from '@/components/common/PageHeader';
@@ -33,8 +28,6 @@ const StrategyListPage = () => {
   const { user } = useAuthStore();
 
   const { data, isLoading, error } = useFetchStrategyList({
-    tradingCycleId: 1,
-    investmentAssetClassesId: 2,
     page: page - 1,
     pageSize: limit,
   });
