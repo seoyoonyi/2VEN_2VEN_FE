@@ -73,6 +73,35 @@ export const submitStrategyUpdate = async (strategyId: number, payload: Strategy
   }
 };
 
+// 전략 목록
+export const fetchStrategyList = async (params: {
+  tradingCycleId?: number;
+  investmentAssetClassesId?: number;
+  page: number;
+  pageSize: number;
+}) => {
+  try {
+    const res = await apiClient.get(API_ENDPOINTS.STRATEGY.CREATE, {
+      params: {
+        page: params.page,
+        pageSize: params.pageSize,
+        tradingCycleId: params.tradingCycleId,
+        investmentAssetClassesId: params.investmentAssetClassesId,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        Auth: 'trader',
+      },
+    });
+
+    console.log('전략 목록', res.data);
+    return res.data;
+  } catch (error) {
+    console.error('Failed to fetch strategy List data:', error);
+    throw error;
+  }
+};
+
 // 제안서 파일 업로드
 export const uploadProposalFile = async (
   options: FileUploadOptions

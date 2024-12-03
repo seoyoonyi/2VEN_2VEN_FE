@@ -4,15 +4,15 @@ import { Option } from '@/components/common/Select';
 export interface StrategyListData {
   strategyId: number;
   strategyTitle: string;
-  analytics_graph?: string;
+  cumulativeProfitLossRate: number;
+  cumulativeProfitLossRateList: number[];
   tradingTypeIcon: string;
-  cycleIcon: string;
-  investmentAssetClassesIcon: string[];
-  cumulativeReturn?: number;
-  oneYearReturn?: number;
+  tradingCycleIcon: string;
+  investmentAssetClassesIcons: string[];
+  recentOneYearReturn?: number;
   mdd?: number;
-  smscore?: number;
-  followers_count?: number;
+  smScore?: number;
+  followersCount?: number;
 }
 
 // 전략 폼 옵션
