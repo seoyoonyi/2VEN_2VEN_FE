@@ -1,93 +1,68 @@
 import { css } from '@emotion/react';
-import { useNavigate, useParams } from 'react-router-dom';
 
-import { deleteMyInquiry } from '@/api/myInquiry';
-import Modal from '@/components/common/Modal';
-import { ROUTES } from '@/constants/routes';
-import useModalStore from '@/stores/modalStore';
-import useToastStore from '@/stores/toastStore';
+import Avatar from '@/components/common/Avatar';
+import { INQUIRY_MESSAGES } from '@/constants/inquiry';
 import theme from '@/styles/theme';
-import { InquiryDetailData, Status } from '@/types/myinquires';
+import { InquiryDetailData, Status } from '@/types/inquiries';
 
-const Question = ({ data }: { data: InquiryDetailData }) => {
-  const { inquiryId } = useParams<{ inquiryId: string }>();
-  const { openModal } = useModalStore();
-  const { showToast } = useToastStore();
-
-  const navigate = useNavigate();
-
-  const handleDelete = () => {
-    openModal({
-      type: 'warning',
-      title: '문의 삭제',
-      desc: `작성한 문의를 삭제하시겠습니까? \n 삭제 후 복구할 수 없습니다.`,
-      onAction: async () => {
-        if (!inquiryId) return;
-
-        try {
-          await deleteMyInquiry(Number(inquiryId));
-          navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST);
-          showToast('문의 삭제가 완료되었습니다.', 'basic');
-        } catch (error) {
-          console.error('Failed to delete inquiry:', error);
-        }
-      },
-    });
-  };
-
-  return (
-    <div css={questionWrapper}>
-      <header css={questionHeaderWrapper}>
-        <span css={statusStyle(data.status)}>
-          {data.status === 'PENDING' && <span className='dot' />}
-          {data.status === 'PENDING' ? '대기' : '완료'}
-        </span>
-        <h1 css={titleStyle}>{data.title}</h1>
-        <div css={infoWrapper}>
-          <div css={infoStyle}>
-            <img src={data.investorProfileUrl} alt={`${data.investorName}'s profile`} />
-            <h2>{data.investorName}</h2>
-            <span>{data.createdAt.slice(0, 10).replace(/-/g, '.')}</span>
-          </div>
-          {data.status === 'PENDING' && (
-            <div css={editWrapper}>
-              <button
-                type='button'
-                onClick={() => navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.EDIT(inquiryId || ''))}
-              >
-                수정
-              </button>
-              <div></div>
-              <button type='button' onClick={handleDelete}>
-                삭제
-              </button>
-            </div>
-          )}
+const Question = ({
+  data,
+  onDelete,
+  onEdit,
+}: {
+  data: InquiryDetailData;
+  onDelete: () => void;
+  onEdit: () => void;
+}) => (
+  <div css={questionWrapper}>
+    <header css={questionHeaderWrapper}>
+      <span css={statusStyle(data.status)}>
+        {data.status === 'PENDING' && <span className='dot' />}
+        {data.status === 'PENDING' ? '대기' : '완료'}
+      </span>
+      <h1 css={titleStyle}>{data.title || INQUIRY_MESSAGES.DELETED_TITLE}</h1>
+      <div css={infoWrapper}>
+        <div css={infoStyle}>
+          <Avatar src={data.investorProfileUrl} alt={`${data.traderName}'s profile`} size='24' />
+          <h2>{data.investorName || INQUIRY_MESSAGES.NO_INFO}</h2>
+          <span>{data.createdAt?.slice(0, 10).replace(/-/g, '.') || INQUIRY_MESSAGES.NO_INFO}</span>
         </div>
-        <Modal />
-      </header>
+        {data.status === 'PENDING' && (
+          <div css={editWrapper}>
+            <button type='button' onClick={onEdit}>
+              수정
+            </button>
+            <div></div>
+            <button type='button' onClick={onDelete}>
+              삭제
+            </button>
+          </div>
+        )}
+      </div>
+    </header>
 
-      <section css={strategyInfoWrapper}>
+    <section css={strategyInfoWrapper}>
+      <div css={strategyInfoStyle}>
+        <h3>관심전략명</h3>
+        <div>{data.strategyName || INQUIRY_MESSAGES.NO_STRATEGY}</div>
+      </div>
+      <div css={investmentItemStyle}>
         <div css={strategyInfoStyle}>
-          <h3>관심전략명</h3>
-          <div>{data.strategyName}</div>
+          <h3>투자개시금액</h3>
+          <span>{data.investmentAmount?.toLocaleString() || INQUIRY_MESSAGES.NO_INFO}</span>
         </div>
-        <div>
-          <div css={strategyInfoStyle}>
-            <h3>투자개시금액</h3>
-            <span>{data.investmentAmount.toLocaleString()}</span>
-          </div>
-          <div css={strategyInfoStyle}>
-            <h3>투자개시시점</h3>
-            <span>{data.investmentDate.slice(0, 10).replace(/-/g, '.')}</span>
-          </div>
+        <div css={strategyInfoStyle}>
+          <h3>투자개시시점</h3>
+          <span>
+            {data.investmentDate?.slice(0, 10).replace(/-/g, '.') || INQUIRY_MESSAGES.NO_INFO}
+          </span>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section css={questionStyle}>{data.content}</section>
-    </div>
-  );
-};
+    <section css={questionStyle}>{data.content || INQUIRY_MESSAGES.NO_CONTENT}</section>
+  </div>
+);
 
 const questionWrapper = css`
   display: flex;
@@ -109,6 +84,10 @@ const infoWrapper = css`
   display: flex;
   justify-content: space-between;
   align-items: center;
+`;
+
+const investmentItemStyle = css`
+  display: flex;
 `;
 
 const infoStyle = css`
@@ -159,11 +138,11 @@ const editWrapper = css`
 const statusStyle = (status: Status) => css`
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   width: 72px;
   height: 32px;
-  justify-content: center;
-  font-weight: ${theme.typography.fontWeight.regular};
+  ${theme.textStyle.body.body3}
   background-color: ${status === 'PENDING' ? theme.colors.teal[50] : theme.colors.gray[200]};
   color: ${theme.colors.main.black};
 
@@ -176,9 +155,7 @@ const statusStyle = (status: Status) => css`
 `;
 
 const titleStyle = css`
-  font-size: ${theme.typography.fontSizes.subtitle.md};
-  font-weight: ${theme.typography.fontWeight.bold};
-  line-height: ${theme.typography.lineHeights.md};
+  ${theme.textStyle.headings.h3};
 `;
 
 const strategyInfoWrapper = css`
@@ -189,11 +166,6 @@ const strategyInfoWrapper = css`
   gap: 24px;
   border-radius: 8px;
   background: ${theme.colors.gray[50]};
-
-  div:nth-of-type(2) {
-    display: flex;
-    gap: 8px;
-  }
 `;
 
 const strategyInfoStyle = css`

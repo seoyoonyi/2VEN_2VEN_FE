@@ -1,5 +1,18 @@
 export type Status = 'COMPLETED' | 'PENDING';
 
+// 문의등록
+export interface InquiryCreateData {
+  investorId: string;
+  traderId: string;
+  strategyId: number;
+  strategyName: string;
+  investmentAmount: number;
+  investmentDate: string;
+  title: string;
+  content: string;
+  status: Status;
+}
+
 export interface InquiryData {
   id: number;
   investorName: string;
@@ -34,6 +47,26 @@ export interface InquiryDetailData {
   answerDate: string;
   replyCreatedAt: string;
   replyUpdatedAt: string;
+}
+
+// 문의 등록 반환 값
+export interface InquiryCreateResponse {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  replyContent: string | null;
+  answerDate: string | null;
+  replyCreatedAt: string | null;
+  replyUpdatedAt: string | null;
+  investorId: string;
+  traderId: string;
+  strategyId: number;
+  strategyName: string;
+  investmentAmount: number;
+  investmentDate: string;
+  title: string;
+  content: string;
+  status: Status;
 }
 
 export interface InquiryUpdateResponse {

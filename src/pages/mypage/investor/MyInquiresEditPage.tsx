@@ -1,35 +1,38 @@
 import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
-import { useQuery } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { fetchMyInquiryDetail } from '@/api/myInquiry';
 import Button from '@/components/common/Button';
 import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
+import Toast from '@/components/common/Toast';
 import InquiresInput from '@/components/page/mypage-investor/inquires-edit/InquiresInput';
 import StrategyInfo from '@/components/page/mypage-investor/inquires-edit/StrategyInfo';
-import { useSubmitInquiryUpdate } from '@/hooks/mutations/useSubmitInquiryUpdate';
+import { ROUTES } from '@/constants/routes';
+import { useUpdateMyInquiry } from '@/hooks/mutations/useMyInquiryMutations';
+import useFetchInquiryDetail from '@/hooks/queries/useFetchInquiryDetail';
+import { useToastWithNavigate } from '@/hooks/useToastWithNavigate';
+import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
-import { InquiryDetailData } from '@/types/myinquires';
+import { InquiryDetailData } from '@/types/inquiries';
 
 const MyInquiresEditPage = () => {
   const [formData, setFormData] = useState<InquiryDetailData | null>(null);
-
+  const { user } = useAuthStore();
   const { openModal } = useModalStore();
-  const { showToast } = useToastStore();
+  const { isToastVisible, hideToast, message, showToast } = useToastStore();
+  const showToastAndNavigate = useToastWithNavigate();
 
   const { inquiryId } = useParams<{ inquiryId: string }>();
   const navigate = useNavigate();
 
-  const { mutate: submitInquiryUpdate } = useSubmitInquiryUpdate();
-
-  const { data, isLoading, isError } = useQuery<InquiryDetailData, Error>({
-    queryKey: ['myInquiryDetail', inquiryId],
-    queryFn: () => fetchMyInquiryDetail(Number(inquiryId)),
+  const { mutate: updateMyInquiry } = useUpdateMyInquiry();
+  const { data, isLoading, isError } = useFetchInquiryDetail({
+    id: Number(inquiryId),
+    role: user?.role,
   });
 
   useEffect(() => {
@@ -59,8 +62,22 @@ const MyInquiresEditPage = () => {
       title: '문의 수정',
       desc: `수정하시겠습니까?`,
       onAction: () => {
-        submitInquiryUpdate({ id: Number(inquiryId), payload: formData });
-        showToast('문의 수정이 정상적으로 완료되었습니다.', 'basic');
+        window.scrollTo(0, 0);
+        updateMyInquiry(
+          { id: Number(inquiryId), payload: formData },
+          {
+            onSuccess: () => {
+              showToastAndNavigate(
+                '문의 수정이 정상적으로 완료되었습니다.',
+                ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(String(inquiryId))
+              );
+            },
+            onError: (error) => {
+              showToast('문의 수정 중 문제가 발생했습니다.', 'error');
+              console.error(error);
+            },
+          }
+        );
       },
     });
   };
@@ -91,6 +108,7 @@ const MyInquiresEditPage = () => {
         </Button>
       </div>
       <Modal />
+      {isToastVisible && <Toast message={message} isVisible={isToastVisible} onClose={hideToast} />}
     </div>
   );
 };
