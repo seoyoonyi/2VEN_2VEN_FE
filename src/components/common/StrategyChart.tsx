@@ -4,8 +4,8 @@ import HighchartsReact from 'highcharts-react-official';
 import theme from '@/styles/theme';
 
 interface LineChartProps {
-  lineData: number[];
-  areaData: number[];
+  lineData: { label: string; data: number[] }[];
+  areaData: { label: string; data: number[] }[];
 }
 
 Highcharts.setOptions({
@@ -27,22 +27,12 @@ const colors = {
   },
 };
 
-const MAX_ACOUNT = 1000000000;
-
 const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
-  const maxAreaValue = Math.max(...areaData);
-  const minAreaValue = Math.min(...areaData);
-  const maxLineValue = Math.max(...lineData);
-
-  const maxArea = maxAreaValue > MAX_ACOUNT ? MAX_ACOUNT : maxAreaValue;
-  const minArea = minAreaValue < 0 ? 0 : minAreaValue;
-
   const options = {
     chart: {
       type: 'areaspline',
       backgroundColor: 'transparent',
       width: 900,
-      zoomType: 'x',
       zooming: {
         mouseWheel: {
           enabled: true,
@@ -53,18 +43,16 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
       text: '',
     },
     xAxis: {
-      enabled: false,
+      visible: false,
     },
     yAxis: [
       {
         labels: {
-          style: { color: colors.secondary.middleColor },
+          style: { color: colors.primary.fillColor },
         },
         title: {
-          text: 'price(원)',
+          enabled: false,
         },
-        max: maxArea,
-        min: minArea,
         gridLineWidth: 1,
         opposite: false,
       },
@@ -73,15 +61,14 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
           style: { color: colors.primary.lineColor },
         },
         title: {
-          text: 'percentage(%)',
+          enabled: false,
         },
-        max: maxLineValue,
         gridLineWidth: 1,
         opposite: true,
       },
     ],
     legend: {
-      enabled: false,
+      enabled: true,
     },
     plotOptions: {
       series: {
@@ -96,12 +83,11 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
       },
     },
     series: [
-      {
+      ...areaData.map((dataItem) => ({
         type: 'areaspline',
-        name: 'price',
-        data: areaData,
+        name: dataItem.label,
+        data: dataItem.data,
         lineWidth: 0,
-        lineColor: colors.secondary.lineColor,
         color: {
           linearGradient: {
             x1: 0,
@@ -110,8 +96,8 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
             y2: 1,
           },
           stops: [
-            [0, colors.secondary.middleColor],
-            [0.1, colors.secondary.fillColor],
+            [1, colors.primary.middleColor],
+            [1, colors.primary.fillColor],
             [1, theme.colors.main.white],
           ],
         },
@@ -120,27 +106,26 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
         },
         Tooltip: {
           pointFormat: `
-        <b>{point.x}</b><br/>
-        price: {point.y}원
-      `,
+                <b>{point.x}</b><br/>
+                ${dataItem.label}: {point.y}원
+              `,
         },
         yAxis: 0,
-      },
-      {
-        // 확률 데이터: Line Chart
+      })),
+      ...lineData.map((item) => ({
         type: 'spline',
-        name: 'percentage',
-        data: lineData,
+        name: item.label,
+        data: item.data,
         lineWidth: 2,
         color: colors.primary.lineColor,
         yAxis: 1,
         tooltip: {
           pointFormat: `
               <b>{point.x}</b><br/>
-              percentage: {point.y}%
+              ${item.label}: {point.y}%
             `,
         },
-      },
+      })),
     ],
     tooltip: {
       shared: true,

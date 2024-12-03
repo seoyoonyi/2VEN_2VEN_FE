@@ -84,3 +84,78 @@ export const statisticsMapping = [
   { label: 'Profit Factor', key: 'profitFactor' },
   { label: 'ROA', key: 'roa' },
 ];
+
+export const strategyChartOptions = [
+  {
+    label: '기준가',
+    value: 'referencePrice',
+  },
+  {
+    label: '잔고',
+    value: 'balance',
+  },
+  {
+    label: '원금',
+    value: 'principal',
+  },
+  {
+    label: '누적 입출금액',
+    value: 'cumulativeDepWdPrice',
+  },
+  {
+    label: '일별 입출금 금액',
+    value: 'dailyWdPrice',
+  },
+  {
+    label: '일손익 금액',
+    value: 'dailyProfitLoss',
+  },
+  {
+    label: '일 손익률(%)',
+    value: 'dailyPlRate',
+  },
+  {
+    label: '누적 수익금액',
+    value: 'cumulativeProfitLoss',
+  },
+  {
+    label: '누적 수익률(%)',
+    value: 'cumulativeProfitLossRate',
+  },
+  {
+    label: '현재 자본인하금액',
+    value: 'currentDrawdownAmount',
+  },
+  {
+    label: '현재 자본인하율',
+    value: 'currentDrawdownRate',
+  },
+  {
+    label: '평균 손익 금액',
+    value: 'averageProfitLoss',
+  },
+  {
+    label: '평균 손익률(%)',
+    value: 'averageProfitLossRate',
+  },
+  {
+    label: '승률',
+    value: 'winRate',
+  },
+  {
+    label: 'profitFactor',
+    value: 'profitFactor',
+  },
+  {
+    label: 'ROA',
+    value: 'roa',
+  },
+  {
+    label: '총 이익',
+    value: 'totalProfit',
+  },
+  {
+    label: '총 손실',
+    value: 'totalLoss',
+  },
+];

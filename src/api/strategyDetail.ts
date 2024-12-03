@@ -351,15 +351,18 @@ export const fetchStrategyChart = async (
   options: string[]
 ) => {
   try {
-    const res = await apiClient.get(`${API_ENDPOINTS.STRATEGY}/${strategyId}/details-chart`, {
-      headers: {
-        role: authRole,
-      },
-      params: {
-        option1: options[0],
-        option2: options[1],
-      },
-    });
+    const res = await apiClient.get(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/details-chart`,
+      {
+        headers: {
+          role: authRole,
+        },
+        params: {
+          option1: options[0],
+          option2: options[1],
+        },
+      }
+    );
     return res.data;
   } catch (error) {
     console.error('failed to fetch strategyChartdata', error);

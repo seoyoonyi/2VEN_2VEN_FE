@@ -232,7 +232,7 @@ const StrategyDetailPage = () => {
               profitFactor={statistics && statistics.profitFactor}
               winRate={statistics && formatRate(statistics.winRate)}
             />
-            <ChartSection />
+            <ChartSection strategyId={Number(strategyId)} role={role} />
             <StrategyTab tabs={tabMenu} />
           </div>
         </div>
