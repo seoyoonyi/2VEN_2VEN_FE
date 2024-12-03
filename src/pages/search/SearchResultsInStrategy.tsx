@@ -28,7 +28,7 @@ const SearchResultsInStrategy = () => {
   return (
     <div css={containerStyle}>
       <h2 css={pageHeadingStyle}>
-        <strong>&lsquo;{shortenString(keyword, 10)}&rsquo;&nbsp;</strong>
+        <strong>{shortenString(keyword, 10)}&nbsp;</strong>
         <span>에 대한 전략 검색 결과</span>
         <span css={totalCountStyle}>{strategyResults?.totalElements ?? 0}</span>
       </h2>
@@ -66,10 +66,10 @@ const pageHeadingStyle = css`
   line-height: ${theme.typography.lineHeights.md};
   font-weight: ${theme.typography.fontWeight.bold};
   strong {
-    color: ${theme.colors.main.black};
+    color: ${theme.colors.teal[700]};
   }
   span {
-    color: ${theme.colors.gray[600]};
+    color: ${theme.colors.gray[700]};
   }
   span:last-of-type {
     color: ${theme.colors.main.primary};

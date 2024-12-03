@@ -33,7 +33,7 @@ const SearchResultsInTrader = () => {
   return (
     <div css={containerStyle}>
       <h2 css={pageHeadingStyle}>
-        <strong>&lsquo;{shortenString(keyword, 10)}&rsquo;&nbsp;</strong>
+        <strong>{shortenString(keyword, 10)}&nbsp;</strong>
         <span>에 대한 트레이더 검색 결과</span>
         <span css={totalCountStyle}>{traderResults?.totalElements ?? 0}</span>
       </h2>
@@ -80,7 +80,10 @@ const pageHeadingStyle = css`
   line-height: ${theme.typography.lineHeights.md};
   font-weight: ${theme.typography.fontWeight.bold};
   strong {
-    color: ${theme.colors.main.black};
+    color: ${theme.colors.teal[700]};
+  }
+  span {
+    color: ${theme.colors.gray[700]};
   }
   span:last-of-type {
     color: ${theme.colors.main.primary};
