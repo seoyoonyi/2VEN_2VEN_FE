@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { css } from '@emotion/react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { adminSignout } from '@/api/auth';
 import defaultImage from '@/assets/images/default_avatar.png';
 import Avatar from '@/components/common/Avatar';
 import Button from '@/components/common/Button';
@@ -16,24 +17,16 @@ import { useSessionTimer } from '@/hooks/useSesstionTimer';
 import { useAdminAuthStore } from '@/stores/adminAuthStore';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
-import { isAdminUser } from '@/types/auth';
+import { isAdminUser, User } from '@/types/auth';
 
 const Header = () => {
   const LOGO = 'SYSMETIC';
-  const { user } = useAuthStore(); // 사용자 정보 가져오기
+  const { user, clearAuth } = useAuthStore(); // 사용자 정보 가져오기
+  const { clearAdminAuth } = useAdminAuthStore();
+
   const { data: profileImageData, isError } = useProfileImage(user?.memberId || ''); // 프로필 이미지 가져오기
-  // 프로필 이미지 관련 디버깅 콘솔
-  console.log('Profile Image Debug:', {
-    memberId: user?.memberId,
-    profileImageUrl: profileImageData?.fileUrl,
-    isError,
-    finalImageSrc: isError ? defaultImage : profileImageData?.fileUrl || defaultImage,
-    defaultImagePath: defaultImage,
-  });
 
   const { isAdmin, isAuthorized, hasExpired } = useAdminAuthStatus(); // 관리자 권한 상태 가져오기
-  console.log('Current user:', user); // user 객체 전체 확인
-  console.log('Member ID:', user?.memberId); // 회원 ID 확인
 
   const { adminAuth } = useAdminAuthStore();
   const navigate = useNavigate();
@@ -42,6 +35,7 @@ const Header = () => {
 
   console.log('Auth user:', useAuthStore.getState().user);
   console.log('Admin auth:', useAdminAuthStore.getState().adminAuth);
+
   useEffect(() => {
     if (user) {
       console.log({
@@ -59,12 +53,33 @@ const Header = () => {
     navigate(ROUTES.AUTH.ADMIN.VERIFY);
   };
 
+  const handleSignout = async () => {
+    try {
+      // 1. 관리자 로그아웃 API 호출
+      const response = await adminSignout();
+
+      if (response.status === 'success') {
+        // 2. 로컬 상태 초기화(JWT 토큰 삭제)
+        clearAdminAuth();
+        clearAuth();
+      }
+      // 3. 메인 페이지로 리다이랙트
+      navigate(ROUTES.HOME.PATH, { replace: true });
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // API 호출이 실패하더라도 로컬 상태는 초기화하고 리다이렉트
+      clearAdminAuth();
+      clearAuth();
+      navigate(ROUTES.HOME.PATH, { replace: true });
+    }
+  };
+
   const renderRightSection = () => {
     // 비로그인 상태
     if (!user) {
       return (
         <>
-          <div css={searchAndMyPageContainer}>
+          <div css={searchAndMyPageContainer(null)}>
             <SearchInput />
             <Button variant='secondary' size='xs' width={100} onClick={handleLoginButtonClick}>
               로그인
@@ -77,8 +92,17 @@ const Header = () => {
     // 관리자로 로그인한 경우
     if (isAdminUser(user)) {
       return (
-        <div css={searchAndMyPageContainer}>
+        <div css={searchAndMyPageContainer(user)}>
           <SearchInput />
+          <Button
+            variant='ghostGray'
+            size='xs'
+            width={100}
+            css={buttonStyle}
+            onClick={handleSignout}
+          >
+            <span>로그아웃</span>
+          </Button>
           {isAdmin &&
             isAuthorized &&
             !hasExpired && ( // 관리자 인증이 된 경우
@@ -97,7 +121,7 @@ const Header = () => {
     // 투자자, 트레이더로 로그인한 경우
     return (
       <>
-        <div css={searchAndMyPageContainer}>
+        <div css={searchAndMyPageContainer(null)}>
           <SearchInput />
           <Link
             to={
@@ -158,10 +182,15 @@ const logoNavContainerStyle = css`
   gap: 47px;
 `;
 
-const searchAndMyPageContainer = css`
+const searchAndMyPageContainer = (user: User | null) => css`
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: ${user && isAdminUser(user) ? '0' : '24px'};
 `;
-
+const buttonStyle = css`
+  margin: 0 8px 0 12px;
+`;
+const iconStyle = css`
+  margin-right: 4px;
+`;
 export default Header;
