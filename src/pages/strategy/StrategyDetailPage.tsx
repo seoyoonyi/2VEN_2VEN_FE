@@ -58,6 +58,9 @@ const StrategyDetailPage = () => {
   const { data: approveState } = useFetchApproveState(Number(strategyId), role) || '';
   const isApproved = dailyAnalysis?.length >= 3 || approveState?.isApproved === 'N';
   const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
+  const isPrivate =
+    user?.role === 'ROLE_ADMIN' ||
+    (user?.role === 'ROLE_TRADER' && user?.memberId === strategy.memberId);
   const { isToastVisible, hideToast, message, type } = useToastStore();
 
   const statisticsTableData = (
@@ -84,7 +87,9 @@ const StrategyDetailPage = () => {
     },
     {
       title: '실계좌인증',
-      component: <AccountVerify strategyId={Number(strategyId)} role={user?.role} />,
+      component: (
+        <AccountVerify strategyId={Number(strategyId)} role={user?.role} isSelfed={isPrivate} />
+      ),
     },
     {
       title: '일간분석',

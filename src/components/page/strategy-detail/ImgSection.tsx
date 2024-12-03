@@ -7,16 +7,21 @@ interface imgSectionProps {
   name: string;
   id: number;
   isSelected: boolean;
+  isSelfed: boolean;
   onSelect: (id: number) => void;
 }
 
-const ImgSection = ({ img, id, name, isSelected, onSelect }: imgSectionProps) => (
+const ImgSection = ({ img, id, name, isSelected, isSelfed, onSelect }: imgSectionProps) => (
   <div css={imgWrapper}>
     <div css={imgContent}>
       <img src={img} alt={img} css={imgSection} />
-      <Checkbox checked={isSelected ?? false} onChange={() => onSelect(id)}>
+      {isSelfed ? (
+        <Checkbox checked={isSelected ?? false} onChange={() => onSelect(id)}>
+          <div>{name}</div>
+        </Checkbox>
+      ) : (
         <div>{name}</div>
-      </Checkbox>
+      )}
     </div>
   </div>
 );

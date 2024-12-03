@@ -23,6 +23,7 @@ import { isValidDateFormat } from '@/utils/fileHelper';
 interface AccountProps {
   strategyId: number;
   role?: UserRole;
+  isSelfed: boolean;
 }
 
 interface AccountImgProps {
@@ -31,7 +32,7 @@ interface AccountImgProps {
   fileLink: string;
 }
 
-const AccountVerify = ({ strategyId, role }: AccountProps) => {
+const AccountVerify = ({ strategyId, isSelfed, role }: AccountProps) => {
   const { pagination, setPage } = usePagination(1, 8);
   const { accountImgs, page, pageSize, totalPages, isLoading } = useFetchAccountImg(
     strategyId,
@@ -57,14 +58,17 @@ const AccountVerify = ({ strategyId, role }: AccountProps) => {
         (item: AccountImgProps) => item.fileName === imgFiles.name
       );
       if (isDuplicate) {
-        showToast('이미 실계좌 인증이 등록된 일자입니다.', 'error');
+        showToast('이미 실계좌 인증 이미지가 등록된 일자입니다.', 'error');
+        e.target.value = '';
         return;
       }
       if (isValidDateFormat(imgFiles.name)) {
         uploadAccount({ strategyId, authRole: role as UserRole, fileItem: imgFiles });
         showToast('실계좌 이미지가 등록되었습니다.');
+        e.target.value = '';
       } else {
-        showToast('파일명은 YYYY.MM.DD형식으로 입력하세요.', 'error');
+        showToast('파일명은 YYYY.MM.DD 형식으로 입력하세요.', 'error');
+        e.target.value = '';
         return;
       }
     }
@@ -107,31 +111,33 @@ const AccountVerify = ({ strategyId, role }: AccountProps) => {
 
   return (
     <div css={accountWrapper}>
-      <div css={headingStyle}>
-        <div css={textStyle}>
-          <MdCheck css={iconStyle} size={24} />
-          <div>
-            파일명은 YYYY.MM.DD 형식(예: 2024.11.15)으로 일간분석 테이블에 입력한 날짜와 동일하게
-            변경해주세요.
+      {isSelfed && (
+        <div css={headingStyle}>
+          <div css={textStyle}>
+            <MdCheck css={iconStyle} size={24} />
+            <div>
+              파일명은 YYYY.MM.DD 형식(예: 2024.11.15)으로 일간분석 테이블에 입력한 날짜와 동일하게
+              변경해주세요.
+            </div>
+          </div>
+          <div css={buttonArea}>
+            <Button variant='secondary' size='xs' width={89} onClick={handleUploadClick}>
+              <BiPlus />
+              추가
+            </Button>
+            <Button variant='neutral' size='xs' width={89} onClick={handleDeleteImg}>
+              삭제
+            </Button>
+            <input
+              type='file'
+              accept='.png,.jpeg,.jpg,.webp'
+              ref={fileInputRef}
+              onChange={handleUploadImg}
+              style={{ display: 'none' }}
+            />
           </div>
         </div>
-        <div css={buttonArea}>
-          <Button variant='secondary' size='xs' width={89} onClick={handleUploadClick}>
-            <BiPlus />
-            추가
-          </Button>
-          <Button variant='neutral' size='xs' width={89} onClick={handleDeleteImg}>
-            삭제
-          </Button>
-          <input
-            type='file'
-            accept='png ,jpeg, jpg, webp'
-            ref={fileInputRef}
-            onChange={handleUploadImg}
-            style={{ display: 'none' }}
-          />
-        </div>
-      </div>
+      )}
       {accountImgs.length > 0 ? (
         <div css={imagesGrid}>
           {accountImgs.map((item: AccountImgProps) => (
@@ -140,6 +146,7 @@ const AccountVerify = ({ strategyId, role }: AccountProps) => {
               img={item.fileLink}
               id={item.liveAccountId}
               name={item.fileName}
+              isSelfed={isSelfed}
               isSelected={selectedFiles.includes(item.liveAccountId)}
               onSelect={handleSelectedImg}
             />
@@ -148,7 +155,7 @@ const AccountVerify = ({ strategyId, role }: AccountProps) => {
       ) : (
         <div css={noneUploaded}>업로드된 데이터가 없습니다.</div>
       )}
-      <Pagination totalPage={totalPages} limit={pageSize} page={page - 1} setPage={setPage} />
+      <Pagination totalPage={totalPages} limit={pageSize} page={page + 1} setPage={setPage} />
       <Modal />
       <Toast message={message} onClose={hideToast} isVisible={isToastVisible} />
     </div>

@@ -327,13 +327,12 @@ export const fetchDeleteRealAccount = async (
   liveAccountId: number[],
   authRole: UserRole
 ) => {
+  const body = liveAccountId;
   try {
     const req = await apiClient.delete(
-      `${API_ENDPOINTS.STRATEGY.UPLOAD_ACCOUNT_IMG}/${liveAccountId}`,
+      `${API_ENDPOINTS.STRATEGY.UPLOAD_ACCOUNT_IMG}/${strategyId}`,
       {
-        params: {
-          strategyId,
-        },
+        data: body,
         headers: {
           auth: authRole,
         },
