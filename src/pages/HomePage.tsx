@@ -1,7 +1,4 @@
-import { useState, useEffect } from 'react';
-
 import { css } from '@emotion/react';
-import axios from 'axios';
 import { MdKeyboardArrowRight, MdArrowForward } from 'react-icons/md';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -13,33 +10,31 @@ import TraderUserImage2 from '@/assets/images/nimo_trader.png';
 import SMScoreGraphImage from '@/assets/images/SMScore_graph.png';
 import TraderMainImage from '@/assets/images/trader_main.png';
 import Button from '@/components/common/Button';
+import Loader from '@/components/common/Loading';
+import TraderStats from '@/components/page/home/TraderStats';
 import { ROUTES } from '@/constants/routes';
+import { useFetchStrategyTraderCount } from '@/hooks/queries/useFetchStrategyTraderCount';
+import DatePickerTest from '@/pages/test-page/DatepickerTestPage';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
 const HomePage = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore(); // store에서 user 정보 가져오기
+  const { data, isLoading, isError } = useFetchStrategyTraderCount();
 
-  const [traderCount, setTraderCount] = useState('0'); // 기본값 설정
-  const [strategyCount, setStrategyCount] = useState('0'); // 기본값 설정
+  // 트레이더 및 전략 수 표시를 위한 데이터 처리
+  const traderCount = Number(data?.traderCnt ?? 0);
+  const strategyCount = Number(data?.strategyCnt ?? 0);
 
-  // role 확인용 로깅
-  console.log('Current user role:', user?.role);
+  console.log('HomePage Data:', { traderCount, strategyCount });
 
-  useEffect(() => {
-    const fetchTraderStats = async () => {
-      try {
-        const { data } = await axios.get('/api/trader-Strategy');
-        setTraderCount(data.traderCount || '0');
-        setStrategyCount(data.strategyCount || '0');
-      } catch (error) {
-        console.error('트레이더 통계 조회 실패:', error);
-      }
-    };
-
-    fetchTraderStats();
-  }, []);
+  if (isLoading) {
+    return <Loader />;
+  }
+  if (isError) {
+    console.error('Error loading data...');
+  }
 
   const rankingData = [
     {
@@ -113,6 +108,7 @@ const HomePage = () => {
 
   return (
     <>
+      <DatePickerTest />
       {/* 투자자Main */}
       <section css={investorSectionStyle}>
         <div css={contentStyle}>
@@ -124,9 +120,13 @@ const HomePage = () => {
               <p css={subTextStyle}>관심 전략의 레코드가 매일매일 업데이트됩니다</p>
             </div>
             <div css={buttonGroupStyle}>
-              <Button variant='primary' size='xl' width={208} onClick={handleSignUpClick}>
-                투자자 가입하기
-              </Button>
+              {!user && ( // user가 null일 때만 버튼 표시
+                <>
+                  <Button variant='primary' size='xl' width={208} onClick={handleSignUpClick}>
+                    투자자 가입하기
+                  </Button>
+                </>
+              )}
               <Button variant='secondary' size='xl' width={208} onClick={handleStrategyListClick}>
                 전략 랭킹 보기
               </Button>
@@ -206,9 +206,13 @@ const HomePage = () => {
                 <p css={subTextStyle}>투자전략 분석과 투자자 매칭서비스를 제공해드립니다</p>
               </div>
               <div css={buttonGroupStyle}>
-                <Button variant='primary' size='xl' width={208} onClick={handleSignUpClick}>
-                  트레이더 가입하기
-                </Button>
+                {!user && ( // user가 null일 때만 버튼 표시
+                  <>
+                    <Button variant='primary' size='xl' width={208} onClick={handleSignUpClick}>
+                      트레이더 가입하기
+                    </Button>
+                  </>
+                )}
                 <Button variant='secondary' size='xl' width={208} onClick={handleTraderListClick}>
                   트레이더 목록보기
                 </Button>
@@ -216,19 +220,8 @@ const HomePage = () => {
             </div>
           </div>
           {/* 통계 정보 */}
-          <div css={traderTotalStyle}>
-            <div css={statsImageContainerStyle}>
-              <img src={TraderUserImage1} alt='트레이더1' css={userImageStyle} />
-              <img src={TraderUserImage2} alt='트레이더2' css={userImageStyle} />
-              <img src={TraderUserImage3} alt='트레이더3' css={userImageStyle} />
-            </div>
-            <p css={statsTextStyle}>
-              <span css={highlightTextStyle}>+{traderCount}</span>
-              <span css={spacingTextStyle}>명의 트레이더가</span> {/* 간격 조정 */}
-              <span css={highlightTextStyle}>{strategyCount}</span>
-              <span css={spacingTextStyle}>개의 전략을 공유하고 있습니다</span> {/* 간격 조정 */}
-            </p>
-          </div>
+          <TraderStats traderCount={traderCount} strategyCount={strategyCount} />
+
           {/* 대표전략통합평균지표 */}
           <div css={metricsContainerStyle}>
             <img
@@ -429,9 +422,9 @@ const userImageStyle = css`
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 1px solid ${theme.colors.main.white}; /* 토탈공유 */
-  position: relative; /* 토탈공유 */
-  margin-left: -12px; /* 토탈공유 */
+  border: 1px solid ${theme.colors.main.white};
+  position: relative;
+  margin-left: -12px;
   &:first-of-type {
     margin-left: 0;
   }
@@ -476,39 +469,6 @@ const traderMainStyle = css`
 
 const leftSectionStyle = css`
   height: 520px;
-`;
-
-const traderTotalStyle = css`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  margin-top: 16px;
-`;
-
-const statsImageContainerStyle = css`
-  display: flex;
-  position: relative;
-`;
-
-const statsTextStyle = css`
-  ${theme.textStyle.headings.h3}
-  color: ${theme.colors.gray[500]};
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-`;
-
-const highlightTextStyle = css`
-  ${theme.textStyle.headings.h2}
-  color: ${theme.colors.gray[900]};
-`;
-
-const spacingTextStyle = css`
-  color: ${theme.colors.gray[600]};
-  margin-right: 4px;
 `;
 
 const traderTextStyle = css`

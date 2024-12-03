@@ -2,13 +2,12 @@ import { useState } from 'react';
 
 import { css } from '@emotion/react';
 
-import Input from '@/components/common/Input';
 import theme from '@/styles/theme';
 
 export interface InputTableProps {
   date: string;
-  depWdPrice: number;
-  dailyProfitLoss: number;
+  depWdPrice: number | string;
+  dailyProfitLoss: number | string;
 }
 
 export interface InputAnalysisProps {
@@ -21,10 +20,38 @@ const attributes = ['일자', '입출금', '일손익'];
 const InputTable = ({ data, onChange }: InputAnalysisProps) => {
   const [inputData, setInputData] = useState<InputTableProps[]>(data);
 
-  const handleInputChange = (idx: number, field: keyof InputTableProps, value: string) => {
-    const updatedData = inputData.map((row, i) => (i === idx ? { ...row, [field]: value } : row));
+  const handleInputChange = (
+    idx: number,
+    field: keyof InputTableProps,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (e.target.value.length > 12) {
+      return;
+    }
+
+    let passValue = e.target.value;
+
+    if (field !== 'date') {
+      const numericValue = e.target.value.replace(/[^-+0-9]/g, '');
+      passValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    const updatedData = inputData.map((row, i) =>
+      i === idx ? { ...row, [field]: passValue } : row
+    );
     setInputData(updatedData);
-    onChange(updatedData);
+
+    const parsedData = updatedData.map((row) => ({
+      ...row,
+      depWdPrice:
+        typeof row.depWdPrice === 'string'
+          ? Number(row.depWdPrice.replace(/,/g, ''))
+          : row.depWdPrice,
+      dailyProfitLoss:
+        typeof row.dailyProfitLoss === 'string'
+          ? Number(row.dailyProfitLoss.replace(/,/g, ''))
+          : row.dailyProfitLoss,
+    }));
+    onChange(parsedData);
   };
 
   return (
@@ -43,28 +70,28 @@ const InputTable = ({ data, onChange }: InputAnalysisProps) => {
           {inputData.map((row, idx) => (
             <tr key={idx} css={tableRowStyle}>
               <td css={tableCellStyle}>
-                <Input
+                <input
                   type='date'
                   value={row.date}
-                  onChange={(e) => handleInputChange(idx, 'date', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'date', e)}
                   css={inputStyle}
                 />
               </td>
               <td css={tableCellStyle}>
-                <Input
-                  type='number'
+                <input
+                  type='text'
                   value={row.depWdPrice}
                   placeholder='예)123,456,789'
-                  onChange={(e) => handleInputChange(idx, 'depWdPrice', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'depWdPrice', e)}
                   css={inputStyle}
                 />
               </td>
               <td css={tableCellStyle}>
-                <Input
-                  type='number'
+                <input
+                  type='text'
                   value={row.dailyProfitLoss}
                   placeholder='예)+123,456'
-                  onChange={(e) => handleInputChange(idx, 'dailyProfitLoss', e.target.value)}
+                  onChange={(e) => handleInputChange(idx, 'dailyProfitLoss', e)}
                   css={inputStyle}
                 />
               </td>
@@ -124,6 +151,30 @@ const tableCellStyle = css`
 const inputStyle = css`
   width: 100%;
   border-radius: 4px;
+  position: relative;
+  height: ${theme.input.height.md};
+  padding: ${theme.input.padding.md};
+  font-size: ${theme.input.fontSize.md};
+  background-color: ${theme.colors.main.white};
+  border: 1px solid ${theme.colors.gray[300]};
+  outline: none;
+  font-size: ${theme.typography.fontSizes.body};
+  color: ${theme.colors.main.black};
+  background-color: ${theme.colors.main.white};
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: ${theme.colors.main.primary};
+  }
+
+  &:focus {
+    border-color: ${theme.colors.main.primary};
+  }
+
+  &::placeholder {
+    color: ${theme.colors.gray[700] + '4a'};
+    font-weight: ${theme.typography.fontWeight.regular};
+  }
 
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {

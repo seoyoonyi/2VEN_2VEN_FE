@@ -16,6 +16,7 @@ import Select from '@/components/common/Select';
 import StrategyList from '@/components/common/StrategyList';
 import useFetchStrategyList from '@/hooks/queries/useFetchStrategyList';
 import useFetchStrategyOptionData from '@/hooks/queries/useFetchStrategyOptionData';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
 const desc = [
@@ -29,6 +30,7 @@ const StrategyListPage = () => {
   const [page, setPage] = useState(1);
   const limit = 30;
   const navigate = useNavigate();
+  const { user } = useAuthStore();
 
   const { data, isLoading, error } = useFetchStrategyList({
     tradingCycleId: 1,
@@ -79,16 +81,18 @@ const StrategyListPage = () => {
               type='sm'
               width='160px'
             />
-            <Button
-              variant='primary'
-              size='xs'
-              customStyle={css`
-                padding: 20px 32px;
-              `}
-              onClick={() => navigate('/mypage/trader/strategies/create')}
-            >
-              전략등록
-            </Button>
+            {user?.role === 'ROLE_TRADER' && (
+              <Button
+                variant='primary'
+                size='xs'
+                customStyle={css`
+                  padding: 20px 32px;
+                `}
+                onClick={() => navigate('/mypage/trader/strategies/create')}
+              >
+                전략등록
+              </Button>
+            )}
           </div>
         </div>
         <div css={listContainerStyle}>

@@ -1,3 +1,5 @@
+import { AxiosError } from 'axios';
+
 import { apiClient, createFormDataRequest } from './apiClient';
 import { API_ENDPOINTS } from './apiEndpoints';
 
@@ -60,6 +62,27 @@ export const fetchDailyAnalysis = async (strategyId: number, page: number, pageS
     return res.data;
   } catch (error) {
     console.error('fetch to failed Daily Analysis', error);
+  }
+};
+
+//전략 엑셀 등록
+export const fetchUploadExcel = async (strategyId: number, fileItem: File, authRole: UserRole) => {
+  const formData = createFormDataRequest({ file: fileItem });
+  try {
+    const req = await apiClient.post(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/upload`,
+      formData,
+      {
+        headers: {
+          auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<{ error: string }>;
+    const errorMsg = axiosError.response?.data?.error || '파일 업로드 실패';
+    throw new Error(errorMsg);
   }
 };
 
@@ -135,7 +158,7 @@ export const fetchDeleteDailyAnalysis = async (
   }
 };
 
-//월간분석 조회(MSW)
+//월간분석 조회
 export const fetchMonthlyAnalysis = async (strategyId: number, page: number, pageSize: number) => {
   try {
     const res = await apiClient.get(
@@ -146,7 +169,7 @@ export const fetchMonthlyAnalysis = async (strategyId: number, page: number, pag
           pageSize,
         },
         headers: {
-          useMock: import.meta.env.VITE_ENABLE_MSW === 'true',
+          auth: 'admin',
         },
       }
     );
@@ -193,5 +216,130 @@ export const uploadProposalFile = async (
   } catch (error) {
     console.error('제안서 업로드 실패:', error);
     throw error;
+  }
+};
+
+//전략 승인 요청
+export const fetchPostApproveStrategy = async (strategyId: number, authRole: UserRole) => {
+  try {
+    const req = await apiClient.post(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/approval-request`,
+      {
+        headers: {
+          Auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to fetch request strategyApprove', error);
+    throw error;
+  }
+};
+
+//전략 승인내역 요청
+export const fetchApproveStrategy = async (strategyId: number, authRole: UserRole) => {
+  try {
+    const res = await apiClient.get(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/rejection-info`,
+      {
+        headers: {
+          Auth: authRole,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error('failed to fetch strategyApprove', error);
+    throw error;
+  }
+};
+
+//전략 운용 종료
+export const fetchEndStrategey = async (strategyId: number, authRole: UserRole) => {
+  try {
+    const req = await apiClient.patch(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/termination`,
+      {
+        headers: {
+          auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to fetch request strategy terminated', error);
+  }
+};
+
+//실계좌 이미지 조회
+export const fetchRealAccount = async (
+  strategyId: number,
+  authRole: UserRole,
+  page: number,
+  pageSize: number
+) => {
+  try {
+    const res = await apiClient.get(
+      `${API_ENDPOINTS.STRATEGY.UPLOAD_ACCOUNT_IMG}/${strategyId}/list`,
+      {
+        params: {
+          page,
+          pageSize,
+        },
+        headers: {
+          auth: authRole,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error('failed to upload real-account-img', error);
+  }
+};
+
+//실계좌 이미지 업로드
+export const fetchUploadRealAccount = async (
+  strategyId: number,
+  fileItem: File,
+  authRole: UserRole
+) => {
+  const formData = createFormDataRequest({ file: fileItem });
+  try {
+    const req = await apiClient.post(
+      `${API_ENDPOINTS.STRATEGY.UPLOAD_ACCOUNT_IMG}/${strategyId}`,
+      formData,
+      {
+        headers: {
+          auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to post real-account-img', error);
+  }
+};
+
+//실계좌 이미지 삭제
+export const fetchDeleteRealAccount = async (
+  strategyId: number,
+  liveAccountId: number[],
+  authRole: UserRole
+) => {
+  const body = liveAccountId;
+  try {
+    const req = await apiClient.delete(
+      `${API_ENDPOINTS.STRATEGY.UPLOAD_ACCOUNT_IMG}/${strategyId}`,
+      {
+        data: body,
+        headers: {
+          auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to post real-account-img', error);
   }
 };

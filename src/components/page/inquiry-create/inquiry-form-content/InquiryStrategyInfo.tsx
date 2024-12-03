@@ -4,9 +4,9 @@ import theme from '@/styles/theme';
 
 interface InquiryStrategyInfoProps {
   strategyName: string;
-  investmentAmount: string;
+  investmentAmount: number;
   investmentDate: string;
-  onAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onAmountChange: (value: number) => void;
   onDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -16,39 +16,55 @@ const InquiryStrategyInfo = ({
   investmentDate,
   onAmountChange,
   onDateChange,
-}: InquiryStrategyInfoProps) => (
-  <div css={containerStyle}>
-    <div css={infoStyle}>
-      <label htmlFor='strategy-name' css={labelStyle}>
-        관심전략명
-      </label>
-      <input id='strategy-name' value={strategyName} readOnly css={nameStyle} />
+}: InquiryStrategyInfoProps) => {
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/,/g, ''); // 쉼표 제거
+    const numericValue = parseInt(rawValue.replace(/[^0-9]/g, ''), 10);
+
+    if (!isNaN(numericValue)) {
+      const clampedValue = Math.min(numericValue, 10000000000);
+      onAmountChange(clampedValue);
+    } else {
+      onAmountChange(0);
+      e.target.value = '0';
+    }
+    e.target.value = numericValue.toLocaleString() || '';
+  };
+
+  return (
+    <div css={containerStyle}>
+      <div css={infoStyle}>
+        <label htmlFor='strategy-name' css={labelStyle}>
+          관심전략명
+        </label>
+        <input id='strategy-name' value={strategyName} readOnly css={nameStyle} />
+      </div>
+      <div css={infoRowStyle}>
+        <label htmlFor='investment-amount' css={labelStyle}>
+          투자개시금액
+        </label>
+        <input
+          id='investment-amount'
+          type='text'
+          value={investmentAmount.toLocaleString()}
+          onInput={handleAmountChange}
+          placeholder='0'
+          css={inputStyle}
+        />
+        <label htmlFor='investment-date' css={labelStyle}>
+          투자개시시점
+        </label>
+        <input
+          id='investment-date'
+          type='date'
+          value={investmentDate}
+          onChange={onDateChange}
+          css={inputStyle}
+        />
+      </div>
     </div>
-    <div css={infoRowStyle}>
-      <label htmlFor='investment-amount' css={labelStyle}>
-        투자개시금액
-      </label>
-      <input
-        id='investment-amount'
-        type='number'
-        value={investmentAmount}
-        onChange={onAmountChange}
-        placeholder='0'
-        css={[inputStyle, amountStyle]}
-      />
-      <label htmlFor='investment-date' css={labelStyle}>
-        투자개시시점
-      </label>
-      <input
-        id='investment-date'
-        type='date'
-        value={investmentDate}
-        onChange={onDateChange}
-        css={inputStyle}
-      />
-    </div>
-  </div>
-);
+  );
+};
 
 const containerStyle = css`
   display: flex;
@@ -105,14 +121,6 @@ const inputStyle = css`
   &::placeholder {
     color: ${theme.colors.gray[700] + '4a'};
     font-weight: ${theme.typography.fontWeight.regular};
-  }
-`;
-
-const amountStyle = css`
-  &::-webkit-inner-spin-button,
-  &::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
   }
 `;
 

@@ -21,8 +21,8 @@ export interface StrategyDetailProps {
 
 export interface DailyAnalysisProps {
   date: string;
-  dailyProfitLoss: number;
-  depWdPrice: number;
+  dailyProfitLoss: number | string;
+  depWdPrice: number | string;
 }
 
 export interface InputDailyAnalysisProps {
@@ -87,4 +87,10 @@ type AuthType = 'Admin' | 'Trader';
 export interface FileUploadOptions {
   file: File;
   authType: AuthType;
+}
+
+export interface FileDeletedResponse {
+  fileId: string;
+  strategyId: string;
+  message: string;
 }

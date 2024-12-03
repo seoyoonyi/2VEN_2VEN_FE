@@ -170,7 +170,7 @@ interface VerifyCodeRequest {
 // 이메일 인증 코드입력 후 서버에 확인하는 핸들러
 export const verificationHandlers = [
   // 이메일로 인증번호 요청 핸들러
-  http.post(API_ENDPOINTS.AUTH.EMAIL.REQUEST_VERIFICATION, async () => {
+  http.post(API_ENDPOINTS.AUTH.EMAIL.REQUEST_ADMIN_VERIFICATION, async () => {
     console.log('MSW: Intercepting verification code request');
     return HttpResponse.json(
       {

@@ -31,11 +31,11 @@ export const VALIDATION_MESSAGE = {
     length: '닉네임은 2-10자 사이여야 합니다.',
     whitespace: '공백은 사용할 수 없습니다.',
     chars: '한글, 영문 대소문자, 숫자만 사용 가능합니다.',
-    valid: '유효한 닉네임입니다.',
+    valid: '사용 가능한 닉네임입니다.',
   },
   password: {
     invalid: '비밀번호는 영문, 숫자, 특수문자를 포함한 8자 이상이어야 합니다.',
-    valid: '유효한 비밀번호입니다.',
+    valid: '사용 가능한 비밀번호입니다.',
   },
 };
 

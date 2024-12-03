@@ -69,3 +69,26 @@ export interface ApiResponse<T> {
 
 // 관리자 여부 확인 함수(타입 가드 함수)
 export const isAdminUser = (user: User): user is AdminUser => user.role === 'ROLE_ADMIN';
+
+// 회원가입 관련 타입
+export interface SignupRequest {
+  memberType: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  nickname: string;
+  phoneNumber: string;
+  privacyRequired: boolean;
+  serviceTermsRequired: boolean;
+  promotionOptional: boolean;
+  marketingOptional: boolean;
+}
+
+export interface SignupResponse {
+  status: 'success' | 'error';
+  message: string;
+}
+
+export interface ValidationErrors {
+  [key: string]: string;
+}

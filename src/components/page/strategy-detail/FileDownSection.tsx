@@ -5,11 +5,10 @@ import theme from '@/styles/theme';
 
 interface FileInfoProps {
   fileUrl: string;
+  fileName: string;
 }
 
-const FileDownSection = ({ fileUrl }: FileInfoProps) => {
-  const fileName = fileUrl.split('/').pop() || '전략파일';
-
+const FileDownSection = ({ fileUrl, fileName }: FileInfoProps) => {
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = fileUrl;

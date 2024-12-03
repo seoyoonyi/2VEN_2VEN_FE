@@ -8,6 +8,7 @@ import { User } from '@/types/auth';
 interface AuthStore {
   token: string | null;
   user: User | null; // 로그인한 사용자 정보
+  expiresAt: string | null;
   setAuth: (token: string, user: User) => void;
   clearAuth: () => void;
 }
@@ -17,8 +18,12 @@ export const useAuthStore = create<AuthStore>()(
     (set) => ({
       token: null,
       user: null,
-      setAuth: (token, user) => set({ token, user }),
-      clearAuth: () => set({ token: null, user: null }),
+      expiresAt: null,
+      setAuth: (token, user) => {
+        const expiresAt = new Date(new Date().getTime() + 60 * 60 * 1000).toISOString();
+        set({ token, user, expiresAt });
+      },
+      clearAuth: () => set({ token: null, user: null, expiresAt: null }),
     }),
     {
       name: 'auth-storage',

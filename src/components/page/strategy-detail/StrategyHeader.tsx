@@ -1,11 +1,13 @@
 import { css } from '@emotion/react';
 import { GiCircle } from 'react-icons/gi';
 import { MdOutlineShare } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
+import Toast from '@/components/common/Toast';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/stores/authStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { UserRole } from '@/types/route';
 
@@ -13,7 +15,11 @@ interface StrategyHeaderProps {
   id: number;
   strategyTitle: string;
   traderId: string;
+  isStrategyApproved: string;
+  isApprovedState: boolean;
+  isTerminated: boolean;
   onDelete: (id: number) => void;
+  onEnd: () => void;
   onApproval: () => void;
 }
 
@@ -21,17 +27,23 @@ export const StrategyHeader = ({
   id,
   strategyTitle,
   traderId,
+  isStrategyApproved,
+  isApprovedState,
+  isTerminated,
+  onEnd,
   onDelete,
   onApproval,
 }: StrategyHeaderProps) => {
   const navigate = useNavigate();
-  const { user } = useAuthStore(); // store에서 user 정보 가져오기
+  const location = useLocation();
+  const { user } = useAuthStore();
+  const userRole = user?.role as UserRole; // 유저 지정
+  const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
 
   const handleMoveEditPage = (id: string) => {
     navigate(`${ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(id)}`);
   };
 
-  // 문의기페이지로 데이터 정보 넘김(요게 스테이트!!!)
   const handleInquiryPage = () => {
     navigate(`${ROUTES.STRATEGY.INQUIRIES}`, {
       state: {
@@ -46,32 +58,57 @@ export const StrategyHeader = ({
     navigate(`${ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS}`);
   };
 
-  const userRole = user?.role as UserRole; // 유저 지정
+  const handleCopy = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('클립보드에 링크가 복사되었습니다!', 'basic');
+    } catch (error) {
+      console.error('failed to copy currentPage');
+      showToast('링크 복사에 실패했습니다.', 'error');
+    }
+  };
 
   return (
     <div css={actionAreaStyle}>
-      <button css={shareButtonStyle}>
+      <button
+        css={shareButtonStyle}
+        onClick={() => handleCopy(`${import.meta.env.VITE_FRONT_URL}${location.pathname}`)}
+      >
         <GiCircle size={40} css={circleStyle} />
         <MdOutlineShare size={16} css={shareStyle} />
       </button>
-      {userRole === 'ROLE_TRADER' ? ( // 트레이더 전용 버튼
+      {userRole === 'ROLE_ADMIN' || (userRole === 'ROLE_TRADER' && user?.memberId === traderId) ? ( // 트레이더 전용 버튼
         <div css={buttonAreaStyle}>
-          <Button size='xs' variant='secondaryGray' width={90} onClick={() => onDelete(id)}>
-            삭제
-          </Button>
-          <Button
-            size='xs'
-            variant='neutral'
-            width={90}
-            onClick={() => {
-              handleMoveEditPage(String(id));
-            }}
-          >
-            수정
-          </Button>
-          <Button size='xs' width={120} onClick={onApproval}>
-            승인요청
-          </Button>
+          {!isTerminated && (
+            <>
+              <Button size='xs' variant='secondaryGray' width={90} onClick={() => onDelete(id)}>
+                삭제
+              </Button>
+              <Button
+                size='xs'
+                variant='neutral'
+                width={90}
+                onClick={() => {
+                  handleMoveEditPage(String(id));
+                }}
+              >
+                수정
+              </Button>
+            </>
+          )}
+          {isStrategyApproved === 'P' ? (
+            <Button size='xs' width={120} disabled>
+              승인대기
+            </Button>
+          ) : isStrategyApproved === 'Y' ? (
+            <Button size='xs' width={120} onClick={onEnd} disabled={isTerminated}>
+              운용종료
+            </Button>
+          ) : (
+            <Button size='xs' width={120} onClick={onApproval} disabled={!isApprovedState}>
+              승인요청
+            </Button>
+          )}
         </div>
       ) : (
         <div css={buttonAreaStyle}>
@@ -97,6 +134,7 @@ export const StrategyHeader = ({
           </Button>
         </div>
       )}
+      <Toast type={type} message={message} onClose={hideToast} isVisible={isToastVisible} />
     </div>
   );
 };

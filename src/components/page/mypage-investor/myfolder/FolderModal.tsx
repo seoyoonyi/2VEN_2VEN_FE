@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 import { css } from '@emotion/react';
 
 import Input from '@/components/common/Input';
@@ -11,21 +13,48 @@ const folder = [
   { label: '그냥 그냥 폴더', value: '4' },
 ];
 
-const FolderModal = ({ isMove = false }: { isMove?: boolean }) => (
-  <div css={contentWrpperStyle}>
-    {isMove ? (
-      <>
-        <label htmlFor='move-folder'>이동할 폴더</label>
-        <Select id='move-folder' options={folder} onChange={() => {}} width='100%' />
-      </>
-    ) : (
-      <>
-        <label htmlFor='add-folder'>폴더명 입력</label>
-        <Input id='add-folder' placeholder='폴더명을 입력해주세요' />
-      </>
-    )}
-  </div>
-);
+const FolderModal = ({
+  isMove = false,
+  initialFolderName = '',
+  onChangeFolderName,
+}: {
+  isMove?: boolean;
+  initialFolderName?: string;
+  onChangeFolderName?: (folderName: string) => void;
+}) => {
+  const [folderName, setFolderName] = useState(initialFolderName);
+
+  useEffect(() => {
+    setFolderName(initialFolderName);
+  }, [initialFolderName]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setFolderName(newValue);
+    onChangeFolderName?.(newValue);
+  };
+
+  return (
+    <div css={contentWrpperStyle}>
+      {isMove ? (
+        <>
+          <label htmlFor='move-folder'>이동할 폴더</label>
+          <Select id='move-folder' options={folder} onChange={() => {}} width='100%' />
+        </>
+      ) : (
+        <>
+          <label htmlFor='add-folder'>폴더명 입력</label>
+          <Input
+            id='add-folder'
+            placeholder='폴더명을 입력해주세요'
+            value={folderName}
+            onChange={handleInputChange}
+          />
+        </>
+      )}
+    </div>
+  );
+};
 
 const contentWrpperStyle = css`
   display: flex;

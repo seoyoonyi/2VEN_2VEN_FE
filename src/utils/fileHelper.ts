@@ -1,5 +1,5 @@
 // 파일 확장자 유효성 검사
-export const ALLOWED_EXTENSIONS = ['.xlsx', '.pdf', '.docx', '.ppt'];
+export const ALLOWED_EXTENSIONS = ['.xlsx', '.pdf', '.docx', '.ppt', '.pptx'];
 export const ALLOWED_IMG_EXTENSIONS = ['png', 'jpeg', 'jpg', 'webp'];
 
 export const isValidFileType = (fileName: string): boolean =>
