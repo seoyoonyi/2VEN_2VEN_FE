@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import theme from '@/styles/theme';
 
 interface TraderData {
-  traderId: number;
+  traderId: string;
   name: string;
   profileImage: string;
   description: string;
@@ -15,7 +15,7 @@ interface TraderData {
 
 interface TraderListProps {
   traders: TraderData[];
-  badgeRank: number[];
+  badgeRank?: string[];
 }
 
 const TraderList = ({ traders, badgeRank }: TraderListProps) => {
@@ -38,7 +38,7 @@ const TraderList = ({ traders, badgeRank }: TraderListProps) => {
           {/* 좌측: 프로필 이미지 및 뱃지 */}
           <div css={badgeContainerStyle}>
             <img src={trader.profileImage} alt={`${trader.name} 프로필`} css={profileImageStyle} />
-            {badgeRank.includes(trader.traderId) && (
+            {badgeRank?.includes(trader.traderId) && (
               <div css={badgeStyle}>
                 {badgeRank.indexOf(trader.traderId) + 1} {/* 순위 계산 */}
               </div>

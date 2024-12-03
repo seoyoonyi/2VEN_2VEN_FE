@@ -26,16 +26,38 @@ export const isValidInputNumber = (value: string | number): boolean => {
 //분석 공휴일, 주말 입력 제한 유효성 검사
 export const isValidPossibleDate = (valid: string[] | string) => {
   const limit = ['01-01', '03-01', '05-05', '08-15', '10-03', '12-25'];
-  const today = new Date();
+
+  const now = new Date();
+  const todayKST = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const todayFormatted = `${todayKST.getFullYear()}-${String(todayKST.getMonth() + 1).padStart(
+    2,
+    '0'
+  )}-${String(todayKST.getDate()).padStart(2, '0')}`;
 
   const validDates = Array.isArray(valid) ? valid : [valid];
+
   const invalidDates = validDates.filter((dateStr: string) => {
-    const date = new Date(dateStr.trim());
-    const dateFormatted = date.toISOString().slice(5, 10);
-    const isHoliday = limit.includes(dateFormatted);
-    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-    const isFutureDate = date > today;
-    return isHoliday || isWeekend || isFutureDate;
+    try {
+      const date = new Date(dateStr.trim());
+      if (isNaN(date.getTime())) {
+        console.error(`Invalid date format: ${dateStr}`);
+        return true;
+      }
+
+      const dateFormatted = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+        2,
+        '0'
+      )}-${String(date.getDate()).padStart(2, '0')}`;
+
+      const isHoliday = limit.includes(dateFormatted.slice(5, 10));
+      const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+      const isFutureDate = dateFormatted > todayFormatted;
+
+      return isHoliday || isWeekend || isFutureDate;
+    } catch (error) {
+      console.error(`Error processing date: ${dateStr}`, error);
+      return true;
+    }
   });
 
   return invalidDates;

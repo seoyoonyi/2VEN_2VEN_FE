@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
@@ -14,6 +14,7 @@ import {
   useDeleteAnalysis,
   usePostDailyAnalysis,
   usePutDailyAnalysis,
+  useUploadExcel,
 } from '@/hooks/mutations/useDailyAnalysis';
 import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
 import usePagination from '@/hooks/usePagination';
@@ -21,11 +22,13 @@ import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useTableModalStore from '@/stores/tableModalStore';
 import useToastStore from '@/stores/toastStore';
+import { UserRole } from '@/types/route';
 import { DailyAnalysisProps, AnalysisDataProps } from '@/types/strategyDetail';
 import { isValidInputNumber, isValidPossibleDate } from '@/utils/statistics';
 
-const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) => {
+const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) => {
   const { user } = useAuthStore();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedData, setSelectedData] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const { pagination, setPage } = usePagination(1, 5);
@@ -35,6 +38,7 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
   const { mutate: postDailyAnalysis } = usePostDailyAnalysis();
   const { mutate: putDailyAnalysis } = usePutDailyAnalysis();
   const { mutate: deleteDailyAnalysis } = useDeleteAnalysis();
+  const { mutate: uploadExcel } = useUploadExcel();
   const { dailyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchDailyAnalysis(
     Number(strategyId),
     pagination.currentPage - 1,
@@ -57,7 +61,7 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
 
   const handleOpenModal = () => {
     let modalData: InputTableProps[] = [];
-    const initalData: InputTableProps[] = Array.from({ length: 5 }, () => ({
+    const initialData: InputTableProps[] = Array.from({ length: 5 }, () => ({
       date: '',
       depWdPrice: '',
       dailyProfitLoss: '',
@@ -68,23 +72,20 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
       title: '일간분석 데이터 직접 입력',
       data: (
         <InputTable
-          data={initalData}
+          data={initialData}
           onChange={(newData) => {
             modalData = newData;
           }}
         />
       ),
       onAction: () => {
-        if (modalData.length < 1) {
-          showToast('올바른 데이터를 입력하세요.', 'error');
-          return;
-        }
-        handleSaveData(modalData);
+        const result = handleSaveData(modalData);
+        return result;
       },
     });
   };
 
-  const handleisValid = (modalData: InputTableProps[]) =>
+  const handleIsValid = (modalData: InputTableProps[]) =>
     modalData.filter((data) => {
       const isDateValid = !!data.date.trim();
       const isDepWdPriceValid =
@@ -104,28 +105,29 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
     return modalData.filter((data) => existingDates.includes(data.date));
   };
 
-  const handleSaveData = (modalData: InputTableProps[]) => {
-    if (!strategyId) return;
-    const emptyData = handleisValid(modalData);
+  const handleSaveData = (modalData: InputTableProps[]): boolean => {
+    if (!strategyId) return false;
+
+    const emptyData = handleIsValid(modalData);
     const duplicateDates = isDuplicatedValue(modalData);
     const limitDates = isValidPossibleDate(
       modalData.map((item: DailyAnalysisProps) => item.date).filter((date) => date !== '')
     );
 
     if (limitDates.length > 0) {
-      showToast('주말, 공휴일, 오늘 이후 날짜는 등록할 수 없습니다.', 'error');
-      return;
+      showToast('주말 및 공휴일, 오늘 이후 날짜는 등록할 수 없습니다.', 'error');
+      return false;
     }
     if (emptyData.length === 0) {
       showToast('일자, 입출금, 일손익은 필수 입력값입니다.', 'error');
-      return;
+      return false;
     }
     if (duplicateDates.length > 0) {
       showToast(
         `이미 등록된 날짜 입니다. ${duplicateDates.map((d) => d.date).join(', ')}`,
         'error'
       );
-      return;
+      return false;
     }
 
     const payload: DailyAnalysisProps[] = modalData
@@ -143,6 +145,7 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
     });
 
     modalData = [];
+    return true;
   };
 
   const handleUpdateModal = (rowId: number, data: DailyAnalysisProps) => {
@@ -164,25 +167,27 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
         />
       ),
       onAction: () => {
-        if (!updatedData) return;
+        if (!updatedData) return false;
 
         const duplicate = normalizedData
           .filter((item: DailyAnalysisProps) => item.date !== data.date)
           .map((item: DailyAnalysisProps) => item.date)
           .includes(updatedData.date);
+
         const limitDates = isValidPossibleDate(updatedData.date);
+
         if (!updatedData.dailyProfitLoss || !updatedData.date || !updatedData.depWdPrice) {
           showToast('일자, 입출금, 일손익은 필수 입력값입니다.', 'error');
-          return;
+          return false;
         }
         if (duplicate) {
           showToast(`이미 등록된 날짜 입니다.`, 'error');
-          return;
+          return false;
         }
 
         if (limitDates.length > 0) {
           showToast('주말 및 공휴일, 오늘 이후 날짜는 등록할 수 없습니다.', 'error');
-          return;
+          return false;
         }
         putDailyAnalysis({
           strategyId,
@@ -191,6 +196,7 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
           dailyDataId: rowId,
         });
         updatedData = null;
+        return true;
       },
     });
   };
@@ -236,6 +242,34 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
     }
   };
 
+  const handleTriggerExcel = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    strategyId: number,
+    role: UserRole
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      showToast('엑셀 파일을 선택해주세요', 'error');
+      return;
+    }
+    uploadExcel(
+      { strategyId: strategyId as number, file, role: role as UserRole },
+      {
+        onSuccess: () => {
+          showToast('업로드가 완료되었습니다.');
+        },
+        onError: (error) => {
+          showToast(error.message, 'error');
+          e.target.value = '';
+        },
+      }
+    );
+  };
+
   useEffect(() => {
     setSelectedData([]);
     setSelectAll(false);
@@ -261,10 +295,23 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
                 <BiPlus size={16} />
                 직접입력
               </Button>
-              <Button variant='accent' size='xs' width={116} css={buttonStyle}>
+              <Button
+                variant='accent'
+                size='xs'
+                width={116}
+                css={buttonStyle}
+                onClick={handleTriggerExcel}
+              >
                 <BiPlus size={16} />
                 엑셀추가
               </Button>
+              <input
+                type='file'
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                accept='.xlsx, .xls'
+                onChange={(e) => handleFileChange(e, Number(strategyId), role as UserRole)}
+              />
             </div>
             <Button variant='neutral' size='xs' width={89} onClick={handleDelete}>
               삭제
@@ -272,6 +319,7 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
           </div>
         )}
       <AnalysisTable
+        strategyId={strategyId}
         attributes={attributes}
         analysis={normalizedData}
         mode={'write'}
@@ -280,6 +328,7 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
         selectAll={selectAll}
         selectedItems={selectedData}
         onUpload={handleOpenModal}
+        onUploadExcel={handleFileChange}
         onSelectChange={handleSelectChange}
         onSelectAll={handleAllChecked}
         onEdit={handleUpdateModal}

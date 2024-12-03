@@ -32,8 +32,10 @@ export const API_ENDPOINTS = {
     CREATE: '/api/strategies', // 전략 등록
     REGISTRATION_FORM: '/api/strategies/registration-form', // 전략 등록 옵션 조회
     UPDATE_FORM: '/api/strategies/update-form', // 전략 수정 조회
+    TRADER_STATS: '/api/strategies/strategy-trader-count', //트레이더 통계조회 (트레이더 수, 전략 수)
+    UPLOAD_ACCOUNT_IMG: '/api/live-account-data', //실계좌 이미지 관리
   },
-  INQUIRY: '/api/consultations', // 나의 문의
+  INQUIRY: '/api/consultations', // 나의 문의 , 문의 등록
   FILES: {
     PROFILE_URL: (memberId: string) => `/api/files/profile/${memberId}`, // 프로필 이미지 URL
     PROPOSAL: '/api/files/proposal', // 제안서 파일 업로드
@@ -42,5 +44,9 @@ export const API_ENDPOINTS = {
   FOLLOWING: {
     FOLDERS: '/api/members/following-strategy-folders', // 나의 관심 전략
     FOLDER_LIST: 'api/members/following-strategy-folderlist', // 폴더 목록
+  },
+  SEARCH: {
+    TRADERS: '/api/traders/search', // 트레이더 검색
+    STRATEGIES: '/api/strategies/search', // 전략 검색
   },
 };
