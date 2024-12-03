@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -46,8 +48,8 @@ const imgTest = [
 const StrategyDetailPage = () => {
   const { user } = useAuthStore();
   const { strategyId } = useParams();
-  const role = user?.role as UserRole;
   const navigate = useNavigate();
+  const role = user?.role as UserRole;
   const { strategy } = useFetchStrategyDetail(strategyId || '');
   const { statistics, writedAt } = useStatistics(Number(strategyId));
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
@@ -56,12 +58,12 @@ const StrategyDetailPage = () => {
   const { openModal } = useModalStore();
   const { dailyAnalysis } = useFetchDailyAnalysis(Number(strategyId), 0, 5);
   const { data: approveState } = useFetchApproveState(Number(strategyId), role) || '';
+  const { isToastVisible, hideToast, message, type } = useToastStore();
   const isApproved = dailyAnalysis?.length >= 3 || approveState?.isApproved === 'N';
   const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
-  const isPrivate =
-    user?.role === 'ROLE_ADMIN' ||
-    (user?.role === 'ROLE_TRADER' && user?.memberId === strategy.memberId);
-  const { isToastVisible, hideToast, message, type } = useToastStore();
+  const isOwner = user?.memberId === strategy?.memberId;
+  const isAdmin = role === 'ROLE_ADMIN';
+  const isPrivate = role === 'ROLE_ADMIN' || role === 'ROLE_TRADER';
 
   const statisticsTableData = (
     mapping: { label: string; key: string }[],
@@ -88,7 +90,12 @@ const StrategyDetailPage = () => {
     {
       title: '실계좌인증',
       component: (
-        <AccountVerify strategyId={Number(strategyId)} role={user?.role} isSelfed={isPrivate} />
+        <AccountVerify
+          strategyId={Number(strategyId)}
+          userId={strategy?.memberId}
+          role={user?.role}
+          isSelfed={isPrivate}
+        />
       ),
     },
     {
@@ -153,6 +160,11 @@ const StrategyDetailPage = () => {
       },
     });
   };
+
+  useEffect(() => {
+    if (strategy?.isApproved === 'N' || (strategy?.isPosted === 'N' && !(isOwner || isAdmin)))
+      navigate('/404', { replace: true });
+  }, [strategy, isOwner, isAdmin]);
 
   if (!strategy) {
     return <Loader />;
