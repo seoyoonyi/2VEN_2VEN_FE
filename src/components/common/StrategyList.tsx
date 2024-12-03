@@ -89,7 +89,7 @@ const StrategyList = ({
             </div>
           </div>
           <div css={graphStyle}>
-            {strategy.cumulativeProfitLossRateList.length !== 0 ? (
+            {strategy.cumulativeProfitLossRateList.length > 1 ? (
               <LineChart
                 data={strategy.cumulativeProfitLossRateList}
                 size='sm'
