@@ -190,7 +190,5 @@ const searchAndMyPageContainer = (user: User | null) => css`
 const buttonStyle = css`
   margin: 0 8px 0 12px;
 `;
-const iconStyle = css`
-  margin-right: 4px;
-`;
+
 export default Header;
