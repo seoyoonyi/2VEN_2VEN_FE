@@ -13,6 +13,5 @@ export const useFetchStrategyTraderCount = () =>
       return res;
     },
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터 재검증 생략
-    retry: 1, // 실패 시 한 번만 재시도
     refetchOnWindowFocus: false, // 창 포커스 시 리패치 비활성화
   });

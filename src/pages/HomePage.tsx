@@ -29,7 +29,7 @@ const HomePage = () => {
   console.log('HomePage Data:', { traderCount, strategyCount });
 
   if (isLoading) {
-    <Loader />;
+    return <Loader />;
   }
   if (isError) {
     console.error('Error loading data...');
