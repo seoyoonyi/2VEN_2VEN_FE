@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 
@@ -15,16 +15,23 @@ const folder = [
 
 const FolderModal = ({
   isMove = false,
+  initialFolderName = '',
   onChangeFolderName,
 }: {
   isMove?: boolean;
+  initialFolderName?: string;
   onChangeFolderName?: (folderName: string) => void;
 }) => {
-  const [folderName, setFolderName] = useState('');
+  const [folderName, setFolderName] = useState(initialFolderName);
+
+  useEffect(() => {
+    setFolderName(initialFolderName);
+  }, [initialFolderName]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFolderName(e.target.value);
-    onChangeFolderName?.(e.target.value);
+    const newValue = e.target.value;
+    setFolderName(newValue);
+    onChangeFolderName?.(newValue);
   };
 
   return (

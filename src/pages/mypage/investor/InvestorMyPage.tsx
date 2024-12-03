@@ -16,26 +16,28 @@ import {
   useUpdateFolderName,
 } from '@/hooks/mutations/useFollwingStrategyMutation';
 import { useFolderList } from '@/hooks/queries/useFetchFolderList';
-import { useAuthStore } from '@/stores/authStore';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
+
+interface Folder {
+  folderId: number;
+  folderName: string;
+  modifiedAt: string;
+  isDefaultFolder: string;
+}
 
 const InvestorMyPage = () => {
   const { openContentModal } = useContentModalStore();
   const { openModal } = useModalStore();
   const { isToastVisible, showToast, hideToast, message, type } = useToastStore();
   const navigate = useNavigate();
-  const { token } = useAuthStore();
-  // console.log(token);
 
   const { data, isLoading, isError } = useFolderList();
   const { mutate: submitFolder } = useSubmitFolder();
   const { mutate: updateFolder } = useUpdateFolderName();
   const { mutate: deleteFolder } = useDeleteFolder();
-
-  let folderName = '';
 
   const handleFolderList = (folderId: number) => {
     navigate(ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(String(folderId)));
@@ -43,6 +45,8 @@ const InvestorMyPage = () => {
   };
 
   const handleAddFolder = () => {
+    let folderName = '';
+
     openContentModal({
       title: '폴더 추가',
       content: (
@@ -73,23 +77,28 @@ const InvestorMyPage = () => {
   };
 
   const handleUpdateFolder = (folderId: number) => {
+    const currentFolder = data?.data.find((folder: Folder) => folder.folderId === folderId);
+    const currentFolderName = currentFolder?.folderName || '';
+    let updatedFolderName = currentFolderName;
+
     openContentModal({
       title: '폴더 수정',
       content: (
         <FolderModal
+          initialFolderName={currentFolderName}
           onChangeFolderName={(value) => {
-            folderName = value;
+            updatedFolderName = value;
           }}
         />
       ),
       onAction: () => {
-        if (!folderName.trim()) {
+        if (!updatedFolderName.trim()) {
           showToast('폴더명을 입력해주세요.', 'error');
           return false;
         }
 
         updateFolder(
-          { folderName, folderId },
+          { folderName: updatedFolderName, folderId },
           {
             onSuccess: () => {
               showToast('폴더명 수정이 완료되었습니다.');
