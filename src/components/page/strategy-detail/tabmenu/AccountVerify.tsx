@@ -14,6 +14,7 @@ import Toast from '@/components/common/Toast';
 import { useDeleteAccountImg, useUploadAccountImg } from '@/hooks/mutations/useAccountMutation';
 import { useFetchAccountImg } from '@/hooks/queries/useAccountImg';
 import usePagination from '@/hooks/usePagination';
+import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
@@ -23,6 +24,7 @@ import { isValidDateFormat } from '@/utils/fileHelper';
 interface AccountProps {
   strategyId: number;
   role?: UserRole;
+  userId: string;
   isSelfed: boolean;
 }
 
@@ -32,7 +34,8 @@ interface AccountImgProps {
   fileLink: string;
 }
 
-const AccountVerify = ({ strategyId, isSelfed, role }: AccountProps) => {
+const AccountVerify = ({ strategyId, isSelfed, role, userId }: AccountProps) => {
+  const { user } = useAuthStore();
   const { pagination, setPage } = usePagination(1, 8);
   const { accountImgs, page, pageSize, totalPages, isLoading } = useFetchAccountImg(
     strategyId,
@@ -110,7 +113,7 @@ const AccountVerify = ({ strategyId, isSelfed, role }: AccountProps) => {
 
   return (
     <div css={accountWrapper}>
-      {isSelfed && (
+      {isSelfed && userId === user?.memberId && (
         <div css={headingStyle}>
           <div css={textStyle}>
             <MdCheck css={iconStyle} size={24} />
