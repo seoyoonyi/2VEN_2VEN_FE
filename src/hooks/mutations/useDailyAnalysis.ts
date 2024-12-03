@@ -4,6 +4,7 @@ import {
   fetchDeleteDailyAnalysis,
   fetchPostDailyAnalysis,
   fetchPutDailyAnalysis,
+  fetchUploadExcel,
 } from '@/api/strategyDetail';
 import { UserRole } from '@/types/route';
 import { DailyAnalysisProps } from '@/types/strategyDetail';
@@ -65,6 +66,23 @@ export const useDeleteAnalysis = () => {
       role: UserRole;
       analysisIds: number[];
     }) => fetchDeleteDailyAnalysis(strategyId, role, analysisIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
+      queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
+    },
+  });
+};
+
+export const useUploadExcel = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ strategyId, role, file }: { strategyId: number; role: UserRole; file: File }) =>
+      fetchUploadExcel(strategyId, file, role),
+
+    onError: (error) => {
+      throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
       queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });

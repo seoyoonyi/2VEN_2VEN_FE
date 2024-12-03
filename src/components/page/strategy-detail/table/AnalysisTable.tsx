@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
 
@@ -35,6 +37,11 @@ export interface AnalysisProps {
   selectedItems?: number[];
   selectAll?: boolean;
   onUpload?: () => void;
+  onUploadExcel?: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    strategyId: number,
+    role: UserRole
+  ) => void;
   onEdit?: (rowId: number, data: InputTableProps) => void;
   onSelectAll?: (checked: boolean) => void;
   onSelectChange?: (selectIdx: number[]) => void;
@@ -43,6 +50,7 @@ export interface AnalysisProps {
 const AnalysisTable = ({
   attributes,
   analysis,
+  strategyId,
   mode,
   selectAll,
   selectedItems,
@@ -50,10 +58,12 @@ const AnalysisTable = ({
   userId,
   onUpload,
   onEdit,
+  onUploadExcel,
   onSelectAll,
   onSelectChange,
 }: AnalysisProps) => {
   const { user } = useAuthStore();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const handleSelected = (idx: number) => {
     const updatedSelected = (selectedItems ?? []).includes(idx)
       ? (selectedItems ?? []).filter((item) => item !== idx)
@@ -69,10 +79,8 @@ const AnalysisTable = ({
     return null;
   };
 
-  console.log(
-    (role === 'ROLE_TRADER' && user?.memberId === userId && mode === 'write') ||
-      (role === 'ROLE_ADMIN' && mode === 'write')
-  );
+  const handleFileUploadClick = () => fileInputRef?.current?.click();
+
   return (
     <div css={tableStyle}>
       <table css={tableVars}>
@@ -166,10 +174,23 @@ const AnalysisTable = ({
                       <BiPlus size={16} />
                       직접입력
                     </Button>
-                    <Button variant='accent' size='xs' width={116} css={buttonStyle}>
+                    <Button
+                      variant='accent'
+                      size='xs'
+                      width={116}
+                      css={buttonStyle}
+                      onClick={handleFileUploadClick}
+                    >
                       <BiPlus size={16} />
                       엑셀추가
                     </Button>
+                    <input
+                      ref={fileInputRef}
+                      type='file'
+                      accept='.xlsx,.xls'
+                      style={{ display: 'none' }}
+                      onChange={(e) => onUploadExcel?.(e, Number(strategyId), role as UserRole)}
+                    />
                   </div>
                 </td>
               ) : (

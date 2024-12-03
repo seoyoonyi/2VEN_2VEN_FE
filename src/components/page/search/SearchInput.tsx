@@ -2,48 +2,43 @@ import { ChangeEvent, KeyboardEvent, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { FiSearch } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 import Input from '@/components/common/Input';
+import { ROUTES } from '@/constants/routes';
+import { useSearchStore } from '@/stores/searchStore';
 import theme from '@/styles/theme';
 
-interface SearchInputProps {
-  onSearchSubmit?: (value: string) => void;
-}
+const SearchInput = () => {
+  const navigate = useNavigate();
+  const { setKeyword } = useSearchStore();
 
-const SearchInput = ({ onSearchSubmit, ...props }: SearchInputProps) => {
   const [searchValue, setSearchValue] = useState('');
 
-  const handleSearchButtonClick = () => {
-    if (onSearchSubmit) onSearchSubmit(searchValue);
-  };
+  const handleSearch = (value: string) => {
+    if (!value.trim()) return;
 
-  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(event.target.value);
+    setKeyword(value);
+    navigate(`${ROUTES.SEARCH.TOTAL}?keyword=${encodeURIComponent(value)}`);
   };
-
-  const handleInputEnterPress = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      handleSearchButtonClick();
-    }
-  };
-
   return (
     <div css={searchContainerStyles}>
-      <button type='button' onClick={handleSearchButtonClick} css={searchIconStyles}>
+      <button type='button' onClick={() => handleSearch(searchValue)} css={searchIconStyles}>
         <FiSearch size={24} />
       </button>
       <Input
         placeholder='내용을 입력해주세요'
         value={searchValue}
-        onChange={handleSearchChange}
-        onKeyDown={handleInputEnterPress}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value)}
+        onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+          if (e.key === 'Enter') handleSearch(searchValue);
+        }}
         showClearButton
         customStyle={css`
           width: 300px;
           text-indent: 10px;
           padding-left: 36px;
         `}
-        {...props}
       />
     </div>
   );
