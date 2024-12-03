@@ -346,7 +346,7 @@ const descriptionStyle = css`
   color: ${theme.colors.gray[400]};
 `;
 
-/* 투자자Main */
+/* 트레이더Main */
 
 const traderSectionStyle = css`
   position: relative;
@@ -367,7 +367,7 @@ const traderMainStyle = css`
 `;
 
 const leftSectionStyle = css`
-  height: 520px;
+  height: 490px;
 `;
 
 const traderTextStyle = css`
