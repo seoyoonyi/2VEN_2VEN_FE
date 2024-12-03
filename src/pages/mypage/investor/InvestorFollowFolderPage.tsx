@@ -17,7 +17,7 @@ const InvestorFollowFolderPage = () => {
   const { isToastVisible, showToast, hideToast, message } = useToastStore();
 
   const [page, setPage] = useState(1);
-  const limit = 10;
+  const limit = 30;
 
   const { data } = useFetchStrategyList({
     page: page - 1,

@@ -12,15 +12,7 @@ type FetchStrategyListParams = {
 const useFetchStrategyList = (params: FetchStrategyListParams) =>
   useQuery({
     queryKey: ['strategyList', params],
-    queryFn: async () => {
-      try {
-        const response = await fetchStrategyList(params);
-        return response;
-      } catch (error) {
-        console.error('Error fetching strategy list:', error);
-        throw error;
-      }
-    },
+    queryFn: async () => await fetchStrategyList(params),
     enabled: !!params,
   });
 

@@ -9,6 +9,7 @@ import PageHeader from '@/components/common/PageHeader';
 import Pagination from '@/components/common/Pagination';
 import Select, { Option } from '@/components/common/Select';
 import StrategyList from '@/components/common/StrategyList';
+import { ROUTES } from '@/constants/routes';
 import useFetchStrategyList from '@/hooks/queries/useFetchStrategyList';
 import useFetchStrategyOptionData from '@/hooks/queries/useFetchStrategyOptionData';
 import { useAuthStore } from '@/stores/authStore';
@@ -97,7 +98,7 @@ const StrategyListPage = () => {
                 customStyle={css`
                   padding: 20px 32px;
                 `}
-                onClick={() => navigate('/mypage/trader/strategies/create')}
+                onClick={() => navigate(ROUTES.MYPAGE.TRADER.STRATEGIES.CREATE)}
               >
                 전략등록
               </Button>
