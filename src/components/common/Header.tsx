@@ -51,9 +51,7 @@ const Header = () => {
       });
     }
   }, [user, adminAuth]);
-  const handleButtonClick = (value: string) => {
-    console.log(value);
-  };
+
   const handleLoginButtonClick = () => {
     navigate(ROUTES.AUTH.SIGNIN);
   };
@@ -67,7 +65,7 @@ const Header = () => {
       return (
         <>
           <div css={searchAndMyPageContainer}>
-            <SearchInput onSearchSubmit={handleButtonClick} />
+            <SearchInput />
             <Button variant='secondary' size='xs' width={100} onClick={handleLoginButtonClick}>
               로그인
             </Button>
@@ -80,7 +78,7 @@ const Header = () => {
     if (isAdminUser(user)) {
       return (
         <div css={searchAndMyPageContainer}>
-          <SearchInput onSearchSubmit={handleButtonClick} />
+          <SearchInput />
           {isAdmin &&
             isAuthorized &&
             !hasExpired && ( // 관리자 인증이 된 경우
@@ -100,7 +98,7 @@ const Header = () => {
     return (
       <>
         <div css={searchAndMyPageContainer}>
-          <SearchInput onSearchSubmit={handleButtonClick} />
+          <SearchInput />
           <Link
             to={
               user.role === 'ROLE_INVESTOR'
