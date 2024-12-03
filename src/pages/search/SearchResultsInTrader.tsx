@@ -34,7 +34,8 @@ const SearchResultsInTrader = () => {
     <div css={containerStyle}>
       <h2 css={pageHeadingStyle}>
         <strong>&lsquo;{shortenString(keyword, 10)}&rsquo;&nbsp;</strong>
-        <span>에 대한 검색 결과</span>
+        <span>에 대한 트레이더 검색 결과</span>
+        <span css={totalCountStyle}>{traderResults?.totalElements ?? 0}</span>
       </h2>
       <div css={headerStyle}>
         <div css={totalStyle}>
@@ -72,7 +73,7 @@ const containerStyle = css`
 const pageHeadingStyle = css`
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   padding: 76px 0 64px;
   background-color: ${theme.colors.gray[100]};
   font-size: ${theme.typography.fontSizes.heading.h2};
@@ -81,8 +82,8 @@ const pageHeadingStyle = css`
   strong {
     color: ${theme.colors.main.black};
   }
-  span {
-    color: ${theme.colors.gray[600]};
+  span:last-of-type {
+    color: ${theme.colors.main.primary};
   }
 `;
 const headerStyle = css`
@@ -105,6 +106,18 @@ const paginationWrapperStyle = css`
   display: flex;
   justify-content: center;
   margin-top: 40px;
+`;
+const totalCountStyle = css`
+  display: flex;
+  width: 56px;
+  height: 32px;
+  justify-content: center;
+  align-items: center;
+  font-size: ${theme.typography.fontSizes.body};
+  line-height: ${theme.typography.lineHeights.md};
+  font-weight: ${theme.typography.fontWeight.bold};
+  background-color: ${theme.colors.teal[50]};
+  border-radius: 100px;
 `;
 
 export default SearchResultsInTrader;
