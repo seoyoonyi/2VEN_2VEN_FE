@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult, keepPreviousData } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import { searchStrategies, searchStrategyDetail, searchTraders } from '@/api/search';
 import {
