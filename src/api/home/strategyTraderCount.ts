@@ -1,14 +1,14 @@
 import apiClient from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
 
-export interface TraderStatsParams {
+export interface StrategyTraderParams {
   traderCnt: number;
   strategyCnt: number;
 }
 
-export const fetchTraderStats = async (): Promise<TraderStatsParams> => {
+export const fetchStrategyTraderCount = async (): Promise<StrategyTraderParams> => {
   try {
-    const res = await apiClient.get<TraderStatsParams>(API_ENDPOINTS.STRATEGY.TRADER_STATS);
+    const res = await apiClient.get<StrategyTraderParams>(API_ENDPOINTS.STRATEGY.TRADER_STATS);
 
     return res.data;
   } catch (error) {

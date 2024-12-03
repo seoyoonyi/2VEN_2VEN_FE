@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchTraderStats, TraderStatsParams } from '@/api/home/traderStats';
+import { fetchStrategyTraderCount, StrategyTraderParams } from '@/api/home/strategyTraderCount';
 
 export const useFetchStrategyTraderCount = () =>
-  useQuery<TraderStatsParams>({
+  useQuery<StrategyTraderParams>({
     queryKey: ['strategyTraderCount'],
     queryFn: async () => {
-      const res = await fetchTraderStats();
+      const res = await fetchStrategyTraderCount();
       if (!res.traderCnt || !res.strategyCnt) {
         throw new Error('Invalid trader or strategy count data');
       }

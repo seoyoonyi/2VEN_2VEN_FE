@@ -10,8 +10,8 @@ import TraderUserImage2 from '@/assets/images/nimo_trader.png';
 import TraderMainImage from '@/assets/images/trader_main.png';
 import Button from '@/components/common/Button';
 import Loader from '@/components/common/Loading';
+import TraderStats from '@/components/page/home/StrategyTraderCount';
 import TopStrategyList from '@/components/page/home/TopStrategyList';
-import TraderStats from '@/components/page/home/TraderStats';
 import { ROUTES } from '@/constants/routes';
 import { useFetchStrategyTraderCount } from '@/hooks/queries/useFetchStrategyTraderCount';
 import { useFetchTopStrategy } from '@/hooks/queries/useFetchTopStrategy';
@@ -25,14 +25,14 @@ const HomePage = () => {
   const { data: strategyData, isLoading: isLoadingStrategy } = useFetchStrategyTraderCount();
   const { data: rankingData, isLoading: isLoadingRanking } = useFetchTopStrategy();
 
+  // 트레이더 및 전략 수 표시를 위한 데이터 처리
+  const traderCount = Number(strategyData?.traderCnt ?? 0);
+  const strategyCount = Number(strategyData?.strategyCnt ?? 0);
+
   // 로딩 처리
   if (isLoadingStrategy || isLoadingRanking) {
     return <Loader />;
   }
-
-  // 트레이더 및 전략 수 표시를 위한 데이터 처리
-  const traderCount = Number(strategyData?.traderCnt ?? 0);
-  const strategyCount = Number(strategyData?.strategyCnt ?? 0);
 
   const handleSignUpClick = () => {
     navigate(ROUTES.AUTH.SIGNUP.SELECT_TYPE);
