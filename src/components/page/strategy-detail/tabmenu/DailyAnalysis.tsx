@@ -259,8 +259,12 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
     uploadExcel(
       { strategyId: strategyId as number, file, role: role as UserRole },
       {
+        onSuccess: () => {
+          showToast('업로드가 완료되었습니다.');
+        },
         onError: (error) => {
           showToast(error.message, 'error');
+          e.target.value = '';
         },
       }
     );
