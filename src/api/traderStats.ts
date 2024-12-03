@@ -8,11 +8,7 @@ export interface TraderStatsParams {
 
 export const fetchTraderStats = async (): Promise<TraderStatsParams> => {
   try {
-    const res = await apiClient.get<TraderStatsParams>(API_ENDPOINTS.STRATEGY.TRADER_STATS, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const res = await apiClient.get<TraderStatsParams>(API_ENDPOINTS.STRATEGY.TRADER_STATS);
 
     console.log('API Response:', res.data);
     return res.data;
