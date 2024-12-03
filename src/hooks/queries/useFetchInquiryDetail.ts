@@ -10,7 +10,7 @@ interface UseFetchInquiryDetailParams {
 
 const useFetchInquiryDetail = ({ role, id }: UseFetchInquiryDetailParams) =>
   useQuery({
-    queryKey: ['inquiryDetail', id, role],
+    queryKey: ['inquiries', id, role],
     queryFn: () => fetchInquiryDetail({ id, role }),
     enabled: id !== undefined && !!role,
   });
