@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
@@ -14,6 +14,7 @@ import {
   useDeleteAnalysis,
   usePostDailyAnalysis,
   usePutDailyAnalysis,
+  useUploadExcel,
 } from '@/hooks/mutations/useDailyAnalysis';
 import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
 import usePagination from '@/hooks/usePagination';
@@ -21,11 +22,13 @@ import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useTableModalStore from '@/stores/tableModalStore';
 import useToastStore from '@/stores/toastStore';
+import { UserRole } from '@/types/route';
 import { DailyAnalysisProps, AnalysisDataProps } from '@/types/strategyDetail';
 import { isValidInputNumber, isValidPossibleDate } from '@/utils/statistics';
 
-const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) => {
+const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) => {
   const { user } = useAuthStore();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedData, setSelectedData] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const { pagination, setPage } = usePagination(1, 5);
@@ -35,6 +38,7 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
   const { mutate: postDailyAnalysis } = usePostDailyAnalysis();
   const { mutate: putDailyAnalysis } = usePutDailyAnalysis();
   const { mutate: deleteDailyAnalysis } = useDeleteAnalysis();
+  const { mutate: uploadExcel } = useUploadExcel();
   const { dailyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchDailyAnalysis(
     Number(strategyId),
     pagination.currentPage - 1,
@@ -238,6 +242,34 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
     }
   };
 
+  const handleTriggerExcel = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    strategyId: number,
+    role: UserRole
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      showToast('엑셀 파일을 선택해주세요', 'error');
+      return;
+    }
+    uploadExcel(
+      { strategyId: strategyId as number, file, role: role as UserRole },
+      {
+        onSuccess: () => {
+          showToast('업로드가 완료되었습니다.');
+        },
+        onError: (error) => {
+          showToast(error.message, 'error');
+          e.target.value = '';
+        },
+      }
+    );
+  };
+
   useEffect(() => {
     setSelectedData([]);
     setSelectAll(false);
@@ -263,10 +295,23 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
                 <BiPlus size={16} />
                 직접입력
               </Button>
-              <Button variant='accent' size='xs' width={116} css={buttonStyle}>
+              <Button
+                variant='accent'
+                size='xs'
+                width={116}
+                css={buttonStyle}
+                onClick={handleTriggerExcel}
+              >
                 <BiPlus size={16} />
                 엑셀추가
               </Button>
+              <input
+                type='file'
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                accept='.xlsx, .xls'
+                onChange={(e) => handleFileChange(e, Number(strategyId), role as UserRole)}
+              />
             </div>
             <Button variant='neutral' size='xs' width={89} onClick={handleDelete}>
               삭제
@@ -274,6 +319,7 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
           </div>
         )}
       <AnalysisTable
+        strategyId={strategyId}
         attributes={attributes}
         analysis={normalizedData}
         mode={'write'}
@@ -282,6 +328,7 @@ const DailyAnalysis = ({ strategyId, userId, attributes, role }: AnalysisProps) 
         selectAll={selectAll}
         selectedItems={selectedData}
         onUpload={handleOpenModal}
+        onUploadExcel={handleFileChange}
         onSelectChange={handleSelectChange}
         onSelectAll={handleAllChecked}
         onEdit={handleUpdateModal}

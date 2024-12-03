@@ -27,9 +27,10 @@ const tagAreaStyle = css`
 const tagStyle = css`
   display: flex;
   max-width: 100px;
-  height: 22px;
+  height: 25px;
   align-items: center;
   justify-content: center;
+  margin: 20px 0;
 `;
 
 export default IconTagSection;

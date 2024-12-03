@@ -1,3 +1,5 @@
+import { AxiosError } from 'axios';
+
 import { apiClient, createFormDataRequest } from './apiClient';
 import { API_ENDPOINTS } from './apiEndpoints';
 
@@ -60,6 +62,27 @@ export const fetchDailyAnalysis = async (strategyId: number, page: number, pageS
     return res.data;
   } catch (error) {
     console.error('fetch to failed Daily Analysis', error);
+  }
+};
+
+//전략 엑셀 등록
+export const fetchUploadExcel = async (strategyId: number, fileItem: File, authRole: UserRole) => {
+  const formData = createFormDataRequest({ file: fileItem });
+  try {
+    const req = await apiClient.post(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/upload`,
+      formData,
+      {
+        headers: {
+          auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<{ error: string }>;
+    const errorMsg = axiosError.response?.data?.error || '파일 업로드 실패';
+    throw new Error(errorMsg);
   }
 };
 
