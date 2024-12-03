@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
-import { InquiryDetailData } from '@/types/myinquires';
+import { InquiryDetailData } from '@/types/inquiries';
 
 const Answer = ({ data }: { data: InquiryDetailData }) => (
   <div css={answerWrapper}>
