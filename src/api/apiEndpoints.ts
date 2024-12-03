@@ -33,6 +33,7 @@ export const API_ENDPOINTS = {
     REGISTRATION_FORM: '/api/strategies/registration-form', // 전략 등록 옵션 조회
     UPDATE_FORM: '/api/strategies/update-form', // 전략 수정 조회
     TRADER_STATS: '/api/strategies/strategy-trader-count', //트레이더 통계조회 (트레이더 수, 전략 수)
+    UPLOAD_ACCOUNT_IMG: '/api/live-account-data', //실계좌 이미지 관리
   },
   INQUIRY: '/api/consultations', // 나의 문의 , 문의 등록
   FILES: {

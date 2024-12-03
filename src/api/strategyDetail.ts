@@ -271,3 +271,75 @@ export const fetchEndStrategey = async (strategyId: number, authRole: UserRole) 
     console.error('failed to fetch request strategy terminated', error);
   }
 };
+
+//실계좌 이미지 조회
+export const fetchRealAccount = async (
+  strategyId: number,
+  authRole: UserRole,
+  page: number,
+  pageSize: number
+) => {
+  try {
+    const res = await apiClient.get(
+      `${API_ENDPOINTS.STRATEGY.UPLOAD_ACCOUNT_IMG}/${strategyId}/list`,
+      {
+        params: {
+          page,
+          pageSize,
+        },
+        headers: {
+          auth: authRole,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error('failed to upload real-account-img', error);
+  }
+};
+
+//실계좌 이미지 업로드
+export const fetchUploadRealAccount = async (
+  strategyId: number,
+  fileItem: File,
+  authRole: UserRole
+) => {
+  const formData = createFormDataRequest({ file: fileItem });
+  try {
+    const req = await apiClient.post(
+      `${API_ENDPOINTS.STRATEGY.UPLOAD_ACCOUNT_IMG}/${strategyId}`,
+      formData,
+      {
+        headers: {
+          auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to post real-account-img', error);
+  }
+};
+
+//실계좌 이미지 삭제
+export const fetchDeleteRealAccount = async (
+  strategyId: number,
+  liveAccountId: number[],
+  authRole: UserRole
+) => {
+  const body = liveAccountId;
+  try {
+    const req = await apiClient.delete(
+      `${API_ENDPOINTS.STRATEGY.UPLOAD_ACCOUNT_IMG}/${strategyId}`,
+      {
+        data: body,
+        headers: {
+          auth: authRole,
+        },
+      }
+    );
+    return req.data;
+  } catch (error) {
+    console.error('failed to post real-account-img', error);
+  }
+};
