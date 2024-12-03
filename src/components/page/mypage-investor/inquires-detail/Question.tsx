@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 
 import Avatar from '@/components/common/Avatar';
+import { INQUIRY_MESSAGES } from '@/constants/inquiry';
 import theme from '@/styles/theme';
 import { InquiryDetailData, Status } from '@/types/inquiries';
 
@@ -19,12 +20,12 @@ const Question = ({
         {data.status === 'PENDING' && <span className='dot' />}
         {data.status === 'PENDING' ? '대기' : '완료'}
       </span>
-      <h1 css={titleStyle}>{data.title}</h1>
+      <h1 css={titleStyle}>{data.title || INQUIRY_MESSAGES.DELETED_TITLE}</h1>
       <div css={infoWrapper}>
         <div css={infoStyle}>
           <Avatar src={data.investorProfileUrl} alt={`${data.traderName}'s profile`} size='24' />
-          <h2>{data.investorName}</h2>
-          <span>{data.createdAt.slice(0, 10).replace(/-/g, '.')}</span>
+          <h2>{data.investorName || INQUIRY_MESSAGES.NO_INFO}</h2>
+          <span>{data.createdAt?.slice(0, 10).replace(/-/g, '.') || INQUIRY_MESSAGES.NO_INFO}</span>
         </div>
         {data.status === 'PENDING' && (
           <div css={editWrapper}>
@@ -43,21 +44,23 @@ const Question = ({
     <section css={strategyInfoWrapper}>
       <div css={strategyInfoStyle}>
         <h3>관심전략명</h3>
-        <div>{data.strategyName}</div>
+        <div>{data.strategyName || INQUIRY_MESSAGES.NO_STRATEGY}</div>
       </div>
       <div css={investmentItemStyle}>
         <div css={strategyInfoStyle}>
           <h3>투자개시금액</h3>
-          <span>{data.investmentAmount.toLocaleString()}</span>
+          <span>{data.investmentAmount?.toLocaleString() || INQUIRY_MESSAGES.NO_INFO}</span>
         </div>
         <div css={strategyInfoStyle}>
           <h3>투자개시시점</h3>
-          <span>{data.investmentDate.slice(0, 10).replace(/-/g, '.')}</span>
+          <span>
+            {data.investmentDate?.slice(0, 10).replace(/-/g, '.') || INQUIRY_MESSAGES.NO_INFO}
+          </span>
         </div>
       </div>
     </section>
 
-    <section css={questionStyle}>{data.content}</section>
+    <section css={questionStyle}>{data.content || INQUIRY_MESSAGES.NO_CONTENT}</section>
   </div>
 );
 
