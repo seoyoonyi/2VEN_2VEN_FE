@@ -22,6 +22,7 @@ interface StrategyListProps {
   gridTemplate?: string;
   moreMenu?: boolean;
   dropdownActions?: DropdownAction[];
+  noDataDesc?: string;
 }
 
 const StrategyList = ({
@@ -32,6 +33,7 @@ const StrategyList = ({
   gridTemplate = '64px 278px 278px 160px 160px 100px 100px',
   moreMenu = false,
   dropdownActions = [],
+  noDataDesc = '전략이 없습니다.',
 }: StrategyListProps) => {
   const navigate = useNavigate();
 
@@ -58,87 +60,95 @@ const StrategyList = ({
           </div>
         )}
       </div>
-      {strategies.map((strategy, idx) => (
-        <div
-          role='button'
-          tabIndex={0}
-          onClick={() => onClickStrategyList(String(strategy.strategyId))}
-          onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              onClickStrategyList(String(strategy.strategyId));
-            }
-          }}
-          css={rowStyle(gridTemplate)}
-          key={strategy.strategyId}
-        >
-          {showRank && <div css={rankStyle}>{startRank + idx}</div>}
-          <div css={strategyTitleContainerStyle}>
-            <div css={strategyTitleStyle}>{strategy.strategyTitle}</div>
-            <div css={iconStyle}>
-              <img src={strategy.tradingTypeIcon} alt='매매유형' width={16} />
-              <img src={strategy.tradingCycleIcon} alt='주기' width={16} />
-              {strategy.investmentAssetClassesIcons
-                ?.slice(0, 2)
-                .map((icon) => <img key={icon} src={icon} alt={icon} height={16} />)}
-              <div css={countStyle}>
-                {strategy.investmentAssetClassesIcons.length > 2 && (
-                  <span css={countStyle}>+{strategy.investmentAssetClassesIcons.length - 2}</span>
+      {strategies.length === 0 ? (
+        <div css={noDataStyle}>{noDataDesc}</div>
+      ) : (
+        <>
+          {strategies.map((strategy, idx) => (
+            <div
+              role='button'
+              tabIndex={0}
+              onClick={() => onClickStrategyList(String(strategy.strategyId))}
+              onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onClickStrategyList(String(strategy.strategyId));
+                }
+              }}
+              css={rowStyle(gridTemplate)}
+              key={strategy.strategyId}
+            >
+              {showRank && <div css={rankStyle}>{startRank + idx}</div>}
+              <div css={strategyTitleContainerStyle}>
+                <div css={strategyTitleStyle}>{strategy.strategyTitle}</div>
+                <div css={iconStyle}>
+                  <img src={strategy.tradingTypeIcon} alt='매매유형' width={16} />
+                  <img src={strategy.tradingCycleIcon} alt='주기' width={16} />
+                  {strategy.investmentAssetClassesIcons
+                    ?.slice(0, 2)
+                    .map((icon) => <img key={icon} src={icon} alt={icon} height={16} />)}
+                  <div css={countStyle}>
+                    {strategy.investmentAssetClassesIcons.length > 2 && (
+                      <span css={countStyle}>
+                        +{strategy.investmentAssetClassesIcons.length - 2}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div css={graphStyle}>
+                {strategy.cumulativeProfitLossRateList.length > 1 ? (
+                  <LineChart
+                    data={strategy.cumulativeProfitLossRateList}
+                    size='sm'
+                    colorTheme='primary'
+                  />
+                ) : (
+                  '-'
                 )}
               </div>
+              <div css={yieldStyle}>
+                {strategy.cumulativeProfitLossRate !== undefined ? (
+                  <>
+                    <div>
+                      <span>누적</span>
+                      {strategy.cumulativeProfitLossRate}%
+                    </div>
+                    <div>
+                      <span>최근 1년</span>
+                      {strategy.recentOneYearReturn}%
+                    </div>
+                  </>
+                ) : (
+                  '-'
+                )}
+              </div>
+              <div css={mddStyle(strategy.mdd ?? 0)}>
+                {strategy.mdd !== undefined
+                  ? strategy.mdd > 0
+                    ? `+${strategy.mdd.toLocaleString()}`
+                    : strategy.mdd.toLocaleString()
+                  : '-'}
+              </div>
+              <div>{strategy.smScore !== undefined ? strategy.smScore : '-'}</div>
+              <div>{strategy.followersCount}</div>
+              {moreMenu && (
+                <DropdownMenu
+                  isActive={activeDropdown === strategy.strategyId}
+                  toggleDropdown={() => toggleDropdown(strategy.strategyId)}
+                  actions={dropdownActions.map((action) => ({
+                    label: action.label,
+                    handleClick: () => {
+                      action.onClick(strategy.strategyId);
+                      closeDropdown();
+                    },
+                  }))}
+                />
+              )}
             </div>
-          </div>
-          <div css={graphStyle}>
-            {strategy.cumulativeProfitLossRateList.length > 1 ? (
-              <LineChart
-                data={strategy.cumulativeProfitLossRateList}
-                size='sm'
-                colorTheme='primary'
-              />
-            ) : (
-              '-'
-            )}
-          </div>
-          <div css={yieldStyle}>
-            {strategy.cumulativeProfitLossRate !== undefined ? (
-              <>
-                <div>
-                  <span>누적</span>
-                  {strategy.cumulativeProfitLossRate}%
-                </div>
-                <div>
-                  <span>최근 1년</span>
-                  {strategy.recentOneYearReturn}%
-                </div>
-              </>
-            ) : (
-              '-'
-            )}
-          </div>
-          <div css={mddStyle(strategy.mdd ?? 0)}>
-            {strategy.mdd !== undefined
-              ? strategy.mdd > 0
-                ? `+${strategy.mdd.toLocaleString()}`
-                : strategy.mdd.toLocaleString()
-              : '-'}
-          </div>
-          <div>{strategy.smScore !== undefined ? strategy.smScore : '-'}</div>
-          <div>{strategy.followersCount}</div>
-          {moreMenu && (
-            <DropdownMenu
-              isActive={activeDropdown === strategy.strategyId}
-              toggleDropdown={() => toggleDropdown(strategy.strategyId)}
-              actions={dropdownActions.map((action) => ({
-                label: action.label,
-                handleClick: () => {
-                  action.onClick(strategy.strategyId);
-                  closeDropdown();
-                },
-              }))}
-            />
-          )}
-        </div>
-      ))}
+          ))}
+        </>
+      )}
     </div>
   );
 };
@@ -237,6 +247,16 @@ const mddStyle = (mdd: string | number | undefined) => css`
     : (mdd as number) < 0
       ? theme.colors.main.blue
       : theme.colors.main.red};
+`;
+
+const noDataStyle = css`
+  display: flex;
+  height: 500px;
+  justify-content: center;
+  align-items: center;
+  color: ${theme.colors.gray[500]};
+
+  font-size: ${theme.typography.fontSizes.subtitle.lg};
 `;
 
 export default StrategyList;

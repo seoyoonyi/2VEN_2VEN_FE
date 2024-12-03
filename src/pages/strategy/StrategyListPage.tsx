@@ -7,7 +7,7 @@ import Button from '@/components/common/Button';
 import Loader from '@/components/common/Loading';
 import PageHeader from '@/components/common/PageHeader';
 import Pagination from '@/components/common/Pagination';
-import Select from '@/components/common/Select';
+import Select, { Option } from '@/components/common/Select';
 import StrategyList from '@/components/common/StrategyList';
 import useFetchStrategyList from '@/hooks/queries/useFetchStrategyList';
 import useFetchStrategyOptionData from '@/hooks/queries/useFetchStrategyOptionData';
@@ -21,6 +21,10 @@ const desc = [
 ];
 
 const StrategyListPage = () => {
+  const [tradingCycleId, setTradingCycleId] = useState<number | undefined>(undefined);
+  const [investmentAssetClassesId, setInvestmentAssetClassesId] = useState<number | undefined>(
+    undefined
+  );
   const { strategyData } = useFetchStrategyOptionData();
   const [page, setPage] = useState(1);
   const limit = 30;
@@ -28,6 +32,8 @@ const StrategyListPage = () => {
   const { user } = useAuthStore();
 
   const { data, isLoading, error } = useFetchStrategyList({
+    tradingCycleId,
+    investmentAssetClassesId,
     page: page - 1,
     pageSize: limit,
   });
@@ -36,7 +42,15 @@ const StrategyListPage = () => {
     window.scrollTo(0, 0);
   }, [page]);
 
-  console.log('전략 목록==========>', data);
+  const handleTradingCycleChange = (option: Option) => {
+    setTradingCycleId(Number(option.value));
+    setPage(1);
+  };
+
+  const handleAssetClassChange = (option: Option) => {
+    setInvestmentAssetClassesId(Number(option.value));
+    setPage(1);
+  };
 
   if (isLoading)
     return (
@@ -46,10 +60,6 @@ const StrategyListPage = () => {
     );
 
   if (error) return <p>Error fetching strategy list</p>;
-
-  if (!data?.data || data.data.length === 0) {
-    return <p>No strategies found</p>;
-  }
 
   return (
     <div>
@@ -62,14 +72,20 @@ const StrategyListPage = () => {
           <div css={optionContainerStyle}>
             <Select
               options={strategyData.products}
-              onChange={() => {}}
+              value={strategyData.products.find(
+                (option) => option.value === investmentAssetClassesId?.toString()
+              )}
+              onChange={handleAssetClassChange}
               defaultLabel='상품유형'
               type='sm'
               width='160px'
             />
             <Select
               options={strategyData.cycles}
-              onChange={() => {}}
+              value={strategyData.cycles.find(
+                (option) => option.value === tradingCycleId?.toString()
+              )}
+              onChange={handleTradingCycleChange}
               defaultLabel='투자주기'
               type='sm'
               width='160px'
@@ -89,7 +105,12 @@ const StrategyListPage = () => {
           </div>
         </div>
         <div css={listContainerStyle}>
-          <StrategyList strategies={data.data} showRank startRank={(page - 1) * limit + 1} />
+          <StrategyList
+            strategies={data.data}
+            showRank
+            startRank={(page - 1) * limit + 1}
+            noDataDesc='더 많은 전략이 당신을 기다립니다! 조건을 변경해보세요.'
+          />
           <Pagination totalPage={data.totalPages} limit={limit} page={page} setPage={setPage} />
         </div>
       </div>
