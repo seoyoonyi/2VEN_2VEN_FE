@@ -83,7 +83,7 @@ const StrategyList = ({
                 <div css={strategyTitleStyle}>{strategy.strategyTitle}</div>
                 <div css={iconStyle}>
                   <img src={strategy.tradingTypeIcon} alt='매매유형' width={16} />
-                  <img src={strategy.tradingCycleIcon} alt='주기' width={16} />
+                  <img src={strategy.tradingCycleIcon} alt='주기' height={16} />
                   {strategy.investmentAssetClassesIcons
                     ?.slice(0, 2)
                     .map((icon) => <img key={icon} src={icon} alt={icon} height={16} />)}
