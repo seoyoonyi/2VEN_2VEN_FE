@@ -8,14 +8,18 @@ import Button from '@/components/common/Button';
 import NavigationMenu from '@/components/common/NavigationMenu';
 import ProfileSection from '@/components/page/mypage/ProfileSection';
 import { ROUTES } from '@/constants/routes';
+import { useProfileImage } from '@/hooks/queries/useProfileImage';
+import { useSidebarProfileQuery } from '@/hooks/queries/useSidebarProfile';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
 const InvestorMypageNav = () => {
   const navigate = useNavigate();
-  const { clearAuth } = useAuthStore();
-  // 사진이 없을때
-  // const [userImage, setUserImage] = useState(null);
+  const { user, clearAuth } = useAuthStore();
+  const { data: profileImageData } = useProfileImage(user?.memberId || ''); // 프로필 이미지 가져오기
+  const imageSrc = profileImageData?.fileUrl;
+  const { data: profileData } = useSidebarProfileQuery();
+
   const [userImage] = useState(
     'https://i.pinimg.com/474x/78/04/d7/7804d73be61366364997b925a613f438.jpg'
   );
@@ -40,15 +44,15 @@ const InvestorMypageNav = () => {
     navigate(ROUTES.HOME.PATH, { replace: true });
     window.scrollTo(0, 0);
   };
-
+  console.log('imageSrc: ', imageSrc);
   return (
     <div css={navContainerStyle}>
       <div css={navWrapper}>
         <ProfileSection
-          userImage={userImage}
-          userRole='투자자'
-          nickname='나는야투자자'
-          desc='투자 잘해서 부자가 되는 그날까지 아자아자 화이팅이닷!!'
+          userImage={imageSrc ?? userImage}
+          userRole={profileData?.data.memberType === 'TRADER' ? '트레이더' : '투자자'}
+          nickname={profileData?.data.nickname ?? '투자자님'}
+          desc={profileData?.data.introduction ?? '투자자님의 소개글이 없습니다.'}
         />
         <NavigationMenu items={InvestorMypageNavItems} />
       </div>
