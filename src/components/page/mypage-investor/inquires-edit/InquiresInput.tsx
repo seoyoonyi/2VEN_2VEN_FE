@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 
 import Input from '@/components/common/Input';
 import theme from '@/styles/theme';
-import { InquiryDetailData } from '@/types/myinquires';
+import { InquiryDetailData } from '@/types/inquiries';
 
 const InquiresInput = ({
   data,
