@@ -7,7 +7,7 @@ import theme from '@/styles/theme';
 const chartOptions = [
   {
     label: '기준가',
-    value: 'base_price',
+    value: 'referencePrice',
   },
   {
     label: '잔고',
@@ -19,59 +19,63 @@ const chartOptions = [
   },
   {
     label: '누적 입출금액',
-    value: 'cumulative_deposit_withdrawal',
+    value: 'cumulativeDepWdPrice',
   },
   {
-    label: '일별 입출금액',
-    value: 'daily_deposit_withdrawal',
+    label: '일별 입출금 금액',
+    value: 'dailyWdPrice',
   },
   {
-    label: '일손익률(%)',
-    value: 'daily_profit_loss_rate',
+    label: '일손익 금액',
+    value: 'dailyProfitLoss',
   },
   {
-    label: '누적 수익 금액',
-    value: 'cumulative_profit_amount',
+    label: '일 손익률(%)',
+    value: 'dailyPlRate',
+  },
+  {
+    label: '누적 수익금액',
+    value: 'cumulativeProfitLoss',
   },
   {
     label: '누적 수익률(%)',
-    value: 'cumulative_profit_rate',
+    value: 'cumulativeProfitLossRate',
   },
   {
     label: '현재 자본인하금액',
-    value: 'current_capital_reduction_amount',
+    value: 'currentDrawdownAmount',
   },
   {
-    label: '현재 자본인하율(%)',
-    value: 'current_capital_reduction_rate',
+    label: '현재 자본인하율',
+    value: 'currentDrawdownRate',
   },
   {
     label: '평균 손익 금액',
-    value: 'average_profit_loss_amount',
+    value: 'averageProfitLoss',
   },
   {
-    label: '평균 손익률',
-    value: 'average_profit_loss_rate',
+    label: '평균 손익률(%)',
+    value: 'averageProfitLossRate',
   },
   {
     label: '승률',
-    value: 'win_rate',
+    value: 'winRate',
   },
   {
-    label: 'Profit Factor',
-    value: 'profit_factor',
+    label: 'profitFactor',
+    value: 'profitFactor',
   },
   {
     label: 'ROA',
     value: 'roa',
   },
   {
-    label: 'totalProfit',
-    value: 'total_profit',
+    label: '총 이익',
+    value: 'totalProfit',
   },
   {
-    label: 'totalLoss',
-    value: 'total_loss',
+    label: '총 손실',
+    value: 'totalLoss',
   },
 ];
 

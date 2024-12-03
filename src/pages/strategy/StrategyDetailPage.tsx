@@ -36,14 +36,10 @@ import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { UserRole } from '@/types/route';
+import { StrategyIacentity } from '@/types/strategy';
 import { StatisticsProps } from '@/types/strategyDetail';
 import { formatDate } from '@/utils/dateFormat';
 import { formatValue, formatRate } from '@/utils/statistics';
-
-const imgTest = [
-  { img: '/src/assets/images/producttype_stock.png' },
-  { img: '/src/assets/images/producttype_stock.png' },
-];
 
 const StrategyDetailPage = () => {
   const { user } = useAuthStore();
@@ -123,6 +119,14 @@ const StrategyDetailPage = () => {
     },
   ];
 
+  const icons = [
+    strategy?.tradingTypeIcon,
+    strategy?.tradingCycleIcon,
+    ...(strategy?.strategyIACEntities.map(
+      (item: StrategyIacentity) => item.investmentAssetClassesIcon
+    ) || []),
+  ];
+
   const handleDeleteDetail = (id: number) => {
     openModal({
       type: 'warning',
@@ -162,7 +166,10 @@ const StrategyDetailPage = () => {
   };
 
   useEffect(() => {
-    if (strategy?.isApproved === 'N' || (strategy?.isPosted === 'N' && !(isOwner || isAdmin)))
+    if (
+      (strategy?.isApproved === 'N' && !(isOwner || isAdmin)) ||
+      (strategy?.isPosted === 'N' && !(isOwner || isAdmin))
+    )
       navigate('/404', { replace: true });
   }, [strategy, isOwner, isAdmin]);
 
@@ -200,7 +207,7 @@ const StrategyDetailPage = () => {
               onDelete={() => handleDeleteDetail(strategy.strategyId)}
               onEnd={() => handleDetailEnd(strategy.strategyId, role)}
             />
-            <IconTagSection imgs={imgTest} />
+            <IconTagSection imgs={icons} />
             <StrategyTitleSection
               title={strategy?.strategyTitle}
               traderId={strategy?.memberId}
