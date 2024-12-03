@@ -93,14 +93,6 @@ const TopStrategyList = ({ rankingData }: TopStrategyListProps) => {
   );
 };
 
-const noDataStyle = css`
-  ${theme.textStyle.headings.h3};
-  color: ${theme.colors.gray[500]};
-  text-align: center;
-  margin: 20px 0;
-  outline: solid lpx red;
-`;
-
 const scoreContentStyle = css`
   max-width: ${theme.layout.width.content};
   margin: 0 auto;
@@ -155,9 +147,9 @@ const strategyTitleStyle = css`
   text-align: start;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1; /* 최대 1줄까지만 보여줌 */
-  overflow: hidden; /* 넘치는 글자를 숨김 */
-  text-overflow: ellipsis; /* ... 처리 */
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const traderInfoStyle = css`
