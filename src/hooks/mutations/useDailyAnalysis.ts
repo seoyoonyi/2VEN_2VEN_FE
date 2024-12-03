@@ -80,6 +80,9 @@ export const useUploadExcel = () => {
     mutationFn: ({ strategyId, role, file }: { strategyId: number; role: UserRole; file: File }) =>
       fetchUploadExcel(strategyId, file, role),
 
+    onError: (error) => {
+      throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
       queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });

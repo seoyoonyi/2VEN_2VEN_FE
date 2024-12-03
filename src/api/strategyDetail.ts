@@ -1,3 +1,5 @@
+import { AxiosError } from 'axios';
+
 import { apiClient, createFormDataRequest } from './apiClient';
 import { API_ENDPOINTS } from './apiEndpoints';
 
@@ -78,7 +80,9 @@ export const fetchUploadExcel = async (strategyId: number, fileItem: File, authR
     );
     return req.data;
   } catch (error) {
-    console.error('failed to upload excel', error);
+    const axiosError = error as AxiosError<{ error: string }>;
+    const errorMsg = axiosError.response?.data?.error || '파일 업로드 실패';
+    throw new Error(errorMsg);
   }
 };
 

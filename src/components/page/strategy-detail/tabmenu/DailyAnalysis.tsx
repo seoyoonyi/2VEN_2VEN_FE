@@ -256,7 +256,14 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
       showToast('엑셀 파일을 선택해주세요', 'error');
       return;
     }
-    uploadExcel({ strategyId: strategyId as number, file, role: role as UserRole });
+    uploadExcel(
+      { strategyId: strategyId as number, file, role: role as UserRole },
+      {
+        onError: (error) => {
+          showToast(error.message, 'error');
+        },
+      }
+    );
   };
 
   useEffect(() => {
