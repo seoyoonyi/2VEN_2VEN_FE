@@ -18,7 +18,10 @@ export const useAdminAuthStore = create<AdminAuthStore>()(
     (set) => ({
       adminAuth: null,
       setAdminAuth: (auth) => set({ adminAuth: auth }),
-      clearAdminAuth: () => set({ adminAuth: null }),
+      clearAdminAuth: () => {
+        set({ adminAuth: null });
+        localStorage.removeItem('admin-auth');
+      },
     }),
     { name: 'admin-auth' }
   )
