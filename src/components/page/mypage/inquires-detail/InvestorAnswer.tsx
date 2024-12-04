@@ -9,7 +9,7 @@ const InvestorAnswer = ({ data }: { data: InquiryDetail }) => (
     <header css={headerWrapper}>
       <h1>트레이더 답변</h1>
       <div css={infoWrapper}>
-        <Avatar src={data.traderProfileUrl} alt={`${data.traderName}'s profile`} />
+        <Avatar src={data.traderProfileUrl} alt={`${data.traderName}'s profile`} size={24} />
         <h2>{data.traderName}</h2>
       </div>
     </header>
