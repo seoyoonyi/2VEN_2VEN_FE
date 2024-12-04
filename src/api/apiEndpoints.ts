@@ -34,6 +34,7 @@ export const API_ENDPOINTS = {
     UPDATE_FORM: '/api/strategies/update-form', // 전략 수정 조회
     TRADER_STATS: '/api/strategies/strategy-trader-count', //트레이더 통계조회 (트레이더 수, 전략 수)
     UPLOAD_ACCOUNT_IMG: '/api/live-account-data', //실계좌 이미지 관리
+    SM_SCORE: '/api/strategies/top5-sm-score', // 메인페이지 SMScore Top5
   },
   INQUIRY: '/api/consultations', // 나의 문의 , 문의 등록
   FILES: {

@@ -8,12 +8,10 @@ import { formatRate } from '@/utils/statistics';
 interface RankingData {
   strategyId: number;
   strategyTitle: string;
-  traderNickname: string;
-  traderProfile: string;
+  profilePath: string;
+  nickname: string;
   cumulativeProfitLossRateList: number[];
-  dailyChange: number;
-  cumulativeProfitLossRate: number;
-  smScore: number;
+  dailyPlRate: number;
 }
 
 interface TopStrategyListProps {
@@ -23,9 +21,7 @@ interface TopStrategyListProps {
 const MAX_RANKS = 5;
 
 const TopStrategyList = ({ rankingData }: TopStrategyListProps) => {
-  const sortedData = [...rankingData].sort((a, b) => b.smScore - a.smScore);
-
-  const filledData = Array.from({ length: MAX_RANKS }, (_, i) => sortedData[i] || null);
+  const filledData = Array.from({ length: MAX_RANKS }, (_, i) => rankingData[i] || null);
 
   return (
     <div css={scoreContentStyle}>
@@ -48,11 +44,11 @@ const TopStrategyList = ({ rankingData }: TopStrategyListProps) => {
                 <div css={strategyTitleStyle}>{data.strategyTitle}</div>
                 <div css={traderInfoStyle}>
                   <img
-                    src={data.traderProfile || '/default-image.png'} // 기본 이미지 제공
-                    alt={`${data.traderNickname || '익명'} 이미지`}
+                    src={data.profilePath || '/default-image.png'}
+                    alt={`${data.nickname} 이미지`}
                     css={traderImageStyle}
                   />
-                  <span css={traderNicknameStyle}>{data.traderNickname || 'api명세서에없음'}</span>
+                  <span css={traderNicknameStyle}>{data.nickname}</span>
                 </div>
               </div>
               <div css={graphStyle}>
@@ -67,9 +63,9 @@ const TopStrategyList = ({ rankingData }: TopStrategyListProps) => {
                 )}
               </div>
               <div css={dailyChangeStyle}>
-                {data.dailyChange !== 0 ? (
+                {data.dailyPlRate !== 0 ? (
                   <>
-                    <span className='value'>{formatRate(data.dailyChange)}</span>
+                    <span className='value'>{formatRate(data.dailyPlRate)}</span>
                     <span className='percent'>%</span>
                   </>
                 ) : (
@@ -77,9 +73,13 @@ const TopStrategyList = ({ rankingData }: TopStrategyListProps) => {
                 )}
               </div>
               <div css={cumulativeReturnStyle}>
-                {data.cumulativeProfitLossRate !== 0 ? (
+                {data.cumulativeProfitLossRateList.length > 0 ? (
                   <>
-                    <span className='value'>{formatRate(data.cumulativeProfitLossRate)}</span>
+                    <span className='value'>
+                      {data.cumulativeProfitLossRateList[
+                        data.cumulativeProfitLossRateList.length - 1
+                      ].toFixed(2)}
+                    </span>
                     <span className='percent'>%</span>
                   </>
                 ) : (
