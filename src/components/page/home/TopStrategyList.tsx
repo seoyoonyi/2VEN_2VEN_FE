@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import LineChart from '@/components/common/LineChart';
 import theme from '@/styles/theme';
+import { formatRate } from '@/utils/statistics';
 
 interface RankingData {
   strategyId: number;
@@ -19,9 +20,12 @@ interface TopStrategyListProps {
   rankingData: RankingData[];
 }
 
+const MAX_RANKS = 5;
+
 const TopStrategyList = ({ rankingData }: TopStrategyListProps) => {
-  // 1. SM Score 기준 내림차순 정렬
   const sortedData = [...rankingData].sort((a, b) => b.smScore - a.smScore);
+
+  const filledData = Array.from({ length: MAX_RANKS }, (_, i) => sortedData[i] || null);
 
   return (
     <div css={scoreContentStyle}>
@@ -36,11 +40,8 @@ const TopStrategyList = ({ rankingData }: TopStrategyListProps) => {
           <div>전일대비</div>
           <div>누적수익률</div>
         </div>
-        {sortedData.slice(0, 5).map(
-          (
-            data,
-            index // 상위 5개만 표시
-          ) => (
+        {filledData.map((data, index) =>
+          data ? (
             <Link to={`/strategies/${data.strategyId}`} key={data.strategyId} css={rowStyle}>
               <div css={rankStyle}>{index + 1}</div>
               <div css={strategyStyle}>
@@ -51,7 +52,7 @@ const TopStrategyList = ({ rankingData }: TopStrategyListProps) => {
                     alt={`${data.traderNickname || '익명'} 이미지`}
                     css={traderImageStyle}
                   />
-                  <span css={traderNicknameStyle}>{data.traderNickname || '익명'}</span>
+                  <span css={traderNicknameStyle}>{data.traderNickname || 'api명세서에없음'}</span>
                 </div>
               </div>
               <div css={graphStyle}>
@@ -68,7 +69,7 @@ const TopStrategyList = ({ rankingData }: TopStrategyListProps) => {
               <div css={dailyChangeStyle}>
                 {data.dailyChange !== 0 ? (
                   <>
-                    <span className='value'>{data.dailyChange}</span>
+                    <span className='value'>{formatRate(data.dailyChange)}</span>
                     <span className='percent'>%</span>
                   </>
                 ) : (
@@ -78,7 +79,7 @@ const TopStrategyList = ({ rankingData }: TopStrategyListProps) => {
               <div css={cumulativeReturnStyle}>
                 {data.cumulativeProfitLossRate !== 0 ? (
                   <>
-                    <span className='value'>{data.cumulativeProfitLossRate}</span>
+                    <span className='value'>{formatRate(data.cumulativeProfitLossRate)}</span>
                     <span className='percent'>%</span>
                   </>
                 ) : (
@@ -86,6 +87,11 @@ const TopStrategyList = ({ rankingData }: TopStrategyListProps) => {
                 )}
               </div>
             </Link>
+          ) : (
+            <div css={rowStyle} key={`empty-${index}`}>
+              <div css={rankStyle}>{index + 1}</div>
+              <div css={emptyStyle}>데이터를 가져오는 중입니다</div>
+            </div>
           )
         )}
       </div>
@@ -207,6 +213,13 @@ const cumulativeReturnStyle = css`
   .percent {
     ${theme.textStyle.headings.h3};
   }
+`;
+
+const emptyStyle = css`
+  grid-column: span 4;
+  ${theme.textStyle.subtitles.subtitle2};
+  color: ${theme.colors.gray[500]};
+  text-align: center;
 `;
 
 export default TopStrategyList;
