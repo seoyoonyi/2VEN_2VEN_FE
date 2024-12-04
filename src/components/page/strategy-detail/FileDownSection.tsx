@@ -4,15 +4,15 @@ import { PiFile } from 'react-icons/pi';
 import theme from '@/styles/theme';
 
 interface FileInfoProps {
-  fileUrl: string;
-  fileName: string;
+  strategyProposalLink: string;
+  strategyProposalFileTitle: string;
 }
 
-const FileDownSection = ({ fileUrl, fileName }: FileInfoProps) => {
+const FileDownSection = ({ strategyProposalLink, strategyProposalFileTitle }: FileInfoProps) => {
   const handleDownload = () => {
     const link = document.createElement('a');
-    link.href = fileUrl;
-    link.download = fileName;
+    link.href = strategyProposalLink;
+    link.download = strategyProposalLink;
     link?.click();
   };
 
@@ -20,7 +20,7 @@ const FileDownSection = ({ fileUrl, fileName }: FileInfoProps) => {
     <div css={fileDownStyle}>
       <div css={nameStyle}>
         <PiFile />
-        {fileName}
+        {strategyProposalFileTitle}
       </div>
       <button onClick={handleDownload}>다운로드</button>
     </div>

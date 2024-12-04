@@ -39,7 +39,7 @@ import { UserRole } from '@/types/route';
 import { StrategyIacentity } from '@/types/strategy';
 import { StatisticsProps } from '@/types/strategyDetail';
 import { formatDate } from '@/utils/dateFormat';
-import { formatValue, formatRate } from '@/utils/statistics';
+import { formatValue } from '@/utils/statistics';
 
 const StrategyDetailPage = () => {
   const { user } = useAuthStore();
@@ -222,19 +222,8 @@ const StrategyDetailPage = () => {
               lastUpdatedDate={writedAt ? formatDate(writedAt) : '데이터없음'}
             />
             <StrategyContent content={strategy?.strategyOverview} />
-            {strategy?.strategyProposalLink && (
-              <FileDownSection
-                fileName={strategy?.strategyProposalFileTitle}
-                fileUrl={strategy?.strategyProposalLink}
-              />
-            )}
-            <StrategyIndicator
-              cumulativeRate={statistics && formatRate(statistics.maxCumulativeProfitLossRatio)}
-              maximumRate={statistics && formatRate(statistics.maxDrawdownRate)}
-              avgProfit={statistics && formatRate(statistics.averageProfitLossRate)}
-              profitFactor={statistics && statistics.profitFactor}
-              winRate={statistics && formatRate(statistics.winRate)}
-            />
+            {strategy?.strategyProposalLink && <FileDownSection {...strategy} />}
+            <StrategyIndicator {...statistics} />
             <ChartSection strategyId={Number(strategyId)} role={role} />
             <StrategyTab tabs={tabMenu} />
           </div>

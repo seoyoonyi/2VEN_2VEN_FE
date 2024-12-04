@@ -1,13 +1,14 @@
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
+import { formatRate } from '@/utils/statistics';
 
 interface IndicatorProps {
-  cumulativeRate: string;
-  maximumRate: string;
-  avgProfit: string;
-  profitFactor: string;
-  winRate: string;
+  cumulativeRate: number;
+  maximumRate: number;
+  avgProfit: number;
+  profitFactor: number;
+  winRate: number;
 }
 
 const StrategyIndicator = ({
@@ -24,23 +25,23 @@ const StrategyIndicator = ({
       <>
         <div css={rateAreaStyle}>
           <div css={titleStyle}>누적수익률</div>
-          <div css={rateContentStyle}>{cumulativeRate}%</div>
+          <div css={rateContentStyle}>{formatRate(cumulativeRate)}%</div>
         </div>
         <div css={rateAreaStyle}>
           <div css={titleStyle}>최대자본인하율</div>
-          <div css={rateContentStyle}>{maximumRate}%</div>
+          <div css={rateContentStyle}>{formatRate(maximumRate)}%</div>
         </div>
         <div css={rateAreaStyle}>
           <div css={titleStyle}>평균손익률</div>
-          <div css={rateContentStyle}>{avgProfit}%</div>
+          <div css={rateContentStyle}>{formatRate(avgProfit)}%</div>
         </div>
         <div css={rateAreaStyle}>
           <div css={titleStyle}>Profit Factor</div>
-          <div css={rateContentStyle}>{profitFactor}</div>
+          <div css={rateContentStyle}>{formatRate(profitFactor)}</div>
         </div>
         <div css={rateAreaStyle}>
           <div css={titleStyle}>승률</div>
-          <div css={winRateStyle}>{winRate}%</div>
+          <div css={winRateStyle}>{formatRate(winRate)}%</div>
         </div>
       </>
     )}
