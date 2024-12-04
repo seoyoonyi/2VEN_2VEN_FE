@@ -159,7 +159,6 @@ const TradingTypeListPage = () => {
           data: {
             tradingTypeName: newName,
             tradingTypeIcon: newIcon,
-            isActive: 'Y',
           },
           role: user.role,
         });
@@ -171,7 +170,6 @@ const TradingTypeListPage = () => {
 
   useEffect(() => {
     if (!user || !tradingId) return;
-    console.log('tradingDetailtradingDetail', tradingDetail);
     const fetchAndOpenModal = async () => {
       try {
         const { data } = await refetch();
@@ -204,7 +202,6 @@ const TradingTypeListPage = () => {
                   tradingTypeOrder: tradingDetail.tradingTypeOrder,
                   tradingTypeName: updatedName,
                   tradingTypeIcon: updatedIcon,
-                  isActive: 'Y',
                 },
                 role: user.role,
               });

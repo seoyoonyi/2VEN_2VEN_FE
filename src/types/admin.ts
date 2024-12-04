@@ -3,7 +3,6 @@ export interface TradingTypeProps {
   tradingTypeOrder?: number;
   tradingTypeName: string;
   tradingTypeIcon: string;
-  isActive?: string;
 }
 
 export interface InvestmentAssetProps {
@@ -11,5 +10,4 @@ export interface InvestmentAssetProps {
   order?: number;
   investmentAssetClassesName: string;
   investmentAssetClassesIcon: string;
-  isActive: string;
 }

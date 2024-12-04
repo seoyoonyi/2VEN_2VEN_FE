@@ -58,13 +58,11 @@ export const fetchDeleteInvestmentType = async (id: number, role: UserRole, file
 export const fetchPostInvestmentType = async ({
   investmentAssetClassesName,
   investmentAssetClassesIcon,
-  isActive,
   role,
 }: InvestmentAssetProps & { role: UserRole }) => {
   const body = {
     investmentAssetClassesName,
     investmentAssetClassesIcon,
-    isActive,
   };
   try {
     const req = await apiClient.post(`${API_ENDPOINTS.ADMIN.STOCK_TYPES}`, body, {
@@ -84,14 +82,12 @@ export const fetchPutInvestmentType = async ({
   order,
   investmentAssetClassesName,
   investmentAssetClassesIcon,
-  isActive,
   role,
 }: InvestmentAssetProps & { role: UserRole }) => {
   const body = {
     order,
     investmentAssetClassesName,
     investmentAssetClassesIcon,
-    isActive,
     role,
   };
   try {

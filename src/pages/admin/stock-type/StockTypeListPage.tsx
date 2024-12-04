@@ -155,7 +155,6 @@ const StockTypeListPage = () => {
           data: {
             investmentAssetClassesName: newName,
             investmentAssetClassesIcon: selectedIcon,
-            isActive: 'Y',
           },
           role: user.role,
         });
@@ -209,7 +208,6 @@ const StockTypeListPage = () => {
                   investmentAssetClassesId: investmentDetail.investmentAssetClassesId,
                   investmentAssetClassesName: updatedName,
                   investmentAssetClassesIcon: updatedIcon,
-                  isActive: 'Y',
                 },
                 role: user.role,
               });
