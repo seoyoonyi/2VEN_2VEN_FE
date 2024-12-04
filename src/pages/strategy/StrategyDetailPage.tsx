@@ -162,7 +162,10 @@ const StrategyDetailPage = () => {
   };
 
   useEffect(() => {
-    if (strategy?.isApproved === 'N' || (strategy?.isPosted === 'N' && !(isOwner || isAdmin)))
+    if (
+      (strategy?.isApproved === 'N' && !(isOwner || isAdmin)) ||
+      (strategy?.isPosted === 'N' && !(isOwner || isAdmin))
+    )
       navigate('/404', { replace: true });
   }, [strategy, isOwner, isAdmin]);
 
