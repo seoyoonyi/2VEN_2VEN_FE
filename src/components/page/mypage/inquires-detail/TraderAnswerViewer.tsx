@@ -9,24 +9,21 @@ const TraderAnswerViewer = ({
   onEdit,
 }: {
   data: InquiryDetail;
-  onDelete?: () => void;
-  onEdit?: () => void;
+  onDelete: () => void;
+  onEdit: () => void;
+  isTrader: boolean;
 }) => (
   <div css={answerWrapper}>
     <header css={headerWrapper}>
       <h1>나의 답변</h1>
 
       <div css={buttonWrapper}>
-        {onEdit && (
-          <button type='button' onClick={onEdit}>
-            수정
-          </button>
-        )}
-        {onDelete && (
-          <button type='button' onClick={onDelete}>
-            삭제
-          </button>
-        )}
+        <button type='button' onClick={onEdit}>
+          수정
+        </button>
+        <button type='button' onClick={onDelete}>
+          삭제
+        </button>
       </div>
     </header>
 

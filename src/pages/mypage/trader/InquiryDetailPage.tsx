@@ -9,6 +9,7 @@ import Toast from '@/components/common/Toast';
 import InquiryQuestion from '@/components/page/mypage/inquires-detail/InquiryQuestion';
 import TraderAnswerEditor from '@/components/page/mypage/inquires-detail/TraderAnswerEditor';
 import TraderAnswerViewer from '@/components/page/mypage/inquires-detail/TraderAnswerViewer';
+import { ROLE_TRADER } from '@/constants/roles';
 import {
   useCreateTraderReply,
   useDeleteTraderReply,
@@ -22,6 +23,7 @@ import useToastStore from '@/stores/toastStore';
 const InquiryDetailPage = () => {
   const { inquiryId } = useParams<{ inquiryId: string }>();
   const { user } = useAuthStore();
+  const isTrader = user?.role === ROLE_TRADER;
   const { isToastVisible, hideToast, message, showToast } = useToastStore();
   const { openModal } = useModalStore();
 
@@ -116,6 +118,7 @@ const InquiryDetailPage = () => {
           data={data}
           onDelete={handleDeleteReply}
           onEdit={() => setIsEditing(true)}
+          isTrader={isTrader}
         />
       )}
 
