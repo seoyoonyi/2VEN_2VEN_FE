@@ -17,10 +17,10 @@ import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
-import { InquiryDetailData } from '@/types/inquiries';
+import { InquiryDetail } from '@/types/inquiries';
 
 const MyInquiresEditPage = () => {
-  const [formData, setFormData] = useState<InquiryDetailData | null>(null);
+  const [formData, setFormData] = useState<InquiryDetail | null>(null);
   const { user } = useAuthStore();
   const { openModal } = useModalStore();
   const { isToastVisible, hideToast, message, showToast } = useToastStore();
@@ -41,7 +41,7 @@ const MyInquiresEditPage = () => {
     }
   }, [data]);
 
-  const handleInputChange = (field: keyof InquiryDetailData, value: string | number) => {
+  const handleInputChange = (field: keyof InquiryDetail, value: string | number) => {
     setFormData((prev) => (prev ? { ...prev, [field]: value } : null));
   };
 

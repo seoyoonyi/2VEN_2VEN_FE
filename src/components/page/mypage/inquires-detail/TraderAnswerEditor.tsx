@@ -5,7 +5,7 @@ import { css } from '@emotion/react';
 import Button from '@/components/common/Button';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
-import { InquiryReplyDetail } from '@/types/inquiries';
+import { InquiryReply } from '@/types/inquiries';
 
 const TraderAnswerEditor = ({
   data,
@@ -13,9 +13,9 @@ const TraderAnswerEditor = ({
   onSave,
   onCancel,
 }: {
-  data?: InquiryReplyDetail;
+  data?: InquiryReply;
   mode: 'create' | 'edit';
-  onSave: (updatedData: InquiryReplyDetail) => void;
+  onSave: (updatedData: InquiryReply) => void;
   onCancel: () => void;
 }) => {
   const { showToast } = useToastStore();
@@ -32,7 +32,7 @@ const TraderAnswerEditor = ({
       return;
     }
 
-    const updatedData: InquiryReplyDetail = {
+    const updatedData: InquiryReply = {
       ...data,
       replyContent: content,
       answerDate: new Date().toISOString(),

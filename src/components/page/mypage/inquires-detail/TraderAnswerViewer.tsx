@@ -1,14 +1,14 @@
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
-import { InquiryDetailData } from '@/types/inquiries';
+import { InquiryDetail } from '@/types/inquiries';
 
 const TraderAnswerViewer = ({
   data,
   onDelete,
   onEdit,
 }: {
-  data: InquiryDetailData;
+  data: InquiryDetail;
   onDelete?: () => void;
   onEdit?: () => void;
 }) => (

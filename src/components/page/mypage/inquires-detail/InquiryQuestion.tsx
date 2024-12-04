@@ -3,14 +3,14 @@ import { css } from '@emotion/react';
 import Avatar from '@/components/common/Avatar';
 import { INQUIRY_MESSAGES } from '@/constants/inquiry';
 import theme from '@/styles/theme';
-import { InquiryDetailData, Status } from '@/types/inquiries';
+import { InquiryDetail, InquiryStatus } from '@/types/inquiries';
 
 const InquiryQuestion = ({
   data,
   onDelete,
   onEdit,
 }: {
-  data: InquiryDetailData;
+  data: InquiryDetail;
   onDelete?: () => void;
   onEdit?: () => void;
 }) => (
@@ -141,7 +141,7 @@ const editWrapper = css`
   }
 `;
 
-const statusStyle = (status: Status) => css`
+const statusStyle = (status: InquiryStatus) => css`
   display: flex;
   align-items: center;
   justify-content: center;

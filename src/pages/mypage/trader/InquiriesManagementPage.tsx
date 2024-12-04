@@ -10,7 +10,7 @@ import useFetchInquiries from '@/hooks/queries/useFetchInquiries';
 import usePagination from '@/hooks/usePagination';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
-import { InquiryData } from '@/types/inquiries';
+import { InquiryListItem } from '@/types/inquiries';
 
 const InquiriesManagementPage = () => {
   const navigate = useNavigate();
@@ -79,7 +79,7 @@ const InquiriesManagementPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {inquiries.map((inquiry: InquiryData) => (
+                {inquiries.map((inquiry: InquiryListItem) => (
                   <tr key={inquiry.id} onClick={() => handleRowClick(inquiry.id)}>
                     <td>
                       <span>Q.</span> {inquiry.title}

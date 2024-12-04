@@ -1,9 +1,9 @@
 import apiClient from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
-import { InquiryCreateData, InquiryDetailData } from '@/types/inquiries';
+import { InquiryCreate, InquiryDetail } from '@/types/inquiries';
 import { handleAxiosError } from '@/utils/errorHandler';
 
-export const createMyInquiry = async (payload: InquiryCreateData) => {
+export const createMyInquiry = async (payload: InquiryCreate) => {
   try {
     const { data } = await apiClient.post(API_ENDPOINTS.INQUIRY, payload, {
       headers: {
@@ -17,7 +17,7 @@ export const createMyInquiry = async (payload: InquiryCreateData) => {
   }
 };
 
-export const updateMyInquiry = async (id: number, payload: InquiryDetailData) => {
+export const updateMyInquiry = async (id: number, payload: InquiryDetail) => {
   if (!payload || !payload.title || !payload.content) {
     throw new Error('문의 데이터가 유효하지 않습니다.');
   }
