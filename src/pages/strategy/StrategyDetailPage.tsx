@@ -47,7 +47,7 @@ const StrategyDetailPage = () => {
   const navigate = useNavigate();
   const role = user?.role as UserRole;
   const { strategy } = useFetchStrategyDetail(strategyId || '');
-  const { statistics, writedAt } = useStatistics(Number(strategyId), role);
+  const { statistics } = useStatistics(Number(strategyId), role);
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { mutate: approveStrategy } = useStrategyDetailApprove();
   const { mutate: terminateStrategy } = useStrategyDetailTerminate();
@@ -62,7 +62,6 @@ const StrategyDetailPage = () => {
   const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
   const isOwner = user?.memberId === strategy?.memberId;
   const isAdmin = role === 'ROLE_ADMIN';
-  const isPrivate = role === 'ROLE_ADMIN' || role === 'ROLE_TRADER';
 
   const statisticsTableData = (
     mapping: { label: string; key: string }[],
@@ -93,7 +92,6 @@ const StrategyDetailPage = () => {
           strategyId={Number(strategyId)}
           userId={strategy?.memberId}
           role={user?.role}
-          isSelfed={isPrivate}
         />
       ),
     },
@@ -215,7 +213,7 @@ const StrategyDetailPage = () => {
               date={formatDate(strategy?.writedAt || '', 'withDayTime')}
               followers={strategy?.followersCount}
               minimumInvestment={strategy?.minInvestmentAmount}
-              lastUpdatedDate={writedAt ? formatDate(writedAt) : '데이터없음'}
+              lastUpdatedDate={statistics?.endDate ? formatDate(statistics?.endDate) : '데이터없음'}
             />
             <StrategyContent content={strategy?.strategyOverview} />
             {strategy?.strategyProposalLink && <FileDownSection {...strategy} />}
