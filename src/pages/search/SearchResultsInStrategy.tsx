@@ -8,10 +8,10 @@ import Loader from '@/components/common/Loading';
 import Pagination from '@/components/common/Pagination';
 import SearchedStrategyList from '@/components/page/search/SearchedStrategyList';
 import StrategyDetailFilter from '@/components/page/search/StrategyDetailFilter';
-import { useSearchStrategies, useSearchStrategyDetail } from '@/hooks/queries/useSearch';
+import { useSearchStrategyDetail } from '@/hooks/queries/useSearch';
 import theme from '@/styles/theme';
 import { StrategySearchParams } from '@/types/search';
-import { mapToStrategyData, mapToStrategyDetailData } from '@/utils/mappers';
+import { mapToStrategyDetailData } from '@/utils/mappers';
 import { shortenString } from '@/utils/string';
 
 const SearchResultsInStrategy = () => {
