@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import { css } from '@emotion/react';
 import { MdRemoveCircle } from 'react-icons/md';
@@ -9,18 +9,41 @@ import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { isValidFileType } from '@/utils/fileHelper';
 
-const FileUpload = ({ onFileSelect }: { onFileSelect: (file: File) => void }) => {
-  const { isToastVisible, showToast, hideToast, message } = useToastStore();
+const FileUpload = ({
+  onFileSelect,
+  uploadedFileUrl,
+  setUploadedFileUrl,
+  displayName,
+  onFileRemove,
+}: {
+  onFileSelect: (file: File) => void;
+  uploadedFileUrl: string | null;
+  setUploadedFileUrl: (url: string | null) => void;
+  displayName: string | null;
+  onFileRemove: () => void;
+}) => {
+  const { isToastVisible, showToast, hideToast, message, type } = useToastStore();
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (displayName) {
+      setSelectedFileName(displayName);
+    } else if (uploadedFileUrl) {
+      const fileName = uploadedFileUrl.split('/').pop();
+      setSelectedFileName(fileName || '');
+    } else {
+      setSelectedFileName('');
+    }
+  }, [uploadedFileUrl, displayName]);
 
   const handleFile = (file: File) => {
     if (isValidFileType(file.name)) {
       onFileSelect(file);
       setSelectedFileName(file.name);
     } else {
-      showToast('pdf, docs, xlsx, ppt 형식의 파일만 업로드 가능합니다.');
+      showToast('pdf, docs, xlsx, ppt 형식의 파일만 업로드 가능합니다.', 'error');
     }
   };
 
@@ -47,11 +70,18 @@ const FileUpload = ({ onFileSelect }: { onFileSelect: (file: File) => void }) =>
   };
 
   const handleRemoveFile = () => {
+    if (!uploadedFileUrl) {
+      showToast('삭제할 파일이 없습니다.', 'error');
+      return;
+    }
+    onFileRemove();
+    setUploadedFileUrl(null);
     setSelectedFileName(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-    showToast('파일이 제거되었습니다.');
+
+    showToast('파일 삭제가 완료되었습니다.', 'basic');
   };
 
   return (
@@ -66,7 +96,7 @@ const FileUpload = ({ onFileSelect }: { onFileSelect: (file: File) => void }) =>
           {selectedFileName ? (
             <div css={fileNameContainerStyle}>
               <span>{`선택된 파일: ${selectedFileName}`}</span>
-              <MdRemoveCircle onClick={handleRemoveFile} size={14} css={iconStyle} />
+              <MdRemoveCircle onClick={handleRemoveFile} size={20} css={iconStyle} />
             </div>
           ) : (
             '업로드할 파일 놓기'
@@ -80,12 +110,12 @@ const FileUpload = ({ onFileSelect }: { onFileSelect: (file: File) => void }) =>
           <input
             type='file'
             ref={fileInputRef}
-            accept='.xls,.xlsx,.pdf,.docx,.ppt'
+            accept='.xls,.xlsx,.pdf,.docx,.ppt,.pptx'
             onChange={handleFileSelect}
             css={fileInputStyle}
           />
         </label>
-        <Toast message={message} onClose={hideToast} isVisible={isToastVisible} />
+        <Toast message={message} type={type} onClose={hideToast} isVisible={isToastVisible} />
       </div>
     </div>
   );

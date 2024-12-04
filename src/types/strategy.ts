@@ -4,15 +4,15 @@ import { Option } from '@/components/common/Select';
 export interface StrategyListData {
   strategyId: number;
   strategyTitle: string;
-  analytics_graph?: string;
+  cumulativeProfitLossRate: number;
+  cumulativeProfitLossRateList: number[];
   tradingTypeIcon: string;
-  cycleIcon: string;
-  investmentAssetClassesIcon: string[];
-  cumulativeReturn?: number;
-  oneYearReturn?: number;
+  tradingCycleIcon: string;
+  investmentAssetClassesIcons: string[];
+  recentOneYearReturn?: number;
   mdd?: number;
-  smscore?: number;
-  followers_count?: number;
+  smScore?: number;
+  followersCount?: number;
 }
 
 // 전략 폼 옵션
@@ -30,6 +30,7 @@ export interface StrategyPayload {
   minInvestmentAmount: string;
   strategyOverview: string;
   isPosted: string;
+  strategyProposalLink: string | null;
   investmentAssetClassesIdList: number[];
 }
 
@@ -67,4 +68,31 @@ export interface StrategyDetailsData {
   writedAt: string;
   isPosted: string;
   isApproved: string;
+  strategyProposalLink: string | null;
+  strategyProposalFileTitle: string | null;
+}
+
+// 전략 수정 조회
+export interface TradingType {
+  tradingTypeId: number;
+  tradingTypeName: string;
+  tradingTypeIcon: string;
+}
+
+export interface TradingCycle {
+  tradingCycleId: number;
+  tradingCycleName: string;
+  tradingCycleIcon: string;
+}
+
+export interface InvestmentAssetClass {
+  investmentAssetClassesId: number;
+  investmentAssetClassesName: string;
+  investmentAssetClassesIcon: string | null;
+}
+
+export interface Requirements {
+  tradingTypeRegistrationDtoList: TradingType[];
+  tradingCycleRegistrationDtoList: TradingCycle[];
+  investmentAssetClassesRegistrationDtoList: InvestmentAssetClass[];
 }

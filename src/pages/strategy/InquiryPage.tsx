@@ -1,8 +1,27 @@
-import { css } from '@emotion/react';
+import { useEffect, useState } from 'react';
 
+import { css } from '@emotion/react';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+import Modal from '@/components/common/Modal';
 import PageHeader from '@/components/common/PageHeader';
+import Toast from '@/components/common/Toast';
 import InquiryCreateForm from '@/components/page/inquiry-create/InquiryCreateForm';
+import { ROUTES } from '@/constants/routes';
+import { useCreateMyInquiry } from '@/hooks/mutations/useMyInquiryMutations';
+import { useToastWithNavigate } from '@/hooks/useToastWithNavigate';
+import { useAuthStore } from '@/stores/authStore';
+import useModalStore from '@/stores/modalStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
+
+export interface InquiryFormState {
+  title: string;
+  content: string;
+  investmentAmount: number;
+  investmentDate: string;
+  strategyName: string;
+}
 
 const desc = [
   {
@@ -20,14 +39,118 @@ const desc = [
   },
 ];
 
-const InquiryPage = () => (
-  <>
-    <PageHeader title='문의하기' desc={desc} icon />
-    <div css={createContainerStyle}>
-      <InquiryCreateForm />
-    </div>
-  </>
-);
+const InquiryPage = () => {
+  const location = useLocation();
+  const { strategyTitle, strategyId, traderId } = location.state || {};
+
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const { isToastVisible, hideToast, message, showToast } = useToastStore();
+  const showToastAndNavigate = useToastWithNavigate();
+  const { openModal } = useModalStore();
+  const { mutate: InquiryCreate } = useCreateMyInquiry();
+
+  const [formState, setFormState] = useState<InquiryFormState>({
+    title: '',
+    content: '',
+    investmentAmount: 0,
+    investmentDate: '',
+    strategyName: strategyTitle || '',
+  });
+
+  useEffect(() => {
+    if (!user) {
+      showToastAndNavigate('로그인이 필요한 서비스 입니다.', ROUTES.AUTH.SIGNIN, 'error');
+    }
+  }, [user]);
+
+  const handleChange = <K extends keyof InquiryFormState>(field: K, value: InquiryFormState[K]) => {
+    setFormState((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const validateForm = () => {
+    if (
+      !formState.title ||
+      !formState.content ||
+      !formState.investmentAmount ||
+      !formState.investmentDate
+    ) {
+      showToast('모든 필드를 입력해주세요.', 'error');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = () => {
+    if (!validateForm()) return;
+
+    if (!user) {
+      showToastAndNavigate('로그인이 필요한 서비스 입니다.', ROUTES.AUTH.SIGNIN, 'error');
+      return;
+    }
+
+    openModal({
+      type: 'confirm',
+      title: '문의 등록',
+      desc: '문의 내용을 등록하시겠습니까?',
+      onAction: () => {
+        const payload = {
+          investorId: user.memberId,
+          traderId,
+          strategyId: Number(strategyId),
+          strategyName: strategyTitle,
+          investmentAmount: Number(formState.investmentAmount),
+          investmentDate: new Date(formState.investmentDate).toISOString(),
+          title: formState.title,
+          content: formState.content,
+        };
+
+        InquiryCreate(
+          { payload },
+          {
+            onSuccess: () => {
+              showToastAndNavigate(
+                '문의 등록이 완료되었습니다.',
+                ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST
+              );
+            },
+            onError: (error: Error) => {
+              console.error('문의 등록 실패:', error.message);
+            },
+          }
+        );
+      },
+    });
+  };
+
+  const handleCancel = () => {
+    openModal({
+      type: 'confirm',
+      title: '작성 취소',
+      desc: '정말 작성 중인 내용을 취소하시겠습니까?',
+      onAction: () => {
+        window.scrollTo(0, 0);
+        navigate(ROUTES.STRATEGY.DETAIL(strategyId));
+      },
+    });
+  };
+
+  return (
+    <>
+      <PageHeader title='문의하기' desc={desc} icon />
+      <div css={createContainerStyle}>
+        <InquiryCreateForm
+          formState={formState}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+        />
+      </div>
+      <Modal />
+      {isToastVisible && <Toast message={message} isVisible={isToastVisible} onClose={hideToast} />}
+    </>
+  );
+};
 
 const createContainerStyle = css`
   width: ${theme.layout.width.content};

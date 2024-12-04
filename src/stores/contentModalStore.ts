@@ -3,7 +3,8 @@ import { create } from 'zustand';
 interface ContentModalData {
   title: string;
   content: React.ReactNode;
-  onAction: () => void;
+  onAction: () => boolean;
+  onCancel?: () => void;
 }
 
 interface ModalStore {

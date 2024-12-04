@@ -1,17 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
 
-const RejectTextarea = () => {
-  const [text, setText] = useState('');
+interface RejectTextareaProps {
+  initialValue: string;
+  onChange: (value: string) => void;
+}
+
+const RejectTextarea = ({ initialValue, onChange }: RejectTextareaProps) => {
   const maxLength = 300;
+  const [text, setText] = useState(initialValue);
+
+  useEffect(() => {
+    onChange(text);
+  }, [text, onChange]);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (event.target.value.length <= maxLength) {
       setText(event.target.value);
-      console.log(event.target.value);
     }
   };
 
@@ -30,7 +38,6 @@ const RejectTextarea = () => {
     </div>
   );
 };
-
 const contentWrapperStyle = css`
   display: flex;
   flex-direction: column;

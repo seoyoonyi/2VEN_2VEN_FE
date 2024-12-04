@@ -7,6 +7,7 @@ import ContentModal from '@/components/common/ContentModal';
 import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
+import Toast from '@/components/common/Toast';
 import FileInput from '@/components/page/admin/FileInput';
 import TypeTable from '@/components/page/admin/TypeTable';
 import {
@@ -22,6 +23,7 @@ import usePagination from '@/hooks/usePagination';
 import { useAuthStore } from '@/stores/authStore';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { InvestmentAssetProps } from '@/types/admin';
 import { UserRole } from '@/types/route';
@@ -53,8 +55,9 @@ const StockTypeListPage = () => {
   const { mutate: updateInvestmentAssets } = usePutInvestmentAssets();
   const { openModal } = useModalStore();
   const { openContentModal } = useContentModalStore();
+  const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
 
-  const { investmentDetail, iconName } = useFetchDetailInvestmentType(
+  const { investmentDetail, refetch } = useFetchDetailInvestmentType(
     stockId as number,
     user?.role as UserRole
   );
@@ -90,6 +93,7 @@ const StockTypeListPage = () => {
             }
           });
           setSelectedStocks([]);
+          showToast('상품유형이 삭제되었습니다.', 'basic');
         },
       });
     } else {
@@ -136,12 +140,16 @@ const StockTypeListPage = () => {
       ),
       onAction: () => {
         if (!newName.trim()) {
-          alert('상품유형명이 입력되지않았습니다.');
-          return;
+          showToast('상품유형명이 입력되지않았습니다.', 'error');
+          return false;
+        }
+        if (!selectedIcon.trim()) {
+          showToast('파일이 업로드되지 않았습니다.', 'error');
+          return false;
         }
         if (isCheckDupicateName(newName, 1, investmentList)) {
-          alert('이미 존재하는 상품유형입니다.');
-          return;
+          showToast('이미 존재하는 상품유형입니다.', 'error');
+          return false;
         }
         addInvestmentAssets({
           data: {
@@ -151,6 +159,8 @@ const StockTypeListPage = () => {
           },
           role: user.role,
         });
+        showToast('상품유형이 등록되었습니다.', 'basic');
+        return true;
       },
     });
   };
@@ -165,45 +175,59 @@ const StockTypeListPage = () => {
   }
 
   useEffect(() => {
-    if (!user) return;
-    if (investmentDetail) {
-      let updatedName = investmentDetail.investmentAssetClassesName;
-      let updatedIcon = investmentDetail.investmentAssetClassesIcon;
-      openContentModal({
-        title: '상품유형 수정',
-        content: (
-          <FileInput
-            mode='update'
-            role={user.role}
-            token={token}
-            title='상품유형'
-            fname={investmentDetail.investmentAssetClassesName}
-            icon={investmentDetail.investmentAssetClassesIcon}
-            iconName={iconName}
-            onNameChange={(name) => (updatedName = name)}
-            onFileIconUrl={(newIcon) => {
-              updatedIcon = newIcon;
-            }}
-          />
-        ),
-        onAction: () => {
-          if (!updatedName.trim()) {
-            alert('상품유형명이 입력되지않았습니다.');
-            return;
-          }
-          updateInvestmentAssets({
-            data: {
-              investmentAssetClassesId: investmentDetail.investmentAssetClassesId,
-              investmentAssetClassesName: updatedName,
-              investmentAssetClassesIcon: updatedIcon,
-              isActive: 'Y',
+    if (!user || !stockId) return;
+    const fetchAndOpenModal = async () => {
+      try {
+        const { data } = await refetch();
+        if (data) {
+          let updatedName = data?.investmentDetail.investmentAssetClassesName;
+          let updatedIcon = data?.investmentDetail.investmentAssetClassesIcon;
+          openContentModal({
+            title: '상품유형 수정',
+            content: (
+              <FileInput
+                mode='update'
+                role={user.role}
+                token={token}
+                title='상품유형'
+                fname={updatedName}
+                icon={updatedIcon}
+                iconName={data?.investmentIconName}
+                onNameChange={(name) => (updatedName = name)}
+                onFileIconUrl={(newIcon) => {
+                  updatedIcon = newIcon;
+                }}
+              />
+            ),
+            onAction: () => {
+              if (!updatedName.trim()) {
+                showToast('상품유형명이 입력되지않았습니다.', 'error');
+                return false;
+              }
+              updateInvestmentAssets({
+                data: {
+                  investmentAssetClassesId: investmentDetail.investmentAssetClassesId,
+                  investmentAssetClassesName: updatedName,
+                  investmentAssetClassesIcon: updatedIcon,
+                  isActive: 'Y',
+                },
+                role: user.role,
+              });
+              setStockId(null);
+
+              return true;
             },
-            role: user.role,
+            onCancel: () => {
+              setStockId(null);
+            },
           });
-        },
-      });
-    }
-  }, [investmentDetail]);
+        }
+      } catch (error) {
+        console.log('failed to fetch stockTypeDetail', error);
+      }
+    };
+    fetchAndOpenModal();
+  }, [investmentDetail, stockId]);
 
   return (
     <>
@@ -235,6 +259,7 @@ const StockTypeListPage = () => {
       </div>
       <Modal />
       <ContentModal />
+      <Toast type={type} message={message} onClose={hideToast} isVisible={isToastVisible} />
     </>
   );
 };

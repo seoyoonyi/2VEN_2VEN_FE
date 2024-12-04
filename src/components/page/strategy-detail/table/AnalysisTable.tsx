@@ -1,21 +1,22 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 
 import { css } from '@emotion/react';
 import { BiPlus } from 'react-icons/bi';
 
-import InputTable, { InputTableProps } from './InputTable';
+import { InputTableProps } from './InputTable';
 import TableModal from './TableModal';
 
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
-import useTableModalStore from '@/stores/tableModalStore';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
+import { UserRole } from '@/types/route';
 
-export interface AnalysisAttribuesProps {
+export interface AnalysisAttributesProps {
   title: string;
 }
 
-interface NormalizedAnalysProps {
+interface NormalizedAnalysisProps {
   dataId: number;
   date: string;
   principal: number;
@@ -28,61 +29,47 @@ interface NormalizedAnalysProps {
 
 export interface AnalysisProps {
   mode: 'write' | 'read';
-  attributes: AnalysisAttribuesProps[];
+  attributes: AnalysisAttributesProps[];
+  role?: UserRole;
+  userId?: string;
   strategyId?: number;
-  analysis?: NormalizedAnalysProps[];
+  analysis?: NormalizedAnalysisProps[];
   selectedItems?: number[];
+  selectAll?: boolean;
   onUpload?: () => void;
+  onUploadExcel?: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    strategyId: number,
+    role: UserRole
+  ) => void;
+  onEdit?: (rowId: number, data: InputTableProps) => void;
+  onSelectAll?: (checked: boolean) => void;
   onSelectChange?: (selectIdx: number[]) => void;
 }
 
 const AnalysisTable = ({
   attributes,
   analysis,
+  strategyId,
   mode,
+  selectAll,
   selectedItems,
+  role,
+  userId,
   onUpload,
+  onEdit,
+  onUploadExcel,
+  onSelectAll,
   onSelectChange,
 }: AnalysisProps) => {
-  const [selectAll, setSelectAll] = useState(false);
-  const [tableData, setTableData] = useState<InputTableProps[]>([]);
-  const { openTableModal } = useTableModalStore();
-
-  const handleAllChecked = () => {
-    const newSelectAll = !selectAll;
-    setSelectAll(newSelectAll);
-    mode === 'write' &&
-      analysis &&
-      onSelectChange?.(newSelectAll ? analysis.map((item) => item.dataId) : []);
-  };
-
+  const { user } = useAuthStore();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const handleSelected = (idx: number) => {
     const updatedSelected = (selectedItems ?? []).includes(idx)
       ? (selectedItems ?? []).filter((item) => item !== idx)
       : [...(selectedItems ?? []), idx];
 
     onSelectChange?.(updatedSelected);
-  };
-
-  const handleInputChange = (updatedData: InputTableProps[]) => {
-    setTableData(updatedData);
-  };
-
-  const handleUpdateData = (data: InputTableProps, idx: number) => {
-    const updatedTableData = [...tableData];
-    updatedTableData[idx] = { ...updatedTableData[idx], ...data };
-    setTableData(updatedTableData);
-  };
-
-  const handleUpdateModal = (data: InputTableProps, idx: number) => {
-    openTableModal({
-      type: 'update',
-      title: '일간분석 데이터 수정',
-      data: <InputTable data={[data]} onChange={handleInputChange} />,
-      onAction: () => {
-        handleUpdateData(data, idx);
-      },
-    });
   };
 
   const getColorValue = (item: number) => {
@@ -92,19 +79,29 @@ const AnalysisTable = ({
     return null;
   };
 
+  const handleFileUploadClick = () => fileInputRef?.current?.click();
+
   return (
     <div css={tableStyle}>
       <table css={tableVars}>
         <thead>
           <tr css={tableRowStyle}>
-            {mode === 'write' && (
+            {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
+            role === 'ROLE_ADMIN' ? (
               <th css={tableHeadStyle}>
-                <Checkbox checked={selectAll} onChange={handleAllChecked} />
+                <Checkbox
+                  checked={selectAll ?? false}
+                  onChange={(checked) => mode === 'write' && analysis && onSelectAll?.(checked)}
+                />
               </th>
-            )}
+            ) : null}
             {attributes.map((item, idx) => (
               <th key={idx} css={tableHeadStyle}>
-                {mode === 'write' || item.title !== '수정' ? item.title : null}
+                {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
+                role === 'ROLE_ADMIN' ||
+                item.title !== '수정'
+                  ? item.title
+                  : null}
               </th>
             ))}
           </tr>
@@ -113,14 +110,15 @@ const AnalysisTable = ({
           {analysis?.length || 0 ? (
             analysis?.map((values) => (
               <tr key={values.dataId} css={tableRowStyle}>
-                {mode === 'write' && (
+                {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
+                role === 'ROLE_ADMIN' ? (
                   <td css={tableCellStyle}>
                     <Checkbox
                       checked={!!selectedItems?.includes(values.dataId)}
                       onChange={() => handleSelected(values.dataId)}
                     />
                   </td>
-                )}
+                ) : null}
                 <td css={tableCellStyle}>{values.date}</td>
                 <td css={tableCellStyle}>{values.principal.toLocaleString()}</td>
                 <td css={tableCellStyle}>{values.dep_wd_price.toLocaleString()}</td>
@@ -139,50 +137,67 @@ const AnalysisTable = ({
                 <td css={tableCellStyle}>{values.pl_rate}%</td>
                 <td css={tableCellStyle}>{values.cumulative_profit_loss.toLocaleString()}</td>
                 <td css={tableCellStyle}>{values.cumulative_profit_loss_rate}%</td>
-                {mode === 'write' && (
+                {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
+                role === 'ROLE_ADMIN' ? (
                   <td css={tableCellStyle}>
                     <Button
                       variant='secondaryGray'
                       size='xs'
                       width={65}
                       onClick={() =>
-                        handleUpdateModal(
-                          {
-                            date: values.date,
-                            depWdPrice: values.dep_wd_price,
-                            dailyProfitLoss: values.profit_loss,
-                          },
-                          values.dataId
-                        )
+                        onEdit?.(values.dataId, {
+                          date: values.date,
+                          depWdPrice: values.dep_wd_price,
+                          dailyProfitLoss: values.profit_loss,
+                        })
                       }
                     >
                       수정
                     </Button>
                   </td>
-                )}
+                ) : null}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={attributes.length + 1} css={noDataStyle}>
-                내용을 추가해주세요.
-                <div css={addArea}>
-                  <Button
-                    variant='secondary'
-                    size='xs'
-                    width={116}
-                    css={buttonStyle}
-                    onClick={onUpload}
-                  >
-                    <BiPlus size={16} />
-                    직접입력
-                  </Button>
-                  <Button variant='accent' size='xs' width={116} css={buttonStyle}>
-                    <BiPlus size={16} />
-                    엑셀추가
-                  </Button>
-                </div>
-              </td>
+              {mode === 'write' ? (
+                <td colSpan={attributes.length + 1} css={noDataStyle}>
+                  일간분석 데이터를 추가해주세요.
+                  <div css={addArea}>
+                    <Button
+                      variant='secondary'
+                      size='xs'
+                      width={116}
+                      css={buttonStyle}
+                      onClick={onUpload}
+                    >
+                      <BiPlus size={16} />
+                      직접입력
+                    </Button>
+                    <Button
+                      variant='accent'
+                      size='xs'
+                      width={116}
+                      css={buttonStyle}
+                      onClick={handleFileUploadClick}
+                    >
+                      <BiPlus size={16} />
+                      엑셀추가
+                    </Button>
+                    <input
+                      ref={fileInputRef}
+                      type='file'
+                      accept='.xlsx,.xls'
+                      style={{ display: 'none' }}
+                      onChange={(e) => onUploadExcel?.(e, Number(strategyId), role as UserRole)}
+                    />
+                  </div>
+                </td>
+              ) : (
+                <td colSpan={attributes.length + 1} css={noDataStyle}>
+                  데이터가 없습니다. 일간분석 데이터를 입력하세요.
+                </td>
+              )}
             </tr>
           )}
         </tbody>
@@ -202,7 +217,7 @@ const tableStyle = css`
   .checkbox {
     cursor: pointer;
   }
-  min-height: 430px;
+  max-height: 430px;
 `;
 
 const tableVars = css`

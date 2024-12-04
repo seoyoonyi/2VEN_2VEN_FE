@@ -5,17 +5,23 @@ import Checkbox from '@/components/common/Checkbox';
 interface imgSectionProps {
   img: string;
   name: string;
+  id: number;
   isSelected: boolean;
-  onSelect: (checked: boolean) => void;
+  isSelfed: boolean;
+  onSelect: (id: number) => void;
 }
 
-const ImgSection = ({ img, name, isSelected, onSelect }: imgSectionProps) => (
+const ImgSection = ({ img, id, name, isSelected, isSelfed, onSelect }: imgSectionProps) => (
   <div css={imgWrapper}>
     <div css={imgContent}>
       <img src={img} alt={img} css={imgSection} />
-      <Checkbox checked={isSelected} onChange={onSelect}>
-        <div css={imgName}>{name}</div>
-      </Checkbox>
+      {isSelfed ? (
+        <Checkbox checked={isSelected ?? false} onChange={() => onSelect(id)}>
+          <div>{name}</div>
+        </Checkbox>
+      ) : (
+        <div>{name}</div>
+      )}
     </div>
   </div>
 );
@@ -36,5 +42,4 @@ const imgContent = css`
   flex-direction: column;
   gap: 10px;
 `;
-const imgName = css``;
 export default ImgSection;

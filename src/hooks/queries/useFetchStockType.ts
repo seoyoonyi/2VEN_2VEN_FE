@@ -36,7 +36,7 @@ export const useFetchInvestmentList = (currentPage: number, pageSize: number, ro
 };
 
 export const useFetchDetailInvestmentType = (id: number, role: UserRole) => {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['investmentDetail', id],
     queryFn: async () => {
       try {
@@ -57,5 +57,6 @@ export const useFetchDetailInvestmentType = (id: number, role: UserRole) => {
     investmentDetail: data?.investmentDetail,
     iconName: data?.investmentIconName,
     isLoading,
+    refetch,
   };
 };

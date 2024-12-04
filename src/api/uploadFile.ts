@@ -32,7 +32,7 @@ export const fetchPutIconFile = async (
   try {
     const res = await apiClient.post(`${API_ENDPOINTS.FILES.ICON}/modify`, formData, {
       params: {
-        fileUrl,
+        fileUrl: decodeURIComponent(fileUrl),
       },
       headers: {
         Auth: role,
@@ -49,7 +49,7 @@ export const fetchDeleteIcon = async (role: string | null, fileUrl: string) => {
   try {
     const res = await apiClient.delete(`${API_ENDPOINTS.FILES.ICON}`, {
       params: {
-        fileUrl,
+        fileUrl: decodeURIComponent(fileUrl),
       },
       headers: {
         Auth: role,

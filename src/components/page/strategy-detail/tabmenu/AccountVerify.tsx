@@ -7,124 +7,157 @@ import { MdCheck } from 'react-icons/md';
 import ImgSection from '../ImgSection';
 
 import Button from '@/components/common/Button';
+import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import Toast from '@/components/common/Toast';
+import { useDeleteAccountImg, useUploadAccountImg } from '@/hooks/mutations/useAccountMutation';
+import { useFetchAccountImg } from '@/hooks/queries/useAccountImg';
+import usePagination from '@/hooks/usePagination';
+import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
-import { isValidCheckImg } from '@/utils/fileHelper';
+import { UserRole } from '@/types/route';
+import { isValidDateFormat } from '@/utils/fileHelper';
 
-interface imgFileDetail {
-  imgUrl: string;
-  name: string;
+interface AccountProps {
+  strategyId: number;
+  role?: UserRole;
+  userId: string;
+  isSelfed: boolean;
 }
 
-const paginatedData = (data: imgFileDetail[], currentPage: number, pageSize = 8) => {
-  const startIdx = (currentPage - 1) * pageSize;
-  const endIdx = startIdx + pageSize;
-  return data.slice(startIdx, endIdx);
-};
+interface AccountImgProps {
+  liveAccountId: number;
+  fileName: string;
+  fileLink: string;
+}
 
-const AccountVerify = () => {
-  const [fileNames, setFileNames] = useState<imgFileDetail[]>([]);
-  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
-  const [page, setPage] = useState(1);
+const AccountVerify = ({ strategyId, isSelfed, role, userId }: AccountProps) => {
+  const { user } = useAuthStore();
+  const { pagination, setPage } = usePagination(1, 8);
+  const { accountImgs, page, pageSize, totalPages, isLoading } = useFetchAccountImg(
+    strategyId,
+    role as UserRole,
+    pagination.currentPage - 1,
+    pagination.pageSize
+  );
+  const { mutate: uploadAccount } = useUploadAccountImg();
+  const { mutate: deleteAccount } = useDeleteAccountImg();
+  const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
   const { openModal } = useModalStore();
   const { showToast, message, hideToast, isToastVisible } = useToastStore();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const limit = 8;
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
   };
 
   const handleUploadImg = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const imgFiles = e.target.files;
+    const imgFiles = e.target.files?.[0];
     if (imgFiles) {
-      const validFiles = Array.from(imgFiles).filter((file) => isValidCheckImg(file.name));
-
-      if (validFiles.length > 0) {
-        const newImgs = validFiles.map((file, idx) => ({
-          id: `${file.name}-${idx}`,
-          imgUrl: URL.createObjectURL(file),
-          name: file.name,
-        }));
-        setFileNames((prevImgs) => [...prevImgs, ...newImgs]);
+      const isDuplicate = accountImgs.some(
+        (item: AccountImgProps) => item.fileName === imgFiles.name
+      );
+      if (isDuplicate) {
+        showToast('이미 실계좌 인증 이미지가 등록된 일자입니다.', 'error');
         e.target.value = '';
-      } else {
-        showToast('올바른 이미지를 등록해주세요.');
+        return;
       }
+      if (!isValidDateFormat(imgFiles.name)) {
+        showToast('파일명은 YYYY.MM.DD 형식으로 입력하세요.', 'error');
+        e.target.value = '';
+        return;
+      }
+      uploadAccount({ strategyId, authRole: role as UserRole, fileItem: imgFiles });
+      showToast('실계좌 이미지가 등록되었습니다.');
+      e.target.value = '';
     }
   };
 
-  const handleSelectedImg = (imgUrl: string, checked: boolean) => {
-    setSelectedFiles((prevSelected) =>
-      checked ? [...prevSelected, imgUrl] : prevSelected.filter((url) => url !== imgUrl)
+  const handleSelectedImg = (imgId: number) => {
+    setSelectedFiles((prev) =>
+      prev.includes(imgId) ? prev.filter((item) => item !== imgId) : [...prev, imgId]
     );
   };
 
   const handleDeleteImg = () => {
-    openModal({
-      type: 'warning',
-      title: '이미지 삭제',
-      desc: `선택하신 ${selectedFiles.length}개의 이미지를 삭제하시겠습니까?`,
-      onAction: () => {
-        setFileNames((prevImgs) => prevImgs.filter((img) => !selectedFiles.includes(img.imgUrl)));
-        setSelectedFiles([]);
-      },
-    });
+    if (selectedFiles.length > 0) {
+      openModal({
+        type: 'warning',
+        title: '이미지 삭제',
+        desc: `선택하신 ${selectedFiles.length}개의 이미지를 삭제하시겠습니까?`,
+        onAction: () => {
+          deleteAccount({ strategyId, authRole: role as UserRole, liveAccountId: selectedFiles });
+          setSelectedFiles([]);
+        },
+      });
+    } else {
+      openModal({
+        type: 'warning',
+        title: '이미지 삭제',
+        desc: `선택된 이미지가 없습니다.`,
+        onAction: () => {},
+      });
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div css={accountWrapper}>
-      <div css={headingStyle}>
-        <div css={textStyle}>
-          <MdCheck css={iconStyle} size={24} />
-          <div>
-            파일명은 YYYY.MM.DD 형식(예: 2024.11.15)으로 일간분석 테이블에 입력한 날짜와 동일하게
-            변경해주세요.
+      {isSelfed && userId === user?.memberId && (
+        <div css={headingStyle}>
+          <div css={textStyle}>
+            <MdCheck css={iconStyle} size={24} />
+            <div>
+              파일명은 YYYY.MM.DD 형식(예: 2024.11.15)으로 일간분석 테이블에 입력한 날짜와 동일하게
+              변경해주세요.
+            </div>
+          </div>
+          <div css={buttonArea}>
+            <Button variant='secondary' size='xs' width={89} onClick={handleUploadClick}>
+              <BiPlus />
+              추가
+            </Button>
+            <Button variant='neutral' size='xs' width={89} onClick={handleDeleteImg}>
+              삭제
+            </Button>
+            <input
+              type='file'
+              accept='.png,.jpeg,.jpg,.webp'
+              ref={fileInputRef}
+              onChange={handleUploadImg}
+              style={{ display: 'none' }}
+            />
           </div>
         </div>
-        <div css={buttonArea}>
-          <Button variant='secondary' size='xs' width={89} onClick={handleUploadClick}>
-            <BiPlus />
-            추가
-          </Button>
-          <Button variant='neutral' size='xs' width={89} onClick={handleDeleteImg}>
-            삭제
-          </Button>
-          <input
-            type='file'
-            accept='image/*'
-            ref={fileInputRef}
-            onChange={handleUploadImg}
-            style={{ display: 'none' }}
-          />
-        </div>
-      </div>
-      {fileNames.length > 0 ? (
+      )}
+      {accountImgs.length > 0 ? (
         <div css={imagesGrid}>
-          {paginatedData(fileNames, page, limit).map((item, idx) => (
+          {accountImgs.map((item: AccountImgProps) => (
             <ImgSection
-              key={idx}
-              img={item.imgUrl}
-              name={item.name}
-              isSelected={selectedFiles.includes(item.imgUrl)}
-              onSelect={(checked) => handleSelectedImg(item.imgUrl, checked)}
+              key={item.liveAccountId}
+              img={item.fileLink}
+              id={item.liveAccountId}
+              name={item.fileName}
+              isSelfed={isSelfed}
+              isSelected={selectedFiles.includes(item.liveAccountId)}
+              onSelect={handleSelectedImg}
             />
           ))}
         </div>
       ) : (
         <div css={noneUploaded}>업로드된 데이터가 없습니다.</div>
       )}
-
-      <Pagination
-        totalPage={Math.ceil(fileNames.length / limit)}
-        limit={limit}
-        page={page}
-        setPage={setPage}
-      />
+      <Pagination totalPage={totalPages} limit={pageSize} page={page + 1} setPage={setPage} />
       <Modal />
       <Toast message={message} onClose={hideToast} isVisible={isToastVisible} />
     </div>

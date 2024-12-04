@@ -2,16 +2,23 @@ import { useState } from 'react';
 
 import { css } from '@emotion/react';
 import { GrLogout } from 'react-icons/gr';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import NavigationMenu from '@/components/common/NavigationMenu';
 import ProfileSection from '@/components/page/mypage/ProfileSection';
 import { ROUTES } from '@/constants/routes';
+import { useProfileImage } from '@/hooks/queries/useProfileImage';
+import { useSidebarProfileQuery } from '@/hooks/queries/useSidebarProfile';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
 const TraderMyPageNav = () => {
-  // 사진이 없을때
-  // const [userImage, setUserImage] = useState(null);
+  const navigate = useNavigate();
+  const { user, clearAuth } = useAuthStore();
+  const { data: profileImageData } = useProfileImage(user?.memberId || ''); // 프로필 이미지 가져오기
+  const imageSrc = profileImageData?.fileUrl;
+  const { data: profileData } = useSidebarProfileQuery();
   const [userImage] = useState(
     'https://i.pinimg.com/736x/2b/4c/91/2b4c913711c4a8be893aa873b3b23193.jpg'
   );
@@ -22,7 +29,7 @@ const TraderMyPageNav = () => {
       label: '나의 전략',
     },
     {
-      to: `${ROUTES.MYPAGE.TRADER.INQUIRIES}`,
+      to: `${ROUTES.MYPAGE.TRADER.INQUIRIES.LIST}`,
       label: '문의 관리',
     },
     {
@@ -31,18 +38,24 @@ const TraderMyPageNav = () => {
     },
   ];
 
+  const handleSignout = async () => {
+    clearAuth();
+    navigate(ROUTES.HOME.PATH, { replace: true });
+    window.scrollTo(0, 0);
+  };
+
   return (
     <div css={navContainerStyle}>
       <div css={navWrapper}>
         <ProfileSection
-          userImage={userImage}
-          userRole='트레이더'
-          nickname='내가여기서투자짱'
-          desc='주도주로 매매하면 수익은 크고 손실은 작다! 믿는 종목에 발등 찍힌다.'
+          userImage={imageSrc ?? userImage}
+          userRole={profileData?.data.memberType === 'TRADER' ? '트레이더' : '투자자'}
+          nickname={profileData?.data.nickname ?? '트레이더님'}
+          desc={profileData?.data.introduction ?? '트레이더님의 소개글이 없습니다.'}
         />
         <NavigationMenu items={TraderMyPageNavItems} />
       </div>
-      <Button variant='ghostGray' customStyle={logoutStyle} size='sm'>
+      <Button variant='ghostGray' customStyle={logoutStyle} size='sm' onClick={handleSignout}>
         <GrLogout size={16} />
         <span>로그아웃</span>
       </Button>

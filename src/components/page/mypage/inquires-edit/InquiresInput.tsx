@@ -2,20 +2,20 @@ import { css } from '@emotion/react';
 
 import Input from '@/components/common/Input';
 import theme from '@/styles/theme';
-import { InquiryDetailData } from '@/types/myinquires';
+import { InquiryDetail } from '@/types/inquiries';
 
 const InquiresInput = ({
   data,
   onChange,
 }: {
-  data: InquiryDetailData | null;
-  onChange: (field: keyof InquiryDetailData, value: string | number) => void;
+  data: InquiryDetail | null;
+  onChange: (field: keyof InquiryDetail, value: string | number) => void;
 }) => {
   if (!data) {
     return null;
   }
 
-  const handleInputChange = (field: keyof InquiryDetailData, value: string, maxLength: number) => {
+  const handleInputChange = (field: keyof InquiryDetail, value: string, maxLength: number) => {
     const trimValue = value.slice(0, maxLength);
     onChange(field, trimValue);
   };

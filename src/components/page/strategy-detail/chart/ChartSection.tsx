@@ -1,103 +1,100 @@
+import { useState } from 'react';
+
 import { css } from '@emotion/react';
 
 import Select from '@/components/common/Select';
+import StrategyChart from '@/components/common/StrategyChart';
+import { strategyChartOptions } from '@/constants/strategyAnalysis';
+import useStrategyChart from '@/hooks/queries/useStrategyChart';
 import theme from '@/styles/theme';
+import { UserRole } from '@/types/route';
 
-const chartOptions = [
-  {
-    label: '기준가',
-    value: 'base_price',
-  },
-  {
-    label: '잔고',
-    value: 'balance',
-  },
-  {
-    label: '원금',
-    value: 'principal',
-  },
-  {
-    label: '누적 입출금액',
-    value: 'cumulative_deposit_withdrawal',
-  },
-  {
-    label: '일별 입출금액',
-    value: 'daily_deposit_withdrawal',
-  },
-  {
-    label: '일손익률(%)',
-    value: 'daily_profit_loss_rate',
-  },
-  {
-    label: '누적 수익 금액',
-    value: 'cumulative_profit_amount',
-  },
-  {
-    label: '누적 수익률(%)',
-    value: 'cumulative_profit_rate',
-  },
-  {
-    label: '현재 자본인하금액',
-    value: 'current_capital_reduction_amount',
-  },
-  {
-    label: '현재 자본인하율(%)',
-    value: 'current_capital_reduction_rate',
-  },
-  {
-    label: '평균 손익 금액',
-    value: 'average_profit_loss_amount',
-  },
-  {
-    label: '평균 손익률',
-    value: 'average_profit_loss_rate',
-  },
-  {
-    label: '승률',
-    value: 'win_rate',
-  },
-  {
-    label: 'Profit Factor',
-    value: 'profit_factor',
-  },
-  {
-    label: 'ROA',
-    value: 'roa',
-  },
-  {
-    label: 'totalProfit',
-    value: 'total_profit',
-  },
-  {
-    label: 'totalLoss',
-    value: 'total_loss',
-  },
+interface StrategyChartProps {
+  strategyId: number;
+  role: UserRole;
+}
+
+interface ChartDataItem {
+  label: string;
+  data: number[];
+}
+
+const areaKeys = [
+  'referencePrice',
+  'balance',
+  'principal',
+  'cumulativeDepWdPrice',
+  'depWdPrice',
+  'dailyProfitLoss',
+  'cumulativeProfitLoss',
+  'currentDrawdownAmount',
+  'averageProfitLoss',
+  'totalProfit',
+  'totalLoss',
 ];
 
-const ChartSection = () => (
-  <div css={sectionStyle}>
-    <div css={chartTitle}>계좌 누적 수익률</div>
-    <div css={showChartStyle}>
-      <div css={selectArea}>
-        <Select
-          type='sm'
-          options={chartOptions}
-          onChange={() => {}}
-          defaultLabel='기준가'
-          width='160px'
-        />
-        <Select
-          type='sm'
-          options={chartOptions}
-          onChange={() => {}}
-          defaultLabel='기준가'
-          width='160px'
-        />
+const lineKeys = [
+  'dailyPlRate',
+  'cumulativeProfitLossRate',
+  'currentDrawdownRate',
+  'averageProfitLossRate',
+  'winRate',
+  'profitFactor',
+  'roa',
+];
+
+const ChartSection = ({ strategyId, role }: StrategyChartProps) => {
+  const [firstOption, setFirstOption] = useState('referencePrice');
+  const [secondOption, setSecondOption] = useState('referencePrice');
+  const { data } = useStrategyChart(strategyId, role, [firstOption, secondOption]);
+
+  const selectedKeys = Array.from(new Set([firstOption, secondOption]));
+
+  const areaData: ChartDataItem[] = selectedKeys
+    .filter((key: string) => areaKeys.includes(key))
+    .map((item) => ({
+      label: strategyChartOptions.find((option) => option.value === item)?.label || item,
+      data: data?.[item] || [],
+    }));
+
+  const lineData: ChartDataItem[] = selectedKeys
+    .filter((key) => lineKeys.includes(key))
+    .map((item) => ({
+      label: strategyChartOptions.find((option) => option.value === item)?.label || item,
+      data: data?.[item] || [],
+    }));
+
+  return (
+    <div css={sectionStyle}>
+      <div css={chartTitle}>계좌 누적 수익률</div>
+      <div css={showChartStyle}>
+        <div css={selectArea}>
+          <Select
+            type='sm'
+            options={strategyChartOptions}
+            onChange={(item) => {
+              setFirstOption(item.value);
+            }}
+            defaultLabel='기준가'
+            width='160px'
+          />
+          <Select
+            type='sm'
+            options={strategyChartOptions}
+            onChange={(item) => {
+              setSecondOption(item.value);
+            }}
+            defaultLabel='기준가'
+            width='160px'
+          />
+        </div>
+        <div css={chartStyle}>
+          <StrategyChart lineData={lineData} areaData={areaData} />
+        </div>
       </div>
-      <div css={chartStyle}></div>
     </div>
-  </div>
-);
+  );
+};
 
 const sectionStyle = css`
   display: flex;
@@ -123,6 +120,8 @@ const showChartStyle = css`
 const chartStyle = css`
   width: 940px;
   height: 460px;
+  padding: 20px;
+  display: flex;
   border: 1px solid ${theme.colors.gray[300]};
 `;
 

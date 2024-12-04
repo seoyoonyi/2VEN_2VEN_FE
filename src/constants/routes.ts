@@ -52,14 +52,17 @@ export const ROUTES = {
         CREATE: '/mypage/trader/strategies/create', // 전략 등록(버튼클릭시 이동)
         EDIT: (strategyId: string) => `/mypage/trader/strategies/${strategyId}/edit`, // 전략 수정(버튼클릭시 이동)
       },
-      INQUIRIES: '/mypage/trader/inquiries', // 문의 관리
+      INQUIRIES: {
+        LIST: '/mypage/trader/inquiries', // 문의 관리 게시판
+        DETAIL: (inquiryId: string) => `/mypage/trader/inquiries/${inquiryId}`, // 문의 관리 상세
+      },
       PROFILE: '/mypage/trader/profile', // 프로필 관리
     },
   },
   SEARCH: {
-    ROOT: '/search',
-    TRADER: '/search/traders',
-    STRATEGY: '/search/strategies',
+    TOTAL: '/search', // 통합 검색 결과 페이지
+    TRADERS_DETAIL: '/search/traders/detail', // 트레이더 내 상세검색 결과 페이지
+    STRATEGIES_DETAIL: '/search/strategies/detail', // 전략 내 상세검색 결과 페이지
   },
   ADMIN: {
     STOCK_TYPE: {

@@ -42,7 +42,7 @@ const defaultColumns: ColumnConfig[] = [
           {strategy.investmentAssetClassesIcon
             ?.slice(0, 2)
             .map((icon) => <img key={icon} src={icon} alt={icon} height={18} />)}
-          {strategy.investmentAssetClassesIcon.length > 2 && (
+          {(strategy.investmentAssetClassesIcon?.length ?? 0) > 2 && (
             <div css={countStyle}>+{strategy.investmentAssetClassesIcon.length - 2}</div>
           )}
         </div>

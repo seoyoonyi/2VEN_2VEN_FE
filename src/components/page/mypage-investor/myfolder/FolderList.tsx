@@ -11,11 +11,11 @@ interface FolderListProps {
     folderId: number;
     folderName: string;
     strategyCount: number;
-    updatedAt: string;
+    modifiedAt: string;
   }>;
-  onFolderClick: (folderId: string) => void;
-  onEditFolder: (folderId: string) => void;
-  onDeleteFolder: (folderId: string) => void;
+  onFolderClick: (folderId: number) => void;
+  onEditFolder: (folderId: number) => void;
+  onDeleteFolder: (folderId: number) => void;
 }
 
 const FolderList = ({
@@ -41,11 +41,11 @@ const FolderList = ({
           key={folder.folderId}
           role='button'
           tabIndex={0}
-          onClick={() => onFolderClick(String(folder.folderId))}
+          onClick={() => onFolderClick(folder.folderId)}
           onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
-              onFolderClick(String(folder.folderId));
+              onFolderClick(folder.folderId);
             }
           }}
           css={rowStyle}
@@ -55,7 +55,7 @@ const FolderList = ({
             {folder.folderName}
           </div>
           <div>{folder.strategyCount}</div>
-          <div>{folder.updatedAt}</div>
+          <div>{folder.modifiedAt.slice(0, 10).replace(/-/g, '.')}</div>
           <DropdownMenu
             isActive={activeDropdown === folder.folderId}
             toggleDropdown={() => toggleDropdown(folder.folderId)}
@@ -63,14 +63,14 @@ const FolderList = ({
               {
                 label: '폴더명 수정',
                 handleClick: () => {
-                  onEditFolder(String(folder.folderId));
+                  onEditFolder(folder.folderId);
                   closeDropdown();
                 },
               },
               {
                 label: '폴더 삭제',
                 handleClick: () => {
-                  onDeleteFolder(String(folder.folderId));
+                  onDeleteFolder(folder.folderId);
                   closeDropdown();
                 },
               },
