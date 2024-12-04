@@ -49,6 +49,29 @@ export interface InquiryDetailData {
   replyUpdatedAt: string;
 }
 
+export interface InquiryReplyDetail {
+  id: number;
+  investorId: string;
+  investorName: string;
+  investorProfileUrl: string;
+  traderId: string;
+  traderName: string;
+  traderProfileUrl: string;
+  strategyId: number;
+  strategyName: string;
+  investmentAmount: number;
+  investmentDate: string;
+  title: string;
+  content: string;
+  status: 'COMPLETED';
+  createdAt: string;
+  updatedAt: string;
+  replyContent: string;
+  answerDate: string;
+  replyCreatedAt: string;
+  replyUpdatedAt?: string | null;
+}
+
 // 문의 등록 반환 값
 export interface InquiryCreateResponse {
   id: number;
