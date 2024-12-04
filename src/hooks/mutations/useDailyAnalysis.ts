@@ -26,6 +26,7 @@ export const usePostDailyAnalysis = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
       queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
+      queryClient.invalidateQueries({ queryKey: ['strategyChart'] });
     },
   });
 };
@@ -49,6 +50,7 @@ export const usePutDailyAnalysis = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
       queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
+      queryClient.invalidateQueries({ queryKey: ['strategyChart'] });
     },
   });
 };
@@ -69,6 +71,7 @@ export const useDeleteAnalysis = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
       queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
+      queryClient.invalidateQueries({ queryKey: ['strategyChart'] });
     },
   });
 };
@@ -86,6 +89,7 @@ export const useUploadExcel = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
       queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
+      queryClient.invalidateQueries({ queryKey: ['strategyChart'] });
     },
   });
 };

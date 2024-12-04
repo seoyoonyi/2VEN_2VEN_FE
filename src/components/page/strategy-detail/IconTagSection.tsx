@@ -1,18 +1,14 @@
 import { css } from '@emotion/react';
 
-interface IconTagProps {
-  img: string;
-}
-
 interface IconTagSectionProps {
-  imgs: IconTagProps[];
+  imgs: string[];
 }
 
 const IconTagSection = ({ imgs }: IconTagSectionProps) => (
   <div css={tagAreaStyle}>
     {imgs.map((item, idx) => (
       <div key={idx} css={tagStyle}>
-        <img src={item.img} alt={`icon-${idx}`} css={tagStyle} />
+        <img src={item} alt={`icon-${idx}`} css={tagStyle} />
       </div>
     ))}
   </div>

@@ -343,3 +343,28 @@ export const fetchDeleteRealAccount = async (
     console.error('failed to post real-account-img', error);
   }
 };
+
+//전략 상세 차트
+export const fetchStrategyChart = async (
+  strategyId: number,
+  authRole: UserRole,
+  options: string[]
+) => {
+  try {
+    const res = await apiClient.get(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/details-chart`,
+      {
+        headers: {
+          role: authRole,
+        },
+        params: {
+          option1: options[0],
+          option2: options[1],
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error('failed to fetch strategyChartdata', error);
+  }
+};
