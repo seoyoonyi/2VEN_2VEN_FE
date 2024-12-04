@@ -36,14 +36,10 @@ import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { UserRole } from '@/types/route';
+import { StrategyIacentity } from '@/types/strategy';
 import { StatisticsProps } from '@/types/strategyDetail';
 import { formatDate } from '@/utils/dateFormat';
-import { formatValue, formatRate } from '@/utils/statistics';
-
-const imgTest = [
-  { img: '/src/assets/images/producttype_stock.png' },
-  { img: '/src/assets/images/producttype_stock.png' },
-];
+import { formatValue } from '@/utils/statistics';
 
 const StrategyDetailPage = () => {
   const { user } = useAuthStore();
@@ -57,7 +53,10 @@ const StrategyDetailPage = () => {
   const { mutate: terminateStrategy } = useStrategyDetailTerminate();
   const { openModal } = useModalStore();
   const { dailyAnalysis } = useFetchDailyAnalysis(Number(strategyId), 0, 5);
-  const { data: approveState } = useFetchApproveState(Number(strategyId), role) || '';
+  const { data: approveState } =
+    useFetchApproveState(Number(strategyId), role, {
+      enabled: strategy?.isApproved === 'N',
+    }) || '';
   const { isToastVisible, hideToast, message, type } = useToastStore();
   const isApproved = dailyAnalysis?.length >= 3 || approveState?.isApproved === 'N';
   const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
@@ -123,6 +122,14 @@ const StrategyDetailPage = () => {
     },
   ];
 
+  const icons = [
+    strategy?.tradingTypeIcon,
+    strategy?.tradingCycleIcon,
+    ...(strategy?.strategyIACEntities.map(
+      (item: StrategyIacentity) => item.investmentAssetClassesIcon
+    ) || []),
+  ];
+
   const handleDeleteDetail = (id: number) => {
     openModal({
       type: 'warning',
@@ -162,7 +169,10 @@ const StrategyDetailPage = () => {
   };
 
   useEffect(() => {
-    if (strategy?.isApproved === 'N' || (strategy?.isPosted === 'N' && !(isOwner || isAdmin)))
+    if (
+      (strategy?.isApproved === 'N' && !(isOwner || isAdmin)) ||
+      (strategy?.isPosted === 'N' && !(isOwner || isAdmin))
+    )
       navigate('/404', { replace: true });
   }, [strategy, isOwner, isAdmin]);
 
@@ -200,7 +210,7 @@ const StrategyDetailPage = () => {
               onDelete={() => handleDeleteDetail(strategy.strategyId)}
               onEnd={() => handleDetailEnd(strategy.strategyId, role)}
             />
-            <IconTagSection imgs={imgTest} />
+            <IconTagSection imgs={icons} />
             <StrategyTitleSection
               title={strategy?.strategyTitle}
               traderId={strategy?.memberId}
@@ -212,20 +222,9 @@ const StrategyDetailPage = () => {
               lastUpdatedDate={writedAt ? formatDate(writedAt) : '데이터없음'}
             />
             <StrategyContent content={strategy?.strategyOverview} />
-            {strategy?.strategyProposalLink && (
-              <FileDownSection
-                fileName={strategy?.strategyProposalFileTitle}
-                fileUrl={strategy?.strategyProposalLink}
-              />
-            )}
-            <StrategyIndicator
-              cumulativeRate={statistics && formatRate(statistics.maxCumulativeProfitLossRatio)}
-              maximumRate={statistics && formatRate(statistics.maxDrawdownRate)}
-              avgProfit={statistics && formatRate(statistics.averageProfitLossRate)}
-              profitFactor={statistics && statistics.profitFactor}
-              winRate={statistics && formatRate(statistics.winRate)}
-            />
-            <ChartSection />
+            {strategy?.strategyProposalLink && <FileDownSection {...strategy} />}
+            <StrategyIndicator {...statistics} />
+            <ChartSection strategyId={Number(strategyId)} role={role} />
             <StrategyTab tabs={tabMenu} />
           </div>
         </div>
