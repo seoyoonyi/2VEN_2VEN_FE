@@ -21,10 +21,11 @@ import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 
-interface Folder {
+export interface Folder {
   folderId: number;
   folderName: string;
   modifiedAt: string;
+  strategyCount: number;
   isDefaultFolder: string;
 }
 
@@ -38,6 +39,8 @@ const InvestorMyPage = () => {
   const { mutate: submitFolder } = useSubmitFolder();
   const { mutate: updateFolder } = useUpdateFolderName();
   const { mutate: deleteFolder } = useDeleteFolder();
+
+  console.log('폴더 데이터', data);
 
   const handleFolderList = (folderId: number) => {
     navigate(ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(String(folderId)));
