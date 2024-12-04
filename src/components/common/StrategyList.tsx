@@ -12,6 +12,7 @@ import { StrategyListData } from '@/types/strategy';
 interface DropdownAction {
   label: string;
   onClick: (strategyId: number) => void;
+  handleClick?: () => void;
 }
 
 interface StrategyListProps {
@@ -21,7 +22,7 @@ interface StrategyListProps {
   containerWidth?: string;
   gridTemplate?: string;
   moreMenu?: boolean;
-  dropdownActions?: DropdownAction[];
+  dropdownActions?: (strategyId: number) => DropdownAction[];
   noDataDesc?: string;
 }
 
@@ -32,7 +33,7 @@ const StrategyList = ({
   containerWidth = theme.layout.width.content,
   gridTemplate = '64px 278px 278px 160px 160px 100px 100px',
   moreMenu = false,
-  dropdownActions = [],
+  dropdownActions = () => [],
   noDataDesc = '전략이 없습니다.',
 }: StrategyListProps) => {
   const navigate = useNavigate();
@@ -136,12 +137,9 @@ const StrategyList = ({
                 <DropdownMenu
                   isActive={activeDropdown === strategy.strategyId}
                   toggleDropdown={() => toggleDropdown(strategy.strategyId)}
-                  actions={dropdownActions.map((action) => ({
+                  actions={dropdownActions?.(strategy.strategyId).map((action) => ({
                     label: action.label,
-                    handleClick: () => {
-                      action.onClick(strategy.strategyId);
-                      closeDropdown();
-                    },
+                    handleClick: () => action.onClick(strategy.strategyId),
                   }))}
                 />
               )}

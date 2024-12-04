@@ -40,8 +40,6 @@ const InvestorMyPage = () => {
   const { mutate: updateFolder } = useUpdateFolderName();
   const { mutate: deleteFolder } = useDeleteFolder();
 
-  console.log('폴더 데이터', data);
-
   const handleFolderList = (folderId: number) => {
     navigate(ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(String(folderId)));
     window.scrollTo(0, 0);
@@ -140,7 +138,7 @@ const InvestorMyPage = () => {
 
   if (isLoading) {
     return (
-      <div css={tableWrapperStyle}>
+      <div css={myPageWrapperStyle}>
         <Loader />
       </div>
     );

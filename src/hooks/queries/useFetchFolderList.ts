@@ -21,7 +21,7 @@ export const useFolderList = () => {
 };
 
 export const useFollowingList = (folderId: number, page: number, pageSize: number) => {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['followingList', folderId, page, pageSize],
     queryFn: async () => {
       const response = await fetchFollowingList(folderId, { page, pageSize });
@@ -29,5 +29,5 @@ export const useFollowingList = (folderId: number, page: number, pageSize: numbe
     },
   });
 
-  return { data, isLoading, isError };
+  return { data, isLoading, isError, refetch };
 };
