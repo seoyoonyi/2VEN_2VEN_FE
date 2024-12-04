@@ -103,7 +103,6 @@ const InquiryPage = () => {
           investmentDate: new Date(formState.investmentDate).toISOString(),
           title: formState.title,
           content: formState.content,
-          status: 'PENDING' as const,
         };
 
         InquiryCreate(

@@ -10,7 +10,6 @@ export interface InquiryCreateData {
   investmentDate: string;
   title: string;
   content: string;
-  status: Status;
 }
 
 export interface InquiryData {
