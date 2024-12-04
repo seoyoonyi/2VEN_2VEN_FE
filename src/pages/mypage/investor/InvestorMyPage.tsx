@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
@@ -39,6 +41,12 @@ const InvestorMyPage = () => {
   const { mutate: submitFolder } = useSubmitFolder();
   const { mutate: updateFolder } = useUpdateFolderName();
   const { mutate: deleteFolder } = useDeleteFolder();
+
+  useEffect(() => {
+    if (isToastVisible) {
+      hideToast();
+    }
+  }, [hideToast, isToastVisible]);
 
   const handleFolderList = (folderId: number) => {
     navigate(ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(String(folderId)));
@@ -138,7 +146,7 @@ const InvestorMyPage = () => {
 
   if (isLoading) {
     return (
-      <div css={myPageWrapperStyle}>
+      <div>
         <Loader />
       </div>
     );
