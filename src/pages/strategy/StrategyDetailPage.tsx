@@ -53,7 +53,10 @@ const StrategyDetailPage = () => {
   const { mutate: terminateStrategy } = useStrategyDetailTerminate();
   const { openModal } = useModalStore();
   const { dailyAnalysis } = useFetchDailyAnalysis(Number(strategyId), 0, 5);
-  const { data: approveState } = useFetchApproveState(Number(strategyId), role) || '';
+  const { data: approveState } =
+    useFetchApproveState(Number(strategyId), role, {
+      enabled: strategy?.isApproved === 'N',
+    }) || '';
   const { isToastVisible, hideToast, message, type } = useToastStore();
   const isApproved = dailyAnalysis?.length >= 3 || approveState?.isApproved === 'N';
   const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
