@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchFolderList } from '@/api/folders';
+import { fetchFollowingList } from '@/api/follow';
 
 export const useFolderList = () => {
   const { data, isLoading, isError } = useQuery({
@@ -17,4 +18,16 @@ export const useFolderList = () => {
   });
 
   return { data, isLoading, isError };
+};
+
+export const useFollowingList = (folderId: number, page: number, pageSize: number) => {
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ['followingList', folderId, page, pageSize],
+    queryFn: async () => {
+      const response = await fetchFollowingList(folderId, { page, pageSize });
+      return response;
+    },
+  });
+
+  return { data, isLoading, isError, refetch };
 };

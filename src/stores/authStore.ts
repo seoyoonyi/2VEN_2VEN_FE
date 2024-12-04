@@ -23,7 +23,10 @@ export const useAuthStore = create<AuthStore>()(
         const expiresAt = new Date(new Date().getTime() + 60 * 60 * 1000).toISOString();
         set({ token, user, expiresAt });
       },
-      clearAuth: () => set({ token: null, user: null, expiresAt: null }),
+      clearAuth: () => {
+        set({ token: null, user: null, expiresAt: null });
+        localStorage.removeItem('auth-storage');
+      },
     }),
     {
       name: 'auth-storage',
