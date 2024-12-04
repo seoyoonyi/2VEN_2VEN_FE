@@ -1,13 +1,37 @@
 //10000 -> 10,000
-export const formatLoss = (value: number) => value.toLocaleString();
+export const formatLoss = (value: number) => {
+  const absValue = Math.abs(value);
+  const op = value < 0 ? '-' : '';
+  if (absValue >= 100000000) {
+    return `${op}${Math.floor(absValue / 100000000)}억`;
+  } else if (absValue >= 10000000) {
+    return `${op}${Math.floor(absValue / 10000)}만`;
+  } else {
+    return `${op}${absValue.toLocaleString()}`;
+  }
+};
 
 //23.23223 -> 23.23
 export const formatRate = (value: number) => Math.floor(value * 100) / 100;
 
 export const formatValue = (key: string, value: string | number) => {
   if (typeof value === 'number') {
-    if (key.endsWith('Rate') || key.endsWith('Ratio')) {
-      return Math.round(value * 100) / 100 + '%';
+    if (
+      key.endsWith('Rate') ||
+      key.endsWith('Ratio') ||
+      key.endsWith('roa') ||
+      key.endsWith('Factor')
+    ) {
+      return Math.floor(value * 100) / 100 + '%';
+    } else if (key.endsWith('Days') || key.endsWith('Period') || key.endsWith('Peak')) {
+      const years = Math.floor(value / 365);
+      const month = Math.floor((value % 365) / 30);
+      const days = (value % 365) % 30;
+      let result = '';
+      if (years > 0) result += `${years}년 `;
+      if (month > 0) result += `${month}개월 `;
+      if (days >= 0 || days <= 0) result += `${days}일`;
+      return result.trim();
     } else {
       return formatLoss(value);
     }
