@@ -6,9 +6,12 @@ const Footer = () => (
   <footer css={footerStyle}>
     <div css={containerStyle}>
       <p css={footerTextStyle}>
-        사업자 등록번호 : 123-45-67890 <br />
-        통신판매업신고 : 제1234-서울 강남구-0000호 <br />
-        주소 : 서울특별시 강남구 테헤란로 000, 1층(역삼동)
+        서울특별시 영등포구 당산로41길 11, E동 1202호(당산동 4가, 당산 SK V1 center) <br />
+        Sysmetic Co., Ltd.
+        <span css={separatorStyle}>|</span>
+        사업자등록번호: 711-86-00050
+        <span css={separatorStyle}>|</span>
+        +82-2-6338-1880
       </p>
       <p css={footerTextStyle}>COPYRIGHT ⓒ SYSMETIC ALL RIGHT RESERVED</p>
     </div>
@@ -27,6 +30,15 @@ const containerStyle = css`
   max-width: ${theme.layout.width.content};
   padding: 55px 20px;
   margin: 0 auto;
+
+  p:nth-of-type(2) {
+    color: ${theme.colors.gray[500]};
+  }
+`;
+
+const separatorStyle = css`
+  margin: 0 10px;
+  color: ${theme.colors.gray[500]};
 `;
 
 const footerTextStyle = css`

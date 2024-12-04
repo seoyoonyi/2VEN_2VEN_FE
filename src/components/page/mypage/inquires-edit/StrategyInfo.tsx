@@ -2,14 +2,14 @@ import { css } from '@emotion/react';
 
 import Input from '@/components/common/Input';
 import theme from '@/styles/theme';
-import { InquiryDetailData } from '@/types/inquiries';
+import { InquiryDetail } from '@/types/inquiries';
 
 const StrategyInfo = ({
   data,
   onChange,
 }: {
-  data: InquiryDetailData | null;
-  onChange: (field: keyof InquiryDetailData, value: string | number) => void;
+  data: InquiryDetail | null;
+  onChange: (field: keyof InquiryDetail, value: string | number) => void;
 }) => {
   if (!data) {
     return null;

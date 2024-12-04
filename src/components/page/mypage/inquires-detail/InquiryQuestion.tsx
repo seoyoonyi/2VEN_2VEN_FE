@@ -3,16 +3,16 @@ import { css } from '@emotion/react';
 import Avatar from '@/components/common/Avatar';
 import { INQUIRY_MESSAGES } from '@/constants/inquiry';
 import theme from '@/styles/theme';
-import { InquiryDetailData, Status } from '@/types/inquiries';
+import { InquiryDetail, InquiryStatus } from '@/types/inquiries';
 
-const Question = ({
+const InquiryQuestion = ({
   data,
   onDelete,
   onEdit,
 }: {
-  data: InquiryDetailData;
-  onDelete: () => void;
-  onEdit: () => void;
+  data: InquiryDetail;
+  onDelete?: () => void;
+  onEdit?: () => void;
 }) => (
   <div css={questionWrapper}>
     <header css={questionHeaderWrapper}>
@@ -29,13 +29,19 @@ const Question = ({
         </div>
         {data.status === 'PENDING' && (
           <div css={editWrapper}>
-            <button type='button' onClick={onEdit}>
-              수정
-            </button>
-            <div></div>
-            <button type='button' onClick={onDelete}>
-              삭제
-            </button>
+            {onEdit && (
+              <button type='button' onClick={onEdit}>
+                수정
+              </button>
+            )}
+            {onDelete && (
+              <>
+                <div />
+                <button type='button' onClick={onDelete}>
+                  삭제
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -135,7 +141,7 @@ const editWrapper = css`
   }
 `;
 
-const statusStyle = (status: Status) => css`
+const statusStyle = (status: InquiryStatus) => css`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,4 +213,4 @@ const questionStyle = css`
   white-space: pre-wrap;
 `;
 
-export default Question;
+export default InquiryQuestion;

@@ -19,7 +19,6 @@ const AdminNav = () => {
     {
       to: `${ROUTES.ADMIN.STRATEGY.APPROVAL}`,
       label: '전략승인관리',
-      notificationCount: 1,
     },
     {
       to: `${ROUTES.ADMIN.STOCK_TYPE.LIST}`,
