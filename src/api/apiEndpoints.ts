@@ -48,6 +48,7 @@ export const API_ENDPOINTS = {
   SEARCH: {
     TRADERS: '/api/traders/search', // 트레이더 검색
     STRATEGIES: '/api/strategies/search', // 전략 검색
+    STRATEGIES_DETAIL: '/api/strategies/advanced-search', // 전략 상세 검색(상세 필터 체크 후 요청할 때)
   },
   // 개인정보관리(프로필)
   MEMBERS: {

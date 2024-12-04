@@ -23,7 +23,7 @@ const SearchTotalResultsPage = () => {
     return <Loader />;
   }
   return (
-    <div>
+    <div css={containerStyle}>
       <h2 css={pageHeadingStyle}>
         <strong>&lsquo;{keyword}&rsquo;&nbsp;</strong>
         <span>에 대한 검색 결과</span>
@@ -68,6 +68,10 @@ const SearchTotalResultsPage = () => {
     </div>
   );
 };
+
+const containerStyle = css`
+  margin-bottom: 76px;
+`;
 const pageHeadingStyle = css`
   display: flex;
   justify-content: center;

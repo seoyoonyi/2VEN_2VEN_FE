@@ -33,3 +33,25 @@ export interface SearchResponse<T> {
   totalElements: number;
   timestamp: string;
 }
+
+export interface StrategySearchParams {
+  keyword: string;
+  page?: number;
+  pageSize?: number;
+  investmentAssetClassesList?: number[];
+  strategyOperationStatusList?: string[];
+  tradingTypeList?: number[];
+  operatingDaysList?: number[];
+  tradingCycleList?: number[];
+  minInvestmentAmount?: number;
+  maxInvestmentAmount?: number;
+  minPrincipal?: number;
+  maxPrincipal?: number;
+  minSmscore?: number;
+  maxSmscore?: number;
+  minMdd?: number;
+  maxMdd?: number;
+  startDate?: string;
+  endDate?: string;
+  returnRateList?: number[];
+}
