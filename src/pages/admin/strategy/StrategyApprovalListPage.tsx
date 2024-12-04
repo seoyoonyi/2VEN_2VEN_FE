@@ -8,6 +8,7 @@ import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import Toast from '@/components/common/Toast';
 import RejectTextarea from '@/components/page/admin/RejectTextarea';
+import StrategyOperationStatus from '@/components/page/admin/StrategyOperationStatus';
 import { ROUTES } from '@/constants/routes';
 import {
   useApproveStrategy,
@@ -173,10 +174,14 @@ const StrategyApprovalListPage = () => {
                       </div>
                     </div>
                   </td>
-                  <td>너는 잠시 빈값으로 살아라...</td>
+                  <td>
+                    <StrategyOperationStatus status={strategy.strategyStatus} />
+                  </td>
                   <td>{formatDate(strategy.requestDatetime)}</td>
                   <td>
-                    <img src={strategy.tradingTypeIcon} alt='icon' />
+                    <div css={tradingTypeIconContainer}>
+                      <img src={strategy.tradingTypeIcon} alt='icon' />
+                    </div>
                   </td>
                   <td>{getPostStatus(strategy.isPosted)}</td>
                   <td>
@@ -341,6 +346,15 @@ const colgroupStyle = css`
   }
   col:nth-of-type(6) {
     width: 160px;
+  }
+`;
+
+const tradingTypeIconContainer = css`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  img {
+    width: 32px;
   }
 `;
 
