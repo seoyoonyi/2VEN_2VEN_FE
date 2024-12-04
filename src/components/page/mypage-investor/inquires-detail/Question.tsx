@@ -11,8 +11,8 @@ const Question = ({
   onEdit,
 }: {
   data: InquiryDetailData;
-  onDelete: () => void;
-  onEdit: () => void;
+  onDelete?: () => void;
+  onEdit?: () => void;
 }) => (
   <div css={questionWrapper}>
     <header css={questionHeaderWrapper}>
@@ -29,13 +29,19 @@ const Question = ({
         </div>
         {data.status === 'PENDING' && (
           <div css={editWrapper}>
-            <button type='button' onClick={onEdit}>
-              수정
-            </button>
-            <div></div>
-            <button type='button' onClick={onDelete}>
-              삭제
-            </button>
+            {onEdit && (
+              <button type='button' onClick={onEdit}>
+                수정
+              </button>
+            )}
+            {onDelete && (
+              <>
+                <div />
+                <button type='button' onClick={onDelete}>
+                  삭제
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
