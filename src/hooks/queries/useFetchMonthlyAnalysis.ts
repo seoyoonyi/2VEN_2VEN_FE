@@ -1,12 +1,18 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { fetchMonthlyAnalysis } from '@/api/strategyDetail';
+import { UserRole } from '@/types/route';
 
-const useFetchMonthlyAnalysis = (strategyId: number, page: number, pageSize: number) => {
+const useFetchMonthlyAnalysis = (
+  strategyId: number,
+  page: number,
+  pageSize: number,
+  role: UserRole
+) => {
   const { data, isLoading } = useQuery({
-    queryKey: ['monthlyAnalysis', strategyId, page, pageSize],
+    queryKey: ['monthlyAnalysis', strategyId, page, pageSize, role],
     queryFn: async () => {
-      const res = await fetchMonthlyAnalysis(strategyId, page, pageSize);
+      const res = await fetchMonthlyAnalysis(strategyId, page, pageSize, role);
       if (!strategyId) {
         throw new Error('Invalid monthlyAnalysis');
       }

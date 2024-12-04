@@ -4,20 +4,20 @@ import theme from '@/styles/theme';
 
 interface RejectReasonProps {
   title: string;
-  admin: string;
-  adminImg: string;
-  content: string;
+  managerNickname: string;
+  profileImg: string;
+  rejectionReason: string;
 }
-const ReasonItem = ({ title, admin, adminImg, content }: RejectReasonProps) => (
+const ReasonItem = ({ title, managerNickname, profileImg, rejectionReason }: RejectReasonProps) => (
   <div css={reasonStyle}>
     <div css={headerStyle}>
       <div css={titleStyle}>{title}</div>
       <div css={adminStyle}>
-        <img src={adminImg} alt={admin} css={imgStyle} />
-        <div>{admin}</div>
+        <img src={profileImg} alt={managerNickname} css={imgStyle} />
+        <div>{managerNickname}</div>
       </div>
     </div>
-    <div css={contentStyle}>{content}</div>
+    <div css={contentStyle}>{rejectionReason}</div>
   </div>
 );
 

@@ -47,7 +47,7 @@ const StrategyDetailPage = () => {
   const navigate = useNavigate();
   const role = user?.role as UserRole;
   const { strategy } = useFetchStrategyDetail(strategyId || '');
-  const { statistics, writedAt } = useStatistics(Number(strategyId));
+  const { statistics, writedAt } = useStatistics(Number(strategyId), role);
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { mutate: approveStrategy } = useStrategyDetailApprove();
   const { mutate: terminateStrategy } = useStrategyDetailTerminate();
@@ -136,7 +136,7 @@ const StrategyDetailPage = () => {
       title: '전략 삭제',
       desc: '해당 전략의 모든 정보가 삭제됩니다.',
       onAction: () => {
-        deleteStrategyDetail(id);
+        deleteStrategyDetail({ id, role });
         navigate(ROUTES.STRATEGY.LIST);
       },
     });
@@ -187,12 +187,7 @@ const StrategyDetailPage = () => {
         strategy?.isApproved !== 'P' &&
         approveState?.isApproved === 'N' &&
         strategy?.isApproved === 'N' && (
-          <ReasonItem
-            title='미승인 이유는 이렇습니다'
-            content={approveState?.rejectionReason}
-            admin={approveState?.managerNickname}
-            adminImg={approveState?.profileImg}
-          />
+          <ReasonItem title='미승인 이유는 이렇습니다' {...approveState} />
         )}
       <div css={contentStyle}>
         <div css={contentWrapper}>

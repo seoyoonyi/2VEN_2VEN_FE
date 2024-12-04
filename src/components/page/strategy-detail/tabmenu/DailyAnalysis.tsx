@@ -141,7 +141,7 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
     postDailyAnalysis({
       strategyId: Number(strategyId),
       payload,
-      authRole: 'admin',
+      authRole: role as UserRole,
     });
 
     modalData = [];
@@ -192,7 +192,7 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
         putDailyAnalysis({
           strategyId,
           payload: updatedData,
-          authRole: 'admin',
+          authRole: role as UserRole,
           dailyDataId: rowId,
         });
         updatedData = null;
