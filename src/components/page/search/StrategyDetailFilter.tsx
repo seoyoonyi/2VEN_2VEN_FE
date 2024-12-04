@@ -12,12 +12,12 @@ import {
 import theme from '@/styles/theme';
 
 interface StrategyDetailFilterProps {
-  selectedProducts: number[];
-  selectedStatus: string[];
-  selectedTradingTypes: number[];
-  selectedOperatingDays: number[];
-  selectedTradingCycle: number[];
-  selectedReturnRates: number[];
+  selectedProducts: number[]; // 상품유형
+  selectedStatus: string[]; // 전략상태
+  selectedTradingTypes: number[]; // 매매유형
+  selectedOperatingDays: number[]; // 운용기간
+  selectedTradingCycle: number[]; // 운용주기
+  selectedReturnRates: number[]; // 누적손익률
   onProductChange: (id: number) => void;
   onStatusChange: (value: string) => void;
   onTradingTypeChange: (id: number) => void;
