@@ -25,7 +25,7 @@ export const updateMyInquiry = async (id: number, payload: InquiryDetailData) =>
   try {
     const res = await apiClient.put(`${API_ENDPOINTS.INQUIRY}/${id}`, payload, {
       headers: {
-        Auth: 'trader',
+        Auth: 'investor',
       },
     });
     return { success: true, data: res.data };
@@ -42,7 +42,7 @@ export const deleteMyInquiry = async (id: number) => {
   try {
     await apiClient.delete(`${API_ENDPOINTS.INQUIRY}/${id}`, {
       headers: {
-        Auth: 'trader',
+        Auth: 'investor',
       },
     });
     return { success: true, message: '문의 삭제 성공' };
