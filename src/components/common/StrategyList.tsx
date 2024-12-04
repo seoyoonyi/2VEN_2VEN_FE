@@ -38,7 +38,7 @@ const StrategyList = ({
 }: StrategyListProps) => {
   const navigate = useNavigate();
 
-  const { activeDropdown, toggleDropdown, closeDropdown } = useDropdown();
+  const { activeDropdown, toggleDropdown } = useDropdown();
 
   const onClickStrategyList = (strategyId: string) => {
     navigate(ROUTES.STRATEGY.DETAIL(strategyId));
