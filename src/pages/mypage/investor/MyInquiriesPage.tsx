@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Avatar from '@/components/common/Avatar';
 import Loader from '@/components/common/Loading';
@@ -7,26 +7,30 @@ import Pagination from '@/components/common/Pagination';
 import InquiryStatusLabel from '@/components/page/mypage/InquiryStatusLabel';
 import { ROUTES } from '@/constants/routes';
 import useFetchInquiries from '@/hooks/queries/useFetchInquiries';
-import usePagination from '@/hooks/usePagination';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
-import { InquiryData } from '@/types/inquiries';
+import { InquiryListItem } from '@/types/inquiries';
 
 const MyInquiriesPage = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { pagination, setPage } = usePagination(1, 10);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPageFromQuery = parseInt(searchParams.get('page') || '1', 10);
 
-  const { inquiries, isLoading, isError, currentPage, totalPages, totalElements, pageSize } =
-    useFetchInquiries({
-      userId: user?.memberId,
-      role: user?.role,
-      page: pagination.currentPage - 1,
-      pageSize: pagination.pageSize,
-    });
+  const { inquiries, isLoading, isError, totalPages, totalElements, pageSize } = useFetchInquiries({
+    userId: user?.memberId,
+    role: user?.role,
+    page: currentPageFromQuery - 1,
+    pageSize: 10,
+  });
 
   const handleRowClick = (id: number) => {
     navigate(`${ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(id.toString())}`);
+  };
+
+  const handlePageChange = (page: number) => {
+    setSearchParams({ page: String(page) });
+    window.scrollTo(0, 0);
   };
 
   if (isLoading) {
@@ -80,7 +84,7 @@ const MyInquiriesPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {inquiries.map((inquiry: InquiryData) => (
+                {inquiries.map((inquiry: InquiryListItem) => (
                   <tr key={inquiry.id} onClick={() => handleRowClick(inquiry.id)}>
                     <td>
                       <span>Q.</span> {inquiry.title}
@@ -107,8 +111,8 @@ const MyInquiriesPage = () => {
           <Pagination
             totalPage={totalPages}
             limit={pageSize}
-            page={currentPage}
-            setPage={setPage}
+            page={currentPageFromQuery}
+            setPage={handlePageChange}
           />
         </div>
       )}

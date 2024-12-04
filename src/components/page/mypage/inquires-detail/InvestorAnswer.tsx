@@ -1,14 +1,15 @@
 import { css } from '@emotion/react';
 
+import Avatar from '@/components/common/Avatar';
 import theme from '@/styles/theme';
-import { InquiryDetailData } from '@/types/inquiries';
+import { InquiryDetail } from '@/types/inquiries';
 
-const Answer = ({ data }: { data: InquiryDetailData }) => (
+const InvestorAnswer = ({ data }: { data: InquiryDetail }) => (
   <div css={answerWrapper}>
     <header css={headerWrapper}>
       <h1>트레이더 답변</h1>
       <div css={infoWrapper}>
-        <img src={data.traderProfileUrl} alt={`${data.traderName}'s profile`} />
+        <Avatar src={data.traderProfileUrl} alt={`${data.traderName}'s profile`} size={24} />
         <h2>{data.traderName}</h2>
       </div>
     </header>
@@ -75,4 +76,4 @@ const answerStyle = css`
   white-space: pre-wrap;
 `;
 
-export default Answer;
+export default InvestorAnswer;

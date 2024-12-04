@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { createMyInquiry, updateMyInquiry, deleteMyInquiry } from '@/api/inquiries/investor';
-import { InquiryCreateData, InquiryCreateResponse, InquiryDetailData } from '@/types/inquiries';
+import { InquiryCreate, InquiryCreateResponse, InquiryDetail } from '@/types/inquiries';
 
 export const useCreateMyInquiry = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<InquiryCreateResponse, Error, { payload: InquiryCreateData }>({
+  return useMutation<InquiryCreateResponse, Error, { payload: InquiryCreate }>({
     mutationFn: async ({ payload }) =>
       createMyInquiry({
         ...payload,
@@ -24,7 +24,7 @@ export const useUpdateMyInquiry = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, payload }: { id: number; payload: InquiryDetailData }) =>
+    mutationFn: ({ id, payload }: { id: number; payload: InquiryDetail }) =>
       updateMyInquiry(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({

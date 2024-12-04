@@ -4,8 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Toast from '@/components/common/Toast';
-import Answer from '@/components/page/mypage-investor/inquires-detail/Answer';
-import Question from '@/components/page/mypage-investor/inquires-detail/Question';
+import InquiryQuestion from '@/components/page/mypage/inquires-detail/InquiryQuestion';
+import InvestorAnswer from '@/components/page/mypage/inquires-detail/InvestorAnswer';
 import { ROUTES } from '@/constants/routes';
 import { useDeleteMyInquiry } from '@/hooks/mutations/useMyInquiryMutations';
 import useFetchInquiryDetail from '@/hooks/queries/useFetchInquiryDetail';
@@ -70,12 +70,12 @@ const MyInquiresDetailPage = () => {
 
   return (
     <div css={containerStyle}>
-      <Question
+      <InquiryQuestion
         data={data}
         onDelete={handleDelete}
         onEdit={() => navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.EDIT(inquiryId || ''))}
       />
-      {data.status === 'COMPLETED' && <Answer data={data} />}
+      {data.status === 'COMPLETED' && <InvestorAnswer data={data} />}
       {isToastVisible && <Toast message={message} isVisible={isToastVisible} onClose={hideToast} />}
       <Modal />
     </div>
