@@ -10,11 +10,13 @@ import {
 
 export const useSearchTraders = (
   keyword: string,
-  sortOption: 'strategyCnt' | 'latestSignup' = 'strategyCnt'
+  sortOption: 'strategyCnt' | 'latestSignup' = 'strategyCnt',
+  options: { page?: number; pageSize?: number } = {}
 ): UseQueryResult<SearchResponse<SearchedTrader>> => {
   console.log('useSearchTraders Hook Parameters:', { keyword, sortOption });
+  const { page = 0, pageSize = 4 } = options;
   return useQuery({
-    queryKey: ['traders', keyword, sortOption],
+    queryKey: ['traders', keyword, sortOption, page, pageSize],
     queryFn: async () => searchTraders({ keyword }),
     enabled: !!keyword,
   });
