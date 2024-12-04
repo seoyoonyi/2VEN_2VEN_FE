@@ -47,6 +47,7 @@ export const API_ENDPOINTS = {
   FOLLOWING: {
     FOLDERS: '/api/members/following-strategy-folders', // 나의 관심 전략
     FOLDER_LIST: 'api/members/following-strategy-folderlist', // 폴더 목록
+    STRATEGY: 'api/members/following-strategy', // 전략 팔로우
   },
   SEARCH: {
     TRADERS: '/api/traders/search', // 트레이더 검색

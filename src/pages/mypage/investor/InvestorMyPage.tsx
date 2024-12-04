@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,10 +23,11 @@ import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 
-interface Folder {
+export interface Folder {
   folderId: number;
   folderName: string;
   modifiedAt: string;
+  strategyCount: number;
   isDefaultFolder: string;
 }
 
@@ -38,6 +41,12 @@ const InvestorMyPage = () => {
   const { mutate: submitFolder } = useSubmitFolder();
   const { mutate: updateFolder } = useUpdateFolderName();
   const { mutate: deleteFolder } = useDeleteFolder();
+
+  useEffect(() => {
+    if (isToastVisible) {
+      hideToast();
+    }
+  }, [hideToast, isToastVisible]);
 
   const handleFolderList = (folderId: number) => {
     navigate(ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(String(folderId)));
@@ -137,7 +146,7 @@ const InvestorMyPage = () => {
 
   if (isLoading) {
     return (
-      <div css={tableWrapperStyle}>
+      <div>
         <Loader />
       </div>
     );
