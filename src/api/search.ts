@@ -8,7 +8,7 @@ import {
 } from '@/types/search';
 
 interface SearchParams {
-  keyword: string;
+  keyword?: string;
   page?: number;
   pageSize?: number;
   sortOption?: 'strategyCnt' | 'latestSignup';

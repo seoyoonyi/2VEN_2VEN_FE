@@ -21,7 +21,7 @@ const SearchResultsInTrader = () => {
   const { data: traderResults, isLoading: isTraderLoading } = useSearchTraders(keyword, sortOption); // 트레이더 검색 결과
 
   const sortOptions = [
-    { label: '전략 많은 수', value: 'strategyCnt' },
+    { label: '전략 많은 순', value: 'strategyCnt' },
     { label: '신규 등록 순', value: 'latestSignup' },
   ];
 
@@ -49,7 +49,7 @@ const SearchResultsInTrader = () => {
           }}
           type='sm'
           width='200px'
-          defaultLabel='전략많은 순'
+          defaultLabel='전략 많은 순'
         />
       </div>
       <TraderList traders={mappedTraders} />
