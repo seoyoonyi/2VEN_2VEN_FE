@@ -54,9 +54,9 @@ const InquiriesManagementPage = () => {
   return (
     <section css={myPageWrapperStyle}>
       <header css={myPageHeaderStyle}>
-        <h2>나의 문의</h2>
+        <h2>문의 관리</h2>
         <p>
-          총 <span>{totalElements}</span>개의 문의 내역이 있습니다
+          총 <span>{totalElements}</span>개의 문의가 있습니다
         </p>
       </header>
 
