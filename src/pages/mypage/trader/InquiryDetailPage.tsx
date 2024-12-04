@@ -6,9 +6,9 @@ import { useParams } from 'react-router-dom';
 import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Toast from '@/components/common/Toast';
-import Question from '@/components/page/mypage-investor/inquires-detail/Question';
-import TraderAnswerEdit from '@/components/page/mypage-investor/inquires-detail/TraderAnswerEdit';
-import TraderAnswerView from '@/components/page/mypage-investor/inquires-detail/TraderAnswerView';
+import Question from '@/components/page/mypage/inquires-detail/Question';
+import TraderAnswerEdit from '@/components/page/mypage/inquires-detail/TraderAnswerEdit';
+import TraderAnswerView from '@/components/page/mypage/inquires-detail/TraderAnswerView';
 import {
   useCreateTraderReply,
   useDeleteTraderReply,
