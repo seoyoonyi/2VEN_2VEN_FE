@@ -35,6 +35,9 @@ export const API_ENDPOINTS = {
     TRADER_STATS: '/api/strategies/strategy-trader-count', //트레이더 통계조회 (트레이더 수, 전략 수)
     UPLOAD_ACCOUNT_IMG: '/api/live-account-data', //실계좌 이미지 관리
   },
+  TRADERS: {
+    STRATEGIES: (traderId: string) => `/api/traders/${traderId}/strategies`, // 트레이더의 나의 전략 조회
+  },
   INQUIRY: '/api/consultations', // 나의 문의 , 문의 등록
   FILES: {
     PROFILE_URL: (memberId: string) => `/api/files/profile/${memberId}`, // 프로필 이미지 URL
@@ -44,6 +47,7 @@ export const API_ENDPOINTS = {
   FOLLOWING: {
     FOLDERS: '/api/members/following-strategy-folders', // 나의 관심 전략
     FOLDER_LIST: 'api/members/following-strategy-folderlist', // 폴더 목록
+    STRATEGY: 'api/members/following-strategy', // 전략 팔로우
   },
   SEARCH: {
     TRADERS: '/api/traders/search', // 트레이더 검색
