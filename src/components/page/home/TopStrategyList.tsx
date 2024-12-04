@@ -90,7 +90,7 @@ const TopStrategyList = ({ rankingData }: TopStrategyListProps) => {
           ) : (
             <div css={rowStyle} key={`empty-${index}`}>
               <div css={rankStyle}>{index + 1}</div>
-              <div css={emptyStyle}>데이터를 가져오는 중입니다</div>
+              <div css={emptyStyle}>해당 순위에 데이터가 없습니다</div>
             </div>
           )
         )}
