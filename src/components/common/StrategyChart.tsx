@@ -34,6 +34,9 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
       backgroundColor: 'transparent',
       width: 900,
     },
+    accessibility: {
+      enabled: false,
+    },
     title: {
       text: '',
     },
