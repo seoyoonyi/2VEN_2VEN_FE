@@ -33,11 +33,6 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
       type: 'areaspline',
       backgroundColor: 'transparent',
       width: 900,
-      zooming: {
-        mouseWheel: {
-          enabled: true,
-        },
-      },
     },
     title: {
       text: '',
@@ -49,6 +44,7 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
       {
         labels: {
           style: { color: colors.primary.fillColor },
+          format: `{value:,.0f}`,
         },
         title: {
           enabled: false,
@@ -104,10 +100,9 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
         states: {
           hover: { enabled: false },
         },
-        Tooltip: {
+        tooltip: {
           pointFormat: `
-                <b>{point.x}</b><br/>
-                ${dataItem.label}: {point.y}원
+                ${dataItem.label}: <b style="color:${colors.primary.lineColor}">{point.y}</b>원<br/>
               `,
         },
         yAxis: 0,
@@ -121,14 +116,14 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
         yAxis: 1,
         tooltip: {
           pointFormat: `
-              <b>{point.x}</b><br/>
-              ${item.label}: {point.y}%
+              ${item.label}: <b style="color:${colors.primary.lineColor}">{point.y}</b>%
             `,
         },
       })),
     ],
     tooltip: {
       shared: true,
+      useHTML: true,
     },
   };
 

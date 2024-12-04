@@ -24,7 +24,7 @@ const areaKeys = [
   'balance',
   'principal',
   'cumulativeDepWdPrice',
-  'dailyWdPrice',
+  'depWdPrice',
   'dailyProfitLoss',
   'cumulativeProfitLoss',
   'currentDrawdownAmount',

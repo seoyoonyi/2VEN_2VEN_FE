@@ -104,7 +104,7 @@ export const strategyChartOptions = [
   },
   {
     label: '일별 입출금 금액',
-    value: 'dailyWdPrice',
+    value: 'depWdPrice',
   },
   {
     label: '일손익 금액',
