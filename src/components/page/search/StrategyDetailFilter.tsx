@@ -311,7 +311,7 @@ const StrategyDetailFilter = ({
   );
 };
 const containerStyle = css`
-  width: 1060px;
+  width: ${theme.layout.width.content};
   padding: 32px 40px 24px;
   background-color: ${theme.colors.main.white};
   border: 1px solid ${theme.colors.gray[200]};

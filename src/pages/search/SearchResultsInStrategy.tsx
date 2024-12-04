@@ -195,7 +195,7 @@ const SearchResultsInStrategy = () => {
         <span>에 대한 전략 검색 결과</span>
         <span css={totalCountStyle}>{strategyDetailResults?.resultCount ?? 0}</span>
       </h2>
-
+      <div css={bgStyle}></div>
       <div css={contentLayoutStyle}>
         {/* 필터 영역 */}
         <div css={filterWrapperStyle}>
@@ -254,10 +254,14 @@ const SearchResultsInStrategy = () => {
 };
 
 const containerStyle = css`
-  width: ${theme.layout.width.content};
+  position: relative;
   margin: 0 auto;
-  padding: 40px 0;
   margin-bottom: 76px;
+`;
+const bgStyle = css`
+  width: 100%;
+  height: 200px;
+  background-color: ${theme.colors.gray[100]};
 `;
 const pageHeadingStyle = css`
   display: flex;
@@ -292,8 +296,8 @@ const headerStyle = css`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 64px;
-  margin-bottom: 24px;
+  width: ${theme.layout.width.content};
+  margin: 64px auto 24px;
 `;
 const totalStyle = css`
   color: ${theme.colors.gray[700]};
