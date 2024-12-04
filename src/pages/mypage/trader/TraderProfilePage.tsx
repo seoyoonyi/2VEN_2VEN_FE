@@ -6,15 +6,20 @@ import PasswordChange from '@/components/page/mypage/PasswordChange';
 import ProfileManager from '@/components/page/mypage/ProfileManager';
 
 const TraderProfilePage = () => (
-  <>
+  <div css={myPageWrapperStyle}>
     <ProfileManager />
     <PasswordChange />
     <Button variant='ghostGray' customStyle={logoutStyle} size='sm'>
       <MdOutlineNoAccounts size={16} />
       <span>회원 탈퇴</span>
     </Button>
-  </>
+  </div>
 );
+
+const myPageWrapperStyle = css`
+  width: 955px;
+  border-radius: 8px;
+`;
 
 const logoutStyle = css`
   width: auto;
