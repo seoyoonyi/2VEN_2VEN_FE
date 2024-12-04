@@ -146,16 +146,20 @@ const datePickerStyle = css`
   .date-input {
     width: 160px;
     height: 36px;
-    border: 0;
+    border: 1px solid ${theme.colors.gray[300]};
     outline: none;
     font-size: 14px;
     font-weight: 500;
     color: ${theme.colors.gray[600]};
-    background-color: #f4f4f5;
+    background-color: ${theme.colors.main.white};
     text-align: left;
     caret-color: transparent;
     cursor: pointer;
     text-indent: 32px;
+
+    &:placeholder {
+      color: ${theme.colors.gray[300]};
+    }
   }
 
   .calendar-icon {
