@@ -1,4 +1,4 @@
-import { SearchedStrategy, SearchedTrader } from '@/types/search';
+import { SearchedStrategy, SearchedTrader, StrategyDetail } from '@/types/search';
 
 export const mapToTraderData = (trader: SearchedTrader) => ({
   traderId: trader.memberId,
@@ -12,12 +12,26 @@ export const mapToTraderData = (trader: SearchedTrader) => ({
 export const mapToStrategyData = (strategy: SearchedStrategy) => ({
   strategyId: strategy.strategyId,
   strategyTitle: strategy.strategyTitle,
-  tradingTypeIcon: strategy.tradingTypeIcon,
-  cycleIcon: strategy.tradingCycleIcon,
-  investmentAssetClassesIcon: strategy.investmentAssetClassesIcon,
+  tradingTypeIcon: strategy.tradingTypeIcon, // 매매유형 아이콘 (매뉴얼/자동/하이브리드)
+  cycleIcon: strategy.tradingCycleIcon, // 주기 아이콘(데이/포지션)
+  investmentAssetClassesIcon: strategy.investmentAssetClassesIcon, // 상품유형 아이콘(국내주식, 해외주식 등)
   cumulativeReturn: strategy.cumulativeProfitLossRate,
   oneYearReturn: strategy.recentOneYearReturn,
   mdd: strategy.mdd,
   smscore: strategy.smScore,
   followers_count: strategy.followersCount,
+});
+
+// 상세 검색용 새로운 mapper 함수 추가
+export const mapToStrategyDetailData = (detail: StrategyDetail) => ({
+  strategyId: detail.strategyId,
+  strategyTitle: detail.strategyTitle,
+  tradingTypeIcon: detail.tradingTypeId.toString(), // 매매유형 아이콘 (매뉴얼/자동/하이브리드) => tradingTypeIcon으로 변경해야 함 ✅
+  cycleIcon: detail.tradingTypeId.toString(), // 주기 아이콘(데이/포지션) => cycleIcon으로 변경해야 함 ✅
+  investmentAssetClassesIcon: detail.investmentAssetClassesId.map((id) => id.toString()), // 상품유형 아이콘(국내주식, 해외주식 등) => investmentAssetClassesIcon으로 변경해야 함 ✅
+  cumulativeReturn: detail.cumulativeReturn,
+  oneYearReturn: detail.oneYearReturn,
+  mdd: detail.mdd,
+  smscore: detail.smscore,
+  followers_count: detail.followers_count,
 });
