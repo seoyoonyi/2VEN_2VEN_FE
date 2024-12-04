@@ -12,7 +12,7 @@ export const followStrategy = async (folderId: string, strategyId: string) => {
 };
 
 // 전략 언팔로우
-export const deleteFolder = async (folderId: number) => {
+export const unfollowStrategy = async (folderId: number) => {
   try {
     const res = await apiClient.delete(`${API_ENDPOINTS.FOLLOWING.STRATEGY}/${folderId}`);
     return res;

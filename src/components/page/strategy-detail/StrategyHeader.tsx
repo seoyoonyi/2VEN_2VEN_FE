@@ -5,8 +5,7 @@ import { GiCircle } from 'react-icons/gi';
 import { MdOutlineShare } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { deleteFolder } from '@/api/folders';
-import { followStrategy } from '@/api/follow';
+import { followStrategy, unfollowStrategy } from '@/api/follow';
 import Button from '@/components/common/Button';
 import ContentModal from '@/components/common/ContentModal';
 import Toast from '@/components/common/Toast';
@@ -99,7 +98,7 @@ export const StrategyHeader = ({
 
   const handleUnfollow = async () => {
     try {
-      await deleteFolder(id);
+      await unfollowStrategy(id);
       showToast('전략이 언팔로우되었습니다.');
       setIsFollowing(false);
     } catch (error) {
