@@ -7,7 +7,7 @@ import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { InquiryReplyDetail } from '@/types/inquiries';
 
-const TraderAnswerEdit = ({
+const TraderAnswerEditor = ({
   data,
   mode = 'create',
   onSave,
@@ -19,7 +19,7 @@ const TraderAnswerEdit = ({
   onCancel: () => void;
 }) => {
   const { showToast } = useToastStore();
-  const [content, setContent] = useState(data?.replyContent || ''); // 답변 내용 상태 관리
+  const [content, setContent] = useState(data?.replyContent || '');
 
   const handleSave = () => {
     if (!content.trim()) {
@@ -35,10 +35,10 @@ const TraderAnswerEdit = ({
     const updatedData: InquiryReplyDetail = {
       ...data,
       replyContent: content,
-      answerDate: new Date().toISOString(), // 현재 시간을 답변 날짜로 설정
+      answerDate: new Date().toISOString(),
     };
 
-    onSave(updatedData); // 부모 컴포넌트로 데이터 전달
+    onSave(updatedData);
   };
 
   return (
@@ -66,10 +66,6 @@ const TraderAnswerEdit = ({
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
-        {/* <div css={buttonWrapper}>
-          <button onClick={handleSave}>{mode === 'create' ? '등록' : '수정 완료'}</button>
-          <button onClick={onCancel}>취소</button>
-        </div> */}
       </section>
     </div>
   );
@@ -135,4 +131,4 @@ const answerWrapper = css`
   background-color: ${theme.colors.main.white};
 `;
 
-export default TraderAnswerEdit;
+export default TraderAnswerEditor;

@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import theme from '@/styles/theme';
 import { InquiryDetailData } from '@/types/inquiries';
 
-const TraderAnswerView = ({
+const TraderAnswerViewer = ({
   data,
   onDelete,
   onEdit,
@@ -129,4 +129,4 @@ const answerStyle = css`
   white-space: pre-wrap;
 `;
 
-export default TraderAnswerView;
+export default TraderAnswerViewer;

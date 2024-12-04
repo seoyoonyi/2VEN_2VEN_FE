@@ -5,7 +5,7 @@ import { INQUIRY_MESSAGES } from '@/constants/inquiry';
 import theme from '@/styles/theme';
 import { InquiryDetailData, Status } from '@/types/inquiries';
 
-const Question = ({
+const InquiryQuestion = ({
   data,
   onDelete,
   onEdit,
@@ -213,4 +213,4 @@ const questionStyle = css`
   white-space: pre-wrap;
 `;
 
-export default Question;
+export default InquiryQuestion;

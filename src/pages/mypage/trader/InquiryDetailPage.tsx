@@ -6,9 +6,9 @@ import { useParams } from 'react-router-dom';
 import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Toast from '@/components/common/Toast';
-import Question from '@/components/page/mypage/inquires-detail/Question';
-import TraderAnswerEdit from '@/components/page/mypage/inquires-detail/TraderAnswerEdit';
-import TraderAnswerView from '@/components/page/mypage/inquires-detail/TraderAnswerView';
+import InquiryQuestion from '@/components/page/mypage/inquires-detail/InquiryQuestion';
+import TraderAnswerEditor from '@/components/page/mypage/inquires-detail/TraderAnswerEditor';
+import TraderAnswerViewer from '@/components/page/mypage/inquires-detail/TraderAnswerViewer';
 import {
   useCreateTraderReply,
   useDeleteTraderReply,
@@ -98,9 +98,9 @@ const InquiryDetailPage = () => {
 
   return (
     <div css={containerStyle}>
-      <Question data={data} />
+      <InquiryQuestion data={data} />
       {data.status === 'PENDING' || isEditing ? (
-        <TraderAnswerEdit
+        <TraderAnswerEditor
           data={data}
           mode={data.status === 'PENDING' ? 'create' : 'edit'}
           onSave={(updatedData) => {
@@ -112,7 +112,7 @@ const InquiryDetailPage = () => {
           onCancel={() => setIsEditing(false)}
         />
       ) : (
-        <TraderAnswerView
+        <TraderAnswerViewer
           data={data}
           onDelete={handleDeleteReply}
           onEdit={() => setIsEditing(true)}

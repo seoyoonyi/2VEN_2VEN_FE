@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import theme from '@/styles/theme';
 import { InquiryDetailData } from '@/types/inquiries';
 
-const Answer = ({ data }: { data: InquiryDetailData }) => (
+const InvestorAnswer = ({ data }: { data: InquiryDetailData }) => (
   <div css={answerWrapper}>
     <header css={headerWrapper}>
       <h1>트레이더 답변</h1>
@@ -75,4 +75,4 @@ const answerStyle = css`
   white-space: pre-wrap;
 `;
 
-export default Answer;
+export default InvestorAnswer;
