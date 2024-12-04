@@ -26,15 +26,15 @@ export const strategyStatus = [
 export const tradingType = [
   { id: 1, label: '매뉴얼', value: 'MANUAL' },
   { id: 2, label: '자동', value: 'AUTOMATIC' },
-  { id: 3, label: '하이브리드(매뉴얼+자동)', value: 'HYBRID' },
+  { id: 3, label: '하이브리드', value: 'HYBRID' },
 ];
 
 // 총 운용일수(운용기간)
 export const operatingDays = [
-  { id: 0, label: '1년이하', value: '1년이하' },
-  { id: 1, label: '1년-2년', value: '1년-2년' },
-  { id: 2, label: '2년-3년', value: '2년-3년' },
-  { id: 3, label: '3년이상', value: '3년이상' },
+  { id: 0, label: '1년 이하', value: '1년 이하' },
+  { id: 1, label: '1년 - 2년', value: '1년 - 2년' },
+  { id: 2, label: '2년 - 3년', value: '2년 - 3년' },
+  { id: 3, label: '3년 이상', value: '3년 이상' },
 ];
 
 // 매매주기(운용주기)
@@ -48,7 +48,7 @@ export const tradingCycle = [
 
 // 누적손익률 필터링 선택값
 export const returnRate = [
-  { id: 1, label: '10%이하', value: '10%이하' },
+  { id: 1, label: '10% 이하', value: '10% 이하' },
   { id: 2, label: '10%-20%', value: '10%-20%' },
-  { id: 3, label: '30%이상', value: '30%이상' },
+  { id: 3, label: '30% 이상', value: '30% 이상' },
 ];
