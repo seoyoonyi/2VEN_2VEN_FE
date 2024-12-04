@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchStrategies, RankingData } from '@/api/home/topStrategyList';
+import { fetchStrategies, RankingData } from '@/api/home/topStrategyRank';
 
 export const useFetchTopStrategy = () =>
   useQuery<RankingData[], Error>({
