@@ -314,7 +314,7 @@ const blurText = css`
 
 const blurArea = css`
   position: absolute;
-  top: 40%;
+  top: 50%;
   left: 0;
   width: 100%;
   height: 100%;
