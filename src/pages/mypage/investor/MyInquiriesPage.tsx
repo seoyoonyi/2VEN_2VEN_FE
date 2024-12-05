@@ -121,7 +121,13 @@ const MyInquiriesPage = () => {
         </div>
       )}
       {isToastVisible && (
-        <Toast message={message} isVisible={isToastVisible} onClose={hideToast} type={type} />
+        <Toast
+          message={message}
+          isVisible={isToastVisible}
+          onClose={hideToast}
+          type={type}
+          duration={1200}
+        />
       )}
     </section>
   );

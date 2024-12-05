@@ -124,7 +124,13 @@ const InvestorFollowFolderPage = () => {
       </div>
       <ContentModal />
       {isToastVisible && (
-        <Toast message={message} onClose={hideToast} isVisible={isToastVisible} type={type} />
+        <Toast
+          message={message}
+          onClose={hideToast}
+          isVisible={isToastVisible}
+          type={type}
+          duration={1000}
+        />
       )}
     </div>
   );

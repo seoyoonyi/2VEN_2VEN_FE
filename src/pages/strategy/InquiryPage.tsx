@@ -111,6 +111,7 @@ const InquiryPage = () => {
             onSuccess: () => {
               showToast('문의 등록이 완료되었습니다.');
               navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST);
+              window.scrollTo(0, 0);
             },
             onError: (error: Error) => {
               showToast('문의 등록에 실패하였습니다.', 'error');
