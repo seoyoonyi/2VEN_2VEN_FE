@@ -1,21 +1,26 @@
 import { css } from '@emotion/react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
+import Button from '@/components/common/Button';
 import Loader from '@/components/common/Loading';
 import Pagination from '@/components/common/Pagination';
 import StrategyList from '@/components/common/StrategyList';
+import { ROUTES } from '@/constants/routes';
 import { useFetchTraderStrategies } from '@/hooks/queries/useFetchTraderStrategies';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
 const TraderDetailPage = () => {
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPageFromQuery = parseInt(searchParams.get('page') || '1', 10);
+  const { traderId } = useParams();
+  console.log('traderId', traderId);
 
   const { strategies, isLoading, isError, totalPages, totalElements, pageSize } =
     useFetchTraderStrategies({
-      traderId: user?.memberId,
+      traderId,
       role: user?.role,
       page: currentPageFromQuery - 1,
       pageSize: 10,
@@ -56,10 +61,17 @@ const TraderDetailPage = () => {
       </div>
       <div>
         {totalElements === 0 ? (
-          <p css={StrategyEmptyStyle}>
+          <div css={StrategyEmptyStyle}>
             아직 등록된 전략이 없습니다.
-            <br /> &apos;전략 등록&apos; 버튼을 눌러 새로운 전략을 추가해보세요!
-          </p>
+            <br /> 더 많은 전략들을 둘러보세요!
+            <Button
+              variant='secondary'
+              width={'220px'}
+              onClick={() => navigate(ROUTES.STRATEGY.LIST)}
+            >
+              전략 랭킹 페이지로 가기
+            </Button>
+          </div>
         ) : (
           <div css={tableWrapperStyle}>
             <StrategyList
@@ -117,9 +129,11 @@ const myPageHeaderStyle = css`
 
 const StrategyEmptyStyle = css`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 200px;
+  gap: 10px;
+  height: 300px;
   color: ${theme.colors.gray[400]};
   text-align: center;
 `;
