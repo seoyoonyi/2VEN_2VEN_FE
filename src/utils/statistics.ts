@@ -1,15 +1,5 @@
 //10000 -> 10,000
-export const formatLoss = (value: number) => {
-  const absValue = Math.abs(value);
-  const op = value < 0 ? '-' : '';
-  if (absValue >= 100000000) {
-    return `${op}${Math.floor(absValue / 100000000)}억`;
-  } else if (absValue >= 10000000) {
-    return `${op}${Math.floor(absValue / 10000)}만`;
-  } else {
-    return `${op}${absValue.toLocaleString()}`;
-  }
-};
+export const formatLoss = (value: number) => value.toLocaleString();
 
 //23.23223 -> 23.23
 export const formatRate = (value: number) => Math.floor(value * 100) / 100;
