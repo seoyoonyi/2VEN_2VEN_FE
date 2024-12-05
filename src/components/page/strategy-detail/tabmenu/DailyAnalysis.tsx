@@ -42,7 +42,8 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
   const { dailyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchDailyAnalysis(
     Number(strategyId),
     pagination.currentPage - 1,
-    pagination.pageSize
+    pagination.pageSize,
+    role as UserRole
   );
 
   const normalizedData = useMemo(() => {
