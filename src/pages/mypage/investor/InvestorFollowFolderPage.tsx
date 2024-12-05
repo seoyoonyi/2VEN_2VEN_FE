@@ -39,6 +39,7 @@ const InvestorFollowFolderPage = () => {
       content: (
         <FolderModal
           isMove={true}
+          folderTitle={folderTitle}
           onFolderSelect={(folderId) => {
             selectedFolderId = folderId;
           }}
@@ -132,6 +133,7 @@ const InvestorFollowFolderPage = () => {
 const myPageWrapperStyle = css`
   width: 955px;
   padding: 48px 40px 80px 40px;
+  min-height: 823px;
   background-color: ${theme.colors.main.white};
   border-radius: 8px;
 `;

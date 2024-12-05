@@ -12,11 +12,13 @@ import theme from '@/styles/theme';
 const FolderModal = ({
   isMove = false,
   initialFolderName = '',
+  folderTitle = '',
   onChangeFolderName,
   onFolderSelect,
 }: {
   isMove?: boolean;
   initialFolderName?: string;
+  folderTitle?: string;
   onChangeFolderName?: (folderName: string) => void;
   onFolderSelect?: (folderId: string) => void;
 }) => {
@@ -61,7 +63,13 @@ const FolderModal = ({
       {isMove ? (
         <>
           <label htmlFor='move-folder'>이동할 폴더</label>
-          <Select id='move-folder' options={folder} onChange={handleChange} width='100%' />
+          <Select
+            id='move-folder'
+            options={folder}
+            defaultLabel={folderTitle}
+            onChange={handleChange}
+            width='100%'
+          />
         </>
       ) : (
         <>
