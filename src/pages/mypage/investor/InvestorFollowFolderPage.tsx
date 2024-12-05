@@ -27,9 +27,9 @@ const InvestorFollowFolderPage = () => {
   const { data, isLoading, isError, refetch } = useFollowingList(Number(folderId), page - 1, limit);
   const { data: folderList } = useFolderList(page - 1, limit);
 
-  const folderTitle = folderList.data
-    .filter((v: Folder) => v.folderId === Number(folderId))
-    .map((v: Folder) => v.folderName);
+  const folderTitle = folderList?.data
+    ?.filter((v: Folder) => v.folderId === Number(folderId))
+    ?.map((v: Folder) => v.folderName);
 
   const handleMoveFolder = (strategyId: number) => {
     let selectedFolderId = '';
