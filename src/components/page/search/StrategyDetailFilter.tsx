@@ -209,7 +209,8 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={minPrincipal}
                 onChange={(e) => onPrincipalChange('min', e.target.value)}
-                placeholder='1000'
+                onBlur={() => onPrincipalChange('min', minPrincipal)} // 포커스 아웃시 API 호출
+                placeholder='0 이상'
                 inputSize='sm'
                 css={inputStyle}
               />
@@ -218,7 +219,8 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={maxPrincipal}
                 onChange={(e) => onPrincipalChange('max', e.target.value)}
-                placeholder='100000'
+                onBlur={(e) => onPrincipalChange('max', e.target.value)} // onBlur 추가
+                placeholder='0 이하'
                 inputSize='sm'
                 css={inputStyle}
               />
@@ -233,7 +235,8 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={minSmscore}
                 onChange={(e) => onSmscoreChange('min', e.target.value)}
-                placeholder='0'
+                onBlur={(e) => onSmscoreChange('min', e.target.value)} // onBlur 추가
+                placeholder='0 이상'
                 inputSize='sm'
                 css={inputStyle}
               />
@@ -242,7 +245,8 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={maxSmscore}
                 onChange={(e) => onSmscoreChange('max', e.target.value)}
-                placeholder='100'
+                onBlur={(e) => onSmscoreChange('max', e.target.value)} // onBlur 추가
+                placeholder='100 이하'
                 inputSize='sm'
                 css={inputStyle}
               />
@@ -256,7 +260,8 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={minMdd}
                 onChange={(e) => onMddChange('min', e.target.value)}
-                placeholder='100'
+                onBlur={(e) => onMddChange('min', e.target.value)} // onBlur 추가
+                placeholder='0 이하'
                 inputSize='sm'
                 css={inputStyle}
               />
@@ -265,7 +270,8 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={maxMdd}
                 onChange={(e) => onMddChange('max', e.target.value)}
-                placeholder='0'
+                onBlur={(e) => onMddChange('max', e.target.value)} // onBlur 추가
+                placeholder='0 이하'
                 inputSize='sm'
                 css={inputStyle}
               />
@@ -408,8 +414,6 @@ const checkboxWrapperStyle = css`
   align-items: center;
   width: 128px;
   font-size: ${theme.typography.fontSizes.body};
-  label span {
-  }
 `;
 
 const rangeInputContainerStyle = css`

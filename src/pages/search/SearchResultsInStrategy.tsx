@@ -37,15 +37,21 @@ const SearchResultsInStrategy = () => {
     maxSmscore: undefined,
     minMdd: undefined,
     maxMdd: undefined,
-    startDate: dayjs().format('YYYY-MM-DD'), // ISO 형식으로 변경
-    endDate: dayjs().format('YYYY-MM-DD'), // ISO 형식으로 변경
     returnRateList: [],
   });
 
   console.log('2. 현재 filterParams:', filterParams); // 현재 필터 상태 확인
 
+  console.log('🚨 API 호출 전 filterParams:', filterParams);
   // API 호출
   const { data: strategyDetailResults, isLoading, error } = useSearchStrategyDetail(filterParams); // 전략 상세 검색 결과
+
+  console.log('✅ API 실제 응답 데이터:', strategyDetailResults?.data);
+
+  // filterParams가 변경될 때마다 새로운 API 호출이 자동으로 트리거됨
+  useEffect(() => {
+    console.log('필터 변경:', filterParams);
+  }, [filterParams]);
 
   console.log('3. API 응답 데이터:', {
     isLoading,
@@ -63,6 +69,7 @@ const SearchResultsInStrategy = () => {
     console.log('6. 상품유형 변경:', id);
     setFilterParams((prev) => ({
       ...prev,
+      page: 1, // 필터 변경시 첫 페이지로 리셋
       investmentAssetClassesList: prev.investmentAssetClassesList?.includes(id)
         ? prev.investmentAssetClassesList.filter((p) => p !== id)
         : [...(prev.investmentAssetClassesList || []), id],
@@ -121,25 +128,122 @@ const SearchResultsInStrategy = () => {
     }));
   };
 
+  // 원금 입력 핸들러 (양수만 허용)
   const handlePrincipalChange = (type: 'min' | 'max', value: string) => {
-    setFilterParams((prev) => ({
-      ...prev,
-      [type === 'min' ? 'minPrincipal' : 'maxPrincipal']: value ? Number(value) : undefined,
-    }));
-  };
+    const number = Number(value);
 
-  const handleSmscoreChange = (type: 'min' | 'max', value: string) => {
-    setFilterParams((prev) => ({
-      ...prev,
-      [type === 'min' ? 'minSmscore' : 'maxSmscore']: value ? Number(value) : undefined,
-    }));
-  };
+    if (value === '' || (number > 0 && !isNaN(number))) {
+      setFilterParams((prev) => {
+        // 최소값 입력시
+        if (type === 'min') {
+          // 최대값이 있는데 최소값보다 작다면 최대값을 undefined로
+          if (prev.maxPrincipal && number > prev.maxPrincipal) {
+            return {
+              ...prev,
+              minPrincipal: number,
+              maxPrincipal: undefined,
+            };
+          }
+          return {
+            ...prev,
+            minPrincipal: number,
+          };
+        }
 
+        // 최대값 입력시
+        if (type === 'max') {
+          // 최소값이 있는데 최대값보다 크다면 최소값을 undefined로
+          if (prev.minPrincipal && number < prev.minPrincipal) {
+            return {
+              ...prev,
+              maxPrincipal: number,
+              minPrincipal: undefined,
+            };
+          }
+          return {
+            ...prev,
+            maxPrincipal: number,
+          };
+        }
+
+        return prev;
+      });
+    }
+  };
+  // MDD 입력 핸들러 (0 이하의 값만 허용)
   const handleMddChange = (type: 'min' | 'max', value: string) => {
-    setFilterParams((prev) => ({
-      ...prev,
-      [type === 'min' ? 'minMdd' : 'maxMdd']: value ? Number(value) : undefined,
-    }));
+    const number = Number(value);
+
+    if (value === '' || (number <= 0 && !isNaN(number))) {
+      setFilterParams((prev) => {
+        if (type === 'min') {
+          if (prev.maxMdd && number > prev.maxMdd) {
+            return {
+              ...prev,
+              minMdd: number,
+              maxMdd: undefined,
+            };
+          }
+          return {
+            ...prev,
+            minMdd: number,
+          };
+        }
+
+        if (type === 'max') {
+          if (prev.minMdd && number < prev.minMdd) {
+            return {
+              ...prev,
+              maxMdd: number,
+              minMdd: undefined,
+            };
+          }
+          return {
+            ...prev,
+            maxMdd: number,
+          };
+        }
+        return prev;
+      });
+    }
+  };
+
+  // SM Score 입력 핸들러 (0~100 사이 값만 허용)
+  const handleSmscoreChange = (type: 'min' | 'max', value: string) => {
+    const number = Number(value);
+
+    if (value === '' || (number >= 0 && number <= 100 && !isNaN(number))) {
+      setFilterParams((prev) => {
+        if (type === 'min') {
+          if (prev.maxSmscore && number > prev.maxSmscore) {
+            return {
+              ...prev,
+              minSmscore: number,
+              maxSmscore: undefined,
+            };
+          }
+          return {
+            ...prev,
+            minSmscore: number,
+          };
+        }
+
+        if (type === 'max') {
+          if (prev.minSmscore && number < prev.minSmscore) {
+            return {
+              ...prev,
+              maxSmscore: number,
+              minSmscore: undefined,
+            };
+          }
+          return {
+            ...prev,
+            maxSmscore: number,
+          };
+        }
+        return prev;
+      });
+    }
   };
 
   const handleInvestmentAmountChange = (value: string) => {
@@ -166,8 +270,6 @@ const SearchResultsInStrategy = () => {
       maxSmscore: undefined,
       minMdd: undefined,
       maxMdd: undefined,
-      startDate: new Date().toISOString(),
-      endDate: new Date().toISOString(),
       returnRateList: [],
     });
   };
@@ -193,7 +295,7 @@ const SearchResultsInStrategy = () => {
       <h2 css={pageHeadingStyle}>
         <strong>{shortenString(keyword, 10)}&nbsp;</strong>
         <span>에 대한 전략 검색 결과</span>
-        <span css={totalCountStyle}>{strategyDetailResults?.resultCount ?? 0}</span>
+        <span css={totalCountStyle}>{strategyDetailResults?.data.length ?? 0}</span>
       </h2>
       <div css={bgStyle}></div>
       <div css={contentLayoutStyle}>
@@ -234,14 +336,14 @@ const SearchResultsInStrategy = () => {
       <div css={resultWrapperStyle}>
         <div css={headerStyle}>
           <div css={totalStyle}>
-            Total <span>{strategyDetailResults?.resultCount ?? 0}</span>
+            Total <span>{strategyDetailResults?.data.length ?? 0}</span>
           </div>
         </div>
         <SearchedStrategyList strategies={mappedStrategies} />
         <div css={paginationWrapperStyle}>
           <Pagination
             totalPage={Math.ceil(
-              (strategyDetailResults?.resultCount ?? 0) / (filterParams.pageSize || 25) // 기본값 설정
+              (strategyDetailResults?.data.length ?? 0) / (filterParams.pageSize || 25) // 기본값 설정
             )}
             limit={5}
             page={filterParams.page || 1} // undefined 처리
@@ -286,7 +388,7 @@ const contentLayoutStyle = css`
   display: flex;
   justify-content: center;
   gap: 24px;
-  margin-top: 24px;
+  margin-top: -207px;
 `;
 const filterWrapperStyle = css``;
 const resultWrapperStyle = css`
