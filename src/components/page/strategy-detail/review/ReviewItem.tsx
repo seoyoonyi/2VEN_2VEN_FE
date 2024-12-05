@@ -3,13 +3,15 @@ import { useState } from 'react';
 import { css } from '@emotion/react';
 
 import theme from '@/styles/theme';
+import { formatDate } from '@/utils/dateFormat';
 
 interface Review {
-  id: number;
+  strategyReviewId: number;
   writerId: string;
-  profileImg: string;
+  nickName: string;
+  profileUrl: string;
   content: string;
-  date: string;
+  writedAt: string;
 }
 
 interface ReviewItemProps {
@@ -22,25 +24,26 @@ interface ReviewItemProps {
 const ReviewItem = ({ review, writerId, onEdit, onDelete }: ReviewItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [updatedContent, setUpdatedContent] = useState(review.content);
+
   const handleEdit = () => {
     if (isEditing) {
-      onEdit(review.id, updatedContent);
+      onEdit(review.strategyReviewId, updatedContent.trim());
     }
     setIsEditing(!isEditing);
   };
 
   const handleDelete = () => {
-    onDelete(review.id);
+    onDelete(review.strategyReviewId);
   };
 
   return (
     <div css={reviewItemStyle}>
-      <img src={review.profileImg} alt='프로필 이미지' css={profileStyle} />
+      <img src={review.profileUrl} alt='프로필' css={profileStyle} />
       <div css={contentStyle}>
         <div css={headerStyle}>
           <div css={userInfoStyle}>
-            <span css={userNameStyle}>{review.writerId}</span>
-            <span css={dateStyle}>{review.date}</span>
+            <span css={userNameStyle}>{review.nickName}</span>
+            <span css={dateStyle}>{formatDate(review.writedAt)}</span>
           </div>
           {review.writerId === writerId && (
             <div css={reviewActionsStyle}>
@@ -70,6 +73,7 @@ const ReviewItem = ({ review, writerId, onEdit, onDelete }: ReviewItemProps) => 
 
 const reviewItemStyle = css`
   display: flex;
+  max-width: 100%;
   align-items: flex-start;
   gap: 12px;
   border-bottom: 1px solid ${theme.colors.gray[200]};
@@ -160,6 +164,9 @@ const textareaStyle = css`
 const reviewContentStyle = css`
   ${theme.textStyle.body.body3};
   margin-top: 4px;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
 `;
 
 export default ReviewItem;
