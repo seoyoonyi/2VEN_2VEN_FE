@@ -166,7 +166,7 @@ const InvestorMyPage = () => {
           onEditFolder={handleUpdateFolder}
           onDeleteFolder={handleDeleteFolder}
         />
-        <Pagination totalPage={5} limit={10} page={1} setPage={() => {}} />
+        <Pagination totalPage={1} limit={10} page={1} setPage={() => {}} />
       </div>
       <ContentModal />
       <Modal />
