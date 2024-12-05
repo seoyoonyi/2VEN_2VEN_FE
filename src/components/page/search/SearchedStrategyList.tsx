@@ -37,8 +37,8 @@ const defaultColumns: ColumnConfig[] = [
       <div css={strategyTitleContainerStyle}>
         <div css={strategyTitleStyle}>{strategy.strategyTitle}</div>
         <div css={iconStyle}>
-          <img src={strategy.tradingTypeIcon} alt='매매유형' width={18} height={18} />
-          <img src={strategy.cycleIcon} alt='주기' width={18} height={18} />
+          <img src={strategy.tradingTypeIcon} alt='매매유형' height={18} />
+          <img src={strategy.cycleIcon} alt='주기' height={18} />
           {strategy.investmentAssetClassesIcon
             ?.slice(0, 2)
             .map((icon) => <img key={icon} src={icon} alt={icon} height={18} />)}

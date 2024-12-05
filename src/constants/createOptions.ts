@@ -1,3 +1,4 @@
+// 매매주기(운용주기) 셀렉트박스 옵션 - StrategySearchParams 투자원금(minInvestmentAmount)
 export const investmentFunds = [
   { label: '1만원 ~ 500만원', value: '1만원 ~ 500만원' },
   { label: '500만원 ~ 1000만원', value: '500만원 ~ 1000만원' },

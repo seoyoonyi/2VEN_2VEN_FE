@@ -33,7 +33,7 @@ export const getNextMonthDays = (currentMonth: dayjs.Dayjs) => {
     : Array.from({ length: WeekDays.saturday - endDayOfMonth }, (_, i) => i + 1);
 };
 
-export const formatYearMonthDay = (date: Date) => dayjs(date).format('YYYY/MM/DD');
+export const formatYearMonthDay = (date: Date) => dayjs(date).format('YYYY-MM-DD');
 
 // 날짜 포맷팅
 export const convertDateWithFormat = (date: Date, format: string = 'YYYY-MM-DD'): string =>
