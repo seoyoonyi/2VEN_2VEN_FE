@@ -76,9 +76,11 @@ const TopStrategyList = ({ rankingData }: TopStrategyListProps) => {
                 {data.cumulativeProfitLossRateList.length > 0 ? (
                   <>
                     <span className='value'>
-                      {data.cumulativeProfitLossRateList[
-                        data.cumulativeProfitLossRateList.length - 1
-                      ].toFixed(2)}
+                      {formatRate(
+                        data.cumulativeProfitLossRateList[
+                          data.cumulativeProfitLossRateList.length - 1
+                        ]
+                      )}
                     </span>
                     <span className='percent'>%</span>
                   </>
@@ -119,14 +121,14 @@ const headerStyle = css`
   color: ${theme.colors.main.white};
   display: grid;
   height: 56px;
-  grid-template-columns: 64px 378px 378px 160px 160px;
+  grid-template-columns: 64px 310px 310px 228px 228px;
   align-items: center;
   text-align: center;
 `;
 
 const rowStyle = css`
   display: grid;
-  grid-template-columns: 64px 378px 378px 160px 160px;
+  grid-template-columns: 64px 310px 310px 228px 228px;
   height: 200px;
   align-items: center;
   text-align: center;
