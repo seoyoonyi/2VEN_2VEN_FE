@@ -43,6 +43,7 @@ const SearchResultsInStrategy = () => {
   console.log('2. 현재 filterParams:', filterParams); // 현재 필터 상태 확인
 
   console.log('🚨 API 호출 전 filterParams:', filterParams);
+
   // API 호출
   const { data: strategyDetailResults, isLoading, error } = useSearchStrategyDetail(filterParams); // 전략 상세 검색 결과
 
@@ -56,7 +57,7 @@ const SearchResultsInStrategy = () => {
   console.log('3. API 응답 데이터:', {
     isLoading,
     error,
-    resultCount: strategyDetailResults?.resultCount,
+    resultCount: strategyDetailResults?.totalElements,
     data: strategyDetailResults?.data,
   }); // API 응답 확인
 
@@ -112,145 +113,110 @@ const SearchResultsInStrategy = () => {
     }));
   };
 
+  const [returnRateError, setReturnRateError] = useState<string>('');
+  // 수익률 필터링 핸들러
   const handleReturnRateChange = (id: number) => {
-    setFilterParams((prev) => ({
-      ...prev,
-      returnRateList: prev.returnRateList?.includes(id)
-        ? prev.returnRateList.filter((r) => r !== id)
-        : [...(prev.returnRateList || []), id],
-    }));
+    // 바로 API 호출
+    setFilterParams((prev) => {
+      const currentList = prev.returnRateList || [];
+      const newList = currentList.includes(id)
+        ? currentList.filter((r) => r !== id)
+        : [...currentList, id];
+
+      return {
+        ...prev,
+        returnRateList: newList,
+      };
+    });
   };
+
+  // 데이트피커를 위한 state를 수정
+  const [dateInputs, setDateInputs] = useState({
+    startDate: undefined,
+    endDate: undefined,
+  });
 
   const handleDateChange = (type: 'start' | 'end', date: Date) => {
-    setFilterParams((prev) => ({
+    console.log('날짜 변경:', type, date);
+
+    const formattedDate = dayjs(date).format('YYYY-MM-DD');
+
+    setDateInputs((prev) => ({
+      // 날짜 변경 시 state 업데이트
       ...prev,
-      [type === 'start' ? 'startDate' : 'endDate']: dayjs(date).format('YYYY-MM-DD'),
+      [type === 'start' ? 'startDate' : 'endDate']: formattedDate,
     }));
+
+    // 시작일과 종료일이 모두 있을 때만 API 호출
+    const updatedDates = {
+      ...dateInputs,
+      [type === 'start' ? 'startDate' : 'endDate']: formattedDate,
+    };
+
+    if (updatedDates.startDate && updatedDates.endDate) {
+      setFilterParams((prev) => ({
+        ...prev,
+        startDate: updatedDates.startDate,
+        endDate: updatedDates.endDate,
+      }));
+    }
   };
 
-  // 원금 입력 핸들러 (양수만 허용)
+  // 입력값을 위한 별도의 state들
+  const [principalInputs, setPrincipalInputs] = useState({
+    min: '',
+    max: '',
+  });
+
+  const [mddInputs, setMddInputs] = useState({
+    min: '',
+    max: '',
+  });
+
+  const [smScoreInputs, setSmScoreInputs] = useState({
+    min: '',
+    max: '',
+  });
+
+  // 원금 핸들러
   const handlePrincipalChange = (type: 'min' | 'max', value: string) => {
-    const number = Number(value);
-
-    if (value === '' || (number > 0 && !isNaN(number))) {
-      setFilterParams((prev) => {
-        // 최소값 입력시
-        if (type === 'min') {
-          // 최대값이 있는데 최소값보다 작다면 최대값을 undefined로
-          if (prev.maxPrincipal && number > prev.maxPrincipal) {
-            return {
-              ...prev,
-              minPrincipal: number,
-              maxPrincipal: undefined,
-            };
-          }
-          return {
-            ...prev,
-            minPrincipal: number,
-          };
-        }
-
-        // 최대값 입력시
-        if (type === 'max') {
-          // 최소값이 있는데 최대값보다 크다면 최소값을 undefined로
-          if (prev.minPrincipal && number < prev.minPrincipal) {
-            return {
-              ...prev,
-              maxPrincipal: number,
-              minPrincipal: undefined,
-            };
-          }
-          return {
-            ...prev,
-            maxPrincipal: number,
-          };
-        }
-
-        return prev;
-      });
+    if (value === '' || /^\d*$/.test(value)) {
+      setPrincipalInputs((prev) => ({
+        ...prev,
+        [type]: value,
+      }));
     }
   };
-  // MDD 입력 핸들러 (0 이하의 값만 허용)
+
+  // MDD 핸들러
   const handleMddChange = (type: 'min' | 'max', value: string) => {
-    const number = Number(value);
-
-    if (value === '' || (number <= 0 && !isNaN(number))) {
-      setFilterParams((prev) => {
-        if (type === 'min') {
-          if (prev.maxMdd && number > prev.maxMdd) {
-            return {
-              ...prev,
-              minMdd: number,
-              maxMdd: undefined,
-            };
-          }
-          return {
-            ...prev,
-            minMdd: number,
-          };
-        }
-
-        if (type === 'max') {
-          if (prev.minMdd && number < prev.minMdd) {
-            return {
-              ...prev,
-              maxMdd: number,
-              minMdd: undefined,
-            };
-          }
-          return {
-            ...prev,
-            maxMdd: number,
-          };
-        }
-        return prev;
-      });
+    if (value === '' || /^-?\d*$/.test(value)) {
+      setMddInputs((prev) => ({
+        ...prev,
+        [type]: value,
+      }));
     }
   };
 
-  // SM Score 입력 핸들러 (0~100 사이 값만 허용)
+  // SM Score 핸들러
   const handleSmscoreChange = (type: 'min' | 'max', value: string) => {
-    const number = Number(value);
-
-    if (value === '' || (number >= 0 && number <= 100 && !isNaN(number))) {
-      setFilterParams((prev) => {
-        if (type === 'min') {
-          if (prev.maxSmscore && number > prev.maxSmscore) {
-            return {
-              ...prev,
-              minSmscore: number,
-              maxSmscore: undefined,
-            };
-          }
-          return {
-            ...prev,
-            minSmscore: number,
-          };
-        }
-
-        if (type === 'max') {
-          if (prev.minSmscore && number < prev.minSmscore) {
-            return {
-              ...prev,
-              maxSmscore: number,
-              minSmscore: undefined,
-            };
-          }
-          return {
-            ...prev,
-            maxSmscore: number,
-          };
-        }
-        return prev;
-      });
+    if (value === '' || /^\d*$/.test(value)) {
+      setSmScoreInputs((prev) => ({
+        ...prev,
+        [type]: value,
+      }));
     }
   };
 
-  const handleInvestmentAmountChange = (value: string) => {
-    setFilterParams((prev) => ({
-      ...prev,
-      minInvestmentAmount: value,
-    }));
+  // 적용 버튼 핸들러들
+  const handleApplyPrincipal = () => {
+    if (validatePrincipal()) {
+      setFilterParams((prev) => ({
+        ...prev,
+        minPrincipal: principalInputs.min ? Number(principalInputs.min) : undefined,
+        maxPrincipal: principalInputs.max ? Number(principalInputs.max) : undefined,
+      }));
+    }
   };
 
   const handleReset = () => {
@@ -271,8 +237,180 @@ const SearchResultsInStrategy = () => {
       minMdd: undefined,
       maxMdd: undefined,
       returnRateList: [],
+      startDate: undefined, // 날짜도 초기화
+      endDate: undefined,
+    });
+
+    // input states 초기화
+    setPrincipalInputs({ min: '', max: '' });
+    setMddInputs({ min: '', max: '' });
+    setSmScoreInputs({ min: '', max: '' });
+    setDateInputs({
+      startDate: undefined,
+      endDate: undefined,
+    });
+
+    // 에러 메시지 초기화
+    setPrincipalError('');
+    setSmScoreError('');
+    setMddError('');
+    setReturnRateError('');
+
+    // state 초기화
+    setPrincipalInputs({ min: '', max: '' });
+    setMddInputs({ min: '', max: '' });
+    setSmScoreInputs({ min: '', max: '' });
+
+    // 데이트피커 초기화
+    setDateInputs({
+      startDate: undefined,
+      endDate: undefined,
     });
   };
+
+  // 원금 유효성 검사 및 적용 로직
+  const [principalError, setPrincipalError] = useState<string>('');
+
+  const validatePrincipal = () => {
+    const min = filterParams.minPrincipal?.toString() || '';
+    const max = filterParams.maxPrincipal?.toString() || '';
+
+    // 둘 다 비어있으면 유효성 검사 통과
+    if (!min && !max) {
+      setPrincipalError('');
+      return true; // 둘 다 비어있어도 true 반환
+    }
+
+    // 숫자 문자열인지 체크
+    if (!/^\d*$/.test(min) || !/^\d*$/.test(max)) {
+      setPrincipalError('숫자만 입력 가능합니다.');
+      return false;
+    }
+
+    const minValue = parseInt(min || '0'); // 비어있으면 0으로 처리
+    const maxValue = parseInt(max || '0');
+
+    // 최소값이 최대값보다 큰 경우에만 에러
+    if (minValue > maxValue && max !== '') {
+      setPrincipalError('최소값이 최대값보다 클 수 없습니다.');
+      return false;
+    }
+
+    setPrincipalError('');
+    return true;
+  };
+
+  const [smScoreError, setSmScoreError] = useState<string>('');
+
+  const validateSmScore = () => {
+    const { min } = smScoreInputs;
+    const { max } = smScoreInputs;
+
+    // 둘 다 비어있으면 에러 메시지 제거하고 true 반환
+    if (!min && !max) {
+      setSmScoreError('');
+      return true; // true로 변경
+    }
+
+    // 숫자 문자열인지 체크 (숫자만 허용)
+    if (!/^\d*$/.test(min) || !/^\d*$/.test(max)) {
+      setSmScoreError('숫자만 입력 가능합니다.');
+      return false;
+    }
+
+    const minValue = parseInt(min);
+    const maxValue = parseInt(max);
+
+    // 0 미만인 경우
+    if (minValue < 0 || maxValue < 0) {
+      setSmScoreError('0 이상의 값을 입력해주세요.');
+      return false;
+    }
+
+    // 100 초과인 경우
+    if (minValue > 100 || maxValue > 100) {
+      setSmScoreError('100 이하의 값을 입력해주세요.');
+      return false;
+    }
+
+    // 최소값이 최대값보다 큰 경우
+    if (minValue > maxValue && max !== '') {
+      setSmScoreError('최소값이 최대값보다 클 수 없습니다.');
+      return false;
+    }
+
+    setSmScoreError('');
+    return true;
+  };
+
+  const handleApplySmScore = () => {
+    if (validateSmScore()) {
+      setFilterParams((prev) => ({
+        ...prev,
+        minSmscore: smScoreInputs.min ? Number(smScoreInputs.min) : undefined,
+        maxSmscore: smScoreInputs.max ? Number(smScoreInputs.max) : undefined,
+      }));
+    }
+  };
+
+  const handleInvestmentAmountChange = (value: string) => {
+    setFilterParams((prev) => ({
+      ...prev,
+      minInvestmentAmount: value,
+    }));
+  };
+
+  const [mddError, setMddError] = useState<string>('');
+
+  const validateMdd = () => {
+    const { min } = mddInputs;
+    const { max } = mddInputs;
+
+    // 둘 다 비어있으면 에러 메시지 제거하고 true 반환
+    if (!min && !max) {
+      setMddError('');
+      return true; // true로 변경
+    }
+
+    // 숫자 문자열인지 체크 (숫자와 - 기호만 허용)
+    if (!/^-?\d*$/.test(min) || !/^-?\d*$/.test(max)) {
+      setMddError('숫자와 음수 기호(-)만 입력 가능합니다.');
+      return false;
+    }
+
+    const minValue = parseInt(min);
+    const maxValue = parseInt(max);
+
+    // 0보다 큰 경우
+    if (minValue > 0 || maxValue > 0) {
+      setMddError('0 이하의 값을 입력해주세요.');
+      return false;
+    }
+
+    // 최소값이 최대값보다 큰 경우 (MDD는 음수라서 절대값으로 비교)
+    if (Math.abs(maxValue) > Math.abs(minValue)) {
+      setMddError('최대값의 절대값이 최소값의 절대값보다 클 수 없습니다.');
+      return false;
+    }
+
+    setMddError('');
+    return true;
+  };
+
+  const handleApplyMdd = () => {
+    if (validateMdd()) {
+      setFilterParams((prev) => ({
+        ...prev,
+        minMdd: mddInputs.min ? Number(mddInputs.min) : undefined,
+        maxMdd: mddInputs.max ? Number(mddInputs.max) : undefined,
+      }));
+    }
+  };
+
+  // useEffect를 통해 filterParams 변경 감지
+  useEffect(() => {
+    console.log('✨ filterParams 변경됨:', filterParams);
+  }, [filterParams]);
 
   // 전략 검색 결과 데이터 매핑
   const mappedStrategies = strategyDetailResults?.data.map(mapToStrategyDetailData) ?? [];
@@ -308,14 +446,14 @@ const SearchResultsInStrategy = () => {
             selectedOperatingDays={filterParams.operatingDaysList || []}
             selectedTradingCycle={filterParams.tradingCycleList || []}
             selectedReturnRates={filterParams.returnRateList || []}
-            startDate={new Date(filterParams.startDate || new Date())}
-            endDate={new Date(filterParams.endDate || new Date())}
-            minPrincipal={filterParams.minPrincipal?.toString() || ''}
-            maxPrincipal={filterParams.maxPrincipal?.toString() || ''}
-            minSmscore={filterParams.minSmscore?.toString() || ''}
-            maxSmscore={filterParams.maxSmscore?.toString() || ''}
-            minMdd={filterParams.minMdd?.toString() || ''}
-            maxMdd={filterParams.maxMdd?.toString() || ''}
+            startDate={dateInputs.startDate ? new Date(dateInputs.startDate) : undefined}
+            endDate={dateInputs.endDate ? new Date(dateInputs.endDate) : undefined}
+            minPrincipal={principalInputs.min}
+            maxPrincipal={principalInputs.max}
+            minMdd={mddInputs.min}
+            maxMdd={mddInputs.max}
+            minSmscore={smScoreInputs.min}
+            maxSmscore={smScoreInputs.max}
             selectedInvestmentAmount={filterParams.minInvestmentAmount || ''}
             onProductChange={handleProductChange}
             onStatusChange={handleStatusChange}
@@ -329,6 +467,13 @@ const SearchResultsInStrategy = () => {
             onMddChange={handleMddChange}
             onInvestmentAmountChange={handleInvestmentAmountChange}
             onReset={handleReset}
+            onApplyPrincipal={handleApplyPrincipal}
+            onApplySmscore={handleApplySmScore}
+            onApplyMdd={handleApplyMdd}
+            principalError={principalError}
+            smScoreError={smScoreError}
+            mddError={mddError}
+            returnRateError={returnRateError}
           />
         </div>
       </div>

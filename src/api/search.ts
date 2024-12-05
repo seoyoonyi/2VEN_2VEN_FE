@@ -8,7 +8,7 @@ import {
   SearchedStrategy,
   SearchedTrader,
   SearchResponse,
-  StrategyDetailResponse,
+  SearchedDetailStrategy,
 } from '@/types/search';
 
 interface SearchParams {
@@ -73,7 +73,7 @@ export const searchStrategyDetail = async ({
   maxMdd,
   startDate,
   endDate,
-}: StrategySearchParams): Promise<StrategyDetailResponse> => {
+}: StrategySearchParams): Promise<SearchResponse<SearchedDetailStrategy>> => {
   try {
     // 필터값이 있는 파라미터만 포함하도록 수정
     const formattedParams: Record<string, string | number> = {
@@ -82,43 +82,55 @@ export const searchStrategyDetail = async ({
       pageSize,
     };
     // 배열 파라미터 체크
-    if (investmentAssetClassesList.length > 0) {
-      formattedParams.investmentAssetClassesList = investmentAssetClassesList.join(',');
-    }
-    if (strategyOperationStatusList.length > 0) {
-      formattedParams.strategyOperationStatusList = strategyOperationStatusList.join(',');
-    }
-    if (tradingTypeList.length > 0) {
-      formattedParams.tradingTypeList = tradingTypeList.join(',');
-    }
-    if (operatingDaysList.length > 0) {
-      formattedParams.operatingDaysList = operatingDaysList.join(',');
-    }
-    if (tradingCycleList.length > 0) {
-      formattedParams.tradingCycleList = tradingCycleList.join(',');
-    }
-    if (returnRateList.length > 0) {
-      formattedParams.returnRateList = returnRateList.join(',');
-    }
+    const arrayParams = {
+      investmentAssetClassesList,
+      strategyOperationStatusList,
+      tradingTypeList,
+      operatingDaysList,
+      tradingCycleList,
+      returnRateList,
+    };
 
-    // 나머지 파라미터
+    Object.entries(arrayParams).forEach(([key, value]) => {
+      if (Array.isArray(value) && value.length > 0) {
+        formattedParams[key] = value.join(',');
+      }
+    });
+
+    // 숫자 파라미터 체크 (undefined 체크 추가)
+    const numberParams = {
+      minPrincipal,
+      maxPrincipal,
+      minSmscore,
+      maxSmscore,
+      minMdd,
+      maxMdd,
+    };
+
+    Object.entries(numberParams).forEach(([key, value]) => {
+      if (value !== undefined) {
+        formattedParams[key] = Number(value);
+      }
+    });
+
+    // 문자열 파라미터 체크
     if (minInvestmentAmount) {
       formattedParams.minInvestmentAmount = minInvestmentAmount;
     }
-    if (minPrincipal) formattedParams.minPrincipal = minPrincipal;
-    if (maxPrincipal) formattedParams.maxPrincipal = maxPrincipal;
-    if (minSmscore) formattedParams.minSmscore = minSmscore;
-    if (maxSmscore) formattedParams.maxSmscore = maxSmscore;
-    if (minMdd) formattedParams.minMdd = minMdd;
-    if (maxMdd) formattedParams.maxMdd = maxMdd;
 
     // 날짜 파라미터
-    if (startDate) {
+    if (startDate && endDate) {
       formattedParams.startDate = dayjs(startDate).format('YYYY-MM-DD');
-    }
-    if (endDate) {
       formattedParams.endDate = dayjs(endDate).format('YYYY-MM-DD');
     }
+
+    console.log('❎❎❎ API 호출 직전 formattedParams:', {
+      startDate,
+      endDate,
+      returnRateList,
+    });
+    console.log('날짜 변환 전:', startDate, endDate);
+    console.log('날짜 변환 후:', formattedParams.startDate, formattedParams.endDate);
 
     const { data } = await apiClient.get(API_ENDPOINTS.SEARCH.STRATEGIES_DETAIL, {
       params: formattedParams,
@@ -126,13 +138,14 @@ export const searchStrategyDetail = async ({
     console.log('✅ API 요청 파라미터:', formattedParams);
     return data;
   } catch (error) {
-    // 에러 처리
     if (isAxiosError(error)) {
-      const errorData = error.response?.data as Error;
+      const errorData = error.response?.data;
+      // 상세 에러 메시지 로깅
+      console.error('Error response:', errorData);
 
       switch (error.response?.status) {
         case 400:
-          throw new Error('잘못된 요청입니다');
+          throw new Error(errorData.message || '잘못된 요청입니다');
         case 401:
           throw new Error('로그인이 필요합니다');
         case 405:

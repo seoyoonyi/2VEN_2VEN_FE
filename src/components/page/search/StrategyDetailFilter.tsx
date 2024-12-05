@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from 'react-icons/md';
 import { PiArrowClockwise } from 'react-icons/pi';
 
+import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
 import DatePicker from '@/components/common/DatePicker';
 import Input from '@/components/common/Input';
@@ -29,8 +30,8 @@ interface StrategyDetailFilterProps {
   selectedReturnRates: number[];
 
   // 날짜 관련
-  startDate: Date;
-  endDate: Date;
+  startDate?: Date;
+  endDate?: Date;
 
   // 숫자 입력 관련
   minPrincipal: string;
@@ -56,6 +57,16 @@ interface StrategyDetailFilterProps {
   onMddChange: (type: 'min' | 'max', value: string) => void;
   onInvestmentAmountChange: (value: string) => void;
   onReset: () => void;
+
+  onApplyPrincipal: () => void; // 원금 적용 버튼
+  onApplySmscore: () => void; // SM Score 적용 버튼
+  onApplyMdd: () => void; // MDD 적용 버튼
+
+  // 에러 메시지 상태
+  principalError?: string;
+  smScoreError?: string;
+  mddError?: string;
+  returnRateError?: string;
 }
 
 const StrategyDetailFilter = ({
@@ -86,7 +97,28 @@ const StrategyDetailFilter = ({
   onMddChange,
   onInvestmentAmountChange,
   onReset,
+  onApplyPrincipal,
+  onApplySmscore,
+  onApplyMdd,
+  principalError,
+  smScoreError,
+  mddError,
+  returnRateError,
 }: StrategyDetailFilterProps) => {
+  // DatePicker를 위한 state 추가
+  const [startDateSelected, setStartDateSelected] = useState(false);
+  const [endDateSelected, setEndDateSelected] = useState(false);
+
+  // 초기화 버튼 클릭 핸들러
+  const handleResetClick = () => {
+    // 모든 선택 상태 초기화
+    setStartDateSelected(false);
+    setEndDateSelected(false);
+
+    // 상위 컴포넌트의 초기화 함수 호출
+    onReset();
+  };
+
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleExpand = () => {
@@ -97,7 +129,7 @@ const StrategyDetailFilter = ({
     <div css={containerStyle}>
       <div css={titleStyle}>
         <h3>필터</h3>
-        <button type='button' css={resetButtonStyle} onClick={onReset}>
+        <button type='button' css={resetButtonStyle} onClick={handleResetClick}>
           <PiArrowClockwise />
           초기화
         </button>
@@ -197,7 +229,7 @@ const StrategyDetailFilter = ({
               value={
                 selectedInvestmentAmount
                   ? { label: selectedInvestmentAmount, value: selectedInvestmentAmount }
-                  : undefined
+                  : { label: '투자금액 선택', value: '' }
               }
             />
           </section>
@@ -209,7 +241,6 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={minPrincipal}
                 onChange={(e) => onPrincipalChange('min', e.target.value)}
-                onBlur={() => onPrincipalChange('min', minPrincipal)} // 포커스 아웃시 API 호출
                 placeholder='0 이상'
                 inputSize='sm'
                 css={inputStyle}
@@ -219,12 +250,22 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={maxPrincipal}
                 onChange={(e) => onPrincipalChange('max', e.target.value)}
-                onBlur={(e) => onPrincipalChange('max', e.target.value)} // onBlur 추가
                 placeholder='0 이하'
                 inputSize='sm'
                 css={inputStyle}
               />
+              <Button
+                type='button'
+                variant='secondary'
+                size='xs'
+                width={80}
+                css={buttonStyle}
+                onClick={onApplyPrincipal}
+              >
+                적용
+              </Button>
             </div>
+            {principalError && <div css={errorMessageStyle}>{principalError}</div>}
           </section>
 
           {/* SM Score, MDD 섹션은 별도로 구현 필요 */}
@@ -235,7 +276,6 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={minSmscore}
                 onChange={(e) => onSmscoreChange('min', e.target.value)}
-                onBlur={(e) => onSmscoreChange('min', e.target.value)} // onBlur 추가
                 placeholder='0 이상'
                 inputSize='sm'
                 css={inputStyle}
@@ -245,12 +285,22 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={maxSmscore}
                 onChange={(e) => onSmscoreChange('max', e.target.value)}
-                onBlur={(e) => onSmscoreChange('max', e.target.value)} // onBlur 추가
                 placeholder='100 이하'
                 inputSize='sm'
                 css={inputStyle}
               />
+              <Button
+                type='button'
+                variant='secondary'
+                size='xs'
+                width={80}
+                css={buttonStyle}
+                onClick={onApplySmscore}
+              >
+                적용
+              </Button>
             </div>
+            {smScoreError && <div css={errorMessageStyle}>{smScoreError}</div>}
           </section>
 
           <section css={[filterSectionStyle, foldSection]}>
@@ -260,7 +310,6 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={minMdd}
                 onChange={(e) => onMddChange('min', e.target.value)}
-                onBlur={(e) => onMddChange('min', e.target.value)} // onBlur 추가
                 placeholder='0 이하'
                 inputSize='sm'
                 css={inputStyle}
@@ -270,12 +319,22 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={maxMdd}
                 onChange={(e) => onMddChange('max', e.target.value)}
-                onBlur={(e) => onMddChange('max', e.target.value)} // onBlur 추가
                 placeholder='0 이하'
                 inputSize='sm'
                 css={inputStyle}
               />
+              <Button
+                type='button'
+                variant='secondary'
+                size='xs'
+                width={80}
+                css={buttonStyle}
+                onClick={onApplyMdd}
+              >
+                적용
+              </Button>
             </div>
+            {mddError && <div css={errorMessageStyle}>{mddError}</div>}
           </section>
 
           {/* 날짜 섹션은 별도로 구현 필요 */}
@@ -286,12 +345,16 @@ const StrategyDetailFilter = ({
                 selected={startDate}
                 setSelected={(date) => onDateChange('start', date)}
                 placeholder='시작일'
+                hasSelected={startDateSelected}
+                setHasSelected={setStartDateSelected}
               />
               <span>~</span>
               <DatePicker
                 selected={endDate}
                 setSelected={(date) => onDateChange('end', date)}
                 placeholder='종료일'
+                hasSelected={endDateSelected}
+                setHasSelected={setEndDateSelected}
               />
               <div css={returnRateContainer}>
                 {returnRate.map((rate) => (
@@ -306,6 +369,7 @@ const StrategyDetailFilter = ({
                 ))}
               </div>
             </div>
+            {returnRateError && <div css={errorMessageStyle}>{returnRateError}</div>}
           </section>
         </div>
       )}
@@ -487,5 +551,18 @@ const moreBtnStyle = css`
   svg {
     font-size: 24px;
   }
+`;
+
+const buttonStyle = css`
+  height: 36px;
+  font-size: ${theme.typography.fontSizes.caption};
+  font-weight: ${theme.typography.fontWeight.regular};
+  margin-left: 8px;
+`;
+
+const errorMessageStyle = css`
+  color: ${theme.colors.main.red};
+  font-size: ${theme.typography.fontSizes.caption};
+  margin-top: 4px;
 `;
 export default StrategyDetailFilter;

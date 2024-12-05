@@ -2,10 +2,10 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import { searchStrategies, searchStrategyDetail, searchTraders } from '@/api/search';
 import {
+  SearchedDetailStrategy,
   SearchedStrategy,
   SearchedTrader,
   SearchResponse,
-  StrategyDetailResponse,
   StrategySearchParams,
 } from '@/types/search';
 
@@ -39,7 +39,7 @@ export const useSearchStrategies = (
 // params 검색 파라미터 (keyword는 필수값)
 // query 결과 객체✨ 반환
 export const useSearchStrategyDetail = (params: StrategySearchParams) =>
-  useQuery<StrategyDetailResponse, Error>({
+  useQuery<SearchResponse<SearchedDetailStrategy>, Error>({
     queryKey: ['searchStrategyDetail', params], // params 전체를 queryKey로 사용
     queryFn: () => searchStrategyDetail(params),
     enabled: !!params.keyword, // params.keyword가 있을 때만 실행
