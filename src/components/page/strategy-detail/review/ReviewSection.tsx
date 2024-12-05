@@ -11,6 +11,7 @@ import {
   useDeleteReview,
 } from '@/hooks/mutations/useReviewMutation';
 import useFetchReview from '@/hooks/queries/useFetchReview';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 
 const itemsPerPage = 5;
@@ -28,6 +29,8 @@ const ReviewSection = ({ strategyId, writerId }: { strategyId: number; writerId:
   const updateReview = useUpdateReview();
   const deleteReview = useDeleteReview();
 
+  const { showToast } = useToastStore();
+
   if (isLoading) {
     return <Loader />;
   }
@@ -38,17 +41,35 @@ const ReviewSection = ({ strategyId, writerId }: { strategyId: number; writerId:
 
   // 리뷰 등록 핸들러
   const handleAddReview = (newReviewContent: string) => {
-    postReview.mutate({ strategyId, content: newReviewContent });
+    postReview.mutate(
+      { strategyId, content: newReviewContent },
+      {
+        onSuccess: () => showToast('리뷰가 성공적으로 등록되었습니다.', 'basic'),
+        onError: () => showToast('작업에 실패했습니다. 다시 시도해주세요.', 'error'),
+      }
+    );
   };
 
   // 리뷰 수정 핸들러
   const handleEditReview = (reviewId: number, updatedContent: string) => {
-    updateReview.mutate({ strategyId, reviewId, content: updatedContent });
+    updateReview.mutate(
+      { strategyId, reviewId, content: updatedContent },
+      {
+        onSuccess: () => showToast('리뷰 수정이 완료되었습니다.', 'basic'),
+        onError: () => showToast('작업에 실패했습니다. 다시 시도해주세요.', 'error'),
+      }
+    );
   };
 
   // 리뷰 삭제 핸들러
   const handleDeleteReview = (reviewId: number) => {
-    deleteReview.mutate({ strategyId, reviewId });
+    deleteReview.mutate(
+      { strategyId, reviewId },
+      {
+        onSuccess: () => showToast('리뷰가 삭제되었습니다.', 'basic'),
+        onError: () => showToast('작업에 실패했습니다. 다시 시도해주세요.', 'error'),
+      }
+    );
   };
 
   return (

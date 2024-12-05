@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { css } from '@emotion/react';
 
+import Avatar from '@/components/common/Avatar';
 import theme from '@/styles/theme';
 import { formatDate } from '@/utils/dateFormat';
 
@@ -38,7 +39,7 @@ const ReviewItem = ({ review, writerId, onEdit, onDelete }: ReviewItemProps) => 
 
   return (
     <div css={reviewItemStyle}>
-      <img src={review.profileUrl} alt='프로필' css={profileStyle} />
+      <Avatar src={review.profileUrl} alt='사용자' css={profileStyle} />
       <div css={contentStyle}>
         <div css={headerStyle}>
           <div css={userInfoStyle}>
