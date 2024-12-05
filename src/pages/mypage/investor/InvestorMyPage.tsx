@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,12 +32,15 @@ export interface Folder {
 }
 
 const InvestorMyPage = () => {
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
   const { openContentModal } = useContentModalStore();
   const { openModal } = useModalStore();
   const { isToastVisible, showToast, hideToast, message, type } = useToastStore();
   const navigate = useNavigate();
 
-  const { data, isLoading, isError } = useFolderList();
+  const { data, isLoading, isError } = useFolderList(page - 1, limit);
   const { mutate: submitFolder } = useSubmitFolder();
   const { mutate: updateFolder } = useUpdateFolderName();
   const { mutate: deleteFolder } = useDeleteFolder();
@@ -158,7 +163,7 @@ const InvestorMyPage = () => {
           onEditFolder={handleUpdateFolder}
           onDeleteFolder={handleDeleteFolder}
         />
-        <Pagination totalPage={1} limit={10} page={1} setPage={() => {}} />
+        <Pagination totalPage={data.totalPages} limit={limit} page={page} setPage={setPage} />
       </div>
       <ContentModal />
       <Modal />
