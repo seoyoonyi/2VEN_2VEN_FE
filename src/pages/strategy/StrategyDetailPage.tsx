@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import Button from '@/components/common/Button';
 import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Toast from '@/components/common/Toast';
@@ -62,6 +63,7 @@ const StrategyDetailPage = () => {
   const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
   const isOwner = user?.memberId === strategy?.memberId;
   const isAdmin = role === 'ROLE_ADMIN';
+  const isLoggedin = !!role;
 
   const statisticsTableData = (
     mapping: { label: string; key: string }[],
@@ -166,6 +168,14 @@ const StrategyDetailPage = () => {
     });
   };
 
+  const handleMoveLogin = () => {
+    navigate(ROUTES.AUTH.SIGNIN);
+  };
+
+  const handleMoveSignIn = () => {
+    navigate(ROUTES.AUTH.SIGNUP.SELECT_TYPE);
+  };
+
   useEffect(() => {
     if (
       (strategy?.isApproved === 'N' && !(isOwner || isAdmin)) ||
@@ -217,9 +227,25 @@ const StrategyDetailPage = () => {
             />
             <StrategyContent content={strategy?.strategyOverview} />
             {strategy?.strategyProposalLink && <FileDownSection {...strategy} />}
-            <StrategyIndicator {...statistics} />
-            <ChartSection strategyId={Number(strategyId)} role={role} />
-            <StrategyTab tabs={tabMenu} />
+            <div css={!isLoggedin ? bluerredContent : null}>
+              <StrategyIndicator {...statistics} />
+              <ChartSection strategyId={Number(strategyId)} role={role} />
+              <StrategyTab tabs={tabMenu} />
+            </div>
+            {!isLoggedin && (
+              <div css={blurArea}>
+                <p css={blurText}>로그인 및 회원가입 후 더 많은 전략들을 만나보세요</p>
+                <div css={userButtonStyle}>
+                  {' '}
+                  <Button width={150} onClick={handleMoveLogin}>
+                    로그인 하러가기
+                  </Button>
+                  <Button width={150} onClick={handleMoveSignIn}>
+                    회원가입 하러가기
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -274,6 +300,34 @@ const noneStaticsStyle = css`
 const reviewSectionWrapper = css`
   width: ${theme.layout.width.content};
   margin: 16px 0 76px 0;
+`;
+
+const bluerredContent = css`
+  filter: blur(30px);
+  pointer-events: none;
+`;
+
+const blurText = css`
+  ${theme.textStyle.subtitles.subtitle3};
+  margin-bottom: 40px;
+`;
+
+const blurArea = css`
+  position: absolute;
+  top: 40%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+`;
+
+const userButtonStyle = css`
+  display: flex;
+  gap: 10px;
 `;
 
 export default StrategyDetailPage;
