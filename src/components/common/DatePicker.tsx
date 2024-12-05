@@ -20,15 +20,18 @@ dayjs.locale('ko');
 const WEEKS = ['일', '월', '화', '수', '목', '금', '토'];
 
 interface DatePicker {
-  selected: Date;
+  selected?: Date;
   setSelected: (value: Date) => void;
   placeholder: string;
+  hasSelected: boolean; // 추가
+  setHasSelected: (value: boolean) => void; // 추가
 }
 
 const DatePicker = ({ selected, setSelected, placeholder }: DatePicker) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(dayjs(selected).startOf('month'));
-  const [hasSelected, setHasSelected] = useState(false);
+  // selected가 undefined일 때 현재 날짜를 사용
+  const [currentMonth, setCurrentMonth] = useState(dayjs(selected || new Date()).startOf('month'));
+  const [hasSelected, setHasSelected] = useState(false); // 추가
 
   const datePickerRef = useRef<HTMLDivElement>(null);
   useOnClickOutside(datePickerRef, () => setIsOpen(false));
@@ -39,8 +42,8 @@ const DatePicker = ({ selected, setSelected, placeholder }: DatePicker) => {
 
   const onClickDate = (date: number) => {
     const clickedDate = currentMonth.date(date).toDate();
-    setSelected(clickedDate);
-    setHasSelected(true); // 날짜를 선택했을 때만 placeholder를 날짜로 변경
+    setSelected(clickedDate); // 이 시점에 API 호출이 이루어져야 함!!!!
+    setHasSelected(true); // 날짜를 선택했을 때 hasSelected를 true로 설정
     setIsOpen(!isOpen);
   };
 
@@ -51,7 +54,8 @@ const DatePicker = ({ selected, setSelected, placeholder }: DatePicker) => {
   const onPreviousMonth = () => setCurrentMonth(currentMonth.subtract(1, 'month'));
   const onNextMonth = () => setCurrentMonth(currentMonth.add(1, 'month'));
 
-  const displayValue = hasSelected ? formatYearMonthDay(selected) : placeholder;
+  // selected가 undefined일 때 placeholder를 보여줌
+  const displayValue = hasSelected && selected ? formatYearMonthDay(selected) : placeholder;
 
   return (
     <div css={datePickerStyle} ref={datePickerRef}>

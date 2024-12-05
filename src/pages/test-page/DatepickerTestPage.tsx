@@ -22,6 +22,8 @@ const DatePickerTest = () => {
               selected={selectedDate}
               setSelected={setSelectedDate}
               placeholder='날짜를 선택하세요'
+              hasSelected={false}
+              setHasSelected={() => {}}
             />
           </div>
 
