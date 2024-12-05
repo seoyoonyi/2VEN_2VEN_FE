@@ -35,7 +35,7 @@ const ProfileManager = () => {
   const nicknameCheck = useNicknameCheck();
   const [userImage] = useState(null);
   const [nicknameMessage, setNicknameMessage] = useState('');
-  const { isToastVisible, hideToast, message, showToast } = useToastStore();
+  const { showToast } = useToastStore();
   const [profile, setProfile] = useState<PersonalDetails>(data);
 
   useEffect(() => {
