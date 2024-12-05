@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import Button from '@/components/common/Button';
 import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Toast from '@/components/common/Toast';
@@ -46,13 +47,13 @@ const StrategyDetailPage = () => {
   const { strategyId } = useParams();
   const navigate = useNavigate();
   const role = user?.role as UserRole;
-  const { strategy } = useFetchStrategyDetail(strategyId || '');
-  const { statistics, writedAt } = useStatistics(Number(strategyId));
+  const { strategy } = useFetchStrategyDetail(strategyId || '', role);
+  const { statistics } = useStatistics(Number(strategyId), role);
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { mutate: approveStrategy } = useStrategyDetailApprove();
   const { mutate: terminateStrategy } = useStrategyDetailTerminate();
   const { openModal } = useModalStore();
-  const { dailyAnalysis } = useFetchDailyAnalysis(Number(strategyId), 0, 5);
+  const { dailyAnalysis } = useFetchDailyAnalysis(Number(strategyId), 0, 5, role);
   const { data: approveState } =
     useFetchApproveState(Number(strategyId), role, {
       enabled: strategy?.isApproved === 'N',
@@ -62,7 +63,7 @@ const StrategyDetailPage = () => {
   const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
   const isOwner = user?.memberId === strategy?.memberId;
   const isAdmin = role === 'ROLE_ADMIN';
-  const isPrivate = role === 'ROLE_ADMIN' || role === 'ROLE_TRADER';
+  const isLoggedin = !!role;
 
   const statisticsTableData = (
     mapping: { label: string; key: string }[],
@@ -93,7 +94,6 @@ const StrategyDetailPage = () => {
           strategyId={Number(strategyId)}
           userId={strategy?.memberId}
           role={user?.role}
-          isSelfed={isPrivate}
         />
       ),
     },
@@ -136,7 +136,7 @@ const StrategyDetailPage = () => {
       title: '전략 삭제',
       desc: '해당 전략의 모든 정보가 삭제됩니다.',
       onAction: () => {
-        deleteStrategyDetail(id);
+        deleteStrategyDetail({ id, role });
         navigate(ROUTES.STRATEGY.LIST);
       },
     });
@@ -168,6 +168,14 @@ const StrategyDetailPage = () => {
     });
   };
 
+  const handleMoveLogin = () => {
+    navigate(ROUTES.AUTH.SIGNIN);
+  };
+
+  const handleMoveSignIn = () => {
+    navigate(ROUTES.AUTH.SIGNUP.SELECT_TYPE);
+  };
+
   useEffect(() => {
     if (
       (strategy?.isApproved === 'N' && !(isOwner || isAdmin)) ||
@@ -187,12 +195,7 @@ const StrategyDetailPage = () => {
         strategy?.isApproved !== 'P' &&
         approveState?.isApproved === 'N' &&
         strategy?.isApproved === 'N' && (
-          <ReasonItem
-            title='미승인 이유는 이렇습니다'
-            content={approveState?.rejectionReason}
-            admin={approveState?.managerNickname}
-            adminImg={approveState?.profileImg}
-          />
+          <ReasonItem title='미승인 이유는 이렇습니다' {...approveState} />
         )}
       <div css={contentStyle}>
         <div css={contentWrapper}>
@@ -220,13 +223,31 @@ const StrategyDetailPage = () => {
               date={formatDate(strategy?.writedAt || '', 'withDayTime')}
               followers={strategy?.followersCount}
               minimumInvestment={strategy?.minInvestmentAmount}
-              lastUpdatedDate={writedAt ? formatDate(writedAt) : '데이터없음'}
+              lastUpdatedDate={statistics?.endDate ? formatDate(statistics?.endDate) : '데이터없음'}
             />
             <StrategyContent content={strategy?.strategyOverview} />
             {strategy?.strategyProposalLink && <FileDownSection {...strategy} />}
-            <StrategyIndicator {...statistics} />
-            <ChartSection strategyId={Number(strategyId)} role={role} />
-            <StrategyTab tabs={tabMenu} />
+            <div css={!isLoggedin ? bluerredContent : null}>
+              <StrategyIndicator {...statistics} />
+              <ChartSection strategyId={Number(strategyId)} role={role} />
+              <StrategyTab tabs={tabMenu} />
+            </div>
+            {!isLoggedin && (
+              <div css={blurArea}>
+                <div css={blurContent}>
+                  <p css={blurText}>로그인 및 회원가입 후 더 많은 전략들을 만나보세요</p>
+                  <div css={userButtonStyle}>
+                    {' '}
+                    <Button width={150} onClick={handleMoveLogin}>
+                      로그인 하러가기
+                    </Button>
+                    <Button width={150} onClick={handleMoveSignIn}>
+                      회원가입 하러가기
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -281,6 +302,43 @@ const noneStaticsStyle = css`
 const reviewSectionWrapper = css`
   width: ${theme.layout.width.content};
   margin: 16px 0 76px 0;
+`;
+
+const bluerredContent = css`
+  filter: blur(30px);
+  pointer-events: none;
+`;
+
+const blurContent = css`
+  display: flex;
+  position: absolute;
+  margin-bottom: 2500px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+`;
+
+const blurText = css`
+  ${theme.textStyle.subtitles.subtitle1};
+`;
+
+const blurArea = css`
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const userButtonStyle = css`
+  display: flex;
+  margin-top: 30px;
+  gap: 10px;
 `;
 
 export default StrategyDetailPage;

@@ -44,6 +44,9 @@ const LineChart = ({ data, size, colorTheme }: LineChartProps) => {
       height: sizes[size].height,
       backgroundColor: 'transparent',
     },
+    accessibility: {
+      enabled: false,
+    },
     title: {
       text: '',
     },

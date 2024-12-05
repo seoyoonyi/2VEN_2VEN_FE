@@ -11,6 +11,7 @@ import ContentModal from '@/components/common/ContentModal';
 import Toast from '@/components/common/Toast';
 import FollowModal from '@/components/page/mypage-investor/myfolder/FollowModal';
 import { ROUTES } from '@/constants/routes';
+import { useToastWithNavigate } from '@/hooks/useToastWithNavigate';
 import { useAuthStore } from '@/stores/authStore';
 import useContentModalStore from '@/stores/contentModalStore';
 import useToastStore from '@/stores/toastStore';
@@ -46,7 +47,8 @@ export const StrategyHeader = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuthStore();
-  const userRole = user?.role as UserRole; // 유저 지정
+  const showToastAndNavigate = useToastWithNavigate();
+  const userRole = user?.role as UserRole;
   const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
   const { openContentModal } = useContentModalStore();
 
@@ -65,6 +67,10 @@ export const StrategyHeader = ({
   };
 
   const handleFollowingPage = () => {
+    if (!user) {
+      showToastAndNavigate('로그인이 필요한 서비스 입니다.', ROUTES.AUTH.SIGNIN, 'error');
+      return;
+    }
     let selectedFolderId = '';
 
     openContentModal({
