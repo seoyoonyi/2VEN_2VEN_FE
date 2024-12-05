@@ -2,7 +2,6 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { fetchTraderStrategies } from '@/api/traderStrategies';
 import { UserRole } from '@/types/route';
-import { isValidAdminOrTraderRole } from '@/utils/roleUtils';
 
 interface UseFetchTraderStrategiesParams {
   role?: UserRole;
@@ -24,11 +23,7 @@ export const useFetchTraderStrategies = ({
         throw new Error('traderId가 없습니다.');
       }
 
-      if (!isValidAdminOrTraderRole(role)) {
-        throw new Error(`유효하지 않은 역할입니다: ${role}`);
-      }
-
-      const res = await fetchTraderStrategies({ role, traderId, page, pageSize });
+      const res = await fetchTraderStrategies({ traderId, page, pageSize });
 
       return {
         strategies: res.data,
