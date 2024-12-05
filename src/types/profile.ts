@@ -22,3 +22,10 @@ export interface UpdatePersonalDetailsPayload {
   introduction: string;
   marketingOptional: boolean;
 }
+
+export interface ChangePasswordResponse {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+  token: string;
+}

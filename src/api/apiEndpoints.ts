@@ -59,5 +59,6 @@ export const API_ENDPOINTS = {
   MEMBERS: {
     SIDEBAR_PROFILE: (memberId: string) => `/api/members/${memberId}/sidebar-profile`, // 사이드바 프로필 정보 조회
     DETAILS: '/api/members/details', // 회원 상세 정보 조회
+    PASSWORD_CHANGE: '/api/members/change-password', // 비밀번호 변경
   },
 };
