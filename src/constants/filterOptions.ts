@@ -18,15 +18,15 @@ export const productType = [
 
 // 전략상태
 export const strategyStatus = [
-  { label: '운영중', value: 'STRATEGY_OPERATION_UNDER_MANAGEMENT' },
-  { label: '운영종료', value: 'STRATEGY_OPERATION_TERMINATED' },
+  { label: '운용중', value: 'STRATEGY_OPERATION_UNDER_MANAGEMENT' },
+  { label: '운용종료', value: 'STRATEGY_OPERATION_TERMINATED' },
 ];
 
 // 매매유형(운용방식)
 export const tradingType = [
-  { id: 1, label: '매뉴얼', value: 'MANUAL' },
-  { id: 2, label: '자동', value: 'AUTOMATIC' },
-  { id: 3, label: '하이브리드', value: 'HYBRID' },
+  { id: 3, label: '매뉴얼', value: 'MANUAL' },
+  { id: 1, label: '자동', value: 'AUTOMATIC' },
+  { id: 2, label: '하이브리드', value: 'HYBRID' },
 ];
 
 // 총 운용일수(운용기간)

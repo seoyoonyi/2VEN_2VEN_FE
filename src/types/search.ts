@@ -60,19 +60,19 @@ export interface StrategyDetailResponse {
   // 검색 결과 메타 데이터
   keyword: string;
   resultCount: number;
-  data: StrategyDetail[];
+  data: SearchedDetailStrategy[];
 }
 
 // 전략 상세 데이터 타입
-export interface StrategyDetail {
+export interface SearchedDetailStrategy {
   strategyId: number;
   strategyTitle: string;
-  tradingTypeId: number;
-  investmentAssetClassesId: number[];
-  writerId: number;
-  cumulativeReturn: number;
-  oneYearReturn: number;
+  tradingTypeIcon: string;
+  tradingCycleIcon: string;
+  investmentAssetClassesIcons: string[];
+  cumulativeProfitLossRate: number;
+  recentOneYearReturn: number;
   mdd: number;
-  smscore: number;
-  followers_count: number;
+  smScore: number;
+  followersCount: number;
 }
