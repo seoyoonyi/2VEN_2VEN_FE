@@ -59,7 +59,7 @@ const InvestorFollowFolderPage = () => {
             refetch();
           })
           .catch(() => {
-            showToast('폴더 이동에 실패했습니다.', 'error');
+            showToast('현재 저장된 폴더입니다.', 'error');
           });
 
         return true;
