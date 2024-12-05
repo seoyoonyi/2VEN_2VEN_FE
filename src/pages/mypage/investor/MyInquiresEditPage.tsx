@@ -67,10 +67,8 @@ const MyInquiresEditPage = () => {
           { id: Number(inquiryId), payload: formData },
           {
             onSuccess: () => {
-              showToastAndNavigate(
-                '문의 수정이 정상적으로 완료되었습니다.',
-                ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(String(inquiryId))
-              );
+              showToast('문의 수정이 정상적으로 완료되었습니다.');
+              navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(String(inquiryId)));
             },
             onError: (error) => {
               showToast('문의 수정 중 문제가 발생했습니다.', 'error');
