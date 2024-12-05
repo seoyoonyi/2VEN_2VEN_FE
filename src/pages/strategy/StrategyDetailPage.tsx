@@ -252,7 +252,7 @@ const StrategyDetailPage = () => {
         </div>
       </div>
       <div css={reviewSectionWrapper}>
-        <ReviewSection />
+        <ReviewSection strategyId={Number(strategyId)} writerId={user?.memberId || ''} />
       </div>
       <Modal />
       {isToastVisible && (

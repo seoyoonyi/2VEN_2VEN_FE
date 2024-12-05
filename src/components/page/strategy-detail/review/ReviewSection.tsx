@@ -2,66 +2,75 @@ import { useState } from 'react';
 
 import { css } from '@emotion/react';
 
+import Loader from '@/components/common/Loading';
 import Pagination from '@/components/common/Pagination';
 import ReviewInputList from '@/components/page/strategy-detail/review/ReviewInputList';
+import {
+  usePostReview,
+  useUpdateReview,
+  useDeleteReview,
+} from '@/hooks/mutations/useReviewMutation';
+import useFetchReview from '@/hooks/queries/useFetchReview';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
-
-interface Review {
-  id: number;
-  writerId: string;
-  profileImg: string;
-  content: string;
-  date: string;
-}
 
 const itemsPerPage = 5;
 
-const ReviewSection = () => {
-  const [reviews, setReviews] = useState<Review[]>([
-    {
-      id: 1,
-      writerId: '내가 투자 짱',
-      profileImg: 'https://via.placeholder.com/40',
-      content: '우와 대박 쩔어용',
-      date: '2024-11-25',
-    },
-    {
-      id: 2,
-      writerId: '너님이 투자 짱',
-      profileImg: 'https://via.placeholder.com/40',
-      content: '워메워메',
-      date: '2024-11-24',
-    },
-  ]);
+const ReviewSection = ({ strategyId, writerId }: { strategyId: number; writerId: string }) => {
+  const [currentPage, setCurrentPage] = useState(0);
 
-  // 전체 리뷰 데이터
-  const [currentPage, setCurrentPage] = useState(1);
+  const { reviews, totalPages, isLoading, isError } = useFetchReview({
+    strategyId,
+    page: currentPage,
+    pageSize: itemsPerPage,
+  });
 
-  const writerId = '내가 투자 짱';
+  const postReview = usePostReview();
+  const updateReview = useUpdateReview();
+  const deleteReview = useDeleteReview();
 
-  // 리뷰 추가 시 호출될 함수
-  const handleAddReview = (newReview: Review) => {
-    setReviews((prevReviews) => [newReview, ...prevReviews]);
-  };
+  const { showToast } = useToastStore();
 
-  // 리뷰 수정 시 호출될 함수
-  const handleEditReview = (id: number, updatedContent: string) => {
-    setReviews((prevReviews) =>
-      prevReviews.map((review) =>
-        review.id === id ? { ...review, content: updatedContent } : review
-      )
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (isError) {
+    console.error('리뷰를 불러오는 중 문제가 발생했습니다.');
+  }
+
+  // 리뷰 등록 핸들러
+  const handleAddReview = (newReviewContent: string) => {
+    postReview.mutate(
+      { strategyId, content: newReviewContent },
+      {
+        onSuccess: () => showToast('리뷰가 성공적으로 등록되었습니다.', 'basic'),
+        onError: () => showToast('작업에 실패했습니다. 다시 시도해주세요.', 'error'),
+      }
     );
   };
 
-  // 리뷰 삭제 시 호출될 함수
-  const handleDeleteReview = (id: number) => {
-    setReviews((prevReviews) => prevReviews.filter((review) => review.id !== id));
+  // 리뷰 수정 핸들러
+  const handleEditReview = (reviewId: number, updatedContent: string) => {
+    updateReview.mutate(
+      { strategyId, reviewId, content: updatedContent },
+      {
+        onSuccess: () => showToast('리뷰 수정이 완료되었습니다.', 'basic'),
+        onError: () => showToast('작업에 실패했습니다. 다시 시도해주세요.', 'error'),
+      }
+    );
   };
 
-  // 현재 페이지의 리뷰 데이터 계산
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const displayedReviews = reviews.slice(startIndex, endIndex);
+  // 리뷰 삭제 핸들러
+  const handleDeleteReview = (reviewId: number) => {
+    deleteReview.mutate(
+      { strategyId, reviewId },
+      {
+        onSuccess: () => showToast('리뷰가 삭제되었습니다.', 'basic'),
+        onError: () => showToast('작업에 실패했습니다. 다시 시도해주세요.', 'error'),
+      }
+    );
+  };
 
   return (
     <div css={containerStyle}>
@@ -72,9 +81,8 @@ const ReviewSection = () => {
 
       {/* 리뷰 입력 및 표시 */}
       <ReviewInputList
-        reviews={displayedReviews}
+        reviews={reviews}
         writerId={writerId}
-        profileImg='https://via.placeholder.com/40'
         onAddReview={handleAddReview}
         onEditReview={handleEditReview}
         onDeleteReview={handleDeleteReview}
@@ -83,10 +91,10 @@ const ReviewSection = () => {
       {/* 페이지네이션 */}
       <div css={PaginationStyle}>
         <Pagination
-          totalPage={Math.ceil(reviews.length / itemsPerPage)}
+          totalPage={totalPages}
           limit={itemsPerPage}
-          page={currentPage}
-          setPage={setCurrentPage}
+          page={currentPage + 1}
+          setPage={(page) => setCurrentPage(page - 1)}
         />
       </div>
     </div>
