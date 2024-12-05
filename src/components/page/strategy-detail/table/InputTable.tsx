@@ -43,13 +43,13 @@ const InputTable = ({ data, onChange }: InputAnalysisProps) => {
     const parsedData = updatedData.map((row) => ({
       ...row,
       depWdPrice:
-        typeof row.depWdPrice === 'string'
+        typeof row.depWdPrice === 'string' && row.depWdPrice.trim() !== ''
           ? Number(row.depWdPrice.replace(/,/g, ''))
-          : row.depWdPrice,
+          : '',
       dailyProfitLoss:
-        typeof row.dailyProfitLoss === 'string'
+        typeof row.dailyProfitLoss === 'string' && row.dailyProfitLoss
           ? Number(row.dailyProfitLoss.replace(/,/g, ''))
-          : row.dailyProfitLoss,
+          : '',
     }));
     onChange(parsedData);
   };

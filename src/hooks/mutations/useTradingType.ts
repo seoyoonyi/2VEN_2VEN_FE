@@ -5,7 +5,6 @@ import {
   fetchPutTradingType,
   fetchDeleteTradingType,
 } from '@/api/tradingType';
-import { fetchDeleteIcon } from '@/api/uploadFile';
 import { TradingTypeProps } from '@/types/admin';
 import { UserRole } from '@/types/route';
 
@@ -38,19 +37,15 @@ export const useDeleteTradingType = () => {
 
   return useMutation({
     mutationFn: async ({
-      tradingTypeId,
+      ids,
       role,
       fileUrl,
     }: {
-      tradingTypeId: number;
+      ids: string;
       role: string | null;
-      fileUrl: string;
+      fileUrl: string[];
     }) => {
-      await fetchDeleteTradingType(tradingTypeId, role, fileUrl);
-
-      if (fileUrl) {
-        await fetchDeleteIcon(role, fileUrl);
-      }
+      await fetchDeleteTradingType(ids, role, fileUrl);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tradingTypes'] });

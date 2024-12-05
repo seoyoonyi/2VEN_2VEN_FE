@@ -38,16 +38,16 @@ export const fetchInvestmentTypeDetail = async (id: number, role: UserRole) => {
 };
 
 //투자자산유형 삭제
-export const fetchDeleteInvestmentType = async (id: number, role: UserRole, fileUrl: string) => {
+export const fetchDeleteInvestmentType = async (id: string, role: UserRole, fileUrls: string[]) => {
   try {
-    if (fileUrl) {
-      await fetchDeleteIcon(role, fileUrl);
+    if (fileUrls.length > 0) {
+      await Promise.all(
+        fileUrls.map(async (fileUrl) => {
+          await fetchDeleteIcon(role, fileUrl);
+        })
+      );
     }
-    const req = await apiClient.delete(`${API_ENDPOINTS.ADMIN.STOCK_TYPES}/${id}`, {
-      headers: {
-        Auth: role,
-      },
-    });
+    const req = await apiClient.delete(`${API_ENDPOINTS.ADMIN.STOCK_TYPES}/${id}`);
     return req.data;
   } catch (error) {
     console.error('failed to delete InvestmentType', error);

@@ -15,9 +15,11 @@ const IconTagSection = ({ imgs }: IconTagSectionProps) => (
 );
 
 const tagAreaStyle = css`
-  width: 100%;
+  max-width: 100%;
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+  margin: 23px 0;
 `;
 
 const tagStyle = css`
@@ -26,7 +28,6 @@ const tagStyle = css`
   height: 25px;
   align-items: center;
   justify-content: center;
-  margin: 20px 0;
 `;
 
 export default IconTagSection;

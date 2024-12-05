@@ -90,13 +90,9 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
     modalData.filter((data) => {
       const isDateValid = !!data.date.trim();
       const isDepWdPriceValid =
-        String(data.depWdPrice).trim() !== '' &&
-        String(data.depWdPrice).trim() !== '0' &&
-        isValidInputNumber(data.depWdPrice);
+        String(data.depWdPrice).trim() !== '' && isValidInputNumber(data.depWdPrice);
       const isDailyProfitLossValid =
-        String(data.dailyProfitLoss).trim() !== '' &&
-        String(data.dailyProfitLoss).trim() !== '0' &&
-        isValidInputNumber(data.dailyProfitLoss);
+        String(data.dailyProfitLoss).trim() !== '' && isValidInputNumber(data.dailyProfitLoss);
 
       return isDateValid && isDepWdPriceValid && isDailyProfitLossValid;
     });
@@ -132,7 +128,14 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
     }
 
     const payload: DailyAnalysisProps[] = modalData
-      .filter((data) => data.date && data.dailyProfitLoss && data.depWdPrice)
+      .filter(
+        (data) =>
+          data.date &&
+          data.depWdPrice !== null &&
+          data.depWdPrice !== '' &&
+          data.dailyProfitLoss !== null &&
+          data.dailyProfitLoss !== ''
+      )
       .map((data) => ({
         date: data.date,
         depWdPrice: Number(data.depWdPrice),
@@ -177,7 +180,11 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
 
         const limitDates = isValidPossibleDate(updatedData.date);
 
-        if (!updatedData.dailyProfitLoss || !updatedData.date || !updatedData.depWdPrice) {
+        if (
+          updatedData.date.trim() === '' ||
+          updatedData.depWdPrice === null ||
+          updatedData.dailyProfitLoss === null
+        ) {
           showToast('일자, 입출금, 일손익은 필수 입력값입니다.', 'error');
           return false;
         }
