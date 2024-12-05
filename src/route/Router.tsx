@@ -6,7 +6,7 @@ import InvestorMypageLayout from '@/layouts/InvestorMypageLayout';
 import NotFoundLayout from '@/layouts/NotFoundLayout';
 import RootLayout from '@/layouts/RootLayout';
 import TraderMyPageLayout from '@/layouts/TraderMyPageLayout';
-import TraderPageLayout from '@/layouts/TraderPageLayout';
+import TraderProfilePageLayout from '@/layouts/TraderProfilePageLayout';
 import StockTypeListPage from '@/pages/admin/stock-type/StockTypeListPage';
 import StrategyApprovalListPage from '@/pages/admin/strategy/StrategyApprovalListPage';
 import TradingTypeListPage from '@/pages/admin/trading-type/TradingTypeListPage';
@@ -237,7 +237,7 @@ export const router = createBrowserRouter(
     },
     {
       path: ROUTES.HOME.PATH,
-      element: <TraderPageLayout />,
+      element: <TraderProfilePageLayout />,
       errorElement: <ErrorPage />, // 에러 처리 페이지
       children: [
         {

@@ -3,14 +3,14 @@ import { Outlet } from 'react-router-dom';
 
 import Footer from '@/components/common/Footer';
 import Header from '@/components/common/Header';
-import TraderPageNav from '@/components/navigation/TraderPageNav';
+import TraderProflieNav from '@/components/navigation/TraderProfilePageNav';
 import theme from '@/styles/theme';
 
-const TraderPageLayout = () => (
+const TraderProfilePageLayout = () => (
   <div css={wrapperStyle}>
     <Header />
     <main css={mainStyle}>
-      <TraderPageNav />
+      <TraderProflieNav />
       <Outlet />
     </main>
     <Footer />
@@ -32,4 +32,4 @@ const mainStyle = css`
   margin: 76px 0;
 `;
 
-export default TraderPageLayout;
+export default TraderProfilePageLayout;

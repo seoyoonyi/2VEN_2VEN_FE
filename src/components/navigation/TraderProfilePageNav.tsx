@@ -10,7 +10,7 @@ import { useProfileImage } from '@/hooks/queries/useProfileImage';
 import { useSidebarProfileQuery } from '@/hooks/queries/useSidebarProfile';
 import theme from '@/styles/theme';
 
-const TraderNav = () => {
+const TraderProflieNav = () => {
   const { traderId } = useParams();
   const { data: profileImageData } = useProfileImage(traderId || ''); // 프로필 이미지 가져오기
   const imageSrc = profileImageData?.fileUrl;
@@ -26,14 +26,20 @@ const TraderNav = () => {
     },
   ];
 
+  const desc = `📌 월급쟁이 직장인이 자산가로 💸
+  🏡 부동산 실전 투자 (2018~)
+  👣 파워 “J” 대기업 연구원의 
+  재테크 이야기
+  🇺🇸 미국주식 스터디 운영 / 링크👇🏻 www.modu.Chwieob.fighting.com`;
+
   return (
     <div css={navContainerStyle}>
       <div css={navWrapper}>
         <ProfileSection
           userImage={imageSrc ?? userImage}
           userRole='트레이더'
-          nickname={profileData?.data.nickname ?? 'user4'}
-          desc={profileData?.data.introduction ?? '트레이더님의 소개글이 없습니다.'}
+          nickname='투자여왕'
+          desc={profileData?.data.introduction ?? desc}
         />
         <NavigationMenu items={TraderMyPageNavItems} />
       </div>
@@ -57,4 +63,4 @@ const navWrapper = css`
   background-color: ${theme.colors.main.white};
 `;
 
-export default TraderNav;
+export default TraderProflieNav;
