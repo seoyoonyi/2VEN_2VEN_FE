@@ -22,7 +22,7 @@ const FolderModal = ({
   onChangeFolderName?: (folderName: string) => void;
   onFolderSelect?: (folderId: string) => void;
 }) => {
-  const { data, isLoading, isError } = useFolderList(1, 10);
+  const { data, isLoading, isError } = useFolderList(0, 10);
   const [folderName, setFolderName] = useState(initialFolderName);
 
   useEffect(() => {
