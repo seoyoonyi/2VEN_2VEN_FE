@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { css } from '@emotion/react';
 
@@ -9,74 +9,102 @@ import Checkbox from '@/components/common/Checkbox';
 import Input from '@/components/common/Input';
 import SingleButtonModal from '@/components/common/SingleButtonModal';
 import { useNicknameCheck } from '@/hooks/mutations/useNicknameCheck';
+import { useUpdatePersonalDetails } from '@/hooks/mutations/useUpdatePersonalDetails';
+import useFetchPersonalDetails from '@/hooks/queries/useFetchPersonalDetails';
 import useModalStore from '@/stores/modalStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { validateNickname } from '@/utils/validation';
 
-interface PersonalDetailsResponse {
-  status: string;
-  message: string;
-  data: {
-    fileId: string;
-    email: string;
-    nickname: string;
-    phoneNumber: string;
-    introduction: string;
-    marketingOptional: boolean;
-  };
+interface PersonalDetails {
+  profilePath: string;
+  email: string;
+  nickname: string;
+  phoneNumber: string;
+  introduction: string;
+  marketingOptional: boolean;
 }
-
-const mockPersonalDetails: PersonalDetailsResponse = {
-  status: 'success',
-  message: '상세 개인정보 조회에 성공하였습니다.',
-  data: {
-    fileId: '1234',
-    email: 'test@test.com',
-    nickname: '나는야투자자',
-    phoneNumber: '01012345678',
-    introduction: '투자 잘해서 부자가 되는 그날까지 아자아자 화이팅이닷!!',
-    marketingOptional: false,
-  },
-};
 
 const ProfileManager = () => {
   const maxLength = 150;
 
   const { openModal } = useModalStore();
+  const { data, isLoading, isError } = useFetchPersonalDetails();
+  const { mutate: updatePersonalDetails } = useUpdatePersonalDetails();
+
   const nicknameCheck = useNicknameCheck();
   const [userImage] = useState(null);
-  const [nickname, setNickname] = useState(mockPersonalDetails.data.nickname);
   const [nicknameMessage, setNicknameMessage] = useState('');
-  const [text, setText] = useState(mockPersonalDetails.data.introduction);
-  const [singleChecked, setSingleChecked] = useState(mockPersonalDetails.data.marketingOptional);
-  const [phoneNumber, setPhoneNumber] = useState(mockPersonalDetails.data.phoneNumber);
+  const { isToastVisible, hideToast, message, showToast } = useToastStore();
+  const [profile, setProfile] = useState<PersonalDetails>(data);
 
-  const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (event.target.value.length <= maxLength) {
-      setText(event.target.value);
+  useEffect(() => {
+    if (data) {
+      setProfile({
+        profilePath: data.fileId || '',
+        email: data.email || '',
+        nickname: data.nickname || '',
+        phoneNumber: data.phoneNumber || '',
+        introduction: data.introduction || '',
+        marketingOptional: data.marketingOptional || false,
+      });
     }
+  }, [data]);
+
+  const handleChange =
+    (field: keyof typeof profile) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value =
+        event.target.type === 'checkbox'
+          ? (event.target as HTMLInputElement).checked
+          : event.target.value;
+
+      setProfile((prev) => ({ ...prev, [field]: value }));
+    };
+
+  const validateForm = () => {
+    if (!profile.nickname.trim()) {
+      alert('닉네임을 입력해주세요.');
+      return false;
+    }
+    if (!profile.phoneNumber.trim()) {
+      alert('휴대폰 번호를 입력해주세요.');
+      return false;
+    }
+    return true;
   };
 
-  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNickname(e.target.value);
-    if (!e.target.value) {
-      setNicknameMessage('');
-    }
-  };
+  const handleProfileUpdate = () => {
+    if (!validateForm()) return;
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhoneNumber(e.target.value);
+    openModal({
+      type: 'confirm',
+      title: '회원정보 수정',
+      desc: '회원정보를 수정하시겠습니까?',
+      actionButton: '확인',
+      onAction: () => {
+        updatePersonalDetails(profile, {
+          onSuccess: () => {
+            showToast('회원정보가 수정되었습니다.');
+          },
+          onError: (error) => {
+            showToast('회원정보 수정 중 오류가 발생했습니다.');
+            console.error(error);
+          },
+        });
+      },
+    });
   };
 
   const handleNicknameCheck = async () => {
-    const validation = validateNickname(nickname);
+    const validation = validateNickname(profile.nickname);
     if (!validation.isValid) {
       setNicknameMessage(validation.message);
       return;
     }
 
     try {
-      const response = await nicknameCheck.mutateAsync(nickname);
+      const response = await nicknameCheck.mutateAsync(profile.nickname);
       if (response.data.isDuplicate) {
         setNicknameMessage('이미 사용중인 닉네임입니다.');
       } else {
@@ -87,142 +115,128 @@ const ProfileManager = () => {
     }
   };
 
-  const validateForm = () => {
-    if (!nickname.trim()) {
-      setNicknameMessage('닉네임을 입력해주세요.');
-      return false;
-    }
-    if (!phoneNumber.trim()) {
-      alert('휴대폰 번호를 입력해주세요.');
-      return false;
-    }
-    return true;
-  };
-
-  const handleProfileUpdate = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    openModal({
-      type: 'confirm',
-      title: '회원정보 수정 완료',
-      desc: '수정된 회원 정보는 저장 후 즉시 반영됩니다.',
-      actionButton: '확인',
-      onAction: () => {
-        console.log('회원정보 수정 완료 확인');
-      },
-    });
-  };
+  if (isLoading) return <p>로딩 중...</p>;
+  if (isError || !data) return <p>데이터를 불러오는 데 실패했습니다.</p>;
 
   return (
     <div css={myPageWrapperStyle}>
       <h2 css={myPageHeaderStyle}>프로필 관리</h2>
-      <form onSubmit={handleProfileUpdate}>
-        <div css={profileContainer}>
-          <div css={leftContainer}>
-            <div css={inputGroupStyle}>
-              <label htmlFor='email' css={labelStyle}>
-                이메일
-              </label>
-              <Input
-                id='email'
-                inputSize='md'
-                value={mockPersonalDetails.data.email}
-                isDisabled={true}
-              />
-            </div>
-            <div css={inputGroupStyle}>
-              <label htmlFor='nickname' css={labelStyle}>
-                닉네임
-              </label>
-              <div css={inputItemStyle}>
+      {data && (
+        <form>
+          <div css={profileContainer}>
+            <div css={leftContainer}>
+              <div css={inputGroupStyle}>
+                <label htmlFor='email' css={labelStyle}>
+                  이메일
+                </label>
                 <Input
-                  id='nickname'
+                  id='email'
                   inputSize='md'
-                  placeholder='사용할 닉네임을 입력해주세요.'
-                  showClearButton
-                  value={nickname}
-                  onChange={handleNicknameChange}
-                  onBlur={() => {
-                    if (!nickname.trim()) {
-                      setNicknameMessage('닉네임을 입력해주세요.');
-                    }
-                  }}
-                  status={
-                    nicknameMessage
-                      ? nicknameMessage.includes('사용 가능한 닉네임')
-                        ? 'success'
-                        : 'error'
-                      : 'default'
-                  }
-                  width='100%'
+                  value={profile.email}
+                  onChange={handleChange('email')}
+                  isDisabled={true}
                 />
-                <Button
-                  variant='primary'
-                  size='sm'
-                  width={100}
-                  onClick={handleNicknameCheck}
-                  disabled={!nickname || nicknameCheck.isPending}
-                >
-                  중복확인
-                </Button>
               </div>
-              {nicknameMessage && (
-                <p
-                  css={[
-                    messageStyle,
-                    nicknameMessage.includes('사용 가능한 닉네임') && successMessageStyle,
-                  ]}
-                >
-                  {nicknameMessage}
-                </p>
-              )}
+              <div css={inputGroupStyle}>
+                <label htmlFor='nickname' css={labelStyle}>
+                  닉네임
+                </label>
+                <div css={inputItemStyle}>
+                  <Input
+                    id='nickname'
+                    inputSize='md'
+                    placeholder='사용할 닉네임을 입력해주세요.'
+                    showClearButton
+                    value={profile.nickname}
+                    onChange={handleChange('nickname')}
+                    onBlur={() => {
+                      if (!profile.nickname.trim()) {
+                        setNicknameMessage('닉네임을 입력해주세요.');
+                      }
+                    }}
+                    status={
+                      nicknameMessage
+                        ? nicknameMessage.includes('사용 가능한 닉네임')
+                          ? 'success'
+                          : 'error'
+                        : 'default'
+                    }
+                    width='100%'
+                  />
+                  <Button
+                    variant='primary'
+                    size='sm'
+                    width={100}
+                    onClick={handleNicknameCheck}
+                    disabled={!profile.nickname || nicknameCheck.isPending}
+                  >
+                    중복확인
+                  </Button>
+                </div>
+                {nicknameMessage && (
+                  <p
+                    css={[
+                      messageStyle,
+                      nicknameMessage.includes('사용 가능한 닉네임') && successMessageStyle,
+                    ]}
+                  >
+                    {nicknameMessage}
+                  </p>
+                )}
+              </div>
+              <div css={inputGroupStyle}>
+                <label htmlFor='phone' css={labelStyle}>
+                  휴대폰번호
+                </label>
+                <Input
+                  id='phone'
+                  inputSize='md'
+                  placeholder='01000000000'
+                  value={profile.phoneNumber}
+                  onChange={handleChange('phoneNumber')}
+                />
+              </div>
+              <div css={inputGroupStyle}>
+                <label htmlFor='introduction' css={labelStyle}>
+                  소개
+                </label>
+                <textarea
+                  css={textareaStyle}
+                  placeholder='내용을 입력하세요'
+                  value={profile.introduction}
+                  onChange={handleChange('introduction')}
+                />
+                <div css={lengthStyle}>
+                  <span>{profile.introduction.length}</span>/{maxLength}
+                </div>
+              </div>
+              <Checkbox
+                checked={profile.marketingOptional}
+                onChange={(checked) =>
+                  setProfile((prev) => ({ ...prev, marketingOptional: checked }))
+                }
+              >
+                [선택] 정보성 마케팅 정보 알림에 수신 동의합니다
+              </Checkbox>
             </div>
-            <div css={inputGroupStyle}>
-              <label htmlFor='phone' css={labelStyle}>
-                휴대폰번호
-              </label>
-              <Input
-                id='phone'
-                inputSize='md'
-                placeholder='010-0000-0000'
-                value={phoneNumber}
-                onChange={handlePhoneChange}
-              />
-            </div>
-            <div css={inputGroupStyle}>
-              <label htmlFor='introduction' css={labelStyle}>
-                소개
-              </label>
-              <textarea
-                css={textareaStyle}
-                placeholder='내용을 입력하세요'
-                value={text}
-                onChange={handleTextChange}
-              />
-              <div css={lengthStyle}>
-                <span>{text.length}</span>/{maxLength}
+            <div css={rightContainer}>
+              <Avatar src={userImage || defaultImage} alt='사용자' size='100%' />
+              <div className='button-container'>
+                <Button variant='secondaryGray'>사진업로드</Button>
+                <Button variant='ghostGray'>사진삭제</Button>
               </div>
             </div>
-            <Checkbox checked={singleChecked} onChange={setSingleChecked}>
-              [선택] 정보성 마케팅 정보 알림에 수신 동의합니다
-            </Checkbox>
           </div>
-          <div css={rightContainer}>
-            <Avatar src={userImage || defaultImage} alt='사용자' size='100%' />
-            <div className='button-container'>
-              <Button variant='secondaryGray'>사진업로드</Button>
-              <Button variant='ghostGray'>사진삭제</Button>
-            </div>
-          </div>
-        </div>
-        <Button type='submit' size='lg' customStyle={editProfileButtonStyle}>
-          회원정보 수정
-        </Button>
-      </form>
+          <Button
+            onClick={handleProfileUpdate}
+            type='submit'
+            size='lg'
+            customStyle={editProfileButtonStyle}
+          >
+            회원정보 수정
+          </Button>
+        </form>
+      )}
       <SingleButtonModal />
     </div>
   );

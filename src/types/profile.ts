@@ -15,3 +15,10 @@ export interface SidebarProfileResponse {
     fileId: string;
   };
 }
+
+export interface UpdatePersonalDetailsPayload {
+  nickname: string;
+  phoneNumber: string;
+  introduction: string;
+  marketingOptional: boolean;
+}
