@@ -5,7 +5,6 @@ import {
   fetchDeleteInvestmentType,
   fetchPutInvestmentType,
 } from '@/api/stockType';
-import { fetchDeleteIcon } from '@/api/uploadFile';
 import { InvestmentAssetProps } from '@/types/admin';
 import { UserRole } from '@/types/route';
 

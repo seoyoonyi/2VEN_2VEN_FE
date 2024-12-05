@@ -38,10 +38,14 @@ export const fetchTradingTypeDetail = async (id: number, role: string | null) =>
 };
 
 //매매유형 삭제
-export const fetchDeleteTradingType = async (id: number, role: string | null, fileUrl: string) => {
+export const fetchDeleteTradingType = async (
+  id: string,
+  role: string | null,
+  fileUrls: string[]
+) => {
   try {
-    if (fileUrl) {
-      await fetchDeleteIcon(role, fileUrl);
+    if (fileUrls.length > 0) {
+      await Promise.all(fileUrls.map(async (fileUrl) => await fetchDeleteIcon(role, fileUrl)));
     }
     const req = await apiClient.delete(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${id}`, {
       headers: {

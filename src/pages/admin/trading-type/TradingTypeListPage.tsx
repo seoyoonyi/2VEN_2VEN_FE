@@ -93,19 +93,22 @@ const TradingTypeListPage = () => {
         type: 'warning',
         title: '매매유형 삭제',
         desc: `선택하신 ${selectedItems.length}개의 유형을 삭제하시겠습니까?`,
-        onAction: () => {
-          selectedItems.forEach((id) => {
-            const tradingItem = tradingList.find(
-              (item: TradingTypeProps) => item.tradingTypeId === id
-            );
-            if (tradingItem) {
-              deleteTradingType({
-                tradingTypeId: tradingItem.tradingTypeId,
-                role: user?.role,
-                fileUrl: tradingItem.tradingTypeIcon,
-              });
-            }
+        onAction: async () => {
+          const deletedIcons = await Promise.all(
+            selectedItems.map((id) => {
+              const tradingItem = tradingList.find(
+                (item: TradingTypeProps) => item.tradingTypeId === id
+              );
+              return tradingItem?.tradingTypeIcon || '';
+            })
+          );
+          const deleteIds = selectedItems.join(',');
+          deleteTradingType({
+            ids: deleteIds,
+            role: user?.role,
+            fileUrl: deletedIcons,
           });
+
           setSelectedItems([]);
         },
       });
