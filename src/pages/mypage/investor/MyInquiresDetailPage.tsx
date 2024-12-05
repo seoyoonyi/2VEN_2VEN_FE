@@ -9,7 +9,6 @@ import InvestorAnswer from '@/components/page/mypage/inquires-detail/InvestorAns
 import { ROUTES } from '@/constants/routes';
 import { useDeleteMyInquiry } from '@/hooks/mutations/useMyInquiryMutations';
 import useFetchInquiryDetail from '@/hooks/queries/useFetchInquiryDetail';
-import { useToastWithNavigate } from '@/hooks/useToastWithNavigate';
 import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
@@ -19,7 +18,6 @@ const MyInquiresDetailPage = () => {
   const { user } = useAuthStore();
   const { isToastVisible, hideToast, message, showToast } = useToastStore();
   const { openModal } = useModalStore();
-  const showToastAndNavigate = useToastWithNavigate();
   const navigate = useNavigate();
 
   const { data, isLoading, isError } = useFetchInquiryDetail({
@@ -42,11 +40,9 @@ const MyInquiresDetailPage = () => {
 
         deleteInquiry(Number(inquiryId), {
           onSuccess: () => {
-            showToastAndNavigate(
-              '문의가 삭제되었습니다.',
-              ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST,
-              'basic'
-            );
+            showToast('문의가 삭제되었습니다.');
+            navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST);
+            window.scrollTo(0, 0);
           },
           onError: () => {
             showToast('문의 삭제에 실패했습니다.', 'error');
@@ -76,7 +72,9 @@ const MyInquiresDetailPage = () => {
         onEdit={() => navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.EDIT(inquiryId || ''))}
       />
       {data.status === 'COMPLETED' && <InvestorAnswer data={data} />}
-      {isToastVisible && <Toast message={message} isVisible={isToastVisible} onClose={hideToast} />}
+      {isToastVisible && (
+        <Toast message={message} isVisible={isToastVisible} onClose={hideToast} duration={1000} />
+      )}
       <Modal />
     </div>
   );

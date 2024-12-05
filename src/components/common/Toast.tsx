@@ -22,7 +22,7 @@ interface ToastProps {
 const Toast: React.FC<ToastProps> = ({
   message,
   onClose,
-  duration = 3000,
+  duration = 2000,
   isVisible,
   type = 'basic',
   buttons = [],
