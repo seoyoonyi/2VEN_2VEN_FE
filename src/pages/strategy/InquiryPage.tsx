@@ -45,7 +45,7 @@ const InquiryPage = () => {
 
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { isToastVisible, hideToast, message, showToast } = useToastStore();
+  const { isToastVisible, hideToast, message, showToast, type } = useToastStore();
   const showToastAndNavigate = useToastWithNavigate();
   const { openModal } = useModalStore();
   const { mutate: InquiryCreate } = useCreateMyInquiry();
@@ -109,12 +109,11 @@ const InquiryPage = () => {
           { payload },
           {
             onSuccess: () => {
-              showToastAndNavigate(
-                '문의 등록이 완료되었습니다.',
-                ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST
-              );
+              showToast('문의 등록이 완료되었습니다.');
+              navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST);
             },
             onError: (error: Error) => {
+              showToast('문의 등록에 실패하였습니다.', 'error');
               console.error('문의 등록 실패:', error.message);
             },
           }
@@ -147,7 +146,9 @@ const InquiryPage = () => {
         />
       </div>
       <Modal />
-      {isToastVisible && <Toast message={message} isVisible={isToastVisible} onClose={hideToast} />}
+      {isToastVisible && (
+        <Toast message={message} isVisible={isToastVisible} onClose={hideToast} type={type} />
+      )}
     </>
   );
 };

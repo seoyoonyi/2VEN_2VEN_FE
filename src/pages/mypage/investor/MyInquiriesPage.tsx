@@ -4,10 +4,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import Avatar from '@/components/common/Avatar';
 import Loader from '@/components/common/Loading';
 import Pagination from '@/components/common/Pagination';
+import Toast from '@/components/common/Toast';
 import InquiryStatusLabel from '@/components/page/mypage/InquiryStatusLabel';
 import { ROUTES } from '@/constants/routes';
 import useFetchInquiries from '@/hooks/queries/useFetchInquiries';
 import { useAuthStore } from '@/stores/authStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { InquiryListItem } from '@/types/inquiries';
 
@@ -16,6 +18,8 @@ const MyInquiriesPage = () => {
   const { user } = useAuthStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPageFromQuery = parseInt(searchParams.get('page') || '1', 10);
+
+  const { isToastVisible, hideToast, message, type } = useToastStore();
 
   const { inquiries, isLoading, isError, totalPages, totalElements, pageSize } = useFetchInquiries({
     userId: user?.memberId,
@@ -115,6 +119,9 @@ const MyInquiriesPage = () => {
             setPage={handlePageChange}
           />
         </div>
+      )}
+      {isToastVisible && (
+        <Toast message={message} isVisible={isToastVisible} onClose={hideToast} type={type} />
       )}
     </section>
   );
