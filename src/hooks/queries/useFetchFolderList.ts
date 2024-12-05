@@ -3,12 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchFolderList } from '@/api/folders';
 import { fetchFollowingList } from '@/api/follow';
 
-export const useFolderList = () => {
+export const useFolderList = (page: number, pageSize: number) => {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['followingFolderList'],
+    queryKey: ['followingFolderList', page, pageSize],
     queryFn: async () => {
       try {
-        const { data } = await fetchFolderList();
+        const { data } = await fetchFolderList({ page, pageSize });
         return data;
       } catch (error) {
         console.error('failed to fetch following folder list', error);
