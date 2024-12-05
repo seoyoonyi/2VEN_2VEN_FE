@@ -25,7 +25,6 @@ const InputTable = ({ data, onChange }: InputAnalysisProps) => {
     field: keyof InputTableProps,
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    e.preventDefault();
     if (e.target.value.length > 12) {
       return;
     }
