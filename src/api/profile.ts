@@ -3,6 +3,7 @@ import { isAxiosError } from 'axios';
 import apiClient from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
 import {
+  ChangePasswordResponse,
   ProfileUrlResponse,
   SidebarProfileResponse,
   UpdatePersonalDetailsPayload,
@@ -76,5 +77,60 @@ export const updatePersonalDetails = async (payload?: UpdatePersonalDetailsPaylo
     return data;
   } catch (error) {
     return handleAxiosError(error, '개인 정보를 수정하는 중 에러가 발생했습니다.');
+  }
+};
+
+export const changePassword = async ({
+  oldPassword,
+  newPassword,
+  confirmPassword,
+}: ChangePasswordResponse) => {
+  try {
+    const response = await apiClient.patch(API_ENDPOINTS.MEMBERS.PASSWORD_CHANGE, {
+      oldPassword,
+      newPassword,
+      confirmPassword,
+    });
+
+    if (response.status === 200) {
+      if (!response.data || response.data.status !== 'success') {
+        throw new Error('서버 응답이 올바르지 않습니다.');
+      }
+      return response.data;
+    }
+
+    throw new Error('비밀번호 변경 중 알 수 없는 오류가 발생했습니다.');
+  } catch (error) {
+    if (isAxiosError(error)) {
+      const errorResponse = error.response?.data;
+
+      if (error.response?.status === 401) {
+        if (errorResponse?.error === 'INVALID_PASSWORD') {
+          throw new Error('현재 비밀번호가 올바르지 않습니다.');
+        }
+        throw new Error('인증이 만료되었습니다. 다시 로그인해주세요.');
+      }
+
+      if (error.response?.status === 400) {
+        switch (errorResponse?.error) {
+          case 'PASSWORD_MISMATCH':
+            throw new Error('입력한 비밀번호가 서로 일치하지 않습니다.');
+          case 'INVALID_PASSWORD_FORMAT':
+            throw new Error(
+              '비밀번호는 공백 없이 영문, 숫자, 특수문자를 하나 이상 포함한 8자 이상의 문자여야 합니다.'
+            );
+          default:
+            console.error('Unexpected error:', errorResponse);
+            throw new Error(errorResponse?.message || '요청 값이 유효하지 않습니다.');
+        }
+      }
+    }
+
+    if (error instanceof Error) {
+      console.error('Unexpected Error:', error.message);
+      throw new Error('비밀번호 변경 중 예기치 못한 오류가 발생했습니다.');
+    }
+
+    throw new Error('비밀번호 변경 중 오류가 발생했습니다.');
   }
 };
