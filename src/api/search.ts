@@ -1,4 +1,5 @@
 import { isAxiosError } from 'axios';
+import dayjs from 'dayjs';
 
 import apiClient from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
@@ -55,41 +56,74 @@ export const searchStrategies = async ({
 // 전략 상세 검색 API 호출 함수 - 검색파라미터 전달
 export const searchStrategyDetail = async ({
   keyword,
-  page = 1, // 기본값은 1로 유지 (상세 검색 결과 페이지용)
+  page = 1,
   pageSize = 25,
-  ...params
+  investmentAssetClassesList = [], // 기본값 설정
+  strategyOperationStatusList = [],
+  tradingTypeList = [],
+  operatingDaysList = [],
+  tradingCycleList = [],
+  returnRateList = [],
+  minInvestmentAmount,
+  minPrincipal,
+  maxPrincipal,
+  minSmscore,
+  maxSmscore,
+  minMdd,
+  maxMdd,
+  startDate,
+  endDate,
 }: StrategySearchParams): Promise<StrategyDetailResponse> => {
   try {
-    // 배열 파라미터를 쉼표로 구분된 문자열로 변환하여 전달
-    const formattedParams = {
+    // 필터값이 있는 파라미터만 포함하도록 수정
+    const formattedParams: Record<string, string | number> = {
       keyword,
-      page: page - 1, // 서버는 0-based pagination 사용하므로 page - 1
+      page: page - 1,
       pageSize,
-      // 배열 타입의 파라미터는, 쉼표로 구분된 문자열로 변환하여 전달
-      ...(params.investmentAssetClassesList?.length && {
-        investmentAssetClassesList: params.investmentAssetClassesList.join(','),
-      }),
-      ...(params.strategyOperationStatusList?.length && {
-        strategyOperationStatusList: params.strategyOperationStatusList.join(','),
-      }),
-      ...(params.tradingTypeList?.length && {
-        tradingTypeList: params.tradingTypeList.join(','),
-      }),
-      ...(params.operatingDaysList?.length && {
-        operatingDaysList: params.operatingDaysList.join(','),
-      }),
-      ...(params.tradingCycleList?.length && {
-        tradingCycleList: params.tradingCycleList.join(','),
-      }),
-      ...(params.returnRateList?.length && {
-        returnRateList: params.returnRateList.join(','),
-      }),
-      ...params, // 나머지 파라미터는 그대로 전달
     };
+    // 배열 파라미터 체크
+    if (investmentAssetClassesList.length > 0) {
+      formattedParams.investmentAssetClassesList = investmentAssetClassesList.join(',');
+    }
+    if (strategyOperationStatusList.length > 0) {
+      formattedParams.strategyOperationStatusList = strategyOperationStatusList.join(',');
+    }
+    if (tradingTypeList.length > 0) {
+      formattedParams.tradingTypeList = tradingTypeList.join(',');
+    }
+    if (operatingDaysList.length > 0) {
+      formattedParams.operatingDaysList = operatingDaysList.join(',');
+    }
+    if (tradingCycleList.length > 0) {
+      formattedParams.tradingCycleList = tradingCycleList.join(',');
+    }
+    if (returnRateList.length > 0) {
+      formattedParams.returnRateList = returnRateList.join(',');
+    }
+
+    // 나머지 파라미터
+    if (minInvestmentAmount) {
+      formattedParams.minInvestmentAmount = minInvestmentAmount;
+    }
+    if (minPrincipal) formattedParams.minPrincipal = minPrincipal;
+    if (maxPrincipal) formattedParams.maxPrincipal = maxPrincipal;
+    if (minSmscore) formattedParams.minSmscore = minSmscore;
+    if (maxSmscore) formattedParams.maxSmscore = maxSmscore;
+    if (minMdd) formattedParams.minMdd = minMdd;
+    if (maxMdd) formattedParams.maxMdd = maxMdd;
+
+    // 날짜 파라미터
+    if (startDate) {
+      formattedParams.startDate = dayjs(startDate).format('YYYY-MM-DD');
+    }
+    if (endDate) {
+      formattedParams.endDate = dayjs(endDate).format('YYYY-MM-DD');
+    }
+
     const { data } = await apiClient.get(API_ENDPOINTS.SEARCH.STRATEGIES_DETAIL, {
       params: formattedParams,
     });
-
+    console.log('✅ API 요청 파라미터:', formattedParams);
     return data;
   } catch (error) {
     // 에러 처리
