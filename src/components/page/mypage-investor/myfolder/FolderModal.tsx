@@ -3,25 +3,26 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 
 import Input from '@/components/common/Input';
-import Select from '@/components/common/Select';
+import Loader from '@/components/common/Loading';
+import Select, { Option } from '@/components/common/Select';
+import { useFolderList } from '@/hooks/queries/useFetchFolderList';
+import { Folder } from '@/pages/mypage/investor/InvestorMyPage';
 import theme from '@/styles/theme';
-
-const folder = [
-  { label: '기본 폴더', value: '1' },
-  { label: '나의 전략 폴더', value: '2' },
-  { label: '크리스마스때 삭제할 폴더', value: '3' },
-  { label: '그냥 그냥 폴더', value: '4' },
-];
 
 const FolderModal = ({
   isMove = false,
   initialFolderName = '',
+  folderTitle = '',
   onChangeFolderName,
+  onFolderSelect,
 }: {
   isMove?: boolean;
   initialFolderName?: string;
+  folderTitle?: string;
   onChangeFolderName?: (folderName: string) => void;
+  onFolderSelect?: (folderId: string) => void;
 }) => {
+  const { data, isLoading, isError } = useFolderList();
   const [folderName, setFolderName] = useState(initialFolderName);
 
   useEffect(() => {
@@ -34,12 +35,41 @@ const FolderModal = ({
     onChangeFolderName?.(newValue);
   };
 
+  if (isLoading) {
+    return (
+      <div css={contentWrpperStyle}>
+        <Loader />
+      </div>
+    );
+  }
+
+  if (isError || !data || !data.data) {
+    return <div css={contentWrpperStyle}>폴더 데이터를 불러오지 못했습니다.</div>;
+  }
+
+  const folder = data?.data.map((item: Folder) => ({
+    label: item.folderName,
+    value: item.folderId.toString(),
+  }));
+
+  const handleChange = (selectedOption: Option) => {
+    if (selectedOption && onFolderSelect) {
+      onFolderSelect(selectedOption.value);
+    }
+  };
+
   return (
     <div css={contentWrpperStyle}>
       {isMove ? (
         <>
           <label htmlFor='move-folder'>이동할 폴더</label>
-          <Select id='move-folder' options={folder} onChange={() => {}} width='100%' />
+          <Select
+            id='move-folder'
+            options={folder}
+            defaultLabel={folderTitle}
+            onChange={handleChange}
+            width='100%'
+          />
         </>
       ) : (
         <>

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { css } from '@emotion/react';
 import { useParams } from 'react-router-dom';
 
-import { unfollowStrategy } from '@/api/follow';
+import { unfollowStrategy, updateFollowingFolder } from '@/api/follow';
 import ContentModal from '@/components/common/ContentModal';
 import Loader from '@/components/common/Loading';
 import Pagination from '@/components/common/Pagination';
@@ -22,7 +22,7 @@ const InvestorFollowFolderPage = () => {
   const limit = 10;
 
   const { openContentModal } = useContentModalStore();
-  const { isToastVisible, showToast, hideToast, message } = useToastStore();
+  const { isToastVisible, showToast, hideToast, message, type } = useToastStore();
 
   const { data, isLoading, isError, refetch } = useFollowingList(Number(folderId), page - 1, limit);
   const { data: folderList } = useFolderList();
@@ -31,13 +31,38 @@ const InvestorFollowFolderPage = () => {
     .filter((v: Folder) => v.folderId === Number(folderId))
     .map((v: Folder) => v.folderName);
 
-  const handleMoveFolder = () => {
+  const handleMoveFolder = (strategyId: number) => {
+    let selectedFolderId = '';
+
     openContentModal({
       title: '폴더 이동',
-      content: <FolderModal isMove={true} />,
+      content: (
+        <FolderModal
+          isMove={true}
+          folderTitle={folderTitle}
+          onFolderSelect={(folderId) => {
+            selectedFolderId = folderId;
+          }}
+        />
+      ),
       onAction: () => {
-        console.log('폴더 이동');
-        showToast('폴더 이동이 완료되었습니다.');
+        if (!selectedFolderId) {
+          showToast('폴더를 선택해주세요.', 'error');
+          return false;
+        }
+
+        updateFollowingFolder({
+          strategyId,
+          folderId: Number(selectedFolderId),
+        })
+          .then(() => {
+            showToast('폴더 이동이 완료되었습니다.');
+            refetch();
+          })
+          .catch(() => {
+            showToast('현재 저장된 폴더입니다.', 'error');
+          });
+
         return true;
       },
     });
@@ -56,7 +81,7 @@ const InvestorFollowFolderPage = () => {
   const dropdownActions = (strategyId: number) => [
     {
       label: '폴더 이동',
-      onClick: () => handleMoveFolder(),
+      onClick: () => handleMoveFolder(strategyId),
     },
     {
       label: '전략 언팔로우',
@@ -98,7 +123,9 @@ const InvestorFollowFolderPage = () => {
         </div>
       </div>
       <ContentModal />
-      {isToastVisible && <Toast message={message} onClose={hideToast} isVisible={isToastVisible} />}
+      {isToastVisible && (
+        <Toast message={message} onClose={hideToast} isVisible={isToastVisible} type={type} />
+      )}
     </div>
   );
 };
@@ -106,6 +133,7 @@ const InvestorFollowFolderPage = () => {
 const myPageWrapperStyle = css`
   width: 955px;
   padding: 48px 40px 80px 40px;
+  min-height: 823px;
   background-color: ${theme.colors.main.white};
   border-radius: 8px;
 `;
