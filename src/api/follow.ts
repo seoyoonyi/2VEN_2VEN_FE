@@ -40,3 +40,21 @@ export const fetchFollowingList = async (
     throw error;
   }
 };
+
+// 관심 전략 폴더 이동
+export const updateFollowingFolder = async ({
+  strategyId,
+  folderId,
+}: {
+  strategyId: number;
+  folderId: number;
+}) => {
+  try {
+    return await apiClient.put(
+      `${API_ENDPOINTS.FOLLOWING.STRATEGY}/${strategyId}/folder/${folderId}`
+    );
+  } catch (error) {
+    console.error('Failed to update folder name:', error);
+    throw error;
+  }
+};
