@@ -6,6 +6,7 @@ import InvestorMypageLayout from '@/layouts/InvestorMypageLayout';
 import NotFoundLayout from '@/layouts/NotFoundLayout';
 import RootLayout from '@/layouts/RootLayout';
 import TraderMyPageLayout from '@/layouts/TraderMyPageLayout';
+import TraderPageLayout from '@/layouts/TraderPageLayout';
 import StockTypeListPage from '@/pages/admin/stock-type/StockTypeListPage';
 import StrategyApprovalListPage from '@/pages/admin/strategy/StrategyApprovalListPage';
 import TradingTypeListPage from '@/pages/admin/trading-type/TradingTypeListPage';
@@ -131,10 +132,6 @@ export const router = createBrowserRouter(
           path: ROUTES.TRADER.LIST,
           element: <TraderListPage />, // 트레이더 목록 페이지
         },
-        {
-          path: ROUTES.TRADER.PROFILE(':traderId'),
-          element: <TraderDetailPage />, // 트레이더 프로필 상세 페이지
-        },
         // -------------------------------------- 검색
         {
           path: ROUTES.SEARCH.TOTAL,
@@ -235,6 +232,22 @@ export const router = createBrowserRouter(
         {
           path: ROUTES.MYPAGE.TRADER.PROFILE,
           element: <TraderProfilePage />, // 트레이더 프로필 관리
+        },
+      ],
+    },
+    {
+      path: ROUTES.HOME.PATH,
+      element: <TraderPageLayout />,
+      errorElement: <ErrorPage />, // 에러 처리 페이지
+      children: [
+        {
+          path: '*',
+          element: <NotFoundLayout />, // 별도의 404 레이아웃 사용
+        },
+        // -------------------------------------- 트레이더
+        {
+          path: ROUTES.TRADER.PROFILE(':traderId'),
+          element: <TraderDetailPage />,
         },
       ],
     },
