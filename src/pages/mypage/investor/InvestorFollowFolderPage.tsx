@@ -25,7 +25,7 @@ const InvestorFollowFolderPage = () => {
   const { isToastVisible, showToast, hideToast, message, type } = useToastStore();
 
   const { data, isLoading, isError, refetch } = useFollowingList(Number(folderId), page - 1, limit);
-  const { data: folderList } = useFolderList(page - 1, limit);
+  const { data: folderList } = useFolderList(page - 1, 50);
 
   const folderTitle = folderList.data
     .filter((v: Folder) => v.folderId === Number(folderId))
