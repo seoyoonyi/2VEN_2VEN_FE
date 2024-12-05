@@ -1,20 +1,17 @@
 import { useState } from 'react';
 
 import { css } from '@emotion/react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import NavigationMenu from '@/components/common/NavigationMenu';
 import ProfileSection from '@/components/page/mypage/ProfileSection';
 import { ROUTES } from '@/constants/routes';
 import { useProfileImage } from '@/hooks/queries/useProfileImage';
 import { useSidebarProfileQuery } from '@/hooks/queries/useSidebarProfile';
-import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 
 const TraderNav = () => {
-  const navigate = useNavigate();
   const { traderId } = useParams();
-  const { clearAuth } = useAuthStore();
   const { data: profileImageData } = useProfileImage(traderId || ''); // 프로필 이미지 가져오기
   const imageSrc = profileImageData?.fileUrl;
   const { data: profileData } = useSidebarProfileQuery();
