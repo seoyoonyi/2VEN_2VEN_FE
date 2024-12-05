@@ -234,15 +234,17 @@ const StrategyDetailPage = () => {
             </div>
             {!isLoggedin && (
               <div css={blurArea}>
-                <p css={blurText}>로그인 및 회원가입 후 더 많은 전략들을 만나보세요</p>
-                <div css={userButtonStyle}>
-                  {' '}
-                  <Button width={150} onClick={handleMoveLogin}>
-                    로그인 하러가기
-                  </Button>
-                  <Button width={150} onClick={handleMoveSignIn}>
-                    회원가입 하러가기
-                  </Button>
+                <div css={blurContent}>
+                  <p css={blurText}>로그인 및 회원가입 후 더 많은 전략들을 만나보세요</p>
+                  <div css={userButtonStyle}>
+                    {' '}
+                    <Button width={150} onClick={handleMoveLogin}>
+                      로그인 하러가기
+                    </Button>
+                    <Button width={150} onClick={handleMoveSignIn}>
+                      회원가입 하러가기
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
@@ -307,26 +309,35 @@ const bluerredContent = css`
   pointer-events: none;
 `;
 
-const blurText = css`
-  ${theme.textStyle.subtitles.subtitle3};
-  margin-bottom: 40px;
-`;
-
-const blurArea = css`
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
-  height: 100%;
+const blurContent = css`
   display: flex;
+  position: absolute;
+  margin-bottom: 2500px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
+`;
+
+const blurText = css`
+  ${theme.textStyle.subtitles.subtitle1};
+`;
+
+const blurArea = css`
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const userButtonStyle = css`
   display: flex;
+  margin-top: 30px;
   gap: 10px;
 `;
 
