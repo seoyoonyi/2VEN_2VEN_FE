@@ -1,3 +1,6 @@
+import { isAxiosError } from 'axios';
+import dayjs from 'dayjs';
+
 import apiClient from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
 import {
@@ -5,6 +8,7 @@ import {
   SearchedStrategy,
   SearchedTrader,
   SearchResponse,
+  StrategyDetailResponse,
 } from '@/types/search';
 
 interface SearchParams {
@@ -49,20 +53,94 @@ export const searchStrategies = async ({
   return data;
 };
 
-// 추가 검색 조건이 있는 경우 - 상세 검색(전략 검색)
+// 전략 상세 검색 API 호출 함수 - 검색파라미터 전달
 export const searchStrategyDetail = async ({
   keyword,
-  page = 0, // 서버는 0-based pagination 사용
+  page = 1,
   pageSize = 25,
-  ...params
-}: StrategySearchParams): Promise<SearchResponse<SearchedStrategy>> => {
-  const { data } = await apiClient.get(API_ENDPOINTS.SEARCH.STRATEGIES_DETAIL, {
-    params: {
+  investmentAssetClassesList = [], // 기본값 설정
+  strategyOperationStatusList = [],
+  tradingTypeList = [],
+  operatingDaysList = [],
+  tradingCycleList = [],
+  returnRateList = [],
+  minInvestmentAmount,
+  minPrincipal,
+  maxPrincipal,
+  minSmscore,
+  maxSmscore,
+  minMdd,
+  maxMdd,
+  startDate,
+  endDate,
+}: StrategySearchParams): Promise<StrategyDetailResponse> => {
+  try {
+    // 필터값이 있는 파라미터만 포함하도록 수정
+    const formattedParams: Record<string, string | number> = {
       keyword,
-      page: page - 1, // 서버는 0-based pagination 사용
+      page: page - 1,
       pageSize,
-      ...params, // 추가 검색 조건(상세 필터 체크박스값들)
-    },
-  });
-  return data;
+    };
+    // 배열 파라미터 체크
+    if (investmentAssetClassesList.length > 0) {
+      formattedParams.investmentAssetClassesList = investmentAssetClassesList.join(',');
+    }
+    if (strategyOperationStatusList.length > 0) {
+      formattedParams.strategyOperationStatusList = strategyOperationStatusList.join(',');
+    }
+    if (tradingTypeList.length > 0) {
+      formattedParams.tradingTypeList = tradingTypeList.join(',');
+    }
+    if (operatingDaysList.length > 0) {
+      formattedParams.operatingDaysList = operatingDaysList.join(',');
+    }
+    if (tradingCycleList.length > 0) {
+      formattedParams.tradingCycleList = tradingCycleList.join(',');
+    }
+    if (returnRateList.length > 0) {
+      formattedParams.returnRateList = returnRateList.join(',');
+    }
+
+    // 나머지 파라미터
+    if (minInvestmentAmount) {
+      formattedParams.minInvestmentAmount = minInvestmentAmount;
+    }
+    if (minPrincipal) formattedParams.minPrincipal = minPrincipal;
+    if (maxPrincipal) formattedParams.maxPrincipal = maxPrincipal;
+    if (minSmscore) formattedParams.minSmscore = minSmscore;
+    if (maxSmscore) formattedParams.maxSmscore = maxSmscore;
+    if (minMdd) formattedParams.minMdd = minMdd;
+    if (maxMdd) formattedParams.maxMdd = maxMdd;
+
+    // 날짜 파라미터
+    if (startDate) {
+      formattedParams.startDate = dayjs(startDate).format('YYYY-MM-DD');
+    }
+    if (endDate) {
+      formattedParams.endDate = dayjs(endDate).format('YYYY-MM-DD');
+    }
+
+    const { data } = await apiClient.get(API_ENDPOINTS.SEARCH.STRATEGIES_DETAIL, {
+      params: formattedParams,
+    });
+    console.log('✅ API 요청 파라미터:', formattedParams);
+    return data;
+  } catch (error) {
+    // 에러 처리
+    if (isAxiosError(error)) {
+      const errorData = error.response?.data as Error;
+
+      switch (error.response?.status) {
+        case 400:
+          throw new Error('잘못된 요청입니다');
+        case 401:
+          throw new Error('로그인이 필요합니다');
+        case 405:
+          throw new Error('잘못된 요청 방식입니다');
+        default:
+          throw new Error(errorData.message || '서버 오류가 발생했습니다');
+      }
+    }
+    throw error;
+  }
 };

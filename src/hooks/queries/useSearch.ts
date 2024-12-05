@@ -5,6 +5,7 @@ import {
   SearchedStrategy,
   SearchedTrader,
   SearchResponse,
+  StrategyDetailResponse,
   StrategySearchParams,
 } from '@/types/search';
 
@@ -34,14 +35,26 @@ export const useSearchStrategies = (
   });
 };
 
-export const useSearchStrategyDetail = (
-  keyword: string,
-  page: number,
-  params: Partial<StrategySearchParams> // 추가 검색 조건
-) =>
-  useQuery({
-    queryKey: ['strategyDetail', keyword, page, params],
-    queryFn: async () => searchStrategyDetail({ keyword, page, ...params }),
-    enabled: !!keyword,
-    placeholderData: (previousData) => previousData, // 페이지 전환 시 이전 데이터 유지
+// 전략 상세 검색을 위한 React Query 훅
+// params 검색 파라미터 (keyword는 필수값)
+// query 결과 객체✨ 반환
+export const useSearchStrategyDetail = (params: StrategySearchParams) =>
+  useQuery<StrategyDetailResponse, Error>({
+    queryKey: ['searchStrategyDetail', params], // params 전체를 queryKey로 사용
+    queryFn: () => searchStrategyDetail(params),
+    enabled: !!params.keyword, // params.keyword가 있을 때만 실행
+    placeholderData: (previousData) => previousData, // 이전 데이터 유지(페이지네이션 UX를 위해)
+    staleTime: 5 * 60 * 1000, // 5분 (캐시 시간 설정)
+    throwOnError: true, // 에러 발생시 컴포넌트에 에러를 던짐
+    retry: false, // 재시도 없음
   });
+// 사용 예시:
+/*
+const { data, isLoading, error } = useSearchStrategyDetail({
+  keyword: "검색어",
+  page: 1,
+  pageSize: 25,
+  investmentAssetClassesList: [1, 2],
+  // ... 기타 필터 파라미터
+});
+*/
