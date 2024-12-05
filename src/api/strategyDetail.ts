@@ -12,15 +12,14 @@ import {
 } from '@/types/strategyDetail';
 
 //전략 상세 기본 정보 조회
-export const fetchDefaultStrategyDetail = async (id: number) => {
+export const fetchDefaultStrategyDetail = async (id: number, role: UserRole) => {
   if (!id) {
     throw new Error('Strategy ID is required');
   }
   try {
     const res = await apiClient.get(`${API_ENDPOINTS.STRATEGY.CREATE}/${id}`, {
       headers: {
-        'Content-Type': 'application/json',
-        Auth: 'admin',
+        Auth: role,
       },
     });
     return res.data;
@@ -30,12 +29,11 @@ export const fetchDefaultStrategyDetail = async (id: number) => {
 };
 
 //전략 상세 기본 정보 삭제
-export const fetchDeleteStrategyDetail = async (id: number) => {
+export const fetchDeleteStrategyDetail = async (id: number, role: UserRole) => {
   try {
     const req = await apiClient.delete(`${API_ENDPOINTS.STRATEGY.CREATE}/${id}`, {
       headers: {
-        'Content-Type': 'application/json',
-        Auth: 'admin',
+        Auth: role,
       },
     });
     return req.data;
@@ -45,7 +43,12 @@ export const fetchDeleteStrategyDetail = async (id: number) => {
 };
 
 //일간분석 조회
-export const fetchDailyAnalysis = async (strategyId: number, page: number, pageSize: number) => {
+export const fetchDailyAnalysis = async (
+  strategyId: number,
+  page: number,
+  pageSize: number,
+  role: UserRole
+) => {
   try {
     const res = await apiClient.get(
       `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/daily-analyses`,
@@ -55,7 +58,7 @@ export const fetchDailyAnalysis = async (strategyId: number, page: number, pageS
           pageSize,
         },
         headers: {
-          auth: 'admin',
+          auth: role,
         },
       }
     );
@@ -66,7 +69,7 @@ export const fetchDailyAnalysis = async (strategyId: number, page: number, pageS
 };
 
 //전략 엑셀 등록
-export const fetchUploadExcel = async (strategyId: number, fileItem: File, authRole: UserRole) => {
+export const fetchUploadExcel = async (strategyId: number, fileItem: File, role: UserRole) => {
   const formData = createFormDataRequest({ file: fileItem });
   try {
     const req = await apiClient.post(
@@ -74,7 +77,7 @@ export const fetchUploadExcel = async (strategyId: number, fileItem: File, authR
       formData,
       {
         headers: {
-          auth: authRole,
+          auth: role,
         },
       }
     );
@@ -90,7 +93,7 @@ export const fetchUploadExcel = async (strategyId: number, fileItem: File, authR
 export const fetchPostDailyAnalysis = async (
   strategyId: number,
   { payload }: InputDailyAnalysisProps,
-  authRole: 'admin' | 'trader'
+  role: UserRole
 ) => {
   const body = { payload };
   try {
@@ -99,7 +102,7 @@ export const fetchPostDailyAnalysis = async (
       body,
       {
         headers: {
-          Auth: authRole,
+          Auth: role,
         },
       }
     );
@@ -114,7 +117,7 @@ export const fetchPostDailyAnalysis = async (
 export const fetchPutDailyAnalysis = async (
   strategyId: number,
   payload: DailyAnalysisProps,
-  authRole: 'admin' | 'trader',
+  role: UserRole,
   dailyDataId: number
 ) => {
   const body = payload;
@@ -124,7 +127,7 @@ export const fetchPutDailyAnalysis = async (
       body,
       {
         headers: {
-          Auth: authRole,
+          Auth: role,
         },
       }
     );
@@ -159,7 +162,12 @@ export const fetchDeleteDailyAnalysis = async (
 };
 
 //월간분석 조회
-export const fetchMonthlyAnalysis = async (strategyId: number, page: number, pageSize: number) => {
+export const fetchMonthlyAnalysis = async (
+  strategyId: number,
+  page: number,
+  pageSize: number,
+  role: UserRole
+) => {
   try {
     const res = await apiClient.get(
       `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/monthly-analysis`,
@@ -169,7 +177,7 @@ export const fetchMonthlyAnalysis = async (strategyId: number, page: number, pag
           pageSize,
         },
         headers: {
-          auth: 'admin',
+          auth: role,
         },
       }
     );
@@ -180,11 +188,11 @@ export const fetchMonthlyAnalysis = async (strategyId: number, page: number, pag
 };
 
 //전략 상세 통계 조회
-export const fetchStatistics = async (strategyId: number) => {
+export const fetchStatistics = async (strategyId: number, role: UserRole) => {
   try {
     const res = await apiClient.get(`${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/statistics`, {
       headers: {
-        auth: 'admin',
+        auth: role,
       },
     });
     return res.data;

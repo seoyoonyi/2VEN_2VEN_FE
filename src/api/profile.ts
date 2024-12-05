@@ -2,7 +2,12 @@ import { isAxiosError } from 'axios';
 
 import apiClient from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
-import { ProfileUrlResponse, SidebarProfileResponse } from '@/types/profile';
+import {
+  ProfileUrlResponse,
+  SidebarProfileResponse,
+  UpdatePersonalDetailsPayload,
+} from '@/types/profile';
+import { handleAxiosError } from '@/utils/errorHandler';
 
 export const getProfileImageUrl = async (memberId: string): Promise<ProfileUrlResponse> => {
   try {
@@ -53,5 +58,23 @@ export const getSidebarProfile = async (memberId: string): Promise<SidebarProfil
       }
     }
     throw error;
+  }
+};
+
+export const fetchPersonalDetails = async () => {
+  try {
+    const { data } = await apiClient.get(API_ENDPOINTS.MEMBERS.DETAILS);
+    return data.data;
+  } catch (error) {
+    return handleAxiosError(error, '개인 정보를 불러오는 중 에러가 발생했습니다.');
+  }
+};
+
+export const updatePersonalDetails = async (payload?: UpdatePersonalDetailsPayload) => {
+  try {
+    const { data } = await apiClient.put(API_ENDPOINTS.MEMBERS.DETAILS, payload);
+    return data;
+  } catch (error) {
+    return handleAxiosError(error, '개인 정보를 수정하는 중 에러가 발생했습니다.');
   }
 };

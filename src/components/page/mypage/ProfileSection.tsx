@@ -73,6 +73,7 @@ const descStyle = css`
   text-align: center;
   width: 225px;
   font-weight: 400;
+  white-space: pre-wrap;
   color: ${theme.colors.gray[700]};
 `;
 

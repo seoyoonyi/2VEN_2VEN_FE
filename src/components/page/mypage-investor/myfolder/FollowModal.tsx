@@ -11,7 +11,7 @@ interface FollowModalProps {
 }
 
 const FollowModal = ({ onFolderSelect }: FollowModalProps) => {
-  const { data, isLoading, isError } = useFolderList();
+  const { data, isLoading, isError } = useFolderList(0, 50);
 
   if (isLoading) {
     return (

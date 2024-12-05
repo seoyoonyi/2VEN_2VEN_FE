@@ -5,7 +5,6 @@ import {
   fetchDeleteInvestmentType,
   fetchPutInvestmentType,
 } from '@/api/stockType';
-import { fetchDeleteIcon } from '@/api/uploadFile';
 import { InvestmentAssetProps } from '@/types/admin';
 import { UserRole } from '@/types/route';
 
@@ -38,19 +37,15 @@ export const useDeleteInvestmentAssets = () => {
 
   return useMutation({
     mutationFn: async ({
-      investmentTypeId,
+      ids,
       role,
       fileUrl,
     }: {
-      investmentTypeId: number;
+      ids: string;
       role: UserRole;
-      fileUrl: string;
+      fileUrl: string[];
     }) => {
-      await fetchDeleteInvestmentType(investmentTypeId, role, fileUrl);
-
-      if (fileUrl) {
-        await fetchDeleteIcon(role, fileUrl);
-      }
+      await fetchDeleteInvestmentType(ids, role, fileUrl);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['investmentTypes'] });

@@ -25,7 +25,6 @@ interface AccountProps {
   strategyId: number;
   role?: UserRole;
   userId: string;
-  isSelfed: boolean;
 }
 
 interface AccountImgProps {
@@ -34,7 +33,7 @@ interface AccountImgProps {
   fileLink: string;
 }
 
-const AccountVerify = ({ strategyId, isSelfed, role, userId }: AccountProps) => {
+const AccountVerify = ({ strategyId, role, userId }: AccountProps) => {
   const { user } = useAuthStore();
   const { pagination, setPage } = usePagination(1, 8);
   const { accountImgs, page, pageSize, totalPages, isLoading } = useFetchAccountImg(
@@ -49,6 +48,7 @@ const AccountVerify = ({ strategyId, isSelfed, role, userId }: AccountProps) => 
   const { openModal } = useModalStore();
   const { showToast, message, hideToast, isToastVisible } = useToastStore();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const isSelfed = (role === 'ROLE_TRADER' && userId === user?.memberId) || role === 'ROLE_ADMIN';
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -113,7 +113,7 @@ const AccountVerify = ({ strategyId, isSelfed, role, userId }: AccountProps) => 
 
   return (
     <div css={accountWrapper}>
-      {isSelfed && userId === user?.memberId && (
+      {isSelfed && (
         <div css={headingStyle}>
           <div css={textStyle}>
             <MdCheck css={iconStyle} size={24} />

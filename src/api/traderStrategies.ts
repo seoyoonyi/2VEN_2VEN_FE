@@ -11,16 +11,12 @@ interface FetchTraderStrategiesParams {
 }
 
 export const fetchTraderStrategies = async ({
-  role,
   traderId,
   page = 0,
   pageSize = 10,
 }: FetchTraderStrategiesParams) => {
   try {
     const response = await apiClient.get(API_ENDPOINTS.TRADERS.STRATEGIES(traderId), {
-      headers: {
-        Auth: role,
-      },
       params: {
         page,
         pageSize,

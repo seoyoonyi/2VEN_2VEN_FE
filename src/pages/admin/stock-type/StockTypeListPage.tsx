@@ -79,19 +79,23 @@ const StockTypeListPage = () => {
         type: 'warning',
         title: '이미지 삭제',
         desc: `선택하신 ${selectedStocks.length}개의 유형을 삭제하시겠습니까?`,
-        onAction: () => {
-          selectedStocks.forEach((id) => {
-            const stockItem = investmentList?.find(
-              (item: InvestmentAssetProps) => item.investmentAssetClassesId === id
-            );
-            if (stockItem) {
-              deleteInvestmentAssets({
-                investmentTypeId: stockItem.investmentAssetClassesId,
-                role: user?.role,
-                fileUrl: stockItem.nvestmentAssetClassesIcon,
-              });
-            }
+        onAction: async () => {
+          const deleteIcons = await Promise.all(
+            selectedStocks.map(async (id) => {
+              const stockItem = investmentList?.find(
+                (item: InvestmentAssetProps) => item.investmentAssetClassesId === id
+              );
+              return stockItem?.investmentAssetClassesIcon || '';
+            })
+          );
+
+          const deleteIds = selectedStocks.join(',');
+          deleteInvestmentAssets({
+            ids: deleteIds,
+            role: user?.role,
+            fileUrl: deleteIcons,
           });
+
           setSelectedStocks([]);
           showToast('상품유형이 삭제되었습니다.', 'basic');
         },
@@ -155,7 +159,6 @@ const StockTypeListPage = () => {
           data: {
             investmentAssetClassesName: newName,
             investmentAssetClassesIcon: selectedIcon,
-            isActive: 'Y',
           },
           role: user.role,
         });
@@ -209,7 +212,6 @@ const StockTypeListPage = () => {
                   investmentAssetClassesId: investmentDetail.investmentAssetClassesId,
                   investmentAssetClassesName: updatedName,
                   investmentAssetClassesIcon: updatedIcon,
-                  isActive: 'Y',
                 },
                 role: user.role,
               });

@@ -20,7 +20,7 @@ interface SearchParams {
 
 // 키보드 입력에 따른 '전체 트레이더' 검색 결과를 보여주는 경우 - 트레이더 검색
 export const searchTraders = async ({
-  keyword,
+  keyword, // 옵셔널
   page = 0,
   pageSize = 4,
   sortOption = 'strategyCnt', // 기본값
@@ -28,7 +28,7 @@ export const searchTraders = async ({
   console.log('Search Parameters:', { keyword, page, pageSize, sortOption });
   const { data } = await apiClient.get(API_ENDPOINTS.SEARCH.TRADERS, {
     params: {
-      keyword,
+      ...(keyword && { keyword }), // keyword가 있을 때만 포함
       page,
       pageSize,
       sortOption,

@@ -16,7 +16,6 @@ const TraderDetailPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPageFromQuery = parseInt(searchParams.get('page') || '1', 10);
   const { traderId } = useParams();
-  console.log('traderId', traderId);
 
   const { strategies, isLoading, isError, totalPages, totalElements, pageSize } =
     useFetchTraderStrategies({

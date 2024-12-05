@@ -10,7 +10,7 @@ import {
 } from '@/types/search';
 
 export const useSearchTraders = (
-  keyword: string,
+  keyword?: string, // 옵셔널
   sortOption: 'strategyCnt' | 'latestSignup' = 'strategyCnt',
   options: { page?: number; pageSize?: number } = {}
 ): UseQueryResult<SearchResponse<SearchedTrader>> => {
@@ -18,8 +18,8 @@ export const useSearchTraders = (
   const { page = 0, pageSize = 4 } = options;
   return useQuery({
     queryKey: ['traders', keyword, sortOption, page, pageSize],
-    queryFn: async () => searchTraders({ keyword }),
-    enabled: !!keyword,
+    queryFn: async () => searchTraders({ keyword, sortOption, page, pageSize }),
+    enabled: true, // 항상 실행
   });
 };
 
