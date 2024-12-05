@@ -74,15 +74,26 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
         marker: {
           enabled: false,
         },
+        states: {
+          inactive: {
+            opacity: 0.2,
+          },
+        },
       },
       area: {
         marker: {
           enabled: false,
         },
+        states: {
+          hover: {
+            enabled: true,
+            brightness: 0.8,
+          },
+        },
       },
     },
     series: [
-      ...areaData.map((dataItem) => ({
+      ...areaData.map((dataItem, idx) => ({
         type: 'areaspline',
         name: dataItem.label,
         data: dataItem.data,
@@ -94,14 +105,20 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
             x2: 0,
             y2: 1,
           },
-          stops: [
-            [1, colors.primary.middleColor],
-            [1, colors.primary.fillColor],
-            [1, theme.colors.main.white],
-          ],
+          stops:
+            idx === 0
+              ? [
+                  [0, colors.primary.middleColor],
+                  [1, colors.primary.fillColor],
+                ]
+              : [
+                  [0, colors.primary.lineColor],
+                  [1, colors.primary.fillColor],
+                ],
         },
+        fillOpacity: 0.7,
         states: {
-          hover: { enabled: false },
+          hover: { enabled: true },
         },
         tooltip: {
           pointFormat: `
@@ -125,8 +142,7 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
       })),
     ],
     tooltip: {
-      shared: true,
-      useHTML: true,
+      shared: false,
     },
   };
 
