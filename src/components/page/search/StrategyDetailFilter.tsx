@@ -143,6 +143,7 @@ const StrategyDetailFilter = ({
               <Checkbox
                 checked={selectedProducts.includes(product.id)}
                 onChange={() => onProductChange(product.id)}
+                customStyle={checkboxLabelStyle(selectedProducts.includes(product.id))}
               >
                 {product.label}
               </Checkbox>
@@ -159,6 +160,7 @@ const StrategyDetailFilter = ({
               <Checkbox
                 checked={selectedStatus.includes(status.value)}
                 onChange={() => onStatusChange(status.value)}
+                customStyle={checkboxLabelStyle(selectedStatus.includes(status.value))}
               >
                 {status.label}
               </Checkbox>
@@ -175,6 +177,7 @@ const StrategyDetailFilter = ({
               <Checkbox
                 checked={selectedTradingTypes.includes(type.id)}
                 onChange={() => onTradingTypeChange(type.id)}
+                customStyle={checkboxLabelStyle(selectedTradingTypes.includes(type.id))}
               >
                 {type.label}
               </Checkbox>
@@ -191,6 +194,7 @@ const StrategyDetailFilter = ({
               <Checkbox
                 checked={selectedOperatingDays.includes(period.id)}
                 onChange={() => onOperatingDaysChange(period.id)}
+                customStyle={checkboxLabelStyle(selectedOperatingDays.includes(period.id))}
               >
                 {period.label}
               </Checkbox>
@@ -207,6 +211,7 @@ const StrategyDetailFilter = ({
               <Checkbox
                 checked={selectedTradingCycle.includes(cycle.id)}
                 onChange={() => onTradingCycleChange(cycle.id)}
+                customStyle={checkboxLabelStyle(selectedTradingCycle.includes(cycle.id))}
               >
                 {cycle.label}
               </Checkbox>
@@ -362,6 +367,7 @@ const StrategyDetailFilter = ({
                     <Checkbox
                       checked={selectedReturnRates.includes(rate.id)}
                       onChange={() => onReturnRateChange(rate.id)}
+                      customStyle={checkboxLabelStyle(selectedReturnRates.includes(rate.id))}
                     >
                       {rate.label}
                     </Checkbox>
@@ -565,4 +571,11 @@ const errorMessageStyle = css`
   font-size: ${theme.typography.fontSizes.caption};
   margin-top: 4px;
 `;
+
+const checkboxLabelStyle = (isChecked: boolean) => css`
+  + span {
+    color: ${isChecked ? theme.colors.gray[900] : theme.colors.gray[400]};
+  }
+`;
+
 export default StrategyDetailFilter;
