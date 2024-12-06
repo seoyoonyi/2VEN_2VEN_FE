@@ -9,7 +9,6 @@ import Toast from '@/components/common/Toast';
 import InquiryCreateForm from '@/components/page/inquiry-create/InquiryCreateForm';
 import { ROUTES } from '@/constants/routes';
 import { useCreateMyInquiry } from '@/hooks/mutations/useMyInquiryMutations';
-import { useToastWithNavigate } from '@/hooks/useToastWithNavigate';
 import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
@@ -46,7 +45,6 @@ const InquiryPage = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const { isToastVisible, hideToast, message, showToast, type } = useToastStore();
-  const showToastAndNavigate = useToastWithNavigate();
   const { openModal } = useModalStore();
   const { mutate: InquiryCreate } = useCreateMyInquiry();
 
@@ -60,7 +58,8 @@ const InquiryPage = () => {
 
   useEffect(() => {
     if (!user) {
-      showToastAndNavigate('로그인이 필요한 서비스 입니다.', ROUTES.AUTH.SIGNIN, 'error');
+      showToast('로그인이 필요한 서비스 입니다.', 'error');
+      navigate(ROUTES.AUTH.SIGNIN);
     }
   }, [user]);
 
@@ -85,7 +84,8 @@ const InquiryPage = () => {
     if (!validateForm()) return;
 
     if (!user) {
-      showToastAndNavigate('로그인이 필요한 서비스 입니다.', ROUTES.AUTH.SIGNIN, 'error');
+      showToast('로그인이 필요한 서비스 입니다.', 'error');
+      navigate(ROUTES.AUTH.SIGNIN);
       return;
     }
 
