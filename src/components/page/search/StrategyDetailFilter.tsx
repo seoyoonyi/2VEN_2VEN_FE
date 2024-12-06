@@ -246,7 +246,7 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={minPrincipal}
                 onChange={(e) => onPrincipalChange('min', e.target.value)}
-                placeholder='0 이상'
+                placeholder='1000'
                 inputSize='sm'
                 css={inputStyle}
               />
@@ -255,7 +255,7 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={maxPrincipal}
                 onChange={(e) => onPrincipalChange('max', e.target.value)}
-                placeholder='0 이하'
+                placeholder='1000000'
                 inputSize='sm'
                 css={inputStyle}
               />
@@ -281,7 +281,7 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={minSmscore}
                 onChange={(e) => onSmscoreChange('min', e.target.value)}
-                placeholder='0 이상'
+                placeholder='0'
                 inputSize='sm'
                 css={inputStyle}
               />
@@ -290,7 +290,7 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={maxSmscore}
                 onChange={(e) => onSmscoreChange('max', e.target.value)}
-                placeholder='100 이하'
+                placeholder='100'
                 inputSize='sm'
                 css={inputStyle}
               />
@@ -315,7 +315,7 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={minMdd}
                 onChange={(e) => onMddChange('min', e.target.value)}
-                placeholder='0 이하'
+                placeholder='-100'
                 inputSize='sm'
                 css={inputStyle}
               />
@@ -324,7 +324,7 @@ const StrategyDetailFilter = ({
                 type='text'
                 value={maxMdd}
                 onChange={(e) => onMddChange('max', e.target.value)}
-                placeholder='0 이하'
+                placeholder='0'
                 inputSize='sm'
                 css={inputStyle}
               />
