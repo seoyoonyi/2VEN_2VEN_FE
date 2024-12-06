@@ -5,10 +5,10 @@ import { css } from '@emotion/react';
 import Avatar from '@/components/common/Avatar';
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
-import Input from '@/components/common/Input';
 import SingleButtonModal from '@/components/common/SingleButtonModal';
 import Toast from '@/components/common/Toast';
-import { useNicknameCheck } from '@/hooks/mutations/useNicknameCheck';
+import ProfileInput from '@/components/page/mypage/ProfileInput';
+import { useNicknameValidation } from '@/hooks/mutations/useNicknameValidation';
 import {
   useDeleteProfileImage,
   useUploadProfileImage,
@@ -16,11 +16,12 @@ import {
 import { useUpdatePersonalDetails } from '@/hooks/mutations/useUpdatePersonalDetails';
 import useFetchPersonalDetails from '@/hooks/queries/useFetchPersonalDetails';
 import { useProfileImage } from '@/hooks/queries/useProfileImage';
+import { useFormValidation } from '@/hooks/useFormValidation';
 import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
+import { useSignupStore } from '@/stores/signupStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
-import { validateNickname } from '@/utils/validation';
 
 interface PersonalDetails {
   profilePath: string;
@@ -39,13 +40,15 @@ const ProfileManager = () => {
   const { user } = useAuthStore();
   const { isToastVisible, showToast, hideToast, message, type } = useToastStore();
   const { openModal } = useModalStore();
-
   const { data: profileImageData } = useProfileImage(user?.memberId || '');
   const { data, isLoading, isError } = useFetchPersonalDetails();
   const { mutate: updatePersonalDetails } = useUpdatePersonalDetails();
   const { mutate: uploadImage } = useUploadProfileImage();
   const { mutate: deleteImage } = useDeleteProfileImage();
-  const nicknameCheck = useNicknameCheck();
+  const { nicknameCheck, handleNicknameCheck } = useNicknameValidation();
+  const { nicknameMessage, actions } = useSignupStore();
+  const { messages: validationMessages, validatePhoneNumber } = useFormValidation();
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
 
   const [profile, setProfile] = useState<PersonalDetails>({
     profilePath: '',
@@ -55,7 +58,6 @@ const ProfileManager = () => {
     introduction: '',
     marketingOptional: false,
   });
-  const [nicknameMessage, setNicknameMessage] = useState('');
 
   useEffect(() => {
     if (data) {
@@ -70,7 +72,35 @@ const ProfileManager = () => {
     }
   }, [data]);
 
-  // Handlers
+  const handleProfileChange =
+    (field: keyof PersonalDetails) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      let value: string | boolean =
+        event.target.type === 'checkbox'
+          ? (event.target as HTMLInputElement).checked
+          : event.target.value;
+
+      if (field === 'marketingOptional') {
+        value = Boolean(value);
+      } else {
+        value = String(value);
+      }
+
+      setProfile((prev) => ({ ...prev, [field]: value }));
+
+      switch (field) {
+        case 'nickname':
+          actions.setNicknameMessage('');
+          setIsNicknameChecked(false);
+          break;
+        case 'phoneNumber':
+          validatePhoneNumber(value as string);
+          break;
+        default:
+          break;
+      }
+    };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return showToast('선택된 파일이 없습니다.', 'error');
@@ -86,6 +116,11 @@ const ProfileManager = () => {
     );
   };
 
+  const handleNicknameCheckClick = (nickname: string) => {
+    handleNicknameCheck(nickname);
+    setIsNicknameChecked(true);
+  };
+
   const handleDeleteImage = () => {
     if (!profileImageData?.fileId) {
       return showToast('삭제할 사진이 없습니다.', 'error');
@@ -99,20 +134,17 @@ const ProfileManager = () => {
 
   const handleUploadClick = () => fileInputRef.current?.click();
 
-  const handleChange =
-    (field: keyof PersonalDetails) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const value =
-        event.target.type === 'checkbox'
-          ? (event.target as HTMLInputElement).checked
-          : event.target.value;
+  const validateForm = (): boolean => {
+    if (!profile.nickname.trim()) {
+      showToast('닉네임을 입력해주세요.', 'error');
+      return false;
+    }
 
-      setProfile((prev) => ({ ...prev, [field]: value }));
-    };
+    if (!validationMessages.phoneNumber.includes('사용 가능')) {
+      showToast('유효한 휴대폰 번호를 입력해주세요.', 'error');
+      return false;
+    }
 
-  const validateForm = () => {
-    if (!profile.nickname.trim()) return alert('닉네임을 입력해주세요.');
-    if (!profile.phoneNumber.trim()) return alert('휴대폰 번호를 입력해주세요.');
     return true;
   };
 
@@ -132,22 +164,9 @@ const ProfileManager = () => {
     });
   };
 
-  const handleNicknameCheck = async () => {
-    const validation = validateNickname(profile.nickname);
-    if (!validation.isValid) {
-      setNicknameMessage(validation.message);
-      return;
-    }
-
-    try {
-      const response = await nicknameCheck.mutateAsync(profile.nickname);
-      setNicknameMessage(
-        response.data.isDuplicate ? '이미 사용중인 닉네임입니다.' : '사용 가능한 닉네임입니다.'
-      );
-    } catch {
-      setNicknameMessage('닉네임 중복 확인에 실패했습니다.');
-    }
-  };
+  const isButtonDisabled = !(
+    isNicknameChecked && validationMessages.phoneNumber?.includes('사용 가능')
+  );
 
   if (isLoading) return <p>로딩 중...</p>;
   if (isError || !data) return <p>데이터를 불러오는 데 실패했습니다.</p>;
@@ -163,11 +182,10 @@ const ProfileManager = () => {
                 <label htmlFor='email' css={labelStyle}>
                   이메일
                 </label>
-                <Input
+                <ProfileInput
                   id='email'
-                  inputSize='md'
                   value={profile.email}
-                  onChange={handleChange('email')}
+                  onChange={handleProfileChange('email')}
                   isDisabled={true}
                 />
               </div>
@@ -175,19 +193,13 @@ const ProfileManager = () => {
                 <label htmlFor='nickname' css={labelStyle}>
                   닉네임
                 </label>
-                <div css={inputItemStyle}>
-                  <Input
+                <div css={[inputItemStyle, nicknameInput]}>
+                  <ProfileInput
                     id='nickname'
-                    inputSize='md'
+                    name='nickname'
                     placeholder='사용할 닉네임을 입력해주세요.'
-                    showClearButton
                     value={profile.nickname}
-                    onChange={handleChange('nickname')}
-                    onBlur={() => {
-                      if (!profile.nickname.trim()) {
-                        setNicknameMessage('닉네임을 입력해주세요.');
-                      }
-                    }}
+                    onChange={handleProfileChange('nickname')}
                     status={
                       nicknameMessage
                         ? nicknameMessage.includes('사용 가능한 닉네임')
@@ -195,13 +207,12 @@ const ProfileManager = () => {
                           : 'error'
                         : 'default'
                     }
-                    width='100%'
                   />
                   <Button
                     variant='primary'
                     size='sm'
                     width={100}
-                    onClick={handleNicknameCheck}
+                    onClick={() => handleNicknameCheckClick(profile.nickname)}
                     disabled={!profile.nickname || nicknameCheck.isPending}
                   >
                     중복확인
@@ -222,13 +233,29 @@ const ProfileManager = () => {
                 <label htmlFor='phone' css={labelStyle}>
                   휴대폰번호
                 </label>
-                <Input
+                <ProfileInput
                   id='phone'
-                  inputSize='md'
                   placeholder='01000000000'
                   value={profile.phoneNumber}
-                  onChange={handleChange('phoneNumber')}
+                  onChange={handleProfileChange('phoneNumber')}
+                  status={
+                    validationMessages.phoneNumber
+                      ? validationMessages.phoneNumber.includes('사용 가능')
+                        ? 'success'
+                        : 'error'
+                      : 'default'
+                  }
                 />
+                {validationMessages.phoneNumber && (
+                  <p
+                    css={[
+                      messageStyle,
+                      validationMessages.phoneNumber.includes('사용 가능') && successMessageStyle,
+                    ]}
+                  >
+                    {validationMessages.phoneNumber}
+                  </p>
+                )}
               </div>
               <div css={inputGroupStyle}>
                 <label htmlFor='introduction' css={labelStyle}>
@@ -238,7 +265,7 @@ const ProfileManager = () => {
                   css={textareaStyle}
                   placeholder='내용을 입력하세요'
                   value={profile.introduction}
-                  onChange={handleChange('introduction')}
+                  onChange={handleProfileChange('introduction')}
                 />
                 <div css={lengthStyle}>
                   <span>{profile.introduction.length}</span>/{maxLength}
@@ -274,8 +301,8 @@ const ProfileManager = () => {
             </div>
           </div>
           <Button
+            disabled={isButtonDisabled}
             onClick={handleProfileUpdate}
-            type='submit'
             size='lg'
             customStyle={editProfileButtonStyle}
           >
@@ -324,6 +351,13 @@ const inputGroupStyle = css`
 const inputItemStyle = css`
   display: flex;
   gap: 12px;
+`;
+
+const nicknameInput = css`
+  justify-content: space-between;
+  button {
+    padding: 16px 18px;
+  }
 `;
 
 const labelStyle = css`
