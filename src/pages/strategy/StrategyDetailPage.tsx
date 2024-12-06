@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
+import ScrollToTop from '@/components/common/ScrollToTop';
 import Toast from '@/components/common/Toast';
 import ChartSection from '@/components/page/strategy-detail/chart/ChartSection';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
@@ -182,6 +183,7 @@ const StrategyDetailPage = () => {
 
   return (
     <div css={containerStyle}>
+      <ScrollToTop />
       {(role === 'ROLE_ADMIN' ||
         (role === 'ROLE_TRADER' && user?.memberId === strategy?.memberId)) &&
         strategy?.isApproved !== 'P' &&
