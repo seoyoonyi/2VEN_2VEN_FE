@@ -159,3 +159,25 @@ export const changePassword = async ({
     throw new Error('비밀번호 변경 중 오류가 발생했습니다.');
   }
 };
+
+export const withdrawMember = async () => {
+  try {
+    const response = await apiClient.delete(API_ENDPOINTS.MEMBERS.WITHDRAWAL);
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      switch (error.response?.status) {
+        case 400:
+          throw new Error('잘못된 요청: 입력값을 확인하세요.');
+        case 401:
+          throw new Error('권한 없음: 로그인이 필요합니다.');
+        case 405:
+          throw new Error('잘못된 요청 방식: HTTP 메서드가 올바르지 않습니다.');
+        case 500:
+          throw new Error('서버 오류: 서버에서 문제가 발생했습니다.');
+        default:
+          throw new Error('알 수 없는 오류가 발생했습니다.');
+      }
+    }
+  }
+};
