@@ -9,7 +9,7 @@ export const useUploadProfileImage = () => {
     mutationFn: ({ fileUrl, fileItem }: { fileUrl?: string; fileItem: File }) => {
       if (!fileUrl || !fileItem) {
         console.error('fileUrl 파일주소가 없음');
-        throw new Error('fileUrl is required'); // 에러를 명시적으로 던짐
+        throw new Error('fileUrl is required');
       }
       return uploadProfileImage(fileUrl, fileItem);
     },
