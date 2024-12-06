@@ -2,6 +2,8 @@ import { css } from '@emotion/react';
 import { MdArrowForward } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
+import Avatar from './Avatar';
+
 import theme from '@/styles/theme';
 
 interface TraderData {
@@ -37,7 +39,7 @@ const TraderList = ({ traders, badgeRank }: TraderListProps) => {
         >
           {/* 좌측: 프로필 이미지 및 뱃지 */}
           <div css={badgeContainerStyle}>
-            <img src={trader.profileImage} alt={`${trader.name} 프로필`} css={profileImageStyle} />
+            <Avatar src={trader.profileImage} alt='프로필이미지' size={50} />
             {badgeRank?.includes(trader.traderId) && (
               <div css={badgeStyle}>
                 {badgeRank.indexOf(trader.traderId) + 1} {/* 순위 계산 */}

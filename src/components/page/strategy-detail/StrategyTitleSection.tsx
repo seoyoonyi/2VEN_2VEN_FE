@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
+import Avatar from '@/components/common/Avatar';
 import { ROUTES } from '@/constants/routes';
 import theme from '@/styles/theme';
 
@@ -49,7 +50,7 @@ const StrategyTitleSection = ({
           <div css={infoSectionStyle}>
             <div css={authorInfoStyle}>
               <button onClick={() => handleMoveProfile(traderId || '')} css={authorDetailsStyle}>
-                <img src={imgUrl} alt={traderName} css={authorImageStyle} />
+                <Avatar src={imgUrl} alt='트레이더 프로필' size={80} />
                 <div css={followerAreaStyle}>
                   <div css={traderTextStyle}>트레이더</div>
                   <div css={followerTextStyle}>{traderName}</div>
