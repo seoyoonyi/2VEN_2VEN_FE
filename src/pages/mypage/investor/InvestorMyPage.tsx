@@ -45,6 +45,8 @@ const InvestorMyPage = () => {
   const { mutate: updateFolder } = useUpdateFolderName();
   const { mutate: deleteFolder } = useDeleteFolder();
 
+  console.log(data);
+
   const handleFolderList = (folderId: number) => {
     navigate(ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(String(folderId)));
     window.scrollTo(0, 0);
@@ -85,6 +87,7 @@ const InvestorMyPage = () => {
   const handleUpdateFolder = (folderId: number) => {
     const currentFolder = data?.data.find((folder: Folder) => folder.folderId === folderId);
     const currentFolderName = currentFolder?.folderName || '';
+    const isDefaultFolder = currentFolder?.isDefaultFolder === 'Y';
     let updatedFolderName = currentFolderName;
 
     openContentModal({
@@ -98,6 +101,11 @@ const InvestorMyPage = () => {
         />
       ),
       onAction: () => {
+        if (isDefaultFolder) {
+          showToast('기본 폴더는 수정할 수 없습니다.', 'error');
+          return false;
+        }
+
         if (!updatedFolderName.trim()) {
           showToast('폴더명을 입력해주세요.', 'error');
           return false;
