@@ -103,10 +103,6 @@ export const router = createBrowserRouter(
           element: <TraderListPage />,
         },
         {
-          path: ROUTES.TRADER.PROFILE(':traderId'),
-          element: <TraderDetailPage />,
-        },
-        {
           path: ROUTES.SEARCH.TOTAL,
           element: <SearchTotalResultsPage />,
         },
@@ -207,6 +203,14 @@ export const router = createBrowserRouter(
           element: (
             <ProtectedRoute requiredAuth={true}>
               <WithdrawalSuccessPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: ROUTES.TRADER.PROFILE(':traderId'),
+          element: (
+            <ProtectedRoute requiredAuth={true}>
+              <TraderDetailPage />
             </ProtectedRoute>
           ),
         },
