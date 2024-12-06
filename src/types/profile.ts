@@ -3,6 +3,7 @@ export interface ProfileUrlResponse {
   message: string;
   category: string;
   displayName: string;
+  fileId: string;
 }
 
 export interface SidebarProfileResponse {
@@ -14,4 +15,18 @@ export interface SidebarProfileResponse {
     introduction: string;
     fileId: string;
   };
+}
+
+export interface UpdatePersonalDetailsPayload {
+  nickname: string;
+  phoneNumber: string;
+  introduction: string;
+  marketingOptional: boolean;
+}
+
+export interface ChangePasswordResponse {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+  token: string;
 }

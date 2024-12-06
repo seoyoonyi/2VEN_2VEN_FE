@@ -20,7 +20,7 @@ export const usePostDailyAnalysis = () => {
     }: {
       strategyId: number;
       payload: DailyAnalysisProps[];
-      authRole: 'admin' | 'trader';
+      authRole: UserRole;
     }) => fetchPostDailyAnalysis(strategyId, { payload }, authRole),
     onError: (error) => error.message,
     onSuccess: () => {
@@ -43,7 +43,7 @@ export const usePutDailyAnalysis = () => {
     }: {
       strategyId: number;
       payload: DailyAnalysisProps;
-      authRole: 'admin' | 'trader';
+      authRole: UserRole;
       dailyDataId: number;
     }) => fetchPutDailyAnalysis(strategyId, payload, authRole, dailyDataId),
     onError: (error) => error.message,

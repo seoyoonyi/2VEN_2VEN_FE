@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchDefaultStrategyDetail } from '@/api/strategyDetail';
+import { UserRole } from '@/types/route';
 
-const useFetchStrategyDetail = (strategyId: string) => {
+const useFetchStrategyDetail = (strategyId: string, role: UserRole) => {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['strategyDetail', strategyId],
+    queryKey: ['strategyDetail', strategyId, role],
     queryFn: async () => {
-      const res = await fetchDefaultStrategyDetail(Number(strategyId));
+      const res = await fetchDefaultStrategyDetail(Number(strategyId), role);
       if (!res.data || !res.data.strategyTitle) {
         throw new Error('Invalid strategy data');
       }

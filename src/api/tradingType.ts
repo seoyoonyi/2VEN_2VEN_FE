@@ -38,10 +38,14 @@ export const fetchTradingTypeDetail = async (id: number, role: string | null) =>
 };
 
 //매매유형 삭제
-export const fetchDeleteTradingType = async (id: number, role: string | null, fileUrl: string) => {
+export const fetchDeleteTradingType = async (
+  id: string,
+  role: string | null,
+  fileUrls: string[]
+) => {
   try {
-    if (fileUrl) {
-      await fetchDeleteIcon(role, decodeURIComponent(fileUrl));
+    if (fileUrls.length > 0) {
+      await Promise.all(fileUrls.map(async (fileUrl) => await fetchDeleteIcon(role, fileUrl)));
     }
     const req = await apiClient.delete(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${id}`, {
       headers: {
@@ -59,13 +63,12 @@ export const fetchDeleteTradingType = async (id: number, role: string | null, fi
 export const fetchPostTradingType = async ({
   tradingTypeName,
   tradingTypeIcon,
-  isActive,
   role,
 }: TradingTypeProps & { role: UserRole }): Promise<{ msg: string; timestamp: string }> => {
   const body = {
     tradingTypeName,
     tradingTypeIcon,
-    isActive,
+    isActive: 'Y',
   };
 
   const req = await apiClient.post(API_ENDPOINTS.ADMIN.TRADING_TYPES, body, {
@@ -82,14 +85,13 @@ export const fetchPutTradingType = async ({
   tradingTypeOrder,
   tradingTypeName,
   tradingTypeIcon,
-  isActive,
   role,
 }: TradingTypeProps & { role: UserRole }): Promise<{ msg: string; timestamp: string }> => {
   const body = {
     tradingTypeName,
     tradingTypeOrder,
     tradingTypeIcon,
-    isActive,
+    isActive: 'Y',
   };
   const req = await apiClient.put(`${API_ENDPOINTS.ADMIN.TRADING_TYPES}/${tradingTypeId}`, body, {
     headers: {

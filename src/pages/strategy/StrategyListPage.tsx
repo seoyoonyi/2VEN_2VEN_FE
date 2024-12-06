@@ -13,6 +13,7 @@ import { ROUTES } from '@/constants/routes';
 import useFetchStrategyList from '@/hooks/queries/useFetchStrategyList';
 import useFetchStrategyOptionData from '@/hooks/queries/useFetchStrategyOptionData';
 import { useAuthStore } from '@/stores/authStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 
 const desc = [
@@ -31,6 +32,7 @@ const StrategyListPage = () => {
   const limit = 30;
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const { isToastVisible, hideToast } = useToastStore();
 
   const { data, isLoading, error } = useFetchStrategyList({
     tradingCycleId,
@@ -42,6 +44,12 @@ const StrategyListPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [page]);
+
+  useEffect(() => {
+    if (isToastVisible) {
+      hideToast();
+    }
+  }, [hideToast, isToastVisible]);
 
   const handleTradingCycleChange = (option: Option) => {
     setTradingCycleId(Number(option.value));

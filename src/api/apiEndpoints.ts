@@ -34,16 +34,24 @@ export const API_ENDPOINTS = {
     UPDATE_FORM: '/api/strategies/update-form', // 전략 수정 조회
     TRADER_STATS: '/api/strategies/strategy-trader-count', //트레이더 통계조회 (트레이더 수, 전략 수)
     UPLOAD_ACCOUNT_IMG: '/api/live-account-data', //실계좌 이미지 관리
+    SM_SCORE: '/api/strategies/top5-sm-score', // 메인페이지 SMScore Top5
+    REVIEWS: (strategyId: number) => `/api/strategies/${strategyId}/reviews`, // 리뷰(전략상세하단)
+  },
+  TRADERS: {
+    STRATEGIES: (traderId: string) => `/api/traders/${traderId}/strategies`, // 트레이더의 나의 전략 조회
   },
   INQUIRY: '/api/consultations', // 나의 문의 , 문의 등록
   FILES: {
+    PROFILE_UPLOAD: '/api/files/profile', // 프로필 이미지 업로드
     PROFILE_URL: (memberId: string) => `/api/files/profile/${memberId}`, // 프로필 이미지 URL
+    DELETE_PROFILE: (fileId: string) => `/api/files/profile/${fileId}`,
     PROPOSAL: '/api/files/proposal', // 제안서 파일 업로드
     ICON: '/api/files/icon', //아이콘 업로드
   },
   FOLLOWING: {
     FOLDERS: '/api/members/following-strategy-folders', // 나의 관심 전략
     FOLDER_LIST: 'api/members/following-strategy-folderlist', // 폴더 목록
+    STRATEGY: 'api/members/following-strategy', // 전략 팔로우
   },
   SEARCH: {
     TRADERS: '/api/traders/search', // 트레이더 검색
@@ -53,5 +61,8 @@ export const API_ENDPOINTS = {
   // 개인정보관리(프로필)
   MEMBERS: {
     SIDEBAR_PROFILE: (memberId: string) => `/api/members/${memberId}/sidebar-profile`, // 사이드바 프로필 정보 조회
+    DETAILS: '/api/members/details', // 회원 상세 정보 조회
+    PASSWORD_CHANGE: '/api/members/change-password', // 비밀번호 변경
+    WITHDRAWAL: '/api/members/withdrawal', // 회원탈퇴
   },
 };

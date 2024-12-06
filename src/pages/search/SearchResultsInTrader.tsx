@@ -18,7 +18,14 @@ const SearchResultsInTrader = () => {
   const [sortOption, setSortOption] = useState<'strategyCnt' | 'latestSignup'>('strategyCnt');
   console.log('검색어:', keyword);
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-  const { data: traderResults, isLoading: isTraderLoading } = useSearchTraders(keyword, sortOption); // 트레이더 검색 결과
+  const { data: traderResults, isLoading: isTraderLoading } = useSearchTraders(
+    keyword,
+    sortOption,
+    {
+      page: currentPage - 1, // 페이지는 0부터 시작
+      pageSize: 30,
+    }
+  ); // 트레이더 검색 결과
 
   const sortOptions = [
     { label: '전략 많은 순', value: 'strategyCnt' },

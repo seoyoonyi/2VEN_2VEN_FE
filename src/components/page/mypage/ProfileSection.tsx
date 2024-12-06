@@ -1,10 +1,10 @@
 import { css } from '@emotion/react';
-import { BsFillPersonFill } from 'react-icons/bs';
 
+import Avatar from '@/components/common/Avatar';
 import theme from '@/styles/theme';
 
 interface ProfileSectionProps {
-  userImage: string | null;
+  userImage?: string | null;
   userRole: '트레이더' | '투자자';
   nickname: string;
   desc: string;
@@ -13,11 +13,7 @@ interface ProfileSectionProps {
 const ProfileSection = ({ userImage, userRole, nickname, desc }: ProfileSectionProps) => (
   <div css={profileWrapper}>
     <div css={profileImageStyle}>
-      {userImage ? (
-        <img src={userImage} alt='프로필사진' />
-      ) : (
-        <BsFillPersonFill color='white' size={60} />
-      )}
+      <Avatar src={userImage} alt='프로필사진' size='100%' />
     </div>
     <div css={roleStyle}>{userRole}</div>
     <div css={nicknameStyle}>{nickname}</div>
@@ -41,7 +37,6 @@ const profileImageStyle = css`
   border-radius: 50%;
   margin-bottom: 24px;
   overflow: hidden;
-  background-color: ${theme.colors.gray[300]};
 
   img {
     width: 100%;
@@ -73,6 +68,7 @@ const descStyle = css`
   text-align: center;
   width: 225px;
   font-weight: 400;
+  white-space: pre-wrap;
   color: ${theme.colors.gray[700]};
 `;
 

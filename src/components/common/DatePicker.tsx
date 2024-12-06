@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { css } from '@emotion/react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
+import { AiOutlineCalendar } from 'react-icons/ai';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi2';
 
 import useOnClickOutside from '@/hooks/useOnClickOutside';
@@ -19,13 +20,18 @@ dayjs.locale('ko');
 const WEEKS = ['일', '월', '화', '수', '목', '금', '토'];
 
 interface DatePicker {
-  selected: Date;
+  selected?: Date;
   setSelected: (value: Date) => void;
+  placeholder: string;
+  hasSelected: boolean; // 추가
+  setHasSelected: (value: boolean) => void; // 추가
 }
 
-const DatePicker = ({ selected, setSelected }: DatePicker) => {
+const DatePicker = ({ selected, setSelected, placeholder }: DatePicker) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(dayjs(selected).startOf('month'));
+  // selected가 undefined일 때 현재 날짜를 사용
+  const [currentMonth, setCurrentMonth] = useState(dayjs(selected || new Date()).startOf('month'));
+  const [hasSelected, setHasSelected] = useState(false); // 추가
 
   const datePickerRef = useRef<HTMLDivElement>(null);
   useOnClickOutside(datePickerRef, () => setIsOpen(false));
@@ -36,7 +42,8 @@ const DatePicker = ({ selected, setSelected }: DatePicker) => {
 
   const onClickDate = (date: number) => {
     const clickedDate = currentMonth.date(date).toDate();
-    setSelected(clickedDate);
+    setSelected(clickedDate); // 이 시점에 API 호출이 이루어져야 함!!!!
+    setHasSelected(true); // 날짜를 선택했을 때 hasSelected를 true로 설정
     setIsOpen(!isOpen);
   };
 
@@ -47,14 +54,20 @@ const DatePicker = ({ selected, setSelected }: DatePicker) => {
   const onPreviousMonth = () => setCurrentMonth(currentMonth.subtract(1, 'month'));
   const onNextMonth = () => setCurrentMonth(currentMonth.add(1, 'month'));
 
+  // selected가 undefined일 때 placeholder를 보여줌
+  const displayValue = hasSelected && selected ? formatYearMonthDay(selected) : placeholder;
+
   return (
     <div css={datePickerStyle} ref={datePickerRef}>
-      <input
-        type='button'
-        value={formatYearMonthDay(selected)}
-        className='date-input'
-        onClick={onClickDateButton}
-      />
+      <div className='date-input-wrapper'>
+        <input
+          type='button'
+          value={displayValue}
+          className='date-input'
+          onClick={onClickDateButton}
+        />
+        <AiOutlineCalendar className='calendar-icon' />
+      </div>
       <div className={`${isOpen ? 'open ' : ''}calendar-container`}>
         <div className='calendar-header'>
           <div className='year-control'>
@@ -129,24 +142,45 @@ const DatePicker = ({ selected, setSelected }: DatePicker) => {
 const datePickerStyle = css`
   position: relative;
 
+  .date-input-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+
   .date-input {
-    width: 90px;
-    height: 32px;
-    border: 0;
+    width: 160px;
+    height: 36px;
+    border: 1px solid ${theme.colors.gray[300]};
     outline: none;
-    font-size: 0.85rem;
+    font-size: 14px;
     font-weight: 500;
-    color: ${theme.colors.gray[800]};
-    background-color: ${theme.colors.gray[100]};
-    text-align: center;
+    color: ${theme.colors.gray[600]};
+    background-color: ${theme.colors.main.white};
+    text-align: left;
     caret-color: transparent;
     cursor: pointer;
+    text-indent: 32px;
+
+    &:placeholder {
+      color: ${theme.colors.gray[300]};
+    }
+  }
+
+  .calendar-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: ${theme.colors.gray[600]};
+    pointer-events: none; /* 아이콘이 클릭 이벤트를 방해하지 않도록 설정 */
   }
 
   .calendar-container {
     z-index: 100;
     position: absolute;
-    top: 36px;
+    top: 44px;
     left: 0;
     display: none;
     padding: 18px;

@@ -37,8 +37,8 @@ const defaultColumns: ColumnConfig[] = [
       <div css={strategyTitleContainerStyle}>
         <div css={strategyTitleStyle}>{strategy.strategyTitle}</div>
         <div css={iconStyle}>
-          <img src={strategy.tradingTypeIcon} alt='매매유형' width={18} height={18} />
-          <img src={strategy.cycleIcon} alt='주기' width={18} height={18} />
+          <img src={strategy.tradingTypeIcon} alt='매매유형' height={18} />
+          <img src={strategy.cycleIcon} alt='주기' height={18} />
           {strategy.investmentAssetClassesIcon
             ?.slice(0, 2)
             .map((icon) => <img key={icon} src={icon} alt={icon} height={18} />)}
@@ -124,15 +124,19 @@ const SearchedStrategyList = ({
           <div key={column.id}>{column.header}</div>
         ))}
       </div>
-      {strategies.map((strategy) => (
-        <Link to={`/strategies/${strategy.strategyId}`} key={strategy.strategyId}>
-          <div css={rowStyle(gridTemplate)}>
-            {columns.map((column) => (
-              <div key={column.id}>{column.render(strategy)}</div>
-            ))}
-          </div>
-        </Link>
-      ))}
+      {strategies.length > 0 ? (
+        strategies.map((strategy) => (
+          <Link to={`/strategies/${strategy.strategyId}`} key={strategy.strategyId}>
+            <div css={rowStyle(gridTemplate)}>
+              {columns.map((column) => (
+                <div key={column.id}>{column.render(strategy)}</div>
+              ))}
+            </div>
+          </Link>
+        ))
+      ) : (
+        <div css={emptyStyle}>검색 결과가 없습니다.</div>
+      )}
     </div>
   );
 };
@@ -221,4 +225,13 @@ const mddStyle = (mdd: string | number | undefined) => css`
       : theme.colors.main.red};
 `;
 
+const emptyStyle = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 76px 24px;
+  font: ${theme.typography.fontSizes.caption};
+  color: ${theme.colors.gray[500]};
+  border-bottom: 1px solid ${theme.colors.gray[300]};
+`;
 export default SearchedStrategyList;

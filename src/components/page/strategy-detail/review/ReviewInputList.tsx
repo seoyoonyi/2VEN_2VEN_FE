@@ -7,18 +7,19 @@ import ReviewItem from '@/components/page/strategy-detail/review/ReviewItem';
 import theme from '@/styles/theme';
 
 interface Review {
-  id: number;
+  strategyReviewId: number;
   writerId: string;
-  profileImg: string;
+  nickName: string;
+  profileUrl: string;
   content: string;
-  date: string;
+  writedAt: string;
 }
 
 interface ReviewInputListProps {
   reviews: Review[];
   writerId: string;
-  profileImg: string;
-  onAddReview: (newReview: Review) => void;
+  isLogged: boolean;
+  onAddReview: (content: string) => void;
   onEditReview: (id: number, updatedContent: string) => void;
   onDeleteReview: (id: number) => void;
 }
@@ -26,7 +27,7 @@ interface ReviewInputListProps {
 const ReviewInputList = ({
   reviews,
   writerId,
-  profileImg,
+  isLogged,
   onAddReview,
   onEditReview,
   onDeleteReview,
@@ -40,20 +41,8 @@ const ReviewInputList = ({
   const handleAddButtonClick = () => {
     if (!inputValue.trim()) return;
 
-    // 리뷰 등록
-    const newReview: Review = {
-      id: Date.now(),
-      writerId,
-      profileImg,
-      content: inputValue.trim(),
-      date: new Date().toISOString().split('T')[0],
-    };
-
+    onAddReview(inputValue.trim());
     setInputValue('');
-
-    if (onAddReview) {
-      onAddReview(newReview);
-    }
   };
 
   return (
@@ -64,14 +53,15 @@ const ReviewInputList = ({
           type='text'
           value={inputValue}
           onChange={onInputChange}
-          placeholder='내용을 입력해주세요'
+          placeholder={isLogged ? '내용을 입력해주세요' : '로그인 후 입력 가능합니다'}
           css={inputStyle}
+          disabled={!isLogged}
         />
         <Button
           variant='accent'
           size='sm'
           width={110}
-          disabled={!inputValue.trim()}
+          disabled={!inputValue.trim() || !isLogged}
           onClick={handleAddButtonClick}
         >
           등록
@@ -81,7 +71,7 @@ const ReviewInputList = ({
       <div css={reviewListStyle}>
         {reviews.map((review) => (
           <ReviewItem
-            key={review.id}
+            key={review.strategyReviewId}
             review={review}
             writerId={writerId}
             onEdit={onEditReview || (() => {})}

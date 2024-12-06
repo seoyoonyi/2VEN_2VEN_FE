@@ -108,8 +108,8 @@ const AnalysisTable = ({
         </thead>
         <tbody>
           {analysis?.length || 0 ? (
-            analysis?.map((values) => (
-              <tr key={values.dataId} css={tableRowStyle}>
+            analysis?.map((values, idx) => (
+              <tr key={`${values.dataId}- ${idx}`} css={tableRowStyle}>
                 {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
                 role === 'ROLE_ADMIN' ? (
                   <td css={tableCellStyle}>

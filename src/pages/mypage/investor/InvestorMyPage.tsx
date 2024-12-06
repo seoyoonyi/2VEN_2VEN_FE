@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,20 +23,24 @@ import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 
-interface Folder {
+export interface Folder {
   folderId: number;
   folderName: string;
   modifiedAt: string;
+  strategyCount: number;
   isDefaultFolder: string;
 }
 
 const InvestorMyPage = () => {
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
   const { openContentModal } = useContentModalStore();
   const { openModal } = useModalStore();
   const { isToastVisible, showToast, hideToast, message, type } = useToastStore();
   const navigate = useNavigate();
 
-  const { data, isLoading, isError } = useFolderList();
+  const { data, isLoading, isError } = useFolderList(page - 1, limit);
   const { mutate: submitFolder } = useSubmitFolder();
   const { mutate: updateFolder } = useUpdateFolderName();
   const { mutate: deleteFolder } = useDeleteFolder();
@@ -137,7 +143,7 @@ const InvestorMyPage = () => {
 
   if (isLoading) {
     return (
-      <div css={tableWrapperStyle}>
+      <div>
         <Loader />
       </div>
     );
@@ -157,12 +163,18 @@ const InvestorMyPage = () => {
           onEditFolder={handleUpdateFolder}
           onDeleteFolder={handleDeleteFolder}
         />
-        <Pagination totalPage={5} limit={10} page={1} setPage={() => {}} />
+        <Pagination totalPage={data.totalPages} limit={limit} page={page} setPage={setPage} />
       </div>
       <ContentModal />
       <Modal />
       {isToastVisible && (
-        <Toast message={message} onClose={hideToast} isVisible={isToastVisible} type={type} />
+        <Toast
+          message={message}
+          onClose={hideToast}
+          isVisible={isToastVisible}
+          type={type}
+          duration={1000}
+        />
       )}
     </div>
   );

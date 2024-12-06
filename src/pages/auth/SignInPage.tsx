@@ -5,9 +5,11 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
+import Toast from '@/components/common/Toast';
 import { AUTH_TEXT } from '@/constants/auth';
 import { ROUTES } from '@/constants/routes';
 import { useSigninMutation } from '@/hooks/mutations/useAuthMutation';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { isValidPassword, validateEmail } from '@/utils/validation';
 
@@ -22,6 +24,7 @@ const SignInPage: React.FC = () => {
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const { mutateAsync: signin } = useSigninMutation();
+  const { isToastVisible, hideToast, message, type } = useToastStore();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -52,6 +55,9 @@ const SignInPage: React.FC = () => {
       console.log('Login result:', result);
       if (result.status === 'success' && result.data) {
         // 로그인 성공 시
+        // 현재 히스토리 스택을 모두 비우고 홈으로 이동
+        window.history.pushState(null, '', ROUTES.HOME.PATH);
+        window.history.go(-(window.history.length - 1));
         // role을 state로 전달하지 않고, 단순 홈으로 이동
         navigate(ROUTES.HOME.PATH, { replace: true });
         // replace: true로 설정하여 뒤로가기 시 로그인 페이지로 돌아가지 않도록 설정
@@ -138,6 +144,7 @@ const SignInPage: React.FC = () => {
           <Link to={ROUTES.AUTH.SIGNUP.SELECT_TYPE}>{AUTH_TEXT.links.signup}</Link>
         </li>
       </ul>
+      <Toast message={message} type={type} isVisible={isToastVisible} onClose={hideToast} />
     </div>
   );
 };

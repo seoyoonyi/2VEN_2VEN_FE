@@ -10,8 +10,9 @@ import { UserRole } from '@/types/route';
 export const useStrategyDetailDelete = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<{ msg: string }, Error, number>({
-    mutationFn: (data: number) => fetchDeleteStrategyDetail(data),
+  return useMutation({
+    mutationFn: ({ id, role }: { id: number; role: UserRole }) =>
+      fetchDeleteStrategyDetail(id, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['strategyDetail'] });
     },

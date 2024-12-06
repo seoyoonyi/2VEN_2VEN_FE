@@ -2,9 +2,14 @@ import apiClient from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
 
 // 폴더 목록 조회
-export const fetchFolderList = async () => {
+export const fetchFolderList = async (params: { page: number; pageSize: number }) => {
   try {
-    const res = await apiClient.get(API_ENDPOINTS.FOLLOWING.FOLDER_LIST);
+    const res = await apiClient.get(API_ENDPOINTS.FOLLOWING.FOLDER_LIST, {
+      params: {
+        page: params.page,
+        pageSize: params.pageSize,
+      },
+    });
     return res;
   } catch (error) {
     console.error('Failed to fetch folder list data:', error);

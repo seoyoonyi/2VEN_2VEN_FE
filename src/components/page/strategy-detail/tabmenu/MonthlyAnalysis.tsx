@@ -7,6 +7,7 @@ import AnalysisTable, { AnalysisProps } from '../table/AnalysisTable';
 import Pagination from '@/components/common/Pagination';
 import useFetchMonthlyAnalysis from '@/hooks/queries/useFetchMonthlyAnalysis';
 import usePagination from '@/hooks/usePagination';
+import { UserRole } from '@/types/route';
 
 export interface MonthlyDataProps {
   strategyMonthlyDataId: number;
@@ -19,12 +20,13 @@ export interface MonthlyDataProps {
   monthlyCumulativeReturn: number;
 }
 
-const MonthlyAnalysis = ({ attributes, strategyId }: AnalysisProps) => {
+const MonthlyAnalysis = ({ attributes, strategyId, role }: AnalysisProps) => {
   const { pagination, setPage } = usePagination(1, 5);
   const { monthlyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchMonthlyAnalysis(
     Number(strategyId),
     pagination.currentPage - 1,
-    pagination.pageSize
+    pagination.pageSize,
+    role as UserRole
   );
 
   const normalizedData = useMemo(() => {

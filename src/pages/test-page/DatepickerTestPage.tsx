@@ -18,7 +18,13 @@ const DatePickerTest = () => {
         <div css={contentStyle}>
           <div css={sectionStyle}>
             <h3>데이트피커 컴포넌트</h3>
-            <DatePicker selected={selectedDate} setSelected={setSelectedDate} />
+            <DatePicker
+              selected={selectedDate}
+              setSelected={setSelectedDate}
+              placeholder='날짜를 선택하세요'
+              hasSelected={false}
+              setHasSelected={() => {}}
+            />
           </div>
 
           <div css={sectionStyle}>

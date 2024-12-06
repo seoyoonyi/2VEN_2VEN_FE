@@ -1,12 +1,18 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { fetchDailyAnalysis } from '@/api/strategyDetail';
+import { UserRole } from '@/types/route';
 
-const useFetchDailyAnalysis = (strategyId: number, page: number, pageSize: number) => {
+const useFetchDailyAnalysis = (
+  strategyId: number,
+  page: number,
+  pageSize: number,
+  role: UserRole
+) => {
   const { data, isLoading } = useQuery({
-    queryKey: ['dailyAnalysis', strategyId, page, pageSize],
+    queryKey: ['dailyAnalysis', strategyId, page, pageSize, role],
     queryFn: async () => {
-      const res = await fetchDailyAnalysis(strategyId, page, pageSize);
+      const res = await fetchDailyAnalysis(strategyId, page, pageSize, role);
       if (!strategyId) {
         throw new Error('Invalid DailyAnalysis');
       }

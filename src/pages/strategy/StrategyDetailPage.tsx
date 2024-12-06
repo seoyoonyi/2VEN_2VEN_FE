@@ -46,23 +46,24 @@ const StrategyDetailPage = () => {
   const { strategyId } = useParams();
   const navigate = useNavigate();
   const role = user?.role as UserRole;
-  const { strategy } = useFetchStrategyDetail(strategyId || '');
-  const { statistics, writedAt } = useStatistics(Number(strategyId));
+  const { strategy } = useFetchStrategyDetail(strategyId || '', role);
+  const { statistics } = useStatistics(Number(strategyId), role);
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { mutate: approveStrategy } = useStrategyDetailApprove();
   const { mutate: terminateStrategy } = useStrategyDetailTerminate();
   const { openModal } = useModalStore();
-  const { dailyAnalysis } = useFetchDailyAnalysis(Number(strategyId), 0, 5);
+  const { dailyAnalysis } = useFetchDailyAnalysis(Number(strategyId), 0, 5, role);
   const { data: approveState } =
     useFetchApproveState(Number(strategyId), role, {
       enabled: strategy?.isApproved === 'N',
     }) || '';
   const { isToastVisible, hideToast, message, type } = useToastStore();
-  const isApproved = dailyAnalysis?.length >= 3 || approveState?.isApproved === 'N';
+  const isApproved =
+    (dailyAnalysis?.length >= 3 && strategy?.requestAvailable === true) ||
+    approveState?.isApproved === 'N';
   const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
   const isOwner = user?.memberId === strategy?.memberId;
   const isAdmin = role === 'ROLE_ADMIN';
-  const isPrivate = role === 'ROLE_ADMIN' || role === 'ROLE_TRADER';
 
   const statisticsTableData = (
     mapping: { label: string; key: string }[],
@@ -93,7 +94,6 @@ const StrategyDetailPage = () => {
           strategyId={Number(strategyId)}
           userId={strategy?.memberId}
           role={user?.role}
-          isSelfed={isPrivate}
         />
       ),
     },
@@ -136,7 +136,7 @@ const StrategyDetailPage = () => {
       title: '전략 삭제',
       desc: '해당 전략의 모든 정보가 삭제됩니다.',
       onAction: () => {
-        deleteStrategyDetail(id);
+        deleteStrategyDetail({ id, role });
         navigate(ROUTES.STRATEGY.LIST);
       },
     });
@@ -187,12 +187,7 @@ const StrategyDetailPage = () => {
         strategy?.isApproved !== 'P' &&
         approveState?.isApproved === 'N' &&
         strategy?.isApproved === 'N' && (
-          <ReasonItem
-            title='미승인 이유는 이렇습니다'
-            content={approveState?.rejectionReason}
-            admin={approveState?.managerNickname}
-            adminImg={approveState?.profileImg}
-          />
+          <ReasonItem title='미승인 이유는 이렇습니다' {...approveState} />
         )}
       <div css={contentStyle}>
         <div css={contentWrapper}>
@@ -204,6 +199,7 @@ const StrategyDetailPage = () => {
               isStrategyApproved={strategy?.isApproved}
               isApprovedState={isApproved}
               isTerminated={isTerminated}
+              isFollowing={strategy?.isFollowed || false}
               onApproval={() => {
                 handleApproval(strategy.strategyId, role);
               }}
@@ -219,7 +215,7 @@ const StrategyDetailPage = () => {
               date={formatDate(strategy?.writedAt || '', 'withDayTime')}
               followers={strategy?.followersCount}
               minimumInvestment={strategy?.minInvestmentAmount}
-              lastUpdatedDate={writedAt ? formatDate(writedAt) : '데이터없음'}
+              lastUpdatedDate={statistics?.endDate ? formatDate(statistics?.endDate) : '데이터없음'}
             />
             <StrategyContent content={strategy?.strategyOverview} />
             {strategy?.strategyProposalLink && <FileDownSection {...strategy} />}
@@ -230,7 +226,7 @@ const StrategyDetailPage = () => {
         </div>
       </div>
       <div css={reviewSectionWrapper}>
-        <ReviewSection />
+        <ReviewSection strategyId={Number(strategyId)} writerId={user?.memberId || ''} />
       </div>
       <Modal />
       {isToastVisible && (

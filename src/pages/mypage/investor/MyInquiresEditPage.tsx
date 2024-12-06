@@ -12,7 +12,6 @@ import StrategyInfo from '@/components/page/mypage/inquires-edit/StrategyInfo';
 import { ROUTES } from '@/constants/routes';
 import { useUpdateMyInquiry } from '@/hooks/mutations/useMyInquiryMutations';
 import useFetchInquiryDetail from '@/hooks/queries/useFetchInquiryDetail';
-import { useToastWithNavigate } from '@/hooks/useToastWithNavigate';
 import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
@@ -24,7 +23,6 @@ const MyInquiresEditPage = () => {
   const { user } = useAuthStore();
   const { openModal } = useModalStore();
   const { isToastVisible, hideToast, message, showToast } = useToastStore();
-  const showToastAndNavigate = useToastWithNavigate();
 
   const { inquiryId } = useParams<{ inquiryId: string }>();
   const navigate = useNavigate();
@@ -67,10 +65,9 @@ const MyInquiresEditPage = () => {
           { id: Number(inquiryId), payload: formData },
           {
             onSuccess: () => {
-              showToastAndNavigate(
-                '문의 수정이 정상적으로 완료되었습니다.',
-                ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(String(inquiryId))
-              );
+              showToast('문의 수정이 정상적으로 완료되었습니다.');
+              navigate(ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(String(inquiryId)));
+              window.scrollTo(0, 0);
             },
             onError: (error) => {
               showToast('문의 수정 중 문제가 발생했습니다.', 'error');
