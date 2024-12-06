@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { css } from '@emotion/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
 import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Toast from '@/components/common/Toast';
