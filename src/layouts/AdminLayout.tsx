@@ -1,21 +1,17 @@
 import { css } from '@emotion/react';
 import { Outlet } from 'react-router-dom';
 
-import Footer from '@/components/common/Footer';
-import Header from '@/components/common/Header';
 import AdminNav from '@/components/navigation/AdminNav';
 import theme from '@/styles/theme';
 
 const AdminLayout = () => (
   <div css={wrapperStyle}>
-    <Header />
     <main css={mainStyle}>
       <AdminNav />
       <div css={outletWrapperStyle}>
         <Outlet />
       </div>
     </main>
-    <Footer />
   </div>
 );
 
@@ -31,7 +27,7 @@ const mainStyle = css`
   display: flex;
   justify-content: center;
   gap: 20px;
-  margin: 76px 0;
+  padding: 76px 0;
 `;
 
 const outletWrapperStyle = css`
