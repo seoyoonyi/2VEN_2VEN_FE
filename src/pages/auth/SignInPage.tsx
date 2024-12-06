@@ -5,9 +5,11 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
+import Toast from '@/components/common/Toast';
 import { AUTH_TEXT } from '@/constants/auth';
 import { ROUTES } from '@/constants/routes';
 import { useSigninMutation } from '@/hooks/mutations/useAuthMutation';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { isValidPassword, validateEmail } from '@/utils/validation';
 
@@ -22,6 +24,7 @@ const SignInPage: React.FC = () => {
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const { mutateAsync: signin } = useSigninMutation();
+  const { isToastVisible, hideToast, message, type } = useToastStore();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -141,6 +144,7 @@ const SignInPage: React.FC = () => {
           <Link to={ROUTES.AUTH.SIGNUP.SELECT_TYPE}>{AUTH_TEXT.links.signup}</Link>
         </li>
       </ul>
+      <Toast message={message} type={type} isVisible={isToastVisible} onClose={hideToast} />
     </div>
   );
 };
