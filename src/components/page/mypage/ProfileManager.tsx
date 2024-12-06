@@ -1,16 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { css } from '@emotion/react';
 
-import defaultImage from '@/assets/images/default_avatar.png';
 import Avatar from '@/components/common/Avatar';
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
 import Input from '@/components/common/Input';
 import SingleButtonModal from '@/components/common/SingleButtonModal';
+import Toast from '@/components/common/Toast';
 import { useNicknameCheck } from '@/hooks/mutations/useNicknameCheck';
+import {
+  useDeleteProfileImage,
+  useUploadProfileImage,
+} from '@/hooks/mutations/useProfileImageMutations';
 import { useUpdatePersonalDetails } from '@/hooks/mutations/useUpdatePersonalDetails';
 import useFetchPersonalDetails from '@/hooks/queries/useFetchPersonalDetails';
+import { useProfileImage } from '@/hooks/queries/useProfileImage';
+import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
@@ -28,15 +34,28 @@ interface PersonalDetails {
 const ProfileManager = () => {
   const maxLength = 150;
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { user } = useAuthStore();
+  const { isToastVisible, showToast, hideToast, message, type } = useToastStore();
   const { openModal } = useModalStore();
+
+  const { data: profileImageData } = useProfileImage(user?.memberId || '');
   const { data, isLoading, isError } = useFetchPersonalDetails();
   const { mutate: updatePersonalDetails } = useUpdatePersonalDetails();
-
+  const { mutate: uploadImage } = useUploadProfileImage();
+  const { mutate: deleteImage } = useDeleteProfileImage();
   const nicknameCheck = useNicknameCheck();
-  const [userImage] = useState(null);
+
+  const [profile, setProfile] = useState<PersonalDetails>({
+    profilePath: '',
+    email: '',
+    nickname: '',
+    phoneNumber: '',
+    introduction: '',
+    marketingOptional: false,
+  });
   const [nicknameMessage, setNicknameMessage] = useState('');
-  const { showToast } = useToastStore();
-  const [profile, setProfile] = useState<PersonalDetails>(data);
 
   useEffect(() => {
     if (data) {
@@ -51,8 +70,37 @@ const ProfileManager = () => {
     }
   }, [data]);
 
+  // Handlers
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return showToast('선택된 파일이 없습니다.', 'error');
+
+    const fileUrl = URL.createObjectURL(file);
+
+    uploadImage(
+      { fileUrl, fileItem: file },
+      {
+        onSuccess: () => showToast('프로필 사진이 업로드되었습니다.'),
+        onError: () => showToast('프로필 사진 업로드에 실패했습니다.', 'error'),
+      }
+    );
+  };
+
+  const handleDeleteImage = () => {
+    if (!profileImageData?.fileId) {
+      return showToast('삭제할 사진이 없습니다.', 'error');
+    }
+
+    deleteImage(profileImageData.fileId, {
+      onSuccess: () => showToast('프로필 사진이 삭제되었습니다.'),
+      onError: () => showToast('프로필 사진 삭제에 실패했습니다.', 'error'),
+    });
+  };
+
+  const handleUploadClick = () => fileInputRef.current?.click();
+
   const handleChange =
-    (field: keyof typeof profile) =>
+    (field: keyof PersonalDetails) =>
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const value =
         event.target.type === 'checkbox'
@@ -63,14 +111,8 @@ const ProfileManager = () => {
     };
 
   const validateForm = () => {
-    if (!profile.nickname.trim()) {
-      alert('닉네임을 입력해주세요.');
-      return false;
-    }
-    if (!profile.phoneNumber.trim()) {
-      alert('휴대폰 번호를 입력해주세요.');
-      return false;
-    }
+    if (!profile.nickname.trim()) return alert('닉네임을 입력해주세요.');
+    if (!profile.phoneNumber.trim()) return alert('휴대폰 번호를 입력해주세요.');
     return true;
   };
 
@@ -82,17 +124,11 @@ const ProfileManager = () => {
       title: '회원정보 수정',
       desc: '회원정보를 수정하시겠습니까?',
       actionButton: '확인',
-      onAction: () => {
+      onAction: () =>
         updatePersonalDetails(profile, {
-          onSuccess: () => {
-            showToast('회원정보가 수정되었습니다.');
-          },
-          onError: (error) => {
-            showToast('회원정보 수정 중 오류가 발생했습니다.');
-            console.error(error);
-          },
-        });
-      },
+          onSuccess: () => showToast('회원정보가 수정되었습니다.'),
+          onError: () => showToast('회원정보 수정 중 오류가 발생했습니다.', 'error'),
+        }),
     });
   };
 
@@ -105,12 +141,10 @@ const ProfileManager = () => {
 
     try {
       const response = await nicknameCheck.mutateAsync(profile.nickname);
-      if (response.data.isDuplicate) {
-        setNicknameMessage('이미 사용중인 닉네임입니다.');
-      } else {
-        setNicknameMessage('사용 가능한 닉네임입니다.');
-      }
-    } catch (error) {
+      setNicknameMessage(
+        response.data.isDuplicate ? '이미 사용중인 닉네임입니다.' : '사용 가능한 닉네임입니다.'
+      );
+    } catch {
       setNicknameMessage('닉네임 중복 확인에 실패했습니다.');
     }
   };
@@ -220,11 +254,23 @@ const ProfileManager = () => {
               </Checkbox>
             </div>
             <div css={rightContainer}>
-              <Avatar src={userImage || defaultImage} alt='사용자' size='100%' />
+              <Avatar src={profileImageData?.fileUrl} alt='사용자' size='100%' />
               <div className='button-container'>
-                <Button variant='secondaryGray'>사진업로드</Button>
-                <Button variant='ghostGray'>사진삭제</Button>
+                <Button variant='secondaryGray' onClick={handleUploadClick}>
+                  사진업로드
+                </Button>
+                <Button variant='ghostGray' onClick={handleDeleteImage}>
+                  사진삭제
+                </Button>
               </div>
+              <input
+                ref={fileInputRef}
+                id='file-upload'
+                type='file'
+                accept='image/*'
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
             </div>
           </div>
           <Button
@@ -238,6 +284,7 @@ const ProfileManager = () => {
         </form>
       )}
       <SingleButtonModal />
+      <Toast message={message} type={type} onClose={hideToast} isVisible={isToastVisible} />
     </div>
   );
 };

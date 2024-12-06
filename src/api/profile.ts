@@ -1,6 +1,6 @@
 import { isAxiosError } from 'axios';
 
-import apiClient from '@/api/apiClient';
+import apiClient, { createFormDataRequest } from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/api/apiEndpoints';
 import {
   ChangePasswordResponse,
@@ -31,6 +31,31 @@ export const getProfileImageUrl = async (memberId: string): Promise<ProfileUrlRe
           throw new Error('프로필 이미지 URL 조회 중 오류가 발생했습니다.');
       }
     }
+    throw error;
+  }
+};
+
+export const uploadProfileImage = async (fileUrl: string, fileItem: File) => {
+  const formData = createFormDataRequest({ file: fileItem });
+
+  try {
+    const res = await apiClient.post(API_ENDPOINTS.FILES.PROFILE_UPLOAD, formData, {
+      params: {
+        fileUrl: decodeURIComponent(fileUrl),
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error('failed to upload icon image');
+  }
+};
+
+export const deleteProfileImage = async (fileId: string) => {
+  try {
+    const response = await apiClient.delete(API_ENDPOINTS.FILES.DELETE_PROFILE(fileId));
+    return response.data;
+  } catch (error) {
+    console.error('Failed to delete profile image:', error);
     throw error;
   }
 };

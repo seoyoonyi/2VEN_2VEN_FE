@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { css } from '@emotion/react';
 import { GrLogout } from 'react-icons/gr';
 import { useNavigate } from 'react-router-dom';
@@ -19,10 +17,6 @@ const InvestorMypageNav = () => {
   const { data: profileImageData } = useProfileImage(user?.memberId || ''); // 프로필 이미지 가져오기
   const imageSrc = profileImageData?.fileUrl;
   const { data: profileData } = useSidebarProfileQuery();
-
-  const [userImage] = useState(
-    'https://i.pinimg.com/474x/78/04/d7/7804d73be61366364997b925a613f438.jpg'
-  );
 
   const InvestorMypageNavItems = [
     {
@@ -49,7 +43,7 @@ const InvestorMypageNav = () => {
     <div css={navContainerStyle}>
       <div css={navWrapper}>
         <ProfileSection
-          userImage={imageSrc ?? userImage}
+          userImage={imageSrc}
           userRole={profileData?.data.memberType === 'TRADER' ? '트레이더' : '투자자'}
           nickname={profileData?.data.nickname ?? '투자자님'}
           desc={profileData?.data.introduction ?? '투자자님의 소개글이 없습니다.'}
