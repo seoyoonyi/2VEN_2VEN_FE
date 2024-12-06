@@ -48,7 +48,7 @@ const ScrollToTop: React.FC = () => {
 const scrollToTopButtonStyle = (buttonBottom: number) => css`
   position: fixed;
   bottom: ${buttonBottom}px;
-  right: 350px;
+  right: calc(max(16px, 10vw));
   z-index: 100;
   width: 48px;
   height: 48px;
