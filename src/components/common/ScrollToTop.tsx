@@ -5,19 +5,22 @@ import { BiArrowToTop } from 'react-icons/bi';
 
 import theme from '@/styles/theme';
 
-const SCROLL_BOTTOM_SPARE = 300;
-
 const ScrollToTop: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [buttonBottom, setButtonBottom] = useState(100);
 
   const handleScroll = () => {
-    const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
 
-    const isAtBottom = scrollTop + clientHeight >= scrollHeight - SCROLL_BOTTOM_SPARE;
-    setIsVisible(isAtBottom);
+    // 페이지 끝에 도달했는지 확인
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 100;
+
+    if (isAtBottom) {
+      setButtonBottom(300);
+    } else {
+      setButtonBottom(100);
+    }
   };
 
-  // 화면 맨 위로 이동
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -26,24 +29,26 @@ const ScrollToTop: React.FC = () => {
   };
 
   useEffect(() => {
-    handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
-  return isVisible ? (
-    <button onClick={scrollToTop} css={scrollToTopButtonStyle} aria-label='스크롤'>
+  return (
+    <button
+      onClick={scrollToTop}
+      css={scrollToTopButtonStyle(buttonBottom)}
+      aria-label='스크롤 맨 위로 이동'
+    >
       <BiArrowToTop css={iconStyle} />
     </button>
-  ) : null;
+  );
 };
-
-const scrollToTopButtonStyle = css`
+const scrollToTopButtonStyle = (buttonBottom: number) => css`
   position: fixed;
-  bottom: 250px;
-  right: 100px;
+  bottom: ${buttonBottom}px;
+  right: 350px;
   z-index: 100;
   width: 48px;
   height: 48px;
@@ -54,6 +59,7 @@ const scrollToTopButtonStyle = css`
   align-items: center;
   cursor: pointer;
   transition:
+    bottom 0.1s ease,
     background 0.3s ease,
     box-shadow 0.2s ease;
 

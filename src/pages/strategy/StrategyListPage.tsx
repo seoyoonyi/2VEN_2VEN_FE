@@ -7,6 +7,7 @@ import Button from '@/components/common/Button';
 import Loader from '@/components/common/Loading';
 import PageHeader from '@/components/common/PageHeader';
 import Pagination from '@/components/common/Pagination';
+import ScrollToTop from '@/components/common/ScrollToTop';
 import Select, { Option } from '@/components/common/Select';
 import StrategyList from '@/components/common/StrategyList';
 import { ROUTES } from '@/constants/routes';
@@ -72,6 +73,7 @@ const StrategyListPage = () => {
 
   return (
     <div>
+      <ScrollToTop />
       <PageHeader title='전략랭킹' desc={desc} descType='center' />
       <div css={strategyListContainerStyle}>
         <div css={filterBarContainerStyle}>
