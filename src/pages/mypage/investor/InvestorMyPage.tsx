@@ -45,8 +45,6 @@ const InvestorMyPage = () => {
   const { mutate: updateFolder } = useUpdateFolderName();
   const { mutate: deleteFolder } = useDeleteFolder();
 
-  console.log(data);
-
   const handleFolderList = (folderId: number) => {
     navigate(ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(String(folderId)));
     window.scrollTo(0, 0);
