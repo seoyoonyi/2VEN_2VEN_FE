@@ -91,15 +91,6 @@ const badgeContainerStyle = css`
   position: relative;
 `;
 
-const profileImageStyle = css`
-  display: flex;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid ${theme.colors.gray[300]};
-`;
-
 const badgeStyle = css`
   position: absolute;
   bottom: -4px;

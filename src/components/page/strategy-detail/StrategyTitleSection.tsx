@@ -122,13 +122,6 @@ const authorDetailsStyle = css`
   outline: none;
 `;
 
-const authorImageStyle = css`
-  width: 56px;
-  height: 56px;
-  border-radius: 56px;
-  object-fit: cover;
-`;
-
 const postDateStyle = css`
   display: flex;
   flex-direction: column;
