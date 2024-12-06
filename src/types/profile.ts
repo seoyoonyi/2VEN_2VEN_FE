@@ -3,6 +3,7 @@ export interface ProfileUrlResponse {
   message: string;
   category: string;
   displayName: string;
+  fileId: string;
 }
 
 export interface SidebarProfileResponse {
