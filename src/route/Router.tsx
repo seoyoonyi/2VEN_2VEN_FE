@@ -1,12 +1,10 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { ROUTES } from '@/constants/routes';
 import AdminLayout from '@/layouts/AdminLayout';
 import InvestorMypageLayout from '@/layouts/InvestorMypageLayout';
-import NotFoundLayout from '@/layouts/NotFoundLayout';
 import RootLayout from '@/layouts/RootLayout';
 import TraderMyPageLayout from '@/layouts/TraderMyPageLayout';
-import TraderProfilePageLayout from '@/layouts/TraderProfilePageLayout';
 import StockTypeListPage from '@/pages/admin/stock-type/StockTypeListPage';
 import StrategyApprovalListPage from '@/pages/admin/strategy/StrategyApprovalListPage';
 import TradingTypeListPage from '@/pages/admin/trading-type/TradingTypeListPage';
@@ -44,210 +42,289 @@ import StrategyDetailPage from '@/pages/strategy/StrategyDetailPage';
 import StrategyListPage from '@/pages/strategy/StrategyListPage';
 import TraderDetailPage from '@/pages/trader/TraderDetailPage';
 import TraderListPage from '@/pages/trader/TraderListPage';
+import { useAuthStore } from '@/stores/authStore';
+import { UserRole } from '@/types/route';
+
+// 권한체크를 위한 Protected Route
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  allowedRoles?: UserRole[];
+  requiredAuth?: boolean;
+  redirectPath?: string;
+}
+
+const ProtectedRoute = ({
+  children,
+  allowedRoles = [],
+  requiredAuth = true,
+  redirectPath = ROUTES.HOME.PATH, // 기본 리다이렉트 경로
+}: ProtectedRouteProps) => {
+  const { user, token } = useAuthStore();
+
+  // 로그인이 필요한 경로인데, 인증되지 않은 경우
+  if (requiredAuth && !token) {
+    return <Navigate to={redirectPath} replace />;
+  }
+  // 로그인된 사용자가 로그인/회원가입 페이지 접근 시도할 경우
+  if (!requiredAuth && token) {
+    return <Navigate to={ROUTES.HOME.PATH} replace />;
+  }
+
+  // 역할 기반 접근 제어
+  if (user && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+    return <Navigate to={ROUTES.HOME.PATH} replace />;
+  }
+
+  return <>{children}</>;
+};
 
 export const router = createBrowserRouter(
   [
     {
       path: ROUTES.HOME.PATH,
       element: <RootLayout />,
-      errorElement: <ErrorPage />, // 에러 처리 페이지
+      errorElement: <ErrorPage />,
       children: [
+        // 공통 접근 가능 라우트 (비로그인도 접근 가능)
         {
           path: ROUTES.HOME.PATH,
-          element: <HomePage />, // 메인 홈 페이지
+          element: <HomePage />,
         },
-        {
-          path: '*',
-          element: <NotFoundPage />, // 존재하지 않는 경로 처리
-        },
-        // -------------------------------------- 인증
-        {
-          path: ROUTES.AUTH.SIGNIN,
-          element: <SignInPage />, // 로그인 페이지
-        },
-        {
-          path: ROUTES.AUTH.SIGNUP.SELECT_TYPE,
-          element: <SignUpSelectTypePage />, // 회원가입 유형 선택 페이지
-        },
-        {
-          path: ROUTES.AUTH.SIGNUP.FORM,
-          element: <SignUpFormPage />, // 회원가입 폼 페이지
-        },
-        {
-          path: ROUTES.AUTH.SIGNUP.SUCCESS,
-          element: <SignUpSuccessPage />, // 회원가입 성공 페이지
-        },
-        {
-          path: ROUTES.AUTH.ADMIN.VERIFY,
-          element: <AdminVerifyPage />, // 관리자 인증 페이지
-        },
-        {
-          path: ROUTES.AUTH.WITHDRAWAL.SUCCESS,
-          element: <WithdrawalSuccessPage />, // 회원탈퇴 성공 페이지
-        },
-        // -------------------------------------- 찾기/재설정
-        {
-          path: ROUTES.AUTH.FIND.EMAIL,
-          element: <FindEmailPage />, // 이메일 찾기 페이지
-        },
-        {
-          path: ROUTES.AUTH.FIND.EMAIL_SUCCESS,
-          element: <EmailFoundPage />, // 이메일 찾기 성공 페이지
-        },
-        {
-          path: ROUTES.AUTH.FIND.PASSWORD,
-          element: <FindPasswordPage />, // 비밀번호 찾기 페이지
-        },
-        {
-          path: ROUTES.AUTH.FIND.PASSWORD_RESET,
-          element: <ResetPasswordPage />, // 비밀번호 재설정 페이지
-        },
-        {
-          path: ROUTES.AUTH.FIND.PASSWORD_RESET_SUCCESS,
-          element: <PasswordResetSuccessPage />, // 비밀번호 재설정 성공 페이지
-        },
-        // -------------------------------------- 전략
         {
           path: ROUTES.STRATEGY.LIST,
-          element: <StrategyListPage />, // 전략 목록 페이지
-        },
-        {
-          path: ROUTES.MYPAGE.TRADER.STRATEGIES.CREATE,
-          element: <StrategyCreatePage />, // 전략 등록 페이지
-        },
-        {
-          path: ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(':strategyId'),
-          element: <StrategyEditPage />, // 전략 수정 페이지
+          element: <StrategyListPage />,
         },
         {
           path: ROUTES.STRATEGY.DETAIL(':strategyId'),
-          element: <StrategyDetailPage />, // 전략 상세 페이지
+          element: <StrategyDetailPage />,
         },
-        {
-          path: ROUTES.STRATEGY.INQUIRIES,
-          element: <InquiryPage />, // 전략 문의 페이지
-        },
-        // -------------------------------------- 트레이더
         {
           path: ROUTES.TRADER.LIST,
-          element: <TraderListPage />, // 트레이더 목록 페이지
+          element: <TraderListPage />,
         },
-        // -------------------------------------- 검색
         {
           path: ROUTES.SEARCH.TOTAL,
-          element: <SearchTotalResultsPage />, // 통합검색결과 페이지(전략과 트레이더 검색결과)
+          element: <SearchTotalResultsPage />,
         },
         {
           path: ROUTES.SEARCH.TRADERS_DETAIL,
-          element: <SearchResultsInTrader />, // 트레이더 상세 검색결과 페이지
+          element: <SearchResultsInTrader />,
         },
         {
           path: ROUTES.SEARCH.STRATEGIES_DETAIL,
-          element: <SearchResultsInStrategy />, // 전략 상세 검색결과 페이지
+          element: <SearchResultsInStrategy />,
         },
-      ],
-    },
-    {
-      path: ROUTES.HOME.PATH,
-      element: <AdminLayout />,
-      errorElement: <ErrorPage />, // 에러 처리 페이지
-      children: [
+
+        // 비로그인 전용 라우트
         {
-          path: '*',
-          element: <NotFoundLayout />, // 별도의 404 레이아웃 사용
-        },
-        // -------------------------------------- 관리자
-        {
-          path: ROUTES.ADMIN.STOCK_TYPE.LIST,
-          element: <StockTypeListPage />, // 상품유형 관리 페이지(현재 대시보드 페이지)
+          path: ROUTES.AUTH.SIGNIN,
+          element: (
+            <ProtectedRoute requiredAuth={false}>
+              <SignInPage />
+            </ProtectedRoute>
+          ),
         },
         {
-          path: ROUTES.ADMIN.TRADING_TYPE.LIST,
-          element: <TradingTypeListPage />, // 매매유형 관리 페이지
+          path: ROUTES.AUTH.SIGNUP.SELECT_TYPE,
+          element: (
+            <ProtectedRoute requiredAuth={false}>
+              <SignUpSelectTypePage />
+            </ProtectedRoute>
+          ),
         },
         {
-          path: ROUTES.ADMIN.STRATEGY.APPROVAL,
-          element: <StrategyApprovalListPage />, // 전략 승인 관리 페이지
-        },
-      ],
-    },
-    {
-      path: ROUTES.HOME.PATH,
-      element: <InvestorMypageLayout />,
-      errorElement: <ErrorPage />, // 에러 처리 페이지
-      children: [
-        {
-          path: '*',
-          element: <NotFoundLayout />, // 별도의 404 레이아웃 사용
-        },
-        // -------------------------------------- 마이페이지(투자자)
-        {
-          path: ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS,
-          element: <InvestorMyPage />, // 투자자 마이페이지 - 관심전략 폴더 목록
+          path: ROUTES.AUTH.SIGNUP.FORM,
+          element: (
+            <ProtectedRoute requiredAuth={false}>
+              <SignUpFormPage />
+            </ProtectedRoute>
+          ),
         },
         {
-          path: ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(':folderId'),
-          element: <InvestorFollowFolderPage />, // 특정 폴더의 관심전략 목록
+          path: ROUTES.AUTH.SIGNUP.SUCCESS,
+          element: (
+            <ProtectedRoute requiredAuth={false}>
+              <SignUpSuccessPage />
+            </ProtectedRoute>
+          ),
         },
         {
-          path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST,
-          element: <MyInquiriesPage />, // 나의 문의 목록 게시판
+          path: ROUTES.AUTH.FIND.EMAIL,
+          element: (
+            <ProtectedRoute requiredAuth={false}>
+              <FindEmailPage />
+            </ProtectedRoute>
+          ),
         },
         {
-          path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(':inquiryId'),
-          element: <MyInquiresDetailPage />, // 나의 문의 상세 게시판
+          path: ROUTES.AUTH.FIND.EMAIL_SUCCESS,
+          element: (
+            <ProtectedRoute requiredAuth={false}>
+              <EmailFoundPage />
+            </ProtectedRoute>
+          ),
         },
         {
-          path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY.EDIT(':inquiryId'),
-          element: <MyInquiresEditPage />, // 나의 문의 수정 게시판
+          path: ROUTES.AUTH.FIND.PASSWORD,
+          element: (
+            <ProtectedRoute requiredAuth={false}>
+              <FindPasswordPage />
+            </ProtectedRoute>
+          ),
         },
         {
-          path: ROUTES.MYPAGE.INVESTOR.PROFILE,
-          element: <InvestorProfilePage />, // 투자자 프로필 관리
-        },
-      ],
-    },
-    {
-      path: ROUTES.HOME.PATH,
-      element: <TraderMyPageLayout />,
-      errorElement: <ErrorPage />, // 에러 처리 페이지
-      children: [
-        {
-          path: '*',
-          element: <NotFoundLayout />, // 별도의 404 레이아웃 사용
-        },
-        // -------------------------------------- 마이페이지(트레이더)
-        {
-          path: ROUTES.MYPAGE.TRADER.STRATEGIES.LIST,
-          element: <TraderMyPage />, // 트레이더 마이페이지 - 나의 전략 리스트
+          path: ROUTES.AUTH.FIND.PASSWORD_RESET,
+          element: (
+            <ProtectedRoute requiredAuth={false}>
+              <ResetPasswordPage />
+            </ProtectedRoute>
+          ),
         },
         {
-          path: ROUTES.MYPAGE.TRADER.INQUIRIES.LIST,
-          element: <InquiriesManagementPage />, // 문의 관리 페이지
+          path: ROUTES.AUTH.FIND.PASSWORD_RESET_SUCCESS,
+          element: (
+            <ProtectedRoute requiredAuth={false}>
+              <PasswordResetSuccessPage />
+            </ProtectedRoute>
+          ),
+        },
+
+        // 로그인 필요 라우트
+        {
+          path: ROUTES.STRATEGY.INQUIRIES,
+          element: (
+            <ProtectedRoute requiredAuth={true}>
+              <InquiryPage />
+            </ProtectedRoute>
+          ),
         },
         {
-          path: ROUTES.MYPAGE.TRADER.INQUIRIES.DETAIL(':inquiryId'),
-          element: <InquiryDetailPage />, // 문의 관리 상세 게시판
+          path: ROUTES.AUTH.WITHDRAWAL.SUCCESS,
+          element: (
+            <ProtectedRoute requiredAuth={true}>
+              <WithdrawalSuccessPage />
+            </ProtectedRoute>
+          ),
         },
-        {
-          path: ROUTES.MYPAGE.TRADER.PROFILE,
-          element: <TraderProfilePage />, // 트레이더 프로필 관리
-        },
-      ],
-    },
-    {
-      path: ROUTES.HOME.PATH,
-      element: <TraderProfilePageLayout />,
-      errorElement: <ErrorPage />, // 에러 처리 페이지
-      children: [
-        {
-          path: '*',
-          element: <NotFoundLayout />, // 별도의 404 레이아웃 사용
-        },
-        // -------------------------------------- 트레이더
         {
           path: ROUTES.TRADER.PROFILE(':traderId'),
-          element: <TraderDetailPage />,
+          element: (
+            <ProtectedRoute requiredAuth={true}>
+              <TraderDetailPage />
+            </ProtectedRoute>
+          ),
+        },
+
+        // 투자자 전용 라우트
+        {
+          path: 'mypage/investor',
+          element: (
+            <ProtectedRoute allowedRoles={['ROLE_INVESTOR', 'ROLE_ADMIN']}>
+              <InvestorMypageLayout />
+            </ProtectedRoute>
+          ),
+          children: [
+            {
+              path: ROUTES.MYPAGE.INVESTOR.FOLLOWING.FOLDERS,
+              element: <InvestorMyPage />,
+            },
+            {
+              path: ROUTES.MYPAGE.INVESTOR.FOLLOWING.STRATEGIES(':folderId'),
+              element: <InvestorFollowFolderPage />,
+            },
+            {
+              path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY.LIST,
+              element: <MyInquiriesPage />,
+            },
+            {
+              path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY.DETAIL(':inquiryId'),
+              element: <MyInquiresDetailPage />,
+            },
+            {
+              path: ROUTES.MYPAGE.INVESTOR.MYINQUIRY.EDIT(':inquiryId'),
+              element: <MyInquiresEditPage />,
+            },
+            {
+              path: ROUTES.MYPAGE.INVESTOR.PROFILE,
+              element: <InvestorProfilePage />,
+            },
+          ],
+        },
+
+        // 트레이더 전용 라우트
+        {
+          path: 'mypage/trader',
+          element: (
+            <ProtectedRoute allowedRoles={['ROLE_TRADER', 'ROLE_ADMIN']}>
+              <TraderMyPageLayout />
+            </ProtectedRoute>
+          ),
+          children: [
+            {
+              path: ROUTES.MYPAGE.TRADER.STRATEGIES.LIST,
+              element: <TraderMyPage />,
+            },
+            {
+              path: ROUTES.MYPAGE.TRADER.STRATEGIES.CREATE,
+              element: <StrategyCreatePage />,
+            },
+            {
+              path: ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(':strategyId'),
+              element: <StrategyEditPage />,
+            },
+            {
+              path: ROUTES.MYPAGE.TRADER.INQUIRIES.LIST,
+              element: <InquiriesManagementPage />,
+            },
+            {
+              path: ROUTES.MYPAGE.TRADER.INQUIRIES.DETAIL(':inquiryId'),
+              element: <InquiryDetailPage />,
+            },
+            {
+              path: ROUTES.MYPAGE.TRADER.PROFILE,
+              element: <TraderProfilePage />,
+            },
+          ],
+        },
+
+        // 관리자 전용 라우트
+        {
+          path: 'admin',
+          element: (
+            <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
+              <AdminLayout />
+            </ProtectedRoute>
+          ),
+          children: [
+            {
+              path: ROUTES.ADMIN.STOCK_TYPE.LIST,
+              element: <StockTypeListPage />,
+            },
+            {
+              path: ROUTES.ADMIN.TRADING_TYPE.LIST,
+              element: <TradingTypeListPage />,
+            },
+            {
+              path: ROUTES.ADMIN.STRATEGY.APPROVAL,
+              element: <StrategyApprovalListPage />,
+            },
+          ],
+        },
+
+        // 관리자 인증 페이지
+        {
+          path: ROUTES.AUTH.ADMIN.VERIFY,
+          element: (
+            <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
+              <AdminVerifyPage />
+            </ProtectedRoute>
+          ),
+        },
+
+        // 404 페이지
+        {
+          path: '*',
+          element: <NotFoundPage />,
         },
       ],
     },
