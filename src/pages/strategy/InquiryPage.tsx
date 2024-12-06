@@ -9,7 +9,6 @@ import Toast from '@/components/common/Toast';
 import InquiryCreateForm from '@/components/page/inquiry-create/InquiryCreateForm';
 import { ROUTES } from '@/constants/routes';
 import { useCreateMyInquiry } from '@/hooks/mutations/useMyInquiryMutations';
-import { useToastWithNavigate } from '@/hooks/useToastWithNavigate';
 import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
