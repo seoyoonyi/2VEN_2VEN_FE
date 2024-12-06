@@ -83,7 +83,7 @@ const PasswordChange = () => {
           openModal({
             type: 'confirm',
             title: '비밀번호 변경 완료',
-            desc: '비밀번호가 성공적으로 변경되었습니다. 안전한 사용을 위해 다시 로그인해주세요.',
+            desc: '비밀번호가 성공적으로 변경되었습니다.\n 안전한 사용을 위해 다시 로그인해주세요.',
             actionButton: '로그인',
             onAction: () => {
               clearAuth();
