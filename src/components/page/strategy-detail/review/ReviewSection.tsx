@@ -11,13 +11,16 @@ import {
   useDeleteReview,
 } from '@/hooks/mutations/useReviewMutation';
 import useFetchReview from '@/hooks/queries/useFetchReview';
+import { useAuthStore } from '@/stores/authStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 
 const itemsPerPage = 5;
 
 const ReviewSection = ({ strategyId, writerId }: { strategyId: number; writerId: string }) => {
+  const { user } = useAuthStore();
   const [currentPage, setCurrentPage] = useState(0);
+  const isLogged = !!user;
 
   const { reviews, totalPages, isLoading, isError } = useFetchReview({
     strategyId,
@@ -83,6 +86,7 @@ const ReviewSection = ({ strategyId, writerId }: { strategyId: number; writerId:
       <ReviewInputList
         reviews={reviews}
         writerId={writerId}
+        isLogged={isLogged}
         onAddReview={handleAddReview}
         onEditReview={handleEditReview}
         onDeleteReview={handleDeleteReview}

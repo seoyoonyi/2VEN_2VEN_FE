@@ -18,6 +18,7 @@ interface Review {
 interface ReviewInputListProps {
   reviews: Review[];
   writerId: string;
+  isLogged: boolean;
   onAddReview: (content: string) => void;
   onEditReview: (id: number, updatedContent: string) => void;
   onDeleteReview: (id: number) => void;
@@ -26,6 +27,7 @@ interface ReviewInputListProps {
 const ReviewInputList = ({
   reviews,
   writerId,
+  isLogged,
   onAddReview,
   onEditReview,
   onDeleteReview,
@@ -51,14 +53,15 @@ const ReviewInputList = ({
           type='text'
           value={inputValue}
           onChange={onInputChange}
-          placeholder='내용을 입력해주세요'
+          placeholder={isLogged ? '내용을 입력해주세요' : '로그인 후 입력 가능합니다'}
           css={inputStyle}
+          disabled={!isLogged}
         />
         <Button
           variant='accent'
           size='sm'
           width={110}
-          disabled={!inputValue.trim()}
+          disabled={!inputValue.trim() || !isLogged}
           onClick={handleAddButtonClick}
         >
           등록
