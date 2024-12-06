@@ -59,7 +59,9 @@ const StrategyDetailPage = () => {
       enabled: strategy?.isApproved === 'N',
     }) || '';
   const { isToastVisible, hideToast, message, type } = useToastStore();
-  const isApproved = dailyAnalysis?.length >= 3 || approveState?.isApproved === 'N';
+  const isApproved =
+    (dailyAnalysis?.length >= 3 && strategy?.requestAvailable === true) ||
+    approveState?.isApproved === 'N';
   const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
   const isOwner = user?.memberId === strategy?.memberId;
   const isAdmin = role === 'ROLE_ADMIN';
