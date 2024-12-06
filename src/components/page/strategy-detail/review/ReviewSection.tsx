@@ -22,7 +22,7 @@ const ReviewSection = ({ strategyId, writerId }: { strategyId: number; writerId:
   const [currentPage, setCurrentPage] = useState(0);
   const isLogged = !!user;
 
-  const { reviews, totalPages, isLoading, isError } = useFetchReview({
+  const { reviews, totalPages, totalElements, isLoading, isError } = useFetchReview({
     strategyId,
     page: currentPage,
     pageSize: itemsPerPage,
@@ -79,7 +79,7 @@ const ReviewSection = ({ strategyId, writerId }: { strategyId: number; writerId:
     <div css={containerStyle}>
       <div css={headerStyle}>
         <h2 css={titleStyle}>리뷰</h2>
-        <span css={countStyle}>{reviews.length}</span>
+        <span css={countStyle}>{totalElements}</span>
       </div>
 
       {/* 리뷰 입력 및 표시 */}
