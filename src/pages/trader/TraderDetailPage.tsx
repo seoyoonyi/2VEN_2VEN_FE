@@ -5,7 +5,7 @@ import Button from '@/components/common/Button';
 import Loader from '@/components/common/Loading';
 import Pagination from '@/components/common/Pagination';
 import StrategyList from '@/components/common/StrategyList';
-import TraderProflieNav from '@/components/navigation/TraderProfilePageNav';
+import TraderProfileNav from '@/components/navigation/TraderProfilePageNav';
 import { ROUTES } from '@/constants/routes';
 import { useFetchTraderStrategies } from '@/hooks/queries/useFetchTraderStrategies';
 import { useAuthStore } from '@/stores/authStore';
@@ -52,7 +52,7 @@ const TraderDetailPage = () => {
   return (
     <div css={wrapperStyle}>
       <div css={mainStyle}>
-        <TraderProflieNav />
+        <TraderProfileNav />
         <div css={myPageWrapperStyle}>
           <div css={myPageHeaderStyle}>
             <div>

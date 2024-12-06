@@ -10,7 +10,7 @@ import { useProfileImage } from '@/hooks/queries/useProfileImage';
 import { useSidebarProfileQuery } from '@/hooks/queries/useSidebarProfile';
 import theme from '@/styles/theme';
 
-const TraderProflieNav = () => {
+const TraderProfileNav = () => {
   const { traderId } = useParams();
   const { data: profileImageData } = useProfileImage(traderId || ''); // 프로필 이미지 가져오기
   const imageSrc = profileImageData?.fileUrl;
@@ -63,4 +63,4 @@ const navWrapper = css`
   background-color: ${theme.colors.main.white};
 `;
 
-export default TraderProflieNav;
+export default TraderProfileNav;
