@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { css } from '@emotion/react';
 import { GrLogout } from 'react-icons/gr';
 import { useNavigate } from 'react-router-dom';
