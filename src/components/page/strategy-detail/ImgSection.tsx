@@ -11,7 +11,7 @@ interface imgSectionProps {
   name: string;
   id: number;
   isSelected: boolean;
-  isSelfed: boolean;
+  isSelfed?: boolean;
   onSelect: (id: number) => void;
 }
 

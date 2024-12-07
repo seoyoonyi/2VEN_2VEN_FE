@@ -133,11 +133,11 @@ export const StrategyHeader = ({
       {(userRole === 'ROLE_ADMIN' && user?.authorized) ||
       (userRole === 'ROLE_TRADER' && user?.memberId === traderId) ? ( // 트레이더 전용 버튼
         <div css={buttonAreaStyle}>
+          <Button size='xs' variant='secondaryGray' width={90} onClick={() => onDelete(id)}>
+            삭제
+          </Button>
           {!isTerminated && (
             <>
-              <Button size='xs' variant='secondaryGray' width={90} onClick={() => onDelete(id)}>
-                삭제
-              </Button>
               <Button
                 size='xs'
                 variant='neutral'
