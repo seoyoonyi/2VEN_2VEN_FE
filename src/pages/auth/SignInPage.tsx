@@ -54,10 +54,6 @@ const SignInPage: React.FC = () => {
       const result = await signin({ email, password });
       console.log('Login result:', result);
       if (result.status === 'success' && result.data) {
-        // 로그인 성공 시
-        // 현재 히스토리 스택을 모두 비우고 홈으로 이동
-        window.history.pushState(null, '', ROUTES.HOME.PATH);
-        window.history.go(-(window.history.length - 1));
         // role을 state로 전달하지 않고, 단순 홈으로 이동
         navigate(ROUTES.HOME.PATH, { replace: true });
         // replace: true로 설정하여 뒤로가기 시 로그인 페이지로 돌아가지 않도록 설정
