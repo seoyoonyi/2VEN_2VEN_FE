@@ -14,6 +14,7 @@ const useStatistics = (strategyId: number, role: UserRole) => {
       };
     },
     enabled: !!strategyId,
+    retry: false,
   });
 
   return { statistics: data?.statistics, writedAt: data?.writedAt, isLoading, isError };

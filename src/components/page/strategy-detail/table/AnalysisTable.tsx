@@ -87,7 +87,7 @@ const AnalysisTable = ({
         <thead>
           <tr css={tableRowStyle}>
             {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
-            role === 'ROLE_ADMIN' ? (
+            (role === 'ROLE_ADMIN' && user?.authorized) ? (
               <th css={tableHeadStyle}>
                 <Checkbox
                   checked={selectAll ?? false}
@@ -111,7 +111,7 @@ const AnalysisTable = ({
             analysis?.map((values, idx) => (
               <tr key={`${values.dataId}- ${idx}`} css={tableRowStyle}>
                 {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
-                role === 'ROLE_ADMIN' ? (
+                (role === 'ROLE_ADMIN' && user?.authorized) ? (
                   <td css={tableCellStyle}>
                     <Checkbox
                       checked={!!selectedItems?.includes(values.dataId)}
@@ -138,7 +138,7 @@ const AnalysisTable = ({
                 <td css={tableCellStyle}>{values.cumulative_profit_loss.toLocaleString()}</td>
                 <td css={tableCellStyle}>{values.cumulative_profit_loss_rate}%</td>
                 {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
-                role === 'ROLE_ADMIN' ? (
+                (role === 'ROLE_ADMIN' && user?.authorized) ? (
                   <td css={tableCellStyle}>
                     <Button
                       variant='secondaryGray'
@@ -160,7 +160,8 @@ const AnalysisTable = ({
             ))
           ) : (
             <tr>
-              {mode === 'write' ? (
+              {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
+              (role === 'ROLE_ADMIN' && user?.authorized) ? (
                 <td colSpan={attributes.length + 1} css={noDataStyle}>
                   일간분석 데이터를 추가해주세요.
                   <div css={addArea}>

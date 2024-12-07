@@ -46,7 +46,7 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
     yAxis: [
       {
         labels: {
-          style: { color: colors.primary.fillColor },
+          style: { color: theme.colors.gray[800] },
           format: `{value:,.0f}`,
         },
         title: {
@@ -57,7 +57,7 @@ const StrategyChart = ({ lineData, areaData }: LineChartProps) => {
       },
       {
         labels: {
-          style: { color: colors.primary.lineColor },
+          style: { color: theme.colors.gray[800] },
         },
         title: {
           enabled: false,

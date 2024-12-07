@@ -6,7 +6,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import ScrollToTop from '@/components/common/ScrollToTop';
-import Toast from '@/components/common/Toast';
 import ChartSection from '@/components/page/strategy-detail/chart/ChartSection';
 import FileDownSection from '@/components/page/strategy-detail/FileDownSection';
 import IconTagSection from '@/components/page/strategy-detail/IconTagSection';
@@ -34,7 +33,6 @@ import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
 import useStatistics from '@/hooks/queries/useStatistics';
 import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
-import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { UserRole } from '@/types/route';
 import { StrategyIacentity } from '@/types/strategy';
@@ -58,7 +56,6 @@ const StrategyDetailPage = () => {
     useFetchApproveState(Number(strategyId), role, {
       enabled: strategy?.isApproved === 'N',
     }) || '';
-  const { isToastVisible, hideToast, message, type } = useToastStore();
   const isApproved =
     (dailyAnalysis?.length >= 3 && strategy?.requestAvailable === true) ||
     approveState?.isApproved === 'N';
@@ -201,7 +198,7 @@ const StrategyDetailPage = () => {
               isStrategyApproved={strategy?.isApproved}
               isApprovedState={isApproved}
               isTerminated={isTerminated}
-              isFollowing={strategy?.isFollowed || false}
+              isFollowing={strategy?.isFollowed}
               onApproval={() => {
                 handleApproval(strategy.strategyId, role);
               }}
@@ -231,9 +228,6 @@ const StrategyDetailPage = () => {
         <ReviewSection strategyId={Number(strategyId)} writerId={user?.memberId || ''} />
       </div>
       <Modal />
-      {isToastVisible && (
-        <Toast message={message} type={type} isVisible={isToastVisible} onClose={hideToast} />
-      )}
     </div>
   );
 };

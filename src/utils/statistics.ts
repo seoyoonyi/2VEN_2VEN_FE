@@ -2,7 +2,7 @@
 export const formatLoss = (value: number) => value.toLocaleString();
 
 //23.23223 -> 23.23
-export const formatRate = (value: number) => Math.floor(value * 100) / 100;
+export const formatRate = (value: number) => value.toFixed(2);
 
 export const formatValue = (key: string, value: string | number) => {
   if (typeof value === 'number') {
@@ -12,7 +12,7 @@ export const formatValue = (key: string, value: string | number) => {
       key.endsWith('roa') ||
       key.endsWith('Factor')
     ) {
-      return Math.floor(value * 100) / 100 + '%';
+      return value.toFixed(2) + '%';
     } else if (key.endsWith('Days') || key.endsWith('Period') || key.endsWith('Peak')) {
       const years = Math.floor(value / 365);
       const month = Math.floor((value % 365) / 30);
@@ -20,7 +20,7 @@ export const formatValue = (key: string, value: string | number) => {
       let result = '';
       if (years > 0) result += `${years}년 `;
       if (month > 0) result += `${month}개월 `;
-      if (days >= 0 || days <= 0) result += `${days}일`;
+      if (days >= 0 || days <= 0) result += `${Math.abs(days)}일`;
       return result.trim();
     } else {
       return formatLoss(value);

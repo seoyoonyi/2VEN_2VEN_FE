@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { css } from '@emotion/react';
 
 import Avatar from '@/components/common/Avatar';
+import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
 import { formatDate } from '@/utils/dateFormat';
 
@@ -23,6 +24,8 @@ interface ReviewItemProps {
 }
 
 const ReviewItem = ({ review, writerId, onEdit, onDelete }: ReviewItemProps) => {
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'ROLE_ADMIN';
   const [isEditing, setIsEditing] = useState(false);
   const [updatedContent, setUpdatedContent] = useState(review.content);
 
@@ -46,7 +49,7 @@ const ReviewItem = ({ review, writerId, onEdit, onDelete }: ReviewItemProps) => 
             <span css={userNameStyle}>{review.nickName}</span>
             <span css={dateStyle}>{formatDate(review.writedAt)}</span>
           </div>
-          {review.writerId === writerId && (
+          {(isAdmin && user?.authorized) || review.writerId === writerId ? (
             <div css={reviewActionsStyle}>
               <button css={actionButtonStyle} onClick={handleEdit}>
                 {isEditing ? '완료' : '수정'}
@@ -56,7 +59,7 @@ const ReviewItem = ({ review, writerId, onEdit, onDelete }: ReviewItemProps) => 
                 삭제
               </button>
             </div>
-          )}
+          ) : null}
         </div>
         {isEditing ? (
           <textarea

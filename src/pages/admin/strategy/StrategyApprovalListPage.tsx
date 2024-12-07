@@ -206,7 +206,12 @@ const StrategyApprovalListPage = () => {
             </tbody>
           </table>
         </div>
-        <Pagination totalPage={totalPages} limit={pageSize} page={currentPage} setPage={setPage} />
+        <Pagination
+          totalPage={totalPages}
+          limit={pageSize}
+          page={currentPage + 1}
+          setPage={setPage}
+        />
       </div>
       <Modal />
       <ContentModal />
