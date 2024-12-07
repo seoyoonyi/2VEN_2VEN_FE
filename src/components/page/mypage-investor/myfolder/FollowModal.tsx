@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import Loader from '@/components/common/Loading';
+import LoadingSpin from '@/components/common/LoadingSpin';
 import Select, { Option } from '@/components/common/Select';
 import { useFolderList } from '@/hooks/queries/useFetchFolderList';
 import { Folder } from '@/pages/mypage/investor/InvestorMyPage';
@@ -16,7 +16,7 @@ const FollowModal = ({ onFolderSelect }: FollowModalProps) => {
   if (isLoading) {
     return (
       <div css={contentWrpperStyle}>
-        <Loader />
+        <LoadingSpin />
       </div>
     );
   }

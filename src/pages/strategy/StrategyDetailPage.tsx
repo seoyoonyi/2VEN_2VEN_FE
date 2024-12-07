@@ -198,7 +198,7 @@ const StrategyDetailPage = () => {
               isStrategyApproved={strategy?.isApproved}
               isApprovedState={isApproved}
               isTerminated={isTerminated}
-              isFollowing={strategy?.isFollowed || false}
+              isFollowing={strategy?.isFollowed}
               onApproval={() => {
                 handleApproval(strategy.strategyId, role);
               }}
