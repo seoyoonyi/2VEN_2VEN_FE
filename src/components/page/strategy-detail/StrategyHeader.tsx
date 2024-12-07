@@ -130,7 +130,8 @@ export const StrategyHeader = ({
         <GiCircle size={40} css={circleStyle} />
         <MdOutlineShare size={16} css={shareStyle} />
       </button>
-      {userRole === 'ROLE_ADMIN' || (userRole === 'ROLE_TRADER' && user?.memberId === traderId) ? ( // 트레이더 전용 버튼
+      {(userRole === 'ROLE_ADMIN' && user?.authorized) ||
+      (userRole === 'ROLE_TRADER' && user?.memberId === traderId) ? ( // 트레이더 전용 버튼
         <div css={buttonAreaStyle}>
           {!isTerminated && (
             <>
@@ -163,7 +164,8 @@ export const StrategyHeader = ({
             </Button>
           )}
         </div>
-      ) : (
+      ) : null}
+      {userRole === 'ROLE_INVESTOR' && (
         <div css={buttonAreaStyle}>
           <Button
             size='sm'

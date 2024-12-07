@@ -29,8 +29,6 @@ const ReviewItem = ({ review, writerId, onEdit, onDelete }: ReviewItemProps) => 
   const [isEditing, setIsEditing] = useState(false);
   const [updatedContent, setUpdatedContent] = useState(review.content);
 
-  console.log(isAdmin);
-
   const handleEdit = () => {
     if (isEditing) {
       onEdit(review.strategyReviewId, updatedContent.trim());
@@ -51,17 +49,18 @@ const ReviewItem = ({ review, writerId, onEdit, onDelete }: ReviewItemProps) => 
             <span css={userNameStyle}>{review.nickName}</span>
             <span css={dateStyle}>{formatDate(review.writedAt)}</span>
           </div>
-          {(isAdmin || review.writerId === writerId) && (
-            <div css={reviewActionsStyle}>
-              <button css={actionButtonStyle} onClick={handleEdit}>
-                {isEditing ? '완료' : '수정'}
-              </button>
-              <span css={separatorStyle}></span>
-              <button css={actionButtonStyle} onClick={handleDelete}>
-                삭제
-              </button>
-            </div>
-          )}
+          {(isAdmin && user?.authorized) ||
+            (review.writerId === writerId && (
+              <div css={reviewActionsStyle}>
+                <button css={actionButtonStyle} onClick={handleEdit}>
+                  {isEditing ? '완료' : '수정'}
+                </button>
+                <span css={separatorStyle}></span>
+                <button css={actionButtonStyle} onClick={handleDelete}>
+                  삭제
+                </button>
+              </div>
+            ))}
         </div>
         {isEditing ? (
           <textarea
