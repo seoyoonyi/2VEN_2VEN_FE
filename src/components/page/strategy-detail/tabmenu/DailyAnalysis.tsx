@@ -281,6 +281,7 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
     }
   };
 
+  const handleAllDelete = () => {};
   const handleTriggerExcel = () => {
     fileInputRef.current?.click();
   };
@@ -357,9 +358,14 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
                 onChange={(e) => handleFileChange(e, Number(strategyId), role as UserRole)}
               />
             </div>
-            <Button variant='neutral' size='xs' width={89} onClick={handleDelete}>
-              삭제
-            </Button>
+            <div css={addArea}>
+              <Button variant='neutral' size='xs' width={89} onClick={handleDelete}>
+                삭제
+              </Button>
+              <Button variant='neutral' size='xs' width={89} onClick={handleAllDelete}>
+                전체삭제
+              </Button>
+            </div>
           </div>
         )}
       {postStatus === 'pending' ||
