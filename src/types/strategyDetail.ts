@@ -55,7 +55,7 @@ export interface StatisticsProps {
   currentDrawdownRate: number;
   maxDrawdownAmount: number;
   maxDrawdownRate: number;
-  unrealizedProfitLoss: number;
+  averageProfitLoss: number;
   averageProfitLossRate: number;
   maxDailyProfit: number;
   maxDailyProfitRate: number;
