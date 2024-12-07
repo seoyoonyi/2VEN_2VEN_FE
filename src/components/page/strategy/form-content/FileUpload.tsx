@@ -99,7 +99,7 @@ const FileUpload = ({
               <MdRemoveCircle onClick={handleRemoveFile} size={20} css={iconStyle} />
             </div>
           ) : (
-            '업로드할 파일 놓기'
+            '업로드할 제안서 파일 놓기'
           )}
         </div>
         <div css={textStyle}>{selectedFileName ? '' : '또는'}</div>
