@@ -10,6 +10,7 @@ import TraderUserImage2 from '@/assets/images/nimo_trader.png';
 import TraderMainImage from '@/assets/images/trader_main.png';
 import Button from '@/components/common/Button';
 import Loader from '@/components/common/Loading';
+import ProgressBar from '@/components/common/ProgressBar';
 import ScrollToTop from '@/components/common/ScrollToTop';
 import TraderStats from '@/components/page/home/StrategyTraderCount';
 import TopStrategyList from '@/components/page/home/TopStrategyList';
@@ -47,9 +48,12 @@ const HomePage = () => {
     navigate(ROUTES.TRADER.LIST);
   };
 
+  const progressValue = 80; // progress 값 (예시)
+
   return (
     <>
       <ScrollToTop />
+      <ProgressBar progress={progressValue} /> {/* progress 값 (예시) */}
       {/* 투자자Main */}
       <section css={investorSectionStyle}>
         <div css={contentStyle}>
@@ -127,7 +131,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
       {/* 트레이더Main */}
       <section css={traderSectionStyle}>
         <div css={traderContentStyle}>
@@ -175,7 +178,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
       {/* 마지막섹션(배경) */}
       <section css={lastSectionStyle}></section>
     </>
