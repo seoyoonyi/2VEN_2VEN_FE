@@ -7,7 +7,7 @@ import { MdCheck } from 'react-icons/md';
 import ImgSection from '../ImgSection';
 
 import Button from '@/components/common/Button';
-import Loader from '@/components/common/Loading';
+import LoadingSpin from '@/components/common/LoadingSpin';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import Toast from '@/components/common/Toast';
@@ -108,7 +108,7 @@ const AccountVerify = ({ strategyId, role, userId }: AccountProps) => {
   if (isLoading) {
     return (
       <div>
-        <Loader />
+        <LoadingSpin />
       </div>
     );
   }
