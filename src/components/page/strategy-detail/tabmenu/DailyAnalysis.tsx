@@ -8,6 +8,7 @@ import InputTable, { InputTableProps } from '../table/InputTable';
 import TableModal from '../table/TableModal';
 
 import Button from '@/components/common/Button';
+import LoadingSpin from '@/components/common/LoadingSpin';
 import Pagination from '@/components/common/Pagination';
 import Toast from '@/components/common/Toast';
 import {
@@ -35,10 +36,10 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
   const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
   const { openModal } = useModalStore();
   const { openTableModal } = useTableModalStore();
-  const { mutate: postDailyAnalysis } = usePostDailyAnalysis();
-  const { mutate: putDailyAnalysis } = usePutDailyAnalysis();
-  const { mutate: deleteDailyAnalysis } = useDeleteAnalysis();
-  const { mutate: uploadExcel } = useUploadExcel();
+  const { mutate: postDailyAnalysis, status: postStatus } = usePostDailyAnalysis();
+  const { mutate: putDailyAnalysis, status: putStatus } = usePutDailyAnalysis();
+  const { mutate: deleteDailyAnalysis, status: DeleteStatus } = useDeleteAnalysis();
+  const { mutate: uploadExcel, status: uploadStatus } = useUploadExcel();
   const { dailyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchDailyAnalysis(
     Number(strategyId),
     pagination.currentPage - 1,
@@ -142,11 +143,21 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
         dailyProfitLoss: Number(data.dailyProfitLoss),
       }));
 
-    postDailyAnalysis({
-      strategyId: Number(strategyId),
-      payload,
-      authRole: role as UserRole,
-    });
+    postDailyAnalysis(
+      {
+        strategyId: Number(strategyId),
+        payload,
+        authRole: role as UserRole,
+      },
+      {
+        onSuccess: () => {
+          showToast('일간분석 등록이 완료되었습니다.');
+        },
+        onError: (error) => {
+          showToast(error.message, 'error');
+        },
+      }
+    );
 
     modalData = [];
     return true;
@@ -197,12 +208,22 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
           showToast('주말 및 공휴일, 오늘 이후 날짜는 등록할 수 없습니다.', 'error');
           return false;
         }
-        putDailyAnalysis({
-          strategyId,
-          payload: updatedData,
-          authRole: role as UserRole,
-          dailyDataId: rowId,
-        });
+        putDailyAnalysis(
+          {
+            strategyId,
+            payload: updatedData,
+            authRole: role as UserRole,
+            dailyDataId: rowId,
+          },
+          {
+            onSuccess: () => {
+              showToast('수정이 완료되었습니다.');
+            },
+            onError: (error) => {
+              showToast(error.message, 'error');
+            },
+          }
+        );
         updatedData = null;
         return true;
       },
@@ -236,7 +257,17 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
         title: '일간분석 삭제',
         desc: `${selectedDailyAnalysis.length}개의 일간 분석 데이터를 삭제하시겠습니까?`,
         onAction: () => {
-          deleteDailyAnalysis({ strategyId, role, analysisIds: selectedDailyAnalysis });
+          deleteDailyAnalysis(
+            { strategyId, role, analysisIds: selectedDailyAnalysis },
+            {
+              onSuccess: () => {
+                showToast('삭제가 완료되었습니다.');
+              },
+              onError: (error) => {
+                showToast(error.message, 'error');
+              },
+            }
+          );
           setSelectAll(false);
         },
       });
@@ -284,12 +315,13 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
   }, [pagination.currentPage]);
 
   if (isLoading) {
-    return <div>로딩중...</div>;
+    return <LoadingSpin />;
   }
 
   return (
     <div css={dailyStyle}>
-      {((role === 'ROLE_TRADER' && user?.memberId === userId) || role === 'ROLE_ADMIN') &&
+      {((role === 'ROLE_TRADER' && user?.memberId === userId) ||
+        (role === 'ROLE_ADMIN' && user?.authorized)) &&
         dailyAnalysis.length > 0 && (
           <div css={editArea}>
             <div css={addArea}>
@@ -326,29 +358,43 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
             </Button>
           </div>
         )}
-      <AnalysisTable
-        strategyId={strategyId}
-        attributes={attributes}
-        analysis={normalizedData}
-        mode={'write'}
-        role={role}
-        userId={userId}
-        selectAll={selectAll}
-        selectedItems={selectedData}
-        onUpload={handleOpenModal}
-        onUploadExcel={handleFileChange}
-        onSelectChange={handleSelectChange}
-        onSelectAll={handleAllChecked}
-        onEdit={handleUpdateModal}
-      />
-      <div css={PaginationArea}>
-        <Pagination
-          totalPage={totalPages}
-          limit={pageSize}
-          page={currentPage + 1}
-          setPage={setPage}
-        />
-      </div>
+      {postStatus === 'pending' ||
+      putStatus === 'pending' ||
+      DeleteStatus === 'pending' ||
+      uploadStatus === 'pending' ? (
+        <div css={loadingArea}>
+          {' '}
+          <LoadingSpin />
+        </div>
+      ) : (
+        <>
+          {' '}
+          <AnalysisTable
+            strategyId={strategyId}
+            attributes={attributes}
+            analysis={normalizedData}
+            mode={'write'}
+            role={role}
+            userId={userId}
+            selectAll={selectAll}
+            selectedItems={selectedData}
+            onUpload={handleOpenModal}
+            onUploadExcel={handleFileChange}
+            onSelectChange={handleSelectChange}
+            onSelectAll={handleAllChecked}
+            onEdit={handleUpdateModal}
+          />
+          <div css={PaginationArea}>
+            <Pagination
+              totalPage={totalPages}
+              limit={pageSize}
+              page={currentPage + 1}
+              setPage={setPage}
+            />
+          </div>
+        </>
+      )}
+
       <TableModal />
       <Toast type={type} message={message} onClose={hideToast} isVisible={isToastVisible} />
     </div>
@@ -357,6 +403,12 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
 
 const dailyStyle = css`
   width: 100%;
+`;
+
+const loadingArea = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const addArea = css`

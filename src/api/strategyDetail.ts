@@ -108,8 +108,10 @@ export const fetchPostDailyAnalysis = async (
     );
     return req.data;
   } catch (error) {
-    console.error('failed to fetch Post DailyAnalysis', error);
-    throw error;
+    const axiosError = error as AxiosError<{ message: string }>;
+    const errorMsg =
+      axiosError.response?.data?.message || '등록에 실패했습니다. 다시 시도해주세요.';
+    throw new Error(errorMsg);
   }
 };
 
@@ -133,8 +135,10 @@ export const fetchPutDailyAnalysis = async (
     );
     return req.data;
   } catch (error) {
-    console.error('failed to fetch Put DailyAnalysis', error);
-    throw error;
+    const axiosError = error as AxiosError<{ message: string }>;
+    const errorMsg =
+      axiosError.response?.data?.message || '수정에 실패했습니다. 다시 시도해주세요.';
+    throw new Error(errorMsg);
   }
 };
 
@@ -157,7 +161,10 @@ export const fetchDeleteDailyAnalysis = async (
     );
     return req.data;
   } catch (error) {
-    console.error('failed to Delete DailyAnalysis', error);
+    const axiosError = error as AxiosError<{ message: string }>;
+    const errorMsg =
+      axiosError.response?.data?.message || '삭제에 실패했습니다. 다시 시도해주세요.';
+    throw new Error(errorMsg);
   }
 };
 
