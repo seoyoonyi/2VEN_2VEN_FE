@@ -98,7 +98,7 @@ const AnalysisTable = ({
             {attributes.map((item, idx) => (
               <th key={idx} css={tableHeadStyle}>
                 {(mode === 'write' && role === 'ROLE_TRADER' && user?.memberId === userId) ||
-                role === 'ROLE_ADMIN' ||
+                (role === 'ROLE_ADMIN' && user?.authorized) ||
                 item.title !== '수정'
                   ? item.title
                   : null}
