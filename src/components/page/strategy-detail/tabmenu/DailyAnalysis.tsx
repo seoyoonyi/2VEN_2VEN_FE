@@ -315,7 +315,11 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
   }, [pagination.currentPage]);
 
   if (isLoading) {
-    return <LoadingSpin />;
+    return (
+      <div css={loadingArea}>
+        <LoadingSpin />
+      </div>
+    );
   }
 
   return (

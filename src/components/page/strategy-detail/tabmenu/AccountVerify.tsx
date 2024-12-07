@@ -107,7 +107,7 @@ const AccountVerify = ({ strategyId, role, userId }: AccountProps) => {
 
   if (isLoading) {
     return (
-      <div>
+      <div css={loadingStyle}>
         <LoadingSpin />
       </div>
     );
@@ -185,6 +185,14 @@ const textStyle = css`
   align-items: center;
   ${theme.textStyle.captions.caption2};
   color: ${theme.colors.gray[500]};
+`;
+
+const loadingStyle = css`
+  display: flex;
+  width: 100%;
+  height: 200px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const buttonArea = css`

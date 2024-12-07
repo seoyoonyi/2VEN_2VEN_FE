@@ -47,6 +47,7 @@ const FollowModal = ({ onFolderSelect }: FollowModalProps) => {
 const contentWrpperStyle = css`
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 12px;
   margin-bottom: 8px;
   padding: 0 12px;
