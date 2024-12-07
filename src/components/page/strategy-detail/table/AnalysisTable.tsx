@@ -218,7 +218,6 @@ const tableStyle = css`
   .checkbox {
     cursor: pointer;
   }
-  max-height: 430px;
 `;
 
 const tableVars = css`
