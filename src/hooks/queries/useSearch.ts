@@ -10,28 +10,33 @@ import {
 } from '@/types/search';
 
 export const useSearchTraders = (
-  keyword?: string, // 옵셔널
-  sortOption: 'strategyCnt' | 'latestSignup' = 'strategyCnt',
-  options: { page?: number; pageSize?: number } = {}
+  keyword?: string,
+  options: {
+    page?: number;
+    pageSize?: number;
+    sortOption?: 'strategyCnt' | 'latestSignup';
+    enabled?: boolean;
+  } = {}
 ): UseQueryResult<SearchResponse<SearchedTrader>> => {
-  console.log('useSearchTraders Hook Parameters:', { keyword, sortOption });
-  const { page = 0, pageSize = 4 } = options;
+  const { page = 0, pageSize = 4, sortOption, enabled = false } = options;
+
   return useQuery({
-    queryKey: ['traders', keyword, sortOption, page, pageSize],
-    queryFn: async () => searchTraders({ keyword, sortOption, page, pageSize }),
-    enabled: true, // 항상 실행
+    queryKey: ['traders', keyword, page, pageSize, sortOption],
+    queryFn: async () => searchTraders({ keyword, page, pageSize, sortOption }),
+    enabled: !!keyword && enabled,
   });
 };
 
 export const useSearchStrategies = (
   keyword: string,
-  options: { page?: number; pageSize?: number } = {}
+  options: { page?: number; pageSize?: number; enabled?: boolean } = {}
 ): UseQueryResult<SearchResponse<SearchedStrategy>> => {
-  const { page = 0, pageSize = 6 } = options;
+  const { page = 0, pageSize = 6, enabled = false } = options;
+
   return useQuery({
     queryKey: ['strategies', keyword, page, pageSize],
     queryFn: async () => searchStrategies({ keyword, page, pageSize }),
-    enabled: !!keyword,
+    enabled: !!keyword && enabled,
   });
 };
 
