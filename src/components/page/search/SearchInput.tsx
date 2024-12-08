@@ -4,36 +4,56 @@ import { css } from '@emotion/react';
 import { FiSearch } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
-import Input from '@/components/common/Input';
+import BaseInput from '@/components/common/BaseInput';
 import { ROUTES } from '@/constants/routes';
+import { useSearchStrategies, useSearchTraders } from '@/hooks/queries/useSearch';
 import { useSearchStore } from '@/stores/searchStore';
 import theme from '@/styles/theme';
 
 const SearchInput = () => {
   const navigate = useNavigate();
   const { setKeyword } = useSearchStore();
-
   const [searchValue, setSearchValue] = useState('');
+  const [searchTrigger, setSearchTrigger] = useState(false);
+
+  const { refetch: refetchTraders } = useSearchTraders(searchValue, {
+    enabled: searchTrigger,
+  });
+  const { refetch: refetchStrategies } = useSearchStrategies(searchValue, {
+    enabled: searchTrigger,
+  });
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+      e.preventDefault();
+      handleSearch(searchValue);
+    }
+  };
+
+  const handleButtonClick = () => {
+    handleSearch(searchValue);
+  };
 
   const handleSearch = (value: string) => {
-    if (!value.trim()) return;
-
     setKeyword(value);
+    setSearchValue('');
+    setSearchTrigger(true);
+    refetchTraders();
+    refetchStrategies();
+    setSearchTrigger(false);
     navigate(`${ROUTES.SEARCH.TOTAL}?keyword=${encodeURIComponent(value)}`);
   };
+
   return (
     <div css={searchContainerStyles}>
-      <button type='button' onClick={() => handleSearch(searchValue)} css={searchIconStyles}>
+      <button type='button' onClick={handleButtonClick} css={searchIconStyles}>
         <FiSearch size={24} />
       </button>
-      <Input
+      <BaseInput
         placeholder='내용을 입력해주세요'
         value={searchValue}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value)}
-        onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
-          if (e.key === 'Enter') handleSearch(searchValue);
-        }}
-        showClearButton
+        onKeyDown={handleKeyDown}
         customStyle={css`
           width: 300px;
           text-indent: 10px;
