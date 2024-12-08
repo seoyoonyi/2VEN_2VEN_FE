@@ -32,7 +32,11 @@ const TraderListPage = () => {
   const mappedTraders = traderResults?.data.map(mapToTraderData) ?? [];
 
   if (isTraderLoading) {
-    return <Loader />;
+    return (
+      <div css={loaderStyle}>
+        <Loader />
+      </div>
+    );
   }
   return (
     <div>
@@ -48,6 +52,7 @@ const TraderListPage = () => {
               setSortOption(option.value as 'strategyCnt' | 'latestSignup' | 'followerCnt');
               setCurrentPage(1); // 정렬 변경시 첫 페이지로 이동
             }}
+            value={sortOptions.find((option) => option.value === sortOption)}
             type='sm'
             width='200px'
             defaultLabel='전략 많은 순'
@@ -97,6 +102,12 @@ const listContainerStyle = css`
   display: flex;
   flex-direction: column;
   gap: 24px;
+`;
+
+const loaderStyle = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export default TraderListPage;
