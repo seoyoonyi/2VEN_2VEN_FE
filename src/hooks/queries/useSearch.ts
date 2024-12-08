@@ -11,7 +11,7 @@ import {
 
 export const useSearchTraders = (
   keyword?: string, // 옵셔널
-  sortOption: 'strategyCnt' | 'latestSignup' = 'strategyCnt',
+  sortOption: 'strategyCnt' | 'latestSignup' | 'followerCnt' = 'strategyCnt',
   options: { page?: number; pageSize?: number } = {}
 ): UseQueryResult<SearchResponse<SearchedTrader>> => {
   console.log('useSearchTraders Hook Parameters:', { keyword, sortOption });

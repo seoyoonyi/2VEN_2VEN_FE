@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 
 import Input from '@/components/common/Input';
-import Loader from '@/components/common/Loading';
+import LoadingSpin from '@/components/common/LoadingSpin';
 import Select, { Option } from '@/components/common/Select';
 import { useFolderList } from '@/hooks/queries/useFetchFolderList';
 import { Folder } from '@/pages/mypage/investor/InvestorMyPage';
@@ -37,14 +37,14 @@ const FolderModal = ({
 
   if (isLoading) {
     return (
-      <div css={contentWrpperStyle}>
-        <Loader />
+      <div css={loaderStyle}>
+        <LoadingSpin />
       </div>
     );
   }
 
   if (isError || !data || !data.data) {
-    return <div css={contentWrpperStyle}>폴더 데이터를 불러오지 못했습니다.</div>;
+    return <div css={loaderStyle}>폴더 데이터를 불러오지 못했습니다.</div>;
   }
 
   const folder = data?.data.map((item: Folder) => ({
@@ -98,6 +98,13 @@ const contentWrpperStyle = css`
     color: ${theme.colors.main.primary};
     text-align: left;
   }
+`;
+
+const loaderStyle = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
 `;
 
 export default FolderModal;

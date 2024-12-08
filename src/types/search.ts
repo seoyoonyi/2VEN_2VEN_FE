@@ -5,6 +5,7 @@ export interface SearchedTrader {
   fileId: string;
   profilePath: string | null;
   strategyCnt: number;
+  followerCnt: number;
 }
 
 export interface SearchedStrategy {

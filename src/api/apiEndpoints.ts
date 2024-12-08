@@ -35,6 +35,7 @@ export const API_ENDPOINTS = {
     TRADER_STATS: '/api/strategies/strategy-trader-count', //트레이더 통계조회 (트레이더 수, 전략 수)
     UPLOAD_ACCOUNT_IMG: '/api/live-account-data', //실계좌 이미지 관리
     SM_SCORE: '/api/strategies/top5-sm-score', // 메인페이지 SMScore Top5
+    FOLLOWING_RANKING: '/api/strategies/follower-ranking', // 팔로우 랭킹
     REVIEWS: (strategyId: number) => `/api/strategies/${strategyId}/reviews`, // 리뷰(전략상세하단)
   },
   TRADERS: {

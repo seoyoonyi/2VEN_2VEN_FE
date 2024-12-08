@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 
 import Button from '@/components/common/Button';
+import Loader from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import Select from '@/components/common/Select';
 import FileUpload from '@/components/page/strategy/form-content/FileUpload';
@@ -162,7 +163,13 @@ const StrategyForm = ({
     handleSubmit();
   };
 
-  if (loading) return <p>Loading.....</p>;
+  if (loading)
+    return (
+      <div css={formContainerStyle}>
+        <Loader />
+      </div>
+    );
+
   if (error) return <p>{error}</p>;
 
   return (

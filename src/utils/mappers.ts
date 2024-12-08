@@ -6,6 +6,7 @@ export const mapToTraderData = (trader: SearchedTrader) => ({
   profileImage: trader.profilePath || '',
   description: trader.introduction || '',
   strategiesCount: trader.strategyCnt,
+  followerCnt: trader.followerCnt,
   createdAt: new Date().toISOString(), // 또는 API에서 받아온 데이터 사용
 });
 
