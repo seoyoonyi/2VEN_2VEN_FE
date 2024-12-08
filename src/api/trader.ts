@@ -6,7 +6,7 @@ interface SearchParams {
   keyword?: string;
   page?: number;
   pageSize?: number;
-  sortOption?: 'strategyCnt' | 'latestSignup';
+  sortOption?: 'strategyCnt' | 'latestSignup' | 'followerCnt';
 }
 
 export const fetchTraders = async ({

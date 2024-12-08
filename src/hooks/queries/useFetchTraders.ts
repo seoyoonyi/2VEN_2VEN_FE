@@ -5,7 +5,7 @@ import { SearchedTrader, SearchResponse } from '@/types/search';
 
 export const useFetchTraders = (
   keyword?: string,
-  sortOption: 'strategyCnt' | 'latestSignup' = 'strategyCnt',
+  sortOption: 'strategyCnt' | 'latestSignup' | 'followerCnt' = 'strategyCnt',
   options: { page?: number; pageSize?: number } = {}
 ): UseQueryResult<SearchResponse<SearchedTrader>> => {
   const { page = 0, pageSize = 4 } = options;
