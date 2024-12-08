@@ -2,22 +2,30 @@ import { css } from '@emotion/react';
 import { MdKeyboardArrowRight, MdArrowForward } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
-import TraderUserImage3 from '@/assets/images/ani_trader.png';
-import TraderUserImage1 from '@/assets/images/apt_trader.png';
 import EverageMetricsChartImage from '@/assets/images/everage_metrics_chart.png';
 import InvestorMainImage from '@/assets/images/investor_main.png';
-import TraderUserImage2 from '@/assets/images/nimo_trader.png';
 import TraderMainImage from '@/assets/images/trader_main.png';
+import Avatar from '@/components/common/Avatar';
 import Button from '@/components/common/Button';
 import Loader from '@/components/common/Loading';
 import ScrollToTop from '@/components/common/ScrollToTop';
 import TraderStats from '@/components/page/home/StrategyTraderCount';
 import TopStrategyList from '@/components/page/home/TopStrategyList';
 import { ROUTES } from '@/constants/routes';
+import { useFetchFollowerRanking } from '@/hooks/queries/useFetchFollowerRanking';
 import { useFetchStrategyTraderCount } from '@/hooks/queries/useFetchStrategyTraderCount';
 import { useFetchTopStrategy } from '@/hooks/queries/useFetchTopStrategy';
 import { useAuthStore } from '@/stores/authStore';
 import theme from '@/styles/theme';
+
+interface FollowerRankingData {
+  memberId: string;
+  followerCnt: number;
+  introduction: string;
+  nickname: string;
+  strategyCnt: number;
+  profilePath: string;
+}
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -25,26 +33,37 @@ const HomePage = () => {
   // 훅 호출
   const { data: strategyData, isLoading: isLoadingStrategy } = useFetchStrategyTraderCount();
   const { data: rankingData, isLoading: isLoadingRanking } = useFetchTopStrategy();
+  const { data: followerRankingData, isLoading: isLoadingFollower } = useFetchFollowerRanking(3);
 
   // 트레이더 및 전략 수 표시를 위한 데이터 처리
   const traderCount = Number(strategyData?.traderCnt ?? 0);
   const strategyCount = Number(strategyData?.strategyCnt ?? 0);
 
+  const getOrdinalSuffix = (num: number) => {
+    if (num === 1) return 'st';
+    if (num === 2) return 'nd';
+    if (num === 3) return 'rd';
+    return 'th';
+  };
+
   // 로딩 처리
-  if (isLoadingStrategy || isLoadingRanking) {
+  if (isLoadingStrategy || isLoadingRanking || isLoadingFollower) {
     return <Loader />;
   }
 
   const handleSignUpClick = () => {
     navigate(ROUTES.AUTH.SIGNUP.SELECT_TYPE);
+    window.scrollTo(0, 0);
   };
 
   const handleStrategyListClick = () => {
     navigate(ROUTES.STRATEGY.LIST);
+    window.scrollTo(0, 0);
   };
 
   const handleTraderListClick = () => {
     navigate(ROUTES.TRADER.LIST);
+    window.scrollTo(0, 0);
   };
 
   return (
@@ -88,42 +107,26 @@ const HomePage = () => {
                 <MdArrowForward css={arrowForwardStyle} />
               </button>
             </div>
-            <div css={rankingItemStyle}>
-              <div css={rankWithIconStyle}>
-                <h3 css={rankTextStyle}>1st</h3>
-                <MdKeyboardArrowRight css={arrowIconStyle} />
+            {followerRankingData.map((ranking: FollowerRankingData, idx: number) => (
+              <div css={rankingItemStyle} key={ranking?.memberId}>
+                <div css={rankWithIconStyle}>
+                  <h3 css={rankTextStyle}>
+                    {idx + 1}
+                    {getOrdinalSuffix(idx + 1)}
+                  </h3>
+                  <MdKeyboardArrowRight css={arrowIconStyle} />
+                </div>
+                <div css={userInfoStyle}>
+                  <Avatar src={ranking.profilePath} alt={ranking.nickname} size={50} />
+                  <p css={traderNameStyle}>{ranking.nickname}</p>
+                </div>
+                <span css={amountTextStyle}>
+                  팔로워
+                  <p>{ranking.followerCnt}</p>| 전략
+                  <p>{ranking.strategyCnt}</p>
+                </span>
               </div>
-              <div css={userInfoStyle}>
-                <img src={TraderUserImage1} alt='아파트수집가' css={userImageStyle} />
-                <p css={traderNameStyle}>아파트수집가</p>
-              </div>
-              <span css={amountTextStyle}>137,031,335원</span>
-            </div>
-            <div css={rankingItemStyle}>
-              <div css={rankWithIconStyle}>
-                <h3 css={rankTextStyle}>2nd</h3>
-                <MdKeyboardArrowRight css={arrowIconStyle} />
-              </div>
-              <div css={userInfoStyle}>
-                <img src={TraderUserImage2} alt='제로니모' css={userImageStyle} />
-                <p css={traderNameStyle}>제로니모</p>
-              </div>
-              <span css={amountTextStyle}>29,852,370원</span>
-            </div>
-            <div css={rankingItemStyle}>
-              <div css={rankWithIconStyle}>
-                <h3 css={rankTextStyle}>3rd</h3>
-                <MdKeyboardArrowRight css={arrowIconStyle} />
-              </div>
-              <div css={userInfoStyle}>
-                <img src={TraderUserImage3} alt='애니헬프' css={userImageStyle} />
-                <p css={traderNameStyle}>애니헬프</p>
-              </div>
-              <span css={amountTextStyle}>29,266,720원</span>
-            </div>
-          </div>
-          <div css={descriptionContainerStyle}>
-            <p css={descriptionStyle}>트레이더의 누적 수익 금액입니다.</p>
+            ))}
           </div>
         </div>
       </section>
@@ -308,8 +311,8 @@ const arrowIconStyle = css`
 
 const userInfoStyle = css`
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 12px;
 `;
 
 const traderNameStyle = css`
@@ -317,33 +320,18 @@ const traderNameStyle = css`
   ${theme.textStyle.subtitles.subtitle2};
 `;
 
-const userImageStyle = css`
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 1px solid ${theme.colors.main.white};
-  position: relative;
-  margin-left: -12px;
-  &:first-of-type {
-    margin-left: 0;
-  }
-`;
-
 const amountTextStyle = css`
-  ${theme.textStyle.subtitles.subtitle1};
+  /* ${theme.textStyle.subtitles.subtitle1}; */
+  font-size: 18px;
   color: ${theme.colors.gray[900]};
   text-align: center;
-`;
+  display: flex;
+  gap: 8px;
 
-const descriptionContainerStyle = css`
-  width: 100%;
-  text-align: right;
-  margin-top: 16px;
-`;
-
-const descriptionStyle = css`
-  ${theme.textStyle.captions.caption2};
-  color: ${theme.colors.gray[400]};
+  p {
+    display: flex;
+    color: ${theme.colors.main.primary};
+  }
 `;
 
 /* 트레이더Main */

@@ -106,7 +106,8 @@ const StrategyListPage = () => {
                 variant='primary'
                 size='xs'
                 customStyle={css`
-                  padding: 20px 32px;
+                  padding: 0 32px;
+                  height: 36px;
                 `}
                 onClick={() => navigate(ROUTES.MYPAGE.TRADER.STRATEGIES.CREATE)}
               >

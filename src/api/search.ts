@@ -15,7 +15,7 @@ interface SearchParams {
   keyword?: string;
   page?: number;
   pageSize?: number;
-  sortOption?: 'strategyCnt' | 'latestSignup';
+  sortOption?: 'strategyCnt' | 'latestSignup' | 'followerCnt';
 }
 
 // 키보드 입력에 따른 '전체 트레이더' 검색 결과를 보여주는 경우 - 트레이더 검색

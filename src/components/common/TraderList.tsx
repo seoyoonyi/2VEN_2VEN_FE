@@ -13,6 +13,7 @@ interface TraderData {
   description: string;
   strategiesCount: number;
   createdAt: string; // 필요한지 확인 필요
+  followerCnt: number;
 }
 
 interface TraderListProps {
@@ -42,7 +43,7 @@ const TraderList = ({ traders, badgeRank }: TraderListProps) => {
             <Avatar src={trader.profileImage} alt='프로필이미지' size={50} />
             {badgeRank?.includes(trader.traderId) && (
               <div css={badgeStyle}>
-                {badgeRank.indexOf(trader.traderId) + 1} {/* 순위 계산 */}
+                {trader.followerCnt} {/* 순위 계산 */}
               </div>
             )}
           </div>

@@ -14,7 +14,7 @@ export const useSearchTraders = (
   options: {
     page?: number;
     pageSize?: number;
-    sortOption?: 'strategyCnt' | 'latestSignup';
+    sortOption: 'strategyCnt' | 'latestSignup' | 'followerCnt' = 'strategyCnt',
     enabled?: boolean;
   } = {}
 ): UseQueryResult<SearchResponse<SearchedTrader>> => {

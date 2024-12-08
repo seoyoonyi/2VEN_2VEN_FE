@@ -28,6 +28,7 @@ interface StrategyHeaderProps {
   onDelete: (id: number) => void;
   onEnd: () => void;
   onApproval: () => void;
+  refetch: () => void;
 }
 
 export const StrategyHeader = ({
@@ -41,6 +42,7 @@ export const StrategyHeader = ({
   onEnd,
   onDelete,
   onApproval,
+  refetch,
 }: StrategyHeaderProps) => {
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const navigate = useNavigate();
@@ -91,6 +93,7 @@ export const StrategyHeader = ({
           .then(() => {
             showToast('전략이 폴더에 성공적으로 추가되었습니다.');
             setIsFollowing(true);
+            refetch();
           })
           .catch(() => {
             showToast('이미 폴더에 추가된 전략입니다.', 'error');
@@ -106,6 +109,7 @@ export const StrategyHeader = ({
       await unfollowStrategy(id);
       showToast('전략이 언팔로우되었습니다.');
       setIsFollowing(false);
+      refetch();
     } catch (error) {
       showToast('전략 언팔로우에 실패했습니다.', 'error');
     }

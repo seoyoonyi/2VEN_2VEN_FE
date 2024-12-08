@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { css } from '@emotion/react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -9,6 +11,7 @@ import TraderProfileNav from '@/components/navigation/TraderProfilePageNav';
 import { ROUTES } from '@/constants/routes';
 import { useFetchTraderStrategies } from '@/hooks/queries/useFetchTraderStrategies';
 import { useAuthStore } from '@/stores/authStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 
 const TraderDetailPage = () => {
@@ -16,6 +19,7 @@ const TraderDetailPage = () => {
   const { user } = useAuthStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPageFromQuery = parseInt(searchParams.get('page') || '1', 10);
+  const { showToast } = useToastStore();
   const { traderId } = useParams();
 
   const { strategies, isLoading, isError, totalPages, totalElements, pageSize } =
@@ -26,6 +30,13 @@ const TraderDetailPage = () => {
       pageSize: 10,
     });
 
+  useEffect(() => {
+    if (!user) {
+      showToast('로그인이 필요한 서비스 입니다.', 'error');
+      navigate(ROUTES.AUTH.SIGNIN);
+    }
+  }, [user]);
+
   const handlePageChange = (page: number) => {
     setSearchParams({ page: String(page) });
     window.scrollTo(0, 0);
@@ -33,7 +44,7 @@ const TraderDetailPage = () => {
 
   if (isLoading) {
     return (
-      <div css={myPageWrapperStyle}>
+      <div css={loaderStyle}>
         <Loader />
       </div>
     );
@@ -41,7 +52,7 @@ const TraderDetailPage = () => {
 
   if (isError) {
     return (
-      <div css={myPageWrapperStyle}>
+      <div css={loaderStyle}>
         <p css={emptyStateWrapperStyle}>
           데이터를 불러오는 데 실패했습니다. <br /> 다시 시도하거나 잠시 후에 확인해주세요.
         </p>
@@ -173,6 +184,12 @@ const emptyStateWrapperStyle = css`
   height: 200px;
   text-align: center;
   color: ${theme.colors.gray[400]};
+`;
+
+const loaderStyle = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export default TraderDetailPage;
