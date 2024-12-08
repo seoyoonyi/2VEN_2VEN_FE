@@ -103,6 +103,7 @@ export const useDeleteAllAnalysis = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
       queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
+      queryClient.removeQueries({ queryKey: ['strategyStatistics'] });
       queryClient.invalidateQueries({ queryKey: ['strategyChart'] });
     },
   });
