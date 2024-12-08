@@ -45,7 +45,7 @@ export const isValidInputNumber = (value: string | number): boolean => {
 
 //분석 공휴일, 주말 입력 제한 유효성 검사
 export const isValidPossibleDate = (valid: string[] | string) => {
-  const limit = ['01-01', '03-01', '05-05', '08-15', '10-03', '12-25'];
+  const limit = ['01-01', '03-01', '05-05', '08-15', '10-03', '10-09', '12-25'];
 
   const now = new Date();
   const todayKST = new Date(now.getTime() + 9 * 60 * 60 * 1000);
