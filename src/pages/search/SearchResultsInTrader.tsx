@@ -16,16 +16,18 @@ const SearchResultsInTrader = () => {
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get('keyword') || '';
   const [sortOption, setSortOption] = useState<'strategyCnt' | 'latestSignup'>('strategyCnt');
-  console.log('검색어:', keyword);
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-  const { data: traderResults, isLoading: isTraderLoading } = useSearchTraders(
-    keyword,
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data: traderResults, isLoading: isTraderLoading } = useSearchTraders(keyword, {
+    page: currentPage - 1,
+    pageSize: 30,
     sortOption,
-    {
-      page: currentPage - 1, // 페이지는 0부터 시작
-      pageSize: 30,
-    }
-  ); // 트레이더 검색 결과
+    enabled: !!keyword,
+  });
+
+  const handleSortChange = (option: { value: string }) => {
+    setSortOption(option.value as 'strategyCnt' | 'latestSignup');
+    setCurrentPage(1);
+  };
 
   const sortOptions = [
     { label: '전략 많은 순', value: 'strategyCnt' },
@@ -50,10 +52,7 @@ const SearchResultsInTrader = () => {
         </div>
         <Select
           options={sortOptions}
-          onChange={(option) => {
-            setSortOption(option.value as 'strategyCnt' | 'latestSignup');
-            setCurrentPage(1); // 정렬 변경시 첫 페이지로 이동
-          }}
+          onChange={handleSortChange}
           type='sm'
           width='200px'
           defaultLabel='전략 많은 순'
