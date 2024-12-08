@@ -127,7 +127,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
       {/* 트레이더Main */}
       <section css={traderSectionStyle}>
         <div css={traderContentStyle}>
@@ -175,7 +174,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
       {/* 마지막섹션(배경) */}
       <section css={lastSectionStyle}></section>
     </>
