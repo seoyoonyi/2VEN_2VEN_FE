@@ -29,7 +29,11 @@ const TraderListPage = () => {
   const mappedTraders = traderResults?.data.map(mapToTraderData) ?? [];
 
   if (isTraderLoading) {
-    return <Loader />;
+    return (
+      <div css={traderListContainerStyle}>
+        <Loader />
+      </div>
+    );
   }
   return (
     <div>
