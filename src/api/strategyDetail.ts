@@ -168,6 +168,21 @@ export const fetchDeleteDailyAnalysis = async (
   }
 };
 
+//전체 일간분석 삭제
+export const fetchAllDeleteDailyAnalysis = async (strategyId: number) => {
+  try {
+    const req = await apiClient.delete(
+      `${API_ENDPOINTS.STRATEGY.CREATE}/${strategyId}/daily-analyses/all`
+    );
+    return req.data;
+  } catch (error) {
+    const axiosError = error as AxiosError<{ message: string }>;
+    const errorMsg =
+      axiosError.response?.data?.message || '삭제에 실패했습니다. 다시 시도해주세요.';
+    throw new Error(errorMsg);
+  }
+};
+
 //월간분석 조회
 export const fetchMonthlyAnalysis = async (
   strategyId: number,

@@ -1,6 +1,7 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 import {
+  fetchAllDeleteDailyAnalysis,
   fetchDeleteDailyAnalysis,
   fetchPostDailyAnalysis,
   fetchPutDailyAnalysis,
@@ -86,6 +87,19 @@ export const useUploadExcel = () => {
     onError: (error) => {
       throw error;
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
+      queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
+      queryClient.invalidateQueries({ queryKey: ['strategyChart'] });
+    },
+  });
+};
+
+export const useDeleteAllAnalysis = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ strategyId }: { strategyId: number }) => fetchAllDeleteDailyAnalysis(strategyId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
       queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
