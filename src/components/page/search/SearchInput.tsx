@@ -2,6 +2,7 @@ import { ChangeEvent, KeyboardEvent, useState } from 'react';
 
 import { css } from '@emotion/react';
 import { FiSearch } from 'react-icons/fi';
+import { IoIosCloseCircle } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
 import BaseInput from '@/components/common/BaseInput';
@@ -34,6 +35,11 @@ const SearchInput = () => {
     handleSearch(searchValue);
   };
 
+  const handleClear = () => {
+    setSearchValue(''); // 검색어 초기화
+    setKeyword(''); // 상태도 초기화
+  };
+
   const handleSearch = (value: string) => {
     setKeyword(value);
     setSearchTrigger(true);
@@ -59,13 +65,21 @@ const SearchInput = () => {
           padding-left: 36px;
         `}
       />
+      {searchValue && (
+        <button type='button' onClick={handleClear} css={clearButtonStyles}>
+          <IoIosCloseCircle size={24} />
+        </button>
+      )}
     </div>
   );
 };
 
 const searchContainerStyles = css`
   position: relative;
-  display: inline-block;
+
+  input {
+    padding-right: 44px;
+  }
 `;
 
 const searchIconStyles = css`
@@ -81,6 +95,23 @@ const searchIconStyles = css`
   padding: 0;
   cursor: pointer;
   color: ${theme.colors.gray[500]};
+
+  &:hover {
+    color: ${theme.colors.gray[700]};
+  }
+`;
+
+const clearButtonStyles = css`
+  z-index: 9;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: ${theme.colors.gray[400]};
 
   &:hover {
     color: ${theme.colors.gray[700]};
