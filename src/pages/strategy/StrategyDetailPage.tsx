@@ -76,7 +76,6 @@ const StrategyDetailPage = () => {
       };
     });
 
-  console.log(statistics);
   const tabMenu = [
     {
       title: '통계',
