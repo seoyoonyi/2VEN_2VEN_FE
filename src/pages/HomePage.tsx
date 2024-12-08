@@ -53,14 +53,17 @@ const HomePage = () => {
 
   const handleSignUpClick = () => {
     navigate(ROUTES.AUTH.SIGNUP.SELECT_TYPE);
+    window.scrollTo(0, 0);
   };
 
   const handleStrategyListClick = () => {
     navigate(ROUTES.STRATEGY.LIST);
+    window.scrollTo(0, 0);
   };
 
   const handleTraderListClick = () => {
     navigate(ROUTES.TRADER.LIST);
+    window.scrollTo(0, 0);
   };
 
   return (
