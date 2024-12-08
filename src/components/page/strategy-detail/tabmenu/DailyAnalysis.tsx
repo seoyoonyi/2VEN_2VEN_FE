@@ -12,6 +12,7 @@ import LoadingSpin from '@/components/common/LoadingSpin';
 import Pagination from '@/components/common/Pagination';
 import Toast from '@/components/common/Toast';
 import {
+  useDeleteAllAnalysis,
   useDeleteAnalysis,
   usePostDailyAnalysis,
   usePutDailyAnalysis,
@@ -37,8 +38,9 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
   const { openModal } = useModalStore();
   const { openTableModal } = useTableModalStore();
   const { mutate: postDailyAnalysis, status: postStatus } = usePostDailyAnalysis();
+  const { mutate: alldeleteAnalysis, status: alldeleteStatus } = useDeleteAllAnalysis();
   const { mutate: putDailyAnalysis, status: putStatus } = usePutDailyAnalysis();
-  const { mutate: deleteDailyAnalysis, status: DeleteStatus } = useDeleteAnalysis();
+  const { mutate: deleteDailyAnalysis, status: deleteStatus } = useDeleteAnalysis();
   const { mutate: uploadExcel, status: uploadStatus } = useUploadExcel();
   const { dailyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchDailyAnalysis(
     Number(strategyId),
@@ -281,7 +283,28 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
     }
   };
 
-  const handleAllDelete = () => {};
+  const handleAllDelete = () => {
+    if (!strategyId) return;
+    openModal({
+      type: 'warning',
+      title: '일간분석 전체 삭제',
+      desc: `등록된 모든 일간 분석 데이터를 삭제하시겠습니까?`,
+      onAction: () => {
+        alldeleteAnalysis(
+          { strategyId },
+          {
+            onSuccess: () => {
+              showToast('전체 삭제가 완료되었습니다.');
+            },
+            onError: (error) => {
+              showToast(error.message, 'error');
+            },
+          }
+        );
+      },
+    });
+  };
+
   const handleTriggerExcel = () => {
     fileInputRef.current?.click();
   };
@@ -370,8 +393,9 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
         )}
       {postStatus === 'pending' ||
       putStatus === 'pending' ||
-      DeleteStatus === 'pending' ||
-      uploadStatus === 'pending' ? (
+      deleteStatus === 'pending' ||
+      uploadStatus === 'pending' ||
+      alldeleteStatus === 'pending' ? (
         <div css={loadingArea}>
           {' '}
           <LoadingSpin />
