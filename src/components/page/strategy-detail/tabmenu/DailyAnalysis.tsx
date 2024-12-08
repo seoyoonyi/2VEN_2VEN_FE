@@ -10,6 +10,7 @@ import TableModal from '../table/TableModal';
 import Button from '@/components/common/Button';
 import LoadingSpin from '@/components/common/LoadingSpin';
 import Pagination from '@/components/common/Pagination';
+import ProgressBar from '@/components/common/ProgressBar';
 import Toast from '@/components/common/Toast';
 import {
   useDeleteAllAnalysis,
@@ -24,6 +25,7 @@ import { useAuthStore } from '@/stores/authStore';
 import useModalStore from '@/stores/modalStore';
 import useTableModalStore from '@/stores/tableModalStore';
 import useToastStore from '@/stores/toastStore';
+import theme from '@/styles/theme';
 import { UserRole } from '@/types/route';
 import { DailyAnalysisProps, AnalysisDataProps } from '@/types/strategyDetail';
 import { isValidInputNumber, isValidPossibleDate } from '@/utils/statistics';
@@ -48,6 +50,12 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
     pagination.pageSize,
     role as UserRole
   );
+  const isPending =
+    postStatus === 'pending' ||
+    putStatus === 'pending' ||
+    deleteStatus === 'pending' ||
+    uploadStatus === 'pending' ||
+    alldeleteStatus === 'pending';
 
   const normalizedData = useMemo(() => {
     if (!dailyAnalysis) return [];
@@ -391,14 +399,10 @@ const DailyAnalysis = ({ strategyId, attributes, userId, role }: AnalysisProps) 
             </div>
           </div>
         )}
-      {postStatus === 'pending' ||
-      putStatus === 'pending' ||
-      deleteStatus === 'pending' ||
-      uploadStatus === 'pending' ||
-      alldeleteStatus === 'pending' ? (
+      {isPending ? (
         <div css={loadingArea}>
-          {' '}
-          <LoadingSpin />
+          <div css={loadingText}>작업을 진행중입니다.</div>
+          <ProgressBar variant='infinite' progress={100} />
         </div>
       ) : (
         <>
@@ -441,8 +445,16 @@ const dailyStyle = css`
 
 const loadingArea = css`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  color: ${theme.colors.gray[400]};
+  ${theme.textStyle.subtitles.subtitle4};
+`;
+
+const loadingText = css`
+  display: flex;
+  margin-top: 40px;
 `;
 
 const addArea = css`
