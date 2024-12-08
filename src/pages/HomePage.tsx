@@ -125,9 +125,6 @@ const HomePage = () => {
               </div>
             ))}
           </div>
-          <div css={descriptionContainerStyle}>
-            <p css={descriptionStyle}>트레이더의 누적 수익 금액입니다.</p>
-          </div>
         </div>
       </section>
       {/* 트레이더Main */}
