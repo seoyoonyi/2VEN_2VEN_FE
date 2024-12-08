@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { unfollowStrategy, updateFollowingFolder } from '@/api/follow';
 import ContentModal from '@/components/common/ContentModal';
 import Loader from '@/components/common/Loading';
+import LoadingSpin from '@/components/common/LoadingSpin';
 import Pagination from '@/components/common/Pagination';
 import StrategyList from '@/components/common/StrategyList';
 import Toast from '@/components/common/Toast';
