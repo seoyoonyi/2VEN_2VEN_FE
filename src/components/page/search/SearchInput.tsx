@@ -36,7 +36,6 @@ const SearchInput = () => {
 
   const handleSearch = (value: string) => {
     setKeyword(value);
-    setSearchValue('');
     setSearchTrigger(true);
     refetchTraders();
     refetchStrategies();
