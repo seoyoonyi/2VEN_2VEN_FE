@@ -44,7 +44,7 @@ const StrategyDetailPage = () => {
   const { strategyId } = useParams();
   const navigate = useNavigate();
   const role = user?.role as UserRole;
-  const { strategy } = useFetchStrategyDetail(strategyId || '', role);
+  const { strategy, refetch } = useFetchStrategyDetail(strategyId || '', role);
   const { statistics } = useStatistics(Number(strategyId), role);
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { mutate: approveStrategy } = useStrategyDetailApprove();
@@ -201,6 +201,7 @@ const StrategyDetailPage = () => {
               }}
               onDelete={() => handleDeleteDetail(strategy.strategyId)}
               onEnd={() => handleDetailEnd(strategy.strategyId, role)}
+              refetch={strategy && refetch}
             />
             <IconTagSection imgs={icons} />
             <StrategyTitleSection

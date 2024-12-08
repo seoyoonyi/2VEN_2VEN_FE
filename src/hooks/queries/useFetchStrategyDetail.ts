@@ -4,7 +4,7 @@ import { fetchDefaultStrategyDetail } from '@/api/strategyDetail';
 import { UserRole } from '@/types/route';
 
 const useFetchStrategyDetail = (strategyId: string, role: UserRole) => {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['strategyDetail', strategyId, role],
     queryFn: async () => {
       const res = await fetchDefaultStrategyDetail(Number(strategyId), role);
@@ -21,7 +21,7 @@ const useFetchStrategyDetail = (strategyId: string, role: UserRole) => {
     return { isError: true };
   }
 
-  return { strategy: data, isLoading, isError };
+  return { strategy: data, isLoading, isError, refetch };
 };
 
 export default useFetchStrategyDetail;
