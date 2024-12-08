@@ -22,7 +22,7 @@ const FolderModal = ({
   onChangeFolderName?: (folderName: string) => void;
   onFolderSelect?: (folderId: string) => void;
 }) => {
-  const { data, isLoading, isError } = useFolderList(0, 10);
+  const { data, isLoading, isError } = useFolderList(0, 100);
   const [folderName, setFolderName] = useState(initialFolderName);
 
   useEffect(() => {
@@ -96,6 +96,7 @@ const contentWrpperStyle = css`
   label {
     ${theme.buttons.label.lg};
     color: ${theme.colors.main.primary};
+    text-align: left;
   }
 `;
 
