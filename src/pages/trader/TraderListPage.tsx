@@ -16,10 +16,13 @@ const desc = [{ text: '관심 있는 트레이더를 찾아 전략과 프로필�
 const sortOptions = [
   { label: '전략 많은 순', value: 'strategyCnt' },
   { label: '신규 등록 순', value: 'latestSignup' },
+  { label: '팔로워 많은 순', value: 'followerCnt' },
 ];
 
 const TraderListPage = () => {
-  const [sortOption, setSortOption] = useState<'strategyCnt' | 'latestSignup'>('strategyCnt');
+  const [sortOption, setSortOption] = useState<'strategyCnt' | 'latestSignup' | 'followerCnt'>(
+    'strategyCnt'
+  );
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const { data: traderResults, isLoading: isTraderLoading } = useSearchTraders('', sortOption, {
     page: currentPage - 1, // 페이지는 0부터 시작
@@ -42,7 +45,7 @@ const TraderListPage = () => {
           <Select
             options={sortOptions}
             onChange={(option) => {
-              setSortOption(option.value as 'strategyCnt' | 'latestSignup');
+              setSortOption(option.value as 'strategyCnt' | 'latestSignup' | 'followerCnt');
               setCurrentPage(1); // 정렬 변경시 첫 페이지로 이동
             }}
             type='sm'
