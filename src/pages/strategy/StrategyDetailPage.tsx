@@ -28,7 +28,6 @@ import {
   useStrategyDetailTerminate,
 } from '@/hooks/mutations/useStrategyDetailMutation';
 import { useFetchApproveState } from '@/hooks/queries/useFetchApprove';
-import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
 import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
 import useStatistics from '@/hooks/queries/useStatistics';
 import { useAuthStore } from '@/stores/authStore';
