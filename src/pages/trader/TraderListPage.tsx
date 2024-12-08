@@ -7,7 +7,7 @@ import PageHeader from '@/components/common/PageHeader';
 import Pagination from '@/components/common/Pagination';
 import Select from '@/components/common/Select';
 import TraderList from '@/components/common/TraderList';
-import { useSearchTraders } from '@/hooks/queries/useSearch';
+import { useFetchTraders } from '@/hooks/queries/useFetchTraders';
 import theme from '@/styles/theme';
 import { mapToTraderData } from '@/utils/mappers';
 
@@ -21,7 +21,7 @@ const sortOptions = [
 const TraderListPage = () => {
   const [sortOption, setSortOption] = useState<'strategyCnt' | 'latestSignup'>('strategyCnt');
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-  const { data: traderResults, isLoading: isTraderLoading } = useSearchTraders('', sortOption, {
+  const { data: traderResults, isLoading: isTraderLoading } = useFetchTraders('', sortOption, {
     page: currentPage - 1, // 페이지는 0부터 시작
     pageSize: 14,
   }); // 트레이더 검색 결과
