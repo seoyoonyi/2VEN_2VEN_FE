@@ -4,6 +4,6 @@ import { fetchStrategies, RankingData } from '@/api/home/topStrategyRank';
 
 export const useFetchTopStrategy = () =>
   useQuery<RankingData[], Error>({
-    queryKey: ['strategies'],
+    queryKey: ['topStrategies'],
     queryFn: fetchStrategies,
   });

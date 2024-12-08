@@ -25,7 +25,6 @@ export const searchTraders = async ({
   pageSize = 4,
   sortOption = 'strategyCnt', // 기본값
 }: SearchParams): Promise<SearchResponse<SearchedTrader>> => {
-  console.log('Search Parameters:', { keyword, page, pageSize, sortOption });
   const { data } = await apiClient.get(API_ENDPOINTS.SEARCH.TRADERS, {
     params: {
       ...(keyword && { keyword }), // keyword가 있을 때만 포함
