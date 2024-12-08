@@ -331,17 +331,6 @@ const amountTextStyle = css`
   }
 `;
 
-const descriptionContainerStyle = css`
-  width: 100%;
-  text-align: right;
-  margin-top: 16px;
-`;
-
-const descriptionStyle = css`
-  ${theme.textStyle.captions.caption2};
-  color: ${theme.colors.gray[400]};
-`;
-
 /* 트레이더Main */
 
 const traderSectionStyle = css`
