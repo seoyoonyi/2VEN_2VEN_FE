@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { css } from '@emotion/react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -9,6 +11,7 @@ import TraderProfileNav from '@/components/navigation/TraderProfilePageNav';
 import { ROUTES } from '@/constants/routes';
 import { useFetchTraderStrategies } from '@/hooks/queries/useFetchTraderStrategies';
 import { useAuthStore } from '@/stores/authStore';
+import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 
 const TraderDetailPage = () => {
@@ -16,6 +19,7 @@ const TraderDetailPage = () => {
   const { user } = useAuthStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPageFromQuery = parseInt(searchParams.get('page') || '1', 10);
+  const { showToast } = useToastStore();
   const { traderId } = useParams();
 
   const { strategies, isLoading, isError, totalPages, totalElements, pageSize } =
@@ -25,6 +29,13 @@ const TraderDetailPage = () => {
       page: currentPageFromQuery - 1,
       pageSize: 10,
     });
+
+  useEffect(() => {
+    if (!user) {
+      showToast('로그인이 필요한 서비스 입니다.', 'error');
+      navigate(ROUTES.AUTH.SIGNIN);
+    }
+  }, [user]);
 
   const handlePageChange = (page: number) => {
     setSearchParams({ page: String(page) });

@@ -114,6 +114,10 @@ export const router = createBrowserRouter(
           path: ROUTES.SEARCH.STRATEGIES_DETAIL,
           element: <SearchResultsInStrategy />,
         },
+        {
+          path: ROUTES.TRADER.PROFILE(':traderId'),
+          element: <TraderDetailPage />,
+        },
 
         // 비로그인 전용 라우트
         {
@@ -203,14 +207,6 @@ export const router = createBrowserRouter(
           element: (
             <ProtectedRoute requiredAuth={true}>
               <WithdrawalSuccessPage />
-            </ProtectedRoute>
-          ),
-        },
-        {
-          path: ROUTES.TRADER.PROFILE(':traderId'),
-          element: (
-            <ProtectedRoute requiredAuth={true}>
-              <TraderDetailPage />
             </ProtectedRoute>
           ),
         },
