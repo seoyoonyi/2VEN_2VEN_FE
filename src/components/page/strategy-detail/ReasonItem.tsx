@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 
+import Avatar from '@/components/common/Avatar';
 import theme from '@/styles/theme';
 
 interface RejectReasonProps {
@@ -13,7 +14,7 @@ const ReasonItem = ({ title, managerNickname, profileImg, rejectionReason }: Rej
     <div css={headerStyle}>
       <div css={titleStyle}>{title}</div>
       <div css={adminStyle}>
-        <img src={profileImg} alt={managerNickname} css={imgStyle} />
+        <Avatar src={profileImg} alt='managetNickName' size={35} />
         <div>{managerNickname}</div>
       </div>
     </div>
@@ -46,13 +47,8 @@ const titleStyle = css`
 const adminStyle = css`
   display: flex;
   gap: 8px;
+  align-items: center;
   ${theme.textStyle.body.body2};
-`;
-
-const imgStyle = css`
-  width: 24px;
-  height: 24px;
-  border-radius: 24px;
 `;
 
 const contentStyle = css`

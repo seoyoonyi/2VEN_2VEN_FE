@@ -28,7 +28,6 @@ import {
   useStrategyDetailTerminate,
 } from '@/hooks/mutations/useStrategyDetailMutation';
 import { useFetchApproveState } from '@/hooks/queries/useFetchApprove';
-import useFetchDailyAnalysis from '@/hooks/queries/useFetchDailyAnalysis';
 import useFetchStrategyDetail from '@/hooks/queries/useFetchStrategyDetail';
 import useStatistics from '@/hooks/queries/useStatistics';
 import { useAuthStore } from '@/stores/authStore';
@@ -51,14 +50,12 @@ const StrategyDetailPage = () => {
   const { mutate: approveStrategy } = useStrategyDetailApprove();
   const { mutate: terminateStrategy } = useStrategyDetailTerminate();
   const { openModal } = useModalStore();
-  const { dailyAnalysis } = useFetchDailyAnalysis(Number(strategyId), 0, 5, role);
   const { data: approveState } =
     useFetchApproveState(Number(strategyId), role, {
       enabled: strategy?.isApproved === 'N',
     }) || '';
-  const isApproved =
-    (dailyAnalysis?.length >= 3 && strategy?.requestAvailable === true) ||
-    approveState?.isApproved === 'N';
+  const isApproved = strategy?.requestAvailable === true;
+  approveState?.isApproved === 'N';
   const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
   const isOwner = user?.memberId === strategy?.memberId;
   const isAdmin = role === 'ROLE_ADMIN';
