@@ -2,7 +2,6 @@ import { css, keyframes } from '@emotion/react';
 
 import theme from '@/styles/theme';
 
-
 const ProgressBar: React.FC<{ progress: number; variant: 'forwards' | 'infinite' }> = ({
   progress,
   variant = 'forwards',
@@ -27,7 +26,6 @@ const progressAnimation = (progress: number) => keyframes`
     background-color: ${theme.colors.main.primary};
   }
 `;
-
 
 const progressInfiniteAnimation = (progress: number) => keyframes`
 0% {
@@ -64,7 +62,7 @@ const progressBarContentStyle = css`
   background: ${theme.colors.gray[200]};
   border-radius: 10px;
   overflow: hidden;
-  height: 15px;
+  height: 12px;
 `;
 
 const progressBarStyle = (progress: number, variant: 'forwards' | 'infinite') => css`
