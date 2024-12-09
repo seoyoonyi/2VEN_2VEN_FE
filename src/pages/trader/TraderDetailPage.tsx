@@ -33,7 +33,7 @@ const TraderDetailPage = () => {
   useEffect(() => {
     if (!user) {
       showToast('로그인이 필요한 서비스 입니다.', 'error');
-      navigate(ROUTES.AUTH.SIGNIN);
+      navigate(ROUTES.AUTH.SIGNIN, { replace: true });
     }
   }, [user]);
 
