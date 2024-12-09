@@ -14,7 +14,7 @@ export interface SidebarProfileResponse {
     memberType: 'TRADER' | 'INVESTOR';
     introduction: string;
     fileId: string;
-    followerCnt: number;
+    followersCnt: number;
   };
 }
 

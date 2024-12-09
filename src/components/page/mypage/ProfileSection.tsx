@@ -8,7 +8,7 @@ interface ProfileSectionProps {
   userRole: '트레이더' | '투자자';
   nickname: string;
   desc: string;
-  followerCnt: number;
+  followersCnt: number;
 }
 
 const ProfileSection = ({
@@ -16,7 +16,7 @@ const ProfileSection = ({
   userRole,
   nickname,
   desc,
-  followerCnt,
+  followersCnt,
 }: ProfileSectionProps) => (
   <div css={profileWrapper}>
     <div css={profileImageStyle}>
@@ -25,7 +25,7 @@ const ProfileSection = ({
     <div css={roleStyle}>{userRole}</div>
     <div css={nicknameStyle}>{nickname}</div>
     <div css={followerStyle}>
-      팔로워 <span>{followerCnt}</span>
+      팔로워 <span>{followersCnt}</span>
     </div>
     <span css={descStyle}>{desc}</span>
   </div>
