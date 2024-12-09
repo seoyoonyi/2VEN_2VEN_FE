@@ -25,6 +25,7 @@ interface FollowerRankingData {
   nickname: string;
   strategyCnt: number;
   profilePath: string;
+  totalCumulativeProfitLoss: number;
 }
 
 const HomePage = () => {
@@ -63,6 +64,11 @@ const HomePage = () => {
 
   const handleTraderListClick = () => {
     navigate(ROUTES.TRADER.LIST);
+    window.scrollTo(0, 0);
+  };
+
+  const handleTraderProfileClick = (memberId: string) => {
+    navigate(ROUTES.TRADER.PROFILE(memberId));
     window.scrollTo(0, 0);
   };
 
@@ -108,7 +114,19 @@ const HomePage = () => {
               </button>
             </div>
             {followerRankingData.map((ranking: FollowerRankingData, idx: number) => (
-              <div css={rankingItemStyle} key={ranking?.memberId}>
+              <div
+                css={rankingItemStyle}
+                key={ranking?.memberId}
+                role='button'
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    handleTraderProfileClick(ranking.memberId);
+                  }
+                }}
+                onClick={() => handleTraderProfileClick(ranking.memberId)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div css={rankWithIconStyle}>
                   <h3 css={rankTextStyle}>
                     {idx + 1}
@@ -120,6 +138,9 @@ const HomePage = () => {
                   <Avatar src={ranking.profilePath} alt={ranking.nickname} size={50} />
                   <p css={traderNameStyle}>{ranking.nickname}</p>
                 </div>
+                <div css={totalTextStyle}>
+                  {Math.trunc(ranking.totalCumulativeProfitLoss).toLocaleString()}원
+                </div>
                 <span css={amountTextStyle}>
                   팔로워
                   <p>{ranking.followerCnt}</p>| 전략
@@ -127,6 +148,9 @@ const HomePage = () => {
                 </span>
               </div>
             ))}
+          </div>
+          <div css={descriptionContainerStyle}>
+            <p css={descriptionStyle}>트레이더의 누적 수익 금액입니다.</p>
           </div>
         </div>
       </section>
@@ -288,7 +312,7 @@ const rankingItemStyle = css`
   align-items: flex-start;
   justify-content: space-between;
   border-right: 1px solid ${theme.colors.gray[200]};
-  padding: 54px 40px;
+  padding: 40px;
   gap: 8px;
 `;
 
@@ -322,7 +346,6 @@ const traderNameStyle = css`
 
 const amountTextStyle = css`
   /* ${theme.textStyle.subtitles.subtitle1}; */
-  font-size: 18px;
   color: ${theme.colors.gray[900]};
   text-align: center;
   display: flex;
@@ -332,6 +355,21 @@ const amountTextStyle = css`
     display: flex;
     color: ${theme.colors.main.primary};
   }
+`;
+
+const totalTextStyle = css`
+  ${theme.textStyle.subtitles.subtitle1};
+`;
+
+const descriptionContainerStyle = css`
+  width: 100%;
+  text-align: right;
+  margin-top: 16px;
+`;
+
+const descriptionStyle = css`
+  ${theme.textStyle.captions.caption2};
+  color: ${theme.colors.gray[400]};
 `;
 
 /* 트레이더Main */

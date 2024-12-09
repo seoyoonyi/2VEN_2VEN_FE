@@ -29,6 +29,7 @@ const TraderProfileNav = () => {
           userRole={profileData?.data.memberType === 'TRADER' ? '트레이더' : '투자자'}
           nickname={profileData?.data.nickname || ''}
           desc={profileData?.data.introduction || ''}
+          followerCnt={profileData?.data.followerCnt || 0}
         />
         <NavigationMenu items={TraderMyPageNavItems} />
       </div>
