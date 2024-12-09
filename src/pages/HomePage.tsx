@@ -66,6 +66,11 @@ const HomePage = () => {
     window.scrollTo(0, 0);
   };
 
+  const handleTraderProfileClick = (memberId: string) => {
+    navigate(ROUTES.TRADER.PROFILE(memberId));
+    window.scrollTo(0, 0);
+  };
+
   return (
     <>
       <ScrollToTop />
@@ -108,7 +113,19 @@ const HomePage = () => {
               </button>
             </div>
             {followerRankingData.map((ranking: FollowerRankingData, idx: number) => (
-              <div css={rankingItemStyle} key={ranking?.memberId}>
+              <div
+                css={rankingItemStyle}
+                key={ranking?.memberId}
+                role='button'
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    handleTraderProfileClick(ranking.memberId);
+                  }
+                }}
+                onClick={() => handleTraderProfileClick(ranking.memberId)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div css={rankWithIconStyle}>
                   <h3 css={rankTextStyle}>
                     {idx + 1}
