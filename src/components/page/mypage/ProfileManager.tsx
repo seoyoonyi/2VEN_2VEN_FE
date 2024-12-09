@@ -94,6 +94,10 @@ const ProfileManager = () => {
         value = String(value);
       }
 
+      if (field === 'introduction') {
+        if (event.target.value.length > 150) return;
+      }
+
       setProfile((prev) => ({ ...prev, [field]: value }));
 
       switch (field) {
