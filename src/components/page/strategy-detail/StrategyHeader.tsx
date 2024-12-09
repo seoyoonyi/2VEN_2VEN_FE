@@ -127,13 +127,17 @@ export const StrategyHeader = ({
 
   return (
     <div css={actionAreaStyle}>
-      <button
-        css={shareButtonStyle}
-        onClick={() => handleCopy(`${import.meta.env.VITE_FRONT_URL}${location.pathname}`)}
-      >
-        <GiCircle size={40} css={circleStyle} />
-        <MdOutlineShare size={16} css={shareStyle} />
-      </button>
+      {isStrategyApproved === 'Y' ? (
+        <button
+          css={shareButtonStyle}
+          onClick={() => handleCopy(`${import.meta.env.VITE_FRONT_URL}${location.pathname}`)}
+        >
+          <GiCircle size={40} css={circleStyle} />
+          <MdOutlineShare size={16} css={shareStyle} />
+        </button>
+      ) : (
+        <div></div>
+      )}
       {(userRole === 'ROLE_ADMIN' && user?.authorized) ||
       (userRole === 'ROLE_TRADER' && user?.memberId === traderId) ? ( // 트레이더 전용 버튼
         <div css={buttonAreaStyle}>

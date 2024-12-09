@@ -55,7 +55,6 @@ const StrategyDetailPage = () => {
       enabled: strategy?.isApproved === 'N',
     }) || '';
   const isApproved = strategy?.requestAvailable === true;
-  approveState?.isApproved === 'N';
   const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
   const isOwner = user?.memberId === strategy?.memberId;
   const isAdmin = role === 'ROLE_ADMIN';

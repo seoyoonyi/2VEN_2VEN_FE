@@ -449,7 +449,7 @@ const loadingArea = css`
   justify-content: center;
   align-items: center;
   color: ${theme.colors.gray[400]};
-  ${theme.textStyle.subtitles.subtitle4};
+  ${theme.textStyle.body.body2};
 `;
 
 const loadingText = css`
