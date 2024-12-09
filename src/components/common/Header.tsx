@@ -146,7 +146,7 @@ const Header = () => {
       <div css={containerStyle}>
         <div css={logoNavContainerStyle}>
           <h1>
-            <Link to={ROUTES.HOME.PATH}>
+            <Link to={ROUTES.HOME.PATH} css={linkStyle}>
               <img src='/logo.svg' alt={LOGO} />
             </Link>
           </h1>
@@ -175,7 +175,10 @@ const containerStyle = css`
   padding: 0px 20px;
   margin: 0 auto;
 `;
-
+const linkStyle = css`
+  display: flex;
+  align-items: center;
+`;
 const logoNavContainerStyle = css`
   display: flex;
   align-items: center;
