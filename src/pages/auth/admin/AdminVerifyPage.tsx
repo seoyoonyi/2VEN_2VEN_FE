@@ -65,6 +65,9 @@ const AdminVerifyPage = () => {
 
   // 인증번호 재요청
   const handleResend = () => {
+    if (import.meta.env.MODE === 'development') {
+      console.log(isVerificationActive);
+    }
     setShouldReset(true);
     // 재전송 요청 전에 타이머 시작 상태를 true로 설정
     setIsVerificationRequested(true);

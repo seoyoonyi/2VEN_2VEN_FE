@@ -38,6 +38,9 @@ const FindPasswordPage = () => {
   }, [verificationCode]);
 
   const handleEmailVerification = () => {
+    if (import.meta.env.MODE === 'development') {
+      console.log(isVerificationActive);
+    }
     // 이메일 입력값 확인
     if (!email) {
       setErrorMessage('이메일을 입력해주세요.');
