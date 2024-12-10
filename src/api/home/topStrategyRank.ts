@@ -18,7 +18,6 @@ export const fetchStrategies = async (): Promise<RankingData[]> => {
       throw new Error('No top-ranking strategies available.');
     }
 
-    console.log('Fetched strategies data:', response.data);
     return response.data.data;
   } catch (error) {
     console.error('Failed to fetch top-ranking strategies:', error);

@@ -65,9 +65,6 @@ const ResetPasswordPage = () => {
       return;
     }
 
-    const requestBody = { email, newPassword, confirmPassword };
-    console.log('Request body:', requestBody); // 요청 바디 확인
-
     resetPassword(
       { email, newPassword, confirmPassword },
       {

@@ -88,7 +88,6 @@ const SignUpForm = ({ formData, setFormData }: SignUpFormProps) => {
         validatePassword(value);
         break;
       case 'confirmPassword':
-        console.log(isVerificationActive);
         validateConfirmPassword(value, formData.password);
         break;
       case 'phoneNumber':

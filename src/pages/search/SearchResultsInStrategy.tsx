@@ -18,8 +18,6 @@ const SearchResultsInStrategy = () => {
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get('keyword') || '';
 
-  console.log('1. URL keyword:', keyword); // URL 파라미터 확인
-
   // 모든 필터값을 하나의 상태로 관리
   const [filterParams, setFilterParams] = useState<StrategySearchParams>({
     keyword,
@@ -40,26 +38,8 @@ const SearchResultsInStrategy = () => {
     returnRateList: [],
   });
 
-  console.log('2. 현재 filterParams:', filterParams); // 현재 필터 상태 확인
-
-  console.log('🚨 API 호출 전 filterParams:', filterParams);
-
   // API 호출
   const { data: strategyDetailResults, isLoading, error } = useSearchStrategyDetail(filterParams); // 전략 상세 검색 결과
-
-  console.log('✅ API 실제 응답 데이터:', strategyDetailResults?.data);
-
-  // filterParams가 변경될 때마다 새로운 API 호출이 자동으로 트리거됨
-  useEffect(() => {
-    console.log('필터 변경:', filterParams);
-  }, [filterParams]);
-
-  console.log('3. API 응답 데이터:', {
-    isLoading,
-    error,
-    resultCount: strategyDetailResults?.totalElements,
-    data: strategyDetailResults?.data,
-  }); // API 응답 확인
 
   // 핸들러 함수들
   const handlePageChange = (page: number) => {
@@ -67,7 +47,6 @@ const SearchResultsInStrategy = () => {
   };
 
   const handleProductChange = (id: number) => {
-    console.log('6. 상품유형 변경:', id);
     setFilterParams((prev) => ({
       ...prev,
       page: 1, // 필터 변경시 첫 페이지로 리셋
@@ -137,8 +116,6 @@ const SearchResultsInStrategy = () => {
   });
 
   const handleDateChange = (type: 'start' | 'end', date: Date) => {
-    console.log('날짜 변경:', type, date);
-
     const formattedDate = dayjs(date).format('YYYY-MM-DD');
 
     setDateInputs((prev) => ({
@@ -407,20 +384,8 @@ const SearchResultsInStrategy = () => {
     }
   };
 
-  // useEffect를 통해 filterParams 변경 감지
-  useEffect(() => {
-    console.log('✨ filterParams 변경됨:', filterParams);
-  }, [filterParams]);
-
   // 전략 검색 결과 데이터 매핑
   const mappedStrategies = strategyDetailResults?.data.map(mapToStrategyDetailData) ?? [];
-
-  console.log('4. 매핑된 전략 데이터:', mappedStrategies); // 매핑된 데이터 확인
-
-  // filterParams가 변경될 때마다 로그
-  useEffect(() => {
-    console.log('5. filterParams 변경됨:', filterParams);
-  }, [filterParams]);
 
   // 로딩 처리
   if (isLoading) return <Loader />;

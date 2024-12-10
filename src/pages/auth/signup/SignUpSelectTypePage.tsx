@@ -17,7 +17,6 @@ const SignUpSelectTypePage = () => {
   }));
 
   const handleSignup = (role: UserRole) => {
-    console.log(role);
     navigate(ROUTES.AUTH.SIGNUP.FORM, { state: { userRole: addRolePrefix(role) } });
   };
 

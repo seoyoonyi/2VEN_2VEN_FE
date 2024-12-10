@@ -13,7 +13,6 @@ export const useSubmitStrategyCreate = () => {
   return useMutation<SubmitStrategyResponse, Error, StrategyPayload>({
     mutationFn: (payload: StrategyPayload) => submitStrategyCreate(payload),
     onSuccess: (data: SubmitStrategyResponse) => {
-      console.log('전략 등록 성공:', data);
       clearForm();
 
       const strategyId = data.data.Strategy_Id;
