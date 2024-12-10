@@ -122,19 +122,10 @@ export const searchStrategyDetail = async ({
       formattedParams.startDate = dayjs(startDate).format('YYYY-MM-DD');
       formattedParams.endDate = dayjs(endDate).format('YYYY-MM-DD');
     }
-
-    console.log('❎❎❎ API 호출 직전 formattedParams:', {
-      startDate,
-      endDate,
-      returnRateList,
-    });
-    console.log('날짜 변환 전:', startDate, endDate);
-    console.log('날짜 변환 후:', formattedParams.startDate, formattedParams.endDate);
-
     const { data } = await apiClient.get(API_ENDPOINTS.SEARCH.STRATEGIES_DETAIL, {
       params: formattedParams,
     });
-    console.log('✅ API 요청 파라미터:', formattedParams);
+
     return data;
   } catch (error) {
     if (isAxiosError(error)) {

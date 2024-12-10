@@ -50,9 +50,7 @@ const SignInPage: React.FC = () => {
     }
     try {
       // 콘솔에서 확인
-      console.log('Submitting login form with:', { email, password });
       const result = await signin({ email, password });
-      console.log('Login result:', result);
       if (result.status === 'success' && result.data) {
         // role을 state로 전달하지 않고, 단순 홈으로 이동
         navigate(ROUTES.HOME.PATH, { replace: true });

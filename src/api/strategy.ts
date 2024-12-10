@@ -93,8 +93,6 @@ export const fetchStrategyList = async (params: {
         Auth: 'trader',
       },
     });
-
-    console.log('전략 목록', res.data);
     return res.data;
   } catch (error) {
     console.error('Failed to fetch strategy List data:', error);

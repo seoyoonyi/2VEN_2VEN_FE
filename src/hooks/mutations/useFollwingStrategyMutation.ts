@@ -12,7 +12,6 @@ export const useSubmitFolder = () => {
       queryClient.invalidateQueries({
         queryKey: ['followingFolderList'],
       });
-      console.log('folder submit success');
     },
     onError: (error) => {
       console.error('Failed to create folder:', error.message);
@@ -31,7 +30,6 @@ export const useUpdateFolderName = () => {
       queryClient.invalidateQueries({
         queryKey: ['followingFolderList'],
       });
-      console.log('Folder update success');
     },
     onError: (error) => {
       console.error('Failed to update folder name:', error.message);
@@ -49,7 +47,6 @@ export const useDeleteFolder = () => {
       queryClient.invalidateQueries({
         queryKey: ['followingFolderList'],
       });
-      console.log('Folder delete success');
     },
     onError: (error) => {
       console.error('Failed to delete folder:', error.message);
