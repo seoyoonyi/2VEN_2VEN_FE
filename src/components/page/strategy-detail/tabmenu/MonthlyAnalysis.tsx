@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 
 import AnalysisTable, { AnalysisProps } from '../table/AnalysisTable';
 
+import LoadingSpin from '@/components/common/LoadingSpin';
 import Pagination from '@/components/common/Pagination';
 import useFetchMonthlyAnalysis from '@/hooks/queries/useFetchMonthlyAnalysis';
 import usePagination from '@/hooks/usePagination';
@@ -21,7 +22,7 @@ export interface MonthlyDataProps {
 }
 
 const MonthlyAnalysis = ({ attributes, strategyId, role }: AnalysisProps) => {
-  const { pagination, setPage } = usePagination(1, 5);
+  const { pagination, setPage } = usePagination(1, 8);
   const { monthlyAnalysis, currentPage, pageSize, totalPages, isLoading } = useFetchMonthlyAnalysis(
     Number(strategyId),
     pagination.currentPage - 1,
@@ -44,7 +45,11 @@ const MonthlyAnalysis = ({ attributes, strategyId, role }: AnalysisProps) => {
   }, [monthlyAnalysis]);
 
   if (isLoading) {
-    return <div>로딩중..</div>;
+    return (
+      <div css={loadingArea}>
+        <LoadingSpin />
+      </div>
+    );
   }
 
   return (
@@ -64,6 +69,12 @@ const MonthlyAnalysis = ({ attributes, strategyId, role }: AnalysisProps) => {
 
 const monthlyStyle = css`
   width: 100%;
+`;
+
+const loadingArea = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const paginationArea = css`

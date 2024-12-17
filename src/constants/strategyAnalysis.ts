@@ -60,7 +60,7 @@ export const statisticsMapping = [
   { label: '누적 손익률', key: 'cumulativeProfitLossRate' },
   { label: '현재 자본인하금액', key: 'currentDrawdownAmount' },
   { label: '현재 자본인하율(%)', key: 'currentDrawdownRate' },
-  { label: '평균 손익 금액', key: 'unrealizedProfitLoss' },
+  { label: '평균 손익 금액', key: 'averageProfitLoss' },
   { label: '평균 손익률', key: 'averageProfitLossRate' },
   { label: '최대 일수익 금액', key: 'maxDailyProfit' },
   { label: '총 매매 일수', key: 'tradingDays' },

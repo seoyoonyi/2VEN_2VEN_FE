@@ -17,7 +17,6 @@ export const useSubmitStrategyUpdate = () => {
   >({
     mutationFn: async ({ strategyId, payload }) => submitStrategyUpdate(strategyId, payload),
     onSuccess: (data) => {
-      console.log('전략 수정 성공:', data);
       clearForm();
 
       const strategyId = data.data.Strategy_Id;

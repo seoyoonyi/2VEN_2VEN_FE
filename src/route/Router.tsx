@@ -114,6 +114,10 @@ export const router = createBrowserRouter(
           path: ROUTES.SEARCH.STRATEGIES_DETAIL,
           element: <SearchResultsInStrategy />,
         },
+        {
+          path: ROUTES.TRADER.PROFILE(':traderId'),
+          element: <TraderDetailPage />,
+        },
 
         // 비로그인 전용 라우트
         {
@@ -207,10 +211,18 @@ export const router = createBrowserRouter(
           ),
         },
         {
-          path: ROUTES.TRADER.PROFILE(':traderId'),
+          path: ROUTES.MYPAGE.TRADER.STRATEGIES.CREATE,
           element: (
             <ProtectedRoute requiredAuth={true}>
-              <TraderDetailPage />
+              <StrategyCreatePage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(':strategyId'),
+          element: (
+            <ProtectedRoute requiredAuth={true}>
+              <StrategyEditPage />
             </ProtectedRoute>
           ),
         },
@@ -263,14 +275,6 @@ export const router = createBrowserRouter(
             {
               path: ROUTES.MYPAGE.TRADER.STRATEGIES.LIST,
               element: <TraderMyPage />,
-            },
-            {
-              path: ROUTES.MYPAGE.TRADER.STRATEGIES.CREATE,
-              element: <StrategyCreatePage />,
-            },
-            {
-              path: ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(':strategyId'),
-              element: <StrategyEditPage />,
             },
             {
               path: ROUTES.MYPAGE.TRADER.INQUIRIES.LIST,

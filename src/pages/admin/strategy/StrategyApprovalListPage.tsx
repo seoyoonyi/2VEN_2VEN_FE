@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import ContentModal from '@/components/common/ContentModal';
@@ -15,7 +15,6 @@ import {
   useRejectStrategy,
 } from '@/hooks/mutations/useStrategyApprovalMutations';
 import useStrategyApprovalList from '@/hooks/queries/useStrategyApprovalList';
-import usePagination from '@/hooks/usePagination';
 import useContentModalStore from '@/stores/contentModalStore';
 import useModalStore from '@/stores/modalStore';
 import useToastStore from '@/stores/toastStore';
@@ -38,20 +37,27 @@ interface StrategyApprovalRequest {
 
 const StrategyApprovalListPage = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPageFromQuery = parseInt(searchParams.get('page') || '1', 10);
+
   const { openModal } = useModalStore();
   const { openContentModal } = useContentModalStore();
-  const { pagination, setPage } = usePagination(1, 10);
   const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
-  const { strategies, currentPage, totalPages, totalElements, pageSize, isLoading, isError } =
+  const { strategies, totalPages, totalElements, pageSize, isLoading, isError } =
     useStrategyApprovalList({
-      page: pagination.currentPage - 1,
-      pageSize: pagination.pageSize,
+      page: currentPageFromQuery - 1,
+      pageSize: 10,
     });
   const { mutate: approveStrategy } = useApproveStrategy();
   const { mutate: rejectStrategy } = useRejectStrategy();
 
   const onClickStrategyList = (strategyId: string) => {
     navigate(ROUTES.STRATEGY.DETAIL(strategyId));
+    window.scrollTo(0, 0);
+  };
+
+  const handlePageChange = (page: number) => {
+    setSearchParams({ page: String(page) });
     window.scrollTo(0, 0);
   };
 
@@ -206,7 +212,12 @@ const StrategyApprovalListPage = () => {
             </tbody>
           </table>
         </div>
-        <Pagination totalPage={totalPages} limit={pageSize} page={currentPage} setPage={setPage} />
+        <Pagination
+          totalPage={totalPages}
+          limit={pageSize}
+          page={currentPageFromQuery}
+          setPage={handlePageChange}
+        />
       </div>
       <Modal />
       <ContentModal />

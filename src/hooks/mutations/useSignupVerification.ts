@@ -19,11 +19,9 @@ export const useSignupVerification = (
   useMutation<SignupVerificationResponse, Error, VerificationData>({
     mutationFn: verifyEmailCode,
     onSuccess: (data) => {
-      console.log('Verification success:', data);
       options?.onSuccess?.(data);
     },
     onError: (error: Error) => {
-      console.error('Verification error:', error);
       options?.onError?.(error);
     },
   });

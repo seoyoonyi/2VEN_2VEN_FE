@@ -15,7 +15,7 @@ interface SearchParams {
   keyword?: string;
   page?: number;
   pageSize?: number;
-  sortOption?: 'strategyCnt' | 'latestSignup';
+  sortOption?: 'strategyCnt' | 'latestSignup' | 'followerCnt';
 }
 
 // 키보드 입력에 따른 '전체 트레이더' 검색 결과를 보여주는 경우 - 트레이더 검색
@@ -25,7 +25,6 @@ export const searchTraders = async ({
   pageSize = 4,
   sortOption = 'strategyCnt', // 기본값
 }: SearchParams): Promise<SearchResponse<SearchedTrader>> => {
-  console.log('Search Parameters:', { keyword, page, pageSize, sortOption });
   const { data } = await apiClient.get(API_ENDPOINTS.SEARCH.TRADERS, {
     params: {
       ...(keyword && { keyword }), // keyword가 있을 때만 포함
@@ -123,19 +122,10 @@ export const searchStrategyDetail = async ({
       formattedParams.startDate = dayjs(startDate).format('YYYY-MM-DD');
       formattedParams.endDate = dayjs(endDate).format('YYYY-MM-DD');
     }
-
-    console.log('❎❎❎ API 호출 직전 formattedParams:', {
-      startDate,
-      endDate,
-      returnRateList,
-    });
-    console.log('날짜 변환 전:', startDate, endDate);
-    console.log('날짜 변환 후:', formattedParams.startDate, formattedParams.endDate);
-
     const { data } = await apiClient.get(API_ENDPOINTS.SEARCH.STRATEGIES_DETAIL, {
       params: formattedParams,
     });
-    console.log('✅ API 요청 파라미터:', formattedParams);
+
     return data;
   } catch (error) {
     if (isAxiosError(error)) {

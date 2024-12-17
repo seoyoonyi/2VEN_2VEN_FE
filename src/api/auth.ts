@@ -71,8 +71,6 @@ export const signin = async (credentials: SigninRequest): Promise<SigninResponse
       };
     }
 
-    console.log('Constructed user object:', baseUser);
-
     // 일반 사용자인 경우
     return {
       status: 'success',
@@ -95,8 +93,7 @@ export const signin = async (credentials: SigninRequest): Promise<SigninResponse
 
 export const checkNicknameDuplicate = async (nickname: string) => {
   const { data } = await apiClient.get(
-    `${API_ENDPOINTS.AUTH.CHECK_NICKNAME}?nickname=${encodeURIComponent(nickname)}`,
-    { headers: { useMock: import.meta.env.VITE_ENABLE_MSW === 'true' } }
+    `${API_ENDPOINTS.AUTH.CHECK_NICKNAME}?nickname=${encodeURIComponent(nickname)}`
   );
   return data;
 };

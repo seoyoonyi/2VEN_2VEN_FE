@@ -49,6 +49,7 @@ const ProfileManager = () => {
   const { nicknameMessage, actions } = useSignupStore();
   const { messages: validationMessages, validatePhoneNumber } = useFormValidation();
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  const [, setIsNicknameChanged] = useState(false);
 
   const [profile, setProfile] = useState<PersonalDetails>({
     profilePath: '',
@@ -72,6 +73,13 @@ const ProfileManager = () => {
     }
   }, [data]);
 
+  useEffect(
+    () => () => {
+      actions.resetNicknameState();
+    },
+    [actions]
+  );
+
   const handleProfileChange =
     (field: keyof PersonalDetails) =>
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -86,12 +94,16 @@ const ProfileManager = () => {
         value = String(value);
       }
 
+      if (field === 'introduction') {
+        if (event.target.value.length > 150) return;
+      }
+
       setProfile((prev) => ({ ...prev, [field]: value }));
 
       switch (field) {
         case 'nickname':
           actions.setNicknameMessage('');
-          setIsNicknameChecked(false);
+          // setIsNicknameChecked(false);
           break;
         case 'phoneNumber':
           validatePhoneNumber(value as string);
@@ -100,6 +112,57 @@ const ProfileManager = () => {
           break;
       }
     };
+
+  const handleProfileNicknameCheck = async (nickname: string) => {
+    if (data?.nickname === nickname) {
+      actions.setNicknameMessage('현재 사용 중인 닉네임입니다.');
+      setIsNicknameChecked(true);
+      return;
+    }
+
+    try {
+      await handleNicknameCheck(nickname);
+
+      setIsNicknameChecked(true);
+      showToast('닉네임 중복 체크가 완료되었습니다.');
+    } catch (error) {
+      setIsNicknameChecked(false);
+      showToast('닉네임 중복 체크 중 오류가 발생했습니다.', 'error');
+    }
+  };
+
+  const handleNicknameChange = (newNickname: string) => {
+    setProfile((prev) => ({ ...prev, nickname: newNickname }));
+    setIsNicknameChecked(false);
+    setIsNicknameChanged(data?.nickname !== newNickname);
+  };
+
+  const handleMemberInfoUpdate = async () => {
+    if (validationMessages.phoneNumber && !validationMessages.phoneNumber.includes('사용 가능')) {
+      showToast('휴대폰 번호가 유효하지 않습니다.', 'error');
+      return;
+    }
+
+    if (data?.nickname !== profile.nickname && !isNicknameChecked) {
+      showToast('닉네임 중복 여부를 확인해주세요.', 'error');
+      return;
+    }
+
+    openModal({
+      type: 'confirm',
+      title: '회원정보 수정',
+      desc: '회원정보를 수정하시겠습니까?',
+      actionButton: '확인',
+      onAction: () =>
+        updatePersonalDetails(profile, {
+          onSuccess: () => showToast('회원정보가 수정되었습니다.'),
+          onError: () => showToast('회원정보 수정 중 오류가 발생했습니다.', 'error'),
+        }),
+    });
+  };
+
+  //프로필 사진
+  const handleUploadClick = () => fileInputRef.current?.click();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -116,11 +179,6 @@ const ProfileManager = () => {
     );
   };
 
-  const handleNicknameCheckClick = (nickname: string) => {
-    handleNicknameCheck(nickname);
-    setIsNicknameChecked(true);
-  };
-
   const handleDeleteImage = () => {
     if (!profileImageData?.fileId) {
       return showToast('삭제할 사진이 없습니다.', 'error');
@@ -131,42 +189,6 @@ const ProfileManager = () => {
       onError: () => showToast('프로필 사진 삭제에 실패했습니다.', 'error'),
     });
   };
-
-  const handleUploadClick = () => fileInputRef.current?.click();
-
-  const validateForm = (): boolean => {
-    if (!profile.nickname.trim()) {
-      showToast('닉네임을 입력해주세요.', 'error');
-      return false;
-    }
-
-    if (!validationMessages.phoneNumber.includes('사용 가능')) {
-      showToast('유효한 휴대폰 번호를 입력해주세요.', 'error');
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleProfileUpdate = () => {
-    if (!validateForm()) return;
-
-    openModal({
-      type: 'confirm',
-      title: '회원정보 수정',
-      desc: '회원정보를 수정하시겠습니까?',
-      actionButton: '확인',
-      onAction: () =>
-        updatePersonalDetails(profile, {
-          onSuccess: () => showToast('회원정보가 수정되었습니다.'),
-          onError: () => showToast('회원정보 수정 중 오류가 발생했습니다.', 'error'),
-        }),
-    });
-  };
-
-  const isButtonDisabled = !(
-    isNicknameChecked && validationMessages.phoneNumber?.includes('사용 가능')
-  );
 
   if (isLoading) return <p>로딩 중...</p>;
   if (isError || !data) return <p>데이터를 불러오는 데 실패했습니다.</p>;
@@ -199,10 +221,11 @@ const ProfileManager = () => {
                     name='nickname'
                     placeholder='사용할 닉네임을 입력해주세요.'
                     value={profile.nickname}
-                    onChange={handleProfileChange('nickname')}
+                    onChange={(e) => handleNicknameChange(e.target.value)}
                     status={
                       nicknameMessage
-                        ? nicknameMessage.includes('사용 가능한 닉네임')
+                        ? nicknameMessage.includes('사용 가능한 닉네임') ||
+                          nicknameMessage === '현재 사용 중인 닉네임입니다.'
                           ? 'success'
                           : 'error'
                         : 'default'
@@ -212,7 +235,7 @@ const ProfileManager = () => {
                     variant='primary'
                     size='sm'
                     width={100}
-                    onClick={() => handleNicknameCheckClick(profile.nickname)}
+                    onClick={() => handleProfileNicknameCheck(profile.nickname)}
                     disabled={!profile.nickname || nicknameCheck.isPending}
                   >
                     중복확인
@@ -222,7 +245,9 @@ const ProfileManager = () => {
                   <p
                     css={[
                       messageStyle,
-                      nicknameMessage.includes('사용 가능한 닉네임') && successMessageStyle,
+                      (nicknameMessage.includes('사용 가능한 닉네임') ||
+                        nicknameMessage === '현재 사용 중인 닉네임입니다.') &&
+                        successMessageStyle,
                     ]}
                   >
                     {nicknameMessage}
@@ -301,8 +326,8 @@ const ProfileManager = () => {
             </div>
           </div>
           <Button
-            disabled={isButtonDisabled}
-            onClick={handleProfileUpdate}
+            // disabled={isButtonDisabled}
+            onClick={handleMemberInfoUpdate}
             size='lg'
             customStyle={editProfileButtonStyle}
           >

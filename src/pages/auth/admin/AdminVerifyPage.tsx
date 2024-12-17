@@ -65,7 +65,9 @@ const AdminVerifyPage = () => {
 
   // 인증번호 재요청
   const handleResend = () => {
-    console.log(isVerificationActive);
+    if (import.meta.env.MODE === 'development') {
+      console.log(isVerificationActive);
+    }
     setShouldReset(true);
     // 재전송 요청 전에 타이머 시작 상태를 true로 설정
     setIsVerificationRequested(true);
@@ -96,11 +98,6 @@ const AdminVerifyPage = () => {
     e.preventDefault();
 
     // 디버깅을 위한 로깅 추가
-    console.log('Current values:', {
-      email: user?.email,
-      verificationCode,
-      user,
-    });
 
     const validationResult = validateCode(verificationCode); // 인증번호 유효성 검증
 
@@ -124,11 +121,9 @@ const AdminVerifyPage = () => {
     };
 
     // 요청 직전 데이터 확인
-    console.log('Sending verification request:', requestData);
 
     verifyCode(requestData, {
       onSuccess: (response) => {
-        console.log('Verification success:', response);
         if (response.status === 'success') {
           navigate(ROUTES.ADMIN.STRATEGY.APPROVAL, { replace: true });
         } else {

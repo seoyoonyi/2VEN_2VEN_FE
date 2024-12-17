@@ -44,15 +44,16 @@ const labelStyle = css`
 `;
 
 const checkboxContainerStyle = css`
-  width: 704px;
+  width: 926px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
 `;
 
 const checkTextStyle = (isSelected: boolean) => css`
   color: ${isSelected ? theme.colors.main.black : theme.colors.gray[400]};
+  width: 140px;
   font-weight: 400;
   line-height: 150%;
 `;

@@ -8,15 +8,25 @@ interface ProfileSectionProps {
   userRole: '트레이더' | '투자자';
   nickname: string;
   desc: string;
+  followersCnt: number;
 }
 
-const ProfileSection = ({ userImage, userRole, nickname, desc }: ProfileSectionProps) => (
+const ProfileSection = ({
+  userImage,
+  userRole,
+  nickname,
+  desc,
+  followersCnt,
+}: ProfileSectionProps) => (
   <div css={profileWrapper}>
     <div css={profileImageStyle}>
       <Avatar src={userImage} alt='프로필사진' size='100%' />
     </div>
     <div css={roleStyle}>{userRole}</div>
     <div css={nicknameStyle}>{nickname}</div>
+    <div css={followerStyle}>
+      팔로워 <span>{followersCnt}</span>
+    </div>
     <span css={descStyle}>{desc}</span>
   </div>
 );
@@ -62,6 +72,13 @@ const nicknameStyle = css`
   font-weight: 700;
   line-height: 140%;
   margin-bottom: 8px;
+`;
+
+const followerStyle = css`
+  margin-bottom: 10px;
+  span {
+    color: ${theme.colors.main.primary};
+  }
 `;
 
 const descStyle = css`

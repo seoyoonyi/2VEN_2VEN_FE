@@ -7,7 +7,7 @@ import { MdCheck } from 'react-icons/md';
 import ImgSection from '../ImgSection';
 
 import Button from '@/components/common/Button';
-import Loader from '@/components/common/Loading';
+import LoadingSpin from '@/components/common/LoadingSpin';
 import Modal from '@/components/common/Modal';
 import Pagination from '@/components/common/Pagination';
 import Toast from '@/components/common/Toast';
@@ -48,7 +48,9 @@ const AccountVerify = ({ strategyId, role, userId }: AccountProps) => {
   const { openModal } = useModalStore();
   const { showToast, message, hideToast, isToastVisible } = useToastStore();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const isSelfed = (role === 'ROLE_TRADER' && userId === user?.memberId) || role === 'ROLE_ADMIN';
+  const isSelfed =
+    (role === 'ROLE_TRADER' && userId === user?.memberId) ||
+    (role === 'ROLE_ADMIN' && user?.authorized);
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -105,8 +107,8 @@ const AccountVerify = ({ strategyId, role, userId }: AccountProps) => {
 
   if (isLoading) {
     return (
-      <div>
-        <Loader />
+      <div css={loadingStyle}>
+        <LoadingSpin />
       </div>
     );
   }
@@ -183,6 +185,14 @@ const textStyle = css`
   align-items: center;
   ${theme.textStyle.captions.caption2};
   color: ${theme.colors.gray[500]};
+`;
+
+const loadingStyle = css`
+  display: flex;
+  width: 100%;
+  height: 200px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const buttonArea = css`

@@ -96,11 +96,11 @@ const MyInquiriesPage = () => {
                     <td>
                       <div>
                         <Avatar
-                          src={inquiry.investorProfileUrl}
+                          src={inquiry.traderProfileUrl}
                           alt={`${inquiry.investorName}'s profile`}
                           size={24}
                         />
-                        <span>{inquiry.investorName}</span>
+                        <span>{inquiry.traderName}</span>
                       </div>
                     </td>
                     <td>

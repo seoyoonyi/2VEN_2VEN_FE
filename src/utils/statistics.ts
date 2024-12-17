@@ -2,7 +2,13 @@
 export const formatLoss = (value: number) => value.toLocaleString();
 
 //23.23223 -> 23.23
-export const formatRate = (value: number) => Math.floor(value * 100) / 100;
+export const formatRate = (value: number) => {
+  if (value < 0) {
+    return Math.ceil(value * 100) / 100;
+  } else {
+    return Math.floor(value * 100) / 100;
+  }
+};
 
 export const formatValue = (key: string, value: string | number) => {
   if (typeof value === 'number') {
@@ -12,7 +18,7 @@ export const formatValue = (key: string, value: string | number) => {
       key.endsWith('roa') ||
       key.endsWith('Factor')
     ) {
-      return Math.floor(value * 100) / 100 + '%';
+      return formatRate(value) + '%';
     } else if (key.endsWith('Days') || key.endsWith('Period') || key.endsWith('Peak')) {
       const years = Math.floor(value / 365);
       const month = Math.floor((value % 365) / 30);
@@ -20,7 +26,7 @@ export const formatValue = (key: string, value: string | number) => {
       let result = '';
       if (years > 0) result += `${years}년 `;
       if (month > 0) result += `${month}개월 `;
-      if (days >= 0 || days <= 0) result += `${days}일`;
+      if (days >= 0 || days <= 0) result += `${Math.abs(days)}일`;
       return result.trim();
     } else {
       return formatLoss(value);
@@ -39,7 +45,7 @@ export const isValidInputNumber = (value: string | number): boolean => {
 
 //분석 공휴일, 주말 입력 제한 유효성 검사
 export const isValidPossibleDate = (valid: string[] | string) => {
-  const limit = ['01-01', '03-01', '05-05', '08-15', '10-03', '12-25'];
+  const limit = ['01-01', '03-01', '05-05', '08-15', '10-03', '10-09', '12-25'];
 
   const now = new Date();
   const todayKST = new Date(now.getTime() + 9 * 60 * 60 * 1000);

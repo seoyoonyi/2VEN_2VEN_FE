@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 import { css } from '@emotion/react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -28,23 +26,9 @@ const Header = () => {
 
   const { isAdmin, isAuthorized, hasExpired } = useAdminAuthStatus(); // 관리자 권한 상태 가져오기
 
-  const { adminAuth } = useAdminAuthStore();
   const navigate = useNavigate();
 
   useSessionTimer();
-
-  console.log('Auth user:', useAuthStore.getState().user);
-  console.log('Admin auth:', useAdminAuthStore.getState().adminAuth);
-
-  useEffect(() => {
-    if (user) {
-      console.log({
-        isAdmin: isAdminUser(user), // 사용자의 role이 ROLE_ADMIN인지 확인
-        adminAuthStatus: adminAuth?.authorized, // 관리자 인증 상태
-        hasExpired, // 관리자 인증이 만료되었는지 확인
-      });
-    }
-  }, [user, adminAuth]);
 
   const handleLoginButtonClick = () => {
     navigate(ROUTES.AUTH.SIGNIN);
@@ -146,7 +130,7 @@ const Header = () => {
       <div css={containerStyle}>
         <div css={logoNavContainerStyle}>
           <h1>
-            <Link to={ROUTES.HOME.PATH}>
+            <Link to={ROUTES.HOME.PATH} css={linkStyle}>
               <img src='/logo.svg' alt={LOGO} />
             </Link>
           </h1>
@@ -175,7 +159,10 @@ const containerStyle = css`
   padding: 0px 20px;
   margin: 0 auto;
 `;
-
+const linkStyle = css`
+  display: flex;
+  align-items: center;
+`;
 const logoNavContainerStyle = css`
   display: flex;
   align-items: center;

@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import Loader from '@/components/common/Loading';
+import LoadingSpin from '@/components/common/LoadingSpin';
 import Select, { Option } from '@/components/common/Select';
 import { useFolderList } from '@/hooks/queries/useFetchFolderList';
 import { Folder } from '@/pages/mypage/investor/InvestorMyPage';
@@ -11,18 +11,18 @@ interface FollowModalProps {
 }
 
 const FollowModal = ({ onFolderSelect }: FollowModalProps) => {
-  const { data, isLoading, isError } = useFolderList(0, 50);
+  const { data, isLoading, isError } = useFolderList(0, 100);
 
   if (isLoading) {
     return (
-      <div css={contentWrpperStyle}>
-        <Loader />
+      <div css={loadingStyle}>
+        <LoadingSpin />
       </div>
     );
   }
 
   if (isError || !data || !data.data) {
-    return <div css={contentWrpperStyle}>폴더 데이터를 불러오지 못했습니다.</div>;
+    return <div css={loadingStyle}>폴더 데이터를 불러오지 못했습니다.</div>;
   }
 
   const folder = data?.data.map((item: Folder) => ({
@@ -47,6 +47,7 @@ const FollowModal = ({ onFolderSelect }: FollowModalProps) => {
 const contentWrpperStyle = css`
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 12px;
   margin-bottom: 8px;
   padding: 0 12px;
@@ -55,6 +56,13 @@ const contentWrpperStyle = css`
     ${theme.buttons.label.lg};
     color: ${theme.colors.main.primary};
   }
+`;
+
+const loadingStyle = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 0;
 `;
 
 export default FollowModal;

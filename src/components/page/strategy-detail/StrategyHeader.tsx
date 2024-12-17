@@ -28,6 +28,7 @@ interface StrategyHeaderProps {
   onDelete: (id: number) => void;
   onEnd: () => void;
   onApproval: () => void;
+  refetch: () => void;
 }
 
 export const StrategyHeader = ({
@@ -41,6 +42,7 @@ export const StrategyHeader = ({
   onEnd,
   onDelete,
   onApproval,
+  refetch,
 }: StrategyHeaderProps) => {
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const navigate = useNavigate();
@@ -91,6 +93,7 @@ export const StrategyHeader = ({
           .then(() => {
             showToast('전략이 폴더에 성공적으로 추가되었습니다.');
             setIsFollowing(true);
+            refetch();
           })
           .catch(() => {
             showToast('이미 폴더에 추가된 전략입니다.', 'error');
@@ -106,6 +109,7 @@ export const StrategyHeader = ({
       await unfollowStrategy(id);
       showToast('전략이 언팔로우되었습니다.');
       setIsFollowing(false);
+      refetch();
     } catch (error) {
       showToast('전략 언팔로우에 실패했습니다.', 'error');
     }
@@ -123,20 +127,25 @@ export const StrategyHeader = ({
 
   return (
     <div css={actionAreaStyle}>
-      <button
-        css={shareButtonStyle}
-        onClick={() => handleCopy(`${import.meta.env.VITE_FRONT_URL}${location.pathname}`)}
-      >
-        <GiCircle size={40} css={circleStyle} />
-        <MdOutlineShare size={16} css={shareStyle} />
-      </button>
-      {userRole === 'ROLE_ADMIN' || (userRole === 'ROLE_TRADER' && user?.memberId === traderId) ? ( // 트레이더 전용 버튼
+      {isStrategyApproved === 'Y' ? (
+        <button
+          css={shareButtonStyle}
+          onClick={() => handleCopy(`${import.meta.env.VITE_FRONT_URL}${location.pathname}`)}
+        >
+          <GiCircle size={40} css={circleStyle} />
+          <MdOutlineShare size={16} css={shareStyle} />
+        </button>
+      ) : (
+        <div></div>
+      )}
+      {(userRole === 'ROLE_ADMIN' && user?.authorized) ||
+      (userRole === 'ROLE_TRADER' && user?.memberId === traderId) ? ( // 트레이더 전용 버튼
         <div css={buttonAreaStyle}>
+          <Button size='xs' variant='secondaryGray' width={90} onClick={() => onDelete(id)}>
+            삭제
+          </Button>
           {!isTerminated && (
             <>
-              <Button size='xs' variant='secondaryGray' width={90} onClick={() => onDelete(id)}>
-                삭제
-              </Button>
               <Button
                 size='xs'
                 variant='neutral'
@@ -163,7 +172,8 @@ export const StrategyHeader = ({
             </Button>
           )}
         </div>
-      ) : (
+      ) : null}
+      {userRole === 'ROLE_INVESTOR' && (
         <div css={buttonAreaStyle}>
           <Button
             size='sm'

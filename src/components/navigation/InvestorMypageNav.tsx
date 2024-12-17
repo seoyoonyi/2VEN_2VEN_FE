@@ -38,7 +38,7 @@ const InvestorMypageNav = () => {
     navigate(ROUTES.HOME.PATH, { replace: true });
     window.scrollTo(0, 0);
   };
-  console.log('imageSrc: ', imageSrc);
+
   return (
     <div css={navContainerStyle}>
       <div css={navWrapper}>
@@ -47,6 +47,7 @@ const InvestorMypageNav = () => {
           userRole={profileData?.data.memberType === 'TRADER' ? '트레이더' : '투자자'}
           nickname={profileData?.data.nickname ?? '투자자님'}
           desc={profileData?.data.introduction ?? '투자자님의 소개글이 없습니다.'}
+          followersCnt={profileData?.data.followersCnt || 0}
         />
         <NavigationMenu items={InvestorMypageNavItems} />
       </div>

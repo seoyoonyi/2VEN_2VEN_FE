@@ -15,9 +15,7 @@ export const useSigninMutation = () => {
     mutationKey: ['signin'],
     mutationFn: async (credentials: SigninRequest) => {
       try {
-        console.log('Starting signin mutation with:', credentials);
         const response = await signin(credentials);
-        console.log('Signin response:', response);
 
         if (!response.data?.token || !response.data?.user) {
           throw new Error('인증 정보가 올바르지 않습니다.');
