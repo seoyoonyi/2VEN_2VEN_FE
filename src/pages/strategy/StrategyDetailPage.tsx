@@ -38,6 +38,7 @@ import { StrategyIacentity } from '@/types/strategy';
 import { StatisticsProps } from '@/types/strategyDetail';
 import { formatDate } from '@/utils/dateFormat';
 import { formatValue } from '@/utils/statistics';
+import { isAdmin, isStrategyApproved, isStrategyOwner, isTerminated } from '@/utils/statusUtils';
 
 const StrategyDetailPage = () => {
   const { user } = useAuthStore();
@@ -54,10 +55,6 @@ const StrategyDetailPage = () => {
     useFetchApproveState(Number(strategyId), role, {
       enabled: strategy?.isApproved === 'N',
     }) || '';
-  const isApproved = strategy?.requestAvailable === true;
-  const isTerminated = strategy?.strategyStatusCode === 'STRATEGY_OPERATION_TERMINATED';
-  const isOwner = user?.memberId === strategy?.memberId;
-  const isAdmin = role === 'ROLE_ADMIN';
 
   const statisticsTableData = (
     mapping: { label: string; key: string }[],
@@ -162,13 +159,15 @@ const StrategyDetailPage = () => {
     });
   };
 
+  if (!user) throw new Error('not found User');
+
   useEffect(() => {
     if (
-      (strategy?.isApproved === 'N' && !(isOwner || isAdmin)) ||
-      (strategy?.isPosted === 'N' && !(isOwner || isAdmin))
+      (strategy?.isApproved === 'N' && !(isStrategyOwner(strategy, user) || isAdmin(user.role))) ||
+      (strategy?.isPosted === 'N' && !(isStrategyOwner(strategy, user) || isAdmin(user.role)))
     )
       navigate('/404', { replace: true });
-  }, [strategy, isOwner, isAdmin]);
+  }, [strategy, isStrategyOwner, isAdmin]);
 
   if (!strategy) {
     return <Loader />;
@@ -177,8 +176,7 @@ const StrategyDetailPage = () => {
   return (
     <div css={containerStyle}>
       <ScrollToTop />
-      {(role === 'ROLE_ADMIN' ||
-        (role === 'ROLE_TRADER' && user?.memberId === strategy?.memberId)) &&
+      {(role === 'ROLE_ADMIN' || (role === 'ROLE_TRADER' && isStrategyOwner(strategy, user))) &&
         strategy?.isApproved !== 'P' &&
         approveState?.isApproved === 'N' &&
         strategy?.isApproved === 'N' && (
@@ -188,13 +186,9 @@ const StrategyDetailPage = () => {
         <div css={contentWrapper}>
           <div key={strategy?.strategyId}>
             <StrategyHeader
-              id={strategy?.strategyId}
-              strategyTitle={strategy?.strategyTitle || ''}
-              traderId={strategy?.memberId || ''}
-              isStrategyApproved={strategy?.isApproved}
-              isApprovedState={isApproved}
-              isTerminated={isTerminated}
-              isFollowing={strategy?.isFollowed}
+              {...strategy}
+              isApprovedState={isStrategyApproved(strategy)}
+              isTerminated={isTerminated(strategy)}
               onApproval={() => {
                 handleApproval(strategy.strategyId, role);
               }}
@@ -204,14 +198,9 @@ const StrategyDetailPage = () => {
             />
             <IconTagSection imgs={icons} />
             <StrategyTitleSection
-              title={strategy?.strategyTitle}
-              traderId={strategy?.memberId}
-              traderName={strategy?.nickname}
-              imgUrl={strategy?.profilePath}
+              {...strategy}
               date={formatDate(strategy?.writedAt || '', 'withDayTime')}
-              followers={strategy?.followersCount}
-              minimumInvestment={strategy?.minInvestmentAmount}
-              lastUpdatedDate={statistics?.endDate ? formatDate(statistics?.endDate) : '데이터없음'}
+              endDate={statistics?.endDate ? formatDate(statistics?.endDate) : '데이터없음'}
             />
             <StrategyContent content={strategy?.strategyOverview} />
             {strategy?.strategyProposalLink && <FileDownSection {...strategy} />}

@@ -6,7 +6,7 @@ export interface StrategyDetailProps {
   strategyIACEntities: InvestmentAssetClass[];
   tradingCycleName: string;
   tradingCycleIcon: string;
-  traderId: string;
+  memberId: string;
   traderName: string;
   traderImage: string;
   strategyId: number;
@@ -14,6 +14,8 @@ export interface StrategyDetailProps {
   minInvestmentAmount: string;
   strategyOverview: string;
   followersCount: number;
+  requestAvailable: boolean;
+  strategyStatusCode: string;
   writedAt: string;
   isPosted: 'Y' | 'N';
   isGranted: 'Y' | 'N';
