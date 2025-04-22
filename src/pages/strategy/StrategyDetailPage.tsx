@@ -159,14 +159,15 @@ const StrategyDetailPage = () => {
     });
   };
 
-  if (!user) throw new Error('not found User');
-
   useEffect(() => {
-    if (
-      (strategy?.isApproved === 'N' && !(isStrategyOwner(strategy, user) || isAdmin(user.role))) ||
-      (strategy?.isPosted === 'N' && !(isStrategyOwner(strategy, user) || isAdmin(user.role)))
-    )
-      navigate('/404', { replace: true });
+    if (user) {
+      const isOwnerOrAdmin = isStrategyOwner(strategy, user) || isAdmin(user.role);
+      if (
+        (strategy?.isApproved === 'N' && !isOwnerOrAdmin) ||
+        (strategy?.isPosted === 'N' && !isOwnerOrAdmin)
+      )
+        navigate('/404', { replace: true });
+    }
   }, [strategy, isStrategyOwner, isAdmin]);
 
   if (!strategy) {
@@ -176,7 +177,8 @@ const StrategyDetailPage = () => {
   return (
     <div css={containerStyle}>
       <ScrollToTop />
-      {(role === 'ROLE_ADMIN' || (role === 'ROLE_TRADER' && isStrategyOwner(strategy, user))) &&
+      {(role === 'ROLE_ADMIN' ||
+        (user?.role === 'ROLE_TRADER' && isStrategyOwner(strategy, user))) &&
         strategy?.isApproved !== 'P' &&
         approveState?.isApproved === 'N' &&
         strategy?.isApproved === 'N' && (
