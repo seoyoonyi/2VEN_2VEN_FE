@@ -8,9 +8,11 @@ export const getPostStatus = (isPosted: string): string =>
 // 관리자
 export const isAdmin = (role: UserRole) => role === 'ROLE_ADMIN';
 
+//트레이더
+export const isTrader = (role: UserRole) => role === 'ROLE_TRADER';
+
 // 전략 작성자
-export const isStrategyOwner = (strategy: StrategyDetailProps, user: User) =>
-  strategy.memberId === user.memberId;
+export const isStrategyOwner = (memberId: string, user: User) => memberId === user.memberId;
 
 // 전략 운용 종료 상태
 export const isTerminated = (strategy: StrategyDetailProps) =>

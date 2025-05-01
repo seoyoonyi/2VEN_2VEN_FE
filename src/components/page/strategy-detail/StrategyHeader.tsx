@@ -16,6 +16,7 @@ import useContentModalStore from '@/stores/contentModalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { UserRole } from '@/types/route';
+import { isAdmin, isStrategyOwner, isTrader } from '@/utils/statusUtils';
 
 interface StrategyHeaderProps {
   strategyId: number;
@@ -138,8 +139,8 @@ export const StrategyHeader = ({
       ) : (
         <div></div>
       )}
-      {(userRole === 'ROLE_ADMIN' && user?.authorized) ||
-      (userRole === 'ROLE_TRADER' && user?.memberId === memberId) ? ( // 트레이더 전용 버튼
+      {(isAdmin(userRole) && user?.authorized) ||
+      (user && isTrader(userRole) && isStrategyOwner(memberId, user)) ? ( // 트레이더 전용 버튼
         <div css={buttonAreaStyle}>
           <Button size='xs' variant='secondaryGray' width={90} onClick={() => onDelete(strategyId)}>
             삭제

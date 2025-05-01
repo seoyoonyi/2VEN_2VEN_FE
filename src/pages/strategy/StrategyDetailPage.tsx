@@ -38,7 +38,13 @@ import { StrategyIacentity } from '@/types/strategy';
 import { StatisticsProps } from '@/types/strategyDetail';
 import { formatDate } from '@/utils/dateFormat';
 import { formatValue } from '@/utils/statistics';
-import { isAdmin, isStrategyApproved, isStrategyOwner, isTerminated } from '@/utils/statusUtils';
+import {
+  isAdmin,
+  isStrategyApproved,
+  isStrategyOwner,
+  isTerminated,
+  isTrader,
+} from '@/utils/statusUtils';
 
 const StrategyDetailPage = () => {
   const { user } = useAuthStore();
@@ -181,8 +187,8 @@ const StrategyDetailPage = () => {
   return (
     <div css={containerStyle}>
       <ScrollToTop />
-      {(role === 'ROLE_ADMIN' ||
-        (user?.role === 'ROLE_TRADER' && isStrategyOwner(strategy, user))) &&
+      {user &&
+        (isAdmin(role) || (isTrader(role) && isStrategyOwner({ ...strategy }, user))) &&
         strategy?.isApproved !== 'P' &&
         approveState?.isApproved === 'N' &&
         strategy?.isApproved === 'N' && (
