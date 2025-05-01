@@ -165,12 +165,6 @@ const traderInfoStyle = css`
   align-items: center;
 `;
 
-const traderImageStyle = css`
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-`;
-
 const traderNicknameStyle = css`
   ${theme.textStyle.subtitles.subtitle2};
   color: ${theme.colors.gray[900]};
