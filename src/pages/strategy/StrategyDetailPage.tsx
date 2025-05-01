@@ -45,7 +45,7 @@ const StrategyDetailPage = () => {
   const { strategyId } = useParams();
   const navigate = useNavigate();
   const role = user?.role as UserRole;
-  const { strategy, refetch } = useFetchStrategyDetail(strategyId || '', role);
+  const { strategy, isError, refetch } = useFetchStrategyDetail(strategyId || '', role);
   const { statistics } = useStatistics(Number(strategyId), role);
   const { mutate: deleteStrategyDetail } = useStrategyDetailDelete();
   const { mutate: approveStrategy } = useStrategyDetailApprove();
@@ -169,6 +169,10 @@ const StrategyDetailPage = () => {
         navigate('/404', { replace: true });
     }
   }, [strategy, isStrategyOwner, isAdmin]);
+
+  if (isError) {
+    navigate('/404', { replace: true });
+  }
 
   if (!strategy) {
     return <Loader />;
