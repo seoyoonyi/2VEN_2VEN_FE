@@ -26,6 +26,7 @@ export const usePostDailyAnalysis = () => {
     onError: (error) => error.message,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
+      queryClient.invalidateQueries({ queryKey: ['monthlyAnalysis'] });
       queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
       queryClient.invalidateQueries({ queryKey: ['strategyChart'] });
     },
@@ -50,6 +51,7 @@ export const usePutDailyAnalysis = () => {
     onError: (error) => error.message,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
+      queryClient.invalidateQueries({ queryKey: ['monthlyAnalysis'] });
       queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
       queryClient.invalidateQueries({ queryKey: ['strategyChart'] });
     },
@@ -71,6 +73,7 @@ export const useDeleteAnalysis = () => {
     }) => fetchDeleteDailyAnalysis(strategyId, role, analysisIds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
+      queryClient.invalidateQueries({ queryKey: ['monthlyAnalysis'] });
       queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
       queryClient.invalidateQueries({ queryKey: ['strategyChart'] });
     },
@@ -89,6 +92,7 @@ export const useUploadExcel = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
+      queryClient.invalidateQueries({ queryKey: ['monthlyAnalysis'] });
       queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
       queryClient.invalidateQueries({ queryKey: ['strategyChart'] });
     },
@@ -102,6 +106,7 @@ export const useDeleteAllAnalysis = () => {
     mutationFn: ({ strategyId }: { strategyId: number }) => fetchAllDeleteDailyAnalysis(strategyId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyAnalysis'] });
+      queryClient.invalidateQueries({ queryKey: ['monthlyAnalysis'] });
       queryClient.invalidateQueries({ queryKey: ['strategyStatistics'] });
       queryClient.removeQueries({ queryKey: ['strategyStatistics'] });
       queryClient.invalidateQueries({ queryKey: ['strategyChart'] });
