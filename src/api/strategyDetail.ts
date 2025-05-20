@@ -280,8 +280,8 @@ export const fetchApproveStrategy = async (strategyId: number, authRole: UserRol
     );
     return res.data;
   } catch (error) {
-    console.error('failed to fetch strategyApprove', error);
-    throw error;
+    const axiosError = error as AxiosError<{ message: string }>;
+    if (axiosError.response?.status === 500) return null; //승인 내역이 없을 때
   }
 };
 

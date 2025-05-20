@@ -166,8 +166,9 @@ const StrategyDetailPage = () => {
   };
 
   useEffect(() => {
-    if (user) {
-      const isOwnerOrAdmin = isStrategyOwner(strategy, user) || isAdmin(user.role);
+    if (user && strategy) {
+      const isOwnerOrAdmin = isStrategyOwner(strategy.memberId, user) || isAdmin(user.role);
+
       if (
         (strategy?.isApproved === 'N' && !isOwnerOrAdmin) ||
         (strategy?.isPosted === 'N' && !isOwnerOrAdmin)
