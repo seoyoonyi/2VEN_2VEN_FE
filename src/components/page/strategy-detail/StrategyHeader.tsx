@@ -1,24 +1,21 @@
-import { useState } from 'react';
-
 import { css } from '@emotion/react';
 import { GiCircle } from 'react-icons/gi';
 import { MdOutlineShare } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { followStrategy, unfollowStrategy } from '@/api/follow';
+import InvestorSection from './strategy-header/InvestorSection';
+
 import Button from '@/components/common/Button';
 import ContentModal from '@/components/common/ContentModal';
 import Toast from '@/components/common/Toast';
-import FollowModal from '@/components/page/mypage-investor/myfolder/FollowModal';
 import { ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/stores/authStore';
-import useContentModalStore from '@/stores/contentModalStore';
 import useToastStore from '@/stores/toastStore';
 import theme from '@/styles/theme';
 import { UserRole } from '@/types/route';
 import { isAdmin, isStrategyOwner, isTrader } from '@/utils/statusUtils';
 
-interface StrategyHeaderProps {
+export interface StrategyHeaderProps {
   strategyId: number;
   strategyTitle: string;
   memberId: string;
@@ -45,75 +42,14 @@ export const StrategyHeader = ({
   onApproval,
   refetch,
 }: StrategyHeaderProps) => {
-  const [isFollowed, setisFollowed] = useState(initialisFollowed);
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuthStore();
   const userRole = user?.role as UserRole;
   const { showToast, type, message, hideToast, isToastVisible } = useToastStore();
-  const { openContentModal } = useContentModalStore();
 
   const handleMoveEditPage = (id: string) => {
     navigate(`${ROUTES.MYPAGE.TRADER.STRATEGIES.EDIT(id)}`);
-  };
-
-  const handleInquiryPage = () => {
-    navigate(`${ROUTES.STRATEGY.INQUIRIES}`, {
-      state: {
-        strategyTitle,
-        strategyId,
-        memberId,
-      },
-    });
-  };
-
-  const handleFollowingPage = () => {
-    if (!user) {
-      showToast('로그인이 필요한 서비스 입니다.', 'error');
-      navigate(ROUTES.AUTH.SIGNIN);
-      return;
-    }
-    let selectedFolderId = '';
-
-    openContentModal({
-      title: '전략 팔로우',
-      content: (
-        <FollowModal
-          onFolderSelect={(folderId) => {
-            selectedFolderId = folderId;
-          }}
-        />
-      ),
-      onAction: () => {
-        if (!selectedFolderId) {
-          showToast('폴더를 선택해주세요.', 'error');
-          return false;
-        }
-
-        followStrategy(selectedFolderId, strategyId.toString())
-          .then(() => {
-            showToast('전략이 폴더에 성공적으로 추가되었습니다.');
-            setisFollowed(true);
-            refetch();
-          })
-          .catch(() => {
-            showToast('이미 폴더에 추가된 전략입니다.', 'error');
-          });
-
-        return true;
-      },
-    });
-  };
-
-  const handleUnfollow = async () => {
-    try {
-      await unfollowStrategy(strategyId);
-      showToast('전략이 언팔로우되었습니다.');
-      setisFollowed(false);
-      refetch();
-    } catch (error) {
-      showToast('전략 언팔로우에 실패했습니다.', 'error');
-    }
   };
 
   const handleCopy = async (url: string) => {
@@ -175,27 +111,13 @@ export const StrategyHeader = ({
         </div>
       ) : null}
       {userRole === 'ROLE_INVESTOR' && (
-        <div css={buttonAreaStyle}>
-          <Button
-            size='sm'
-            variant='accent'
-            width={114}
-            onClick={() => {
-              handleInquiryPage();
-            }}
-          >
-            문의하기
-          </Button>
-          {isFollowed ? (
-            <Button size='sm' variant='neutral' width={124} onClick={handleUnfollow}>
-              전략 언팔로우
-            </Button>
-          ) : (
-            <Button size='sm' variant='primary' width={124} onClick={handleFollowingPage}>
-              전략 팔로우
-            </Button>
-          )}
-        </div>
+        <InvestorSection
+          memberId={memberId}
+          strategyId={strategyId}
+          strategyTitle={strategyTitle}
+          isFollowed={initialisFollowed}
+          refetch={refetch}
+        />
       )}
       <ContentModal />
       <Toast type={type} message={message} onClose={hideToast} isVisible={isToastVisible} />
