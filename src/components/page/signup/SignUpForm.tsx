@@ -197,7 +197,7 @@ const SignUpForm = ({ formData, setFormData }: SignUpFormProps) => {
         <label htmlFor='auth_code' css={labelStyle}>
           인증번호
         </label>
-        <div>
+        <div css={authCodeStyle}>
           <form css={formStyle} onSubmit={handleCodeVerification}>
             <VerificationInput
               id='auth_code'
@@ -379,12 +379,19 @@ const labelStyle = css`
   line-height: ${theme.typography.lineHeights.lg};
 `;
 
+const authCodeStyle = css`
+  position: relative;
+`;
+
 const messageStyle = css`
-  margin-top: 16px;
-  text-align: center;
-  color: ${theme.colors.main.alert};
+  position: absolute;
+  left: 0;
+  bottom: -20px;
   font-size: ${theme.typography.fontSizes.caption};
   line-height: ${theme.typography.lineHeights.sm};
+  color: ${theme.colors.main.alert};
+  margin: 0;
+  text-indent: 5px;
 `;
 const successMessageStyle = css`
   color: ${theme.colors.main.primary};
