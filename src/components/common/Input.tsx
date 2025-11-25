@@ -1,7 +1,6 @@
 import React, { forwardRef, RefObject, useEffect, useState } from 'react';
 
 import { css, SerializedStyles } from '@emotion/react';
-import { FiSearch } from 'react-icons/fi';
 import { GrMailOption } from 'react-icons/gr';
 import { IoIosCloseCircle, IoMdEye, IoMdEyeOff } from 'react-icons/io';
 import { RiKeyFill } from 'react-icons/ri';
@@ -16,7 +15,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   inputSize?: InputSize;
   width?: string | number;
   status?: InputStatus;
-  leftIcon?: 'mail' | 'key' | 'search';
+  leftIcon?: 'mail' | 'key';
   rightIcon?: 'eye' | 'clear';
   showClearButton?: boolean;
   isDisabled?: boolean;
@@ -40,6 +39,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     onInputValidation,
     ...inputProps
   } = props;
+
+  // UI 상태만 관리
   const [inputStatus, setInputStatus] = useState<InputStatus>(status);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -56,17 +57,17 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         return showPassword ? <IoMdEyeOff /> : <IoMdEye />;
       case 'clear':
         return <IoIosCloseCircle />;
-      case 'search':
-        return <FiSearch />;
       default:
         return null;
     }
   };
 
+  // status prop 변경 시 동기화
   useEffect(() => {
     setInputStatus(status);
   }, [status]);
 
+  // validation 로직 (선택적)
   useEffect(() => {
     if (validate && inputValue) {
       const validationResult = validate(inputValue);
@@ -94,6 +95,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     setShowPassword((prev) => !prev);
   };
 
+  // padding 스타일 계산
   const dynamicPaddingStyles = css`
     ${leftIcon && 'padding-left: 36px;'}
     ${(rightIcon || (showClearButton && inputValue)) && 'padding-right: 36px;'}

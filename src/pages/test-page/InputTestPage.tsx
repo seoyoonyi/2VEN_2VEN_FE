@@ -153,20 +153,6 @@ const InputTestPage = () => {
                 `}
               />
             </div>
-            <div>
-              <h3>Search Input with Clear Button</h3>
-              <Input
-                leftIcon='search'
-                placeholder='Search...'
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                showClearButton
-                customStyle={css`
-                  width: 300px;
-                  text-indent: 10px;
-                `}
-              />
-            </div>
           </div>
         </section>
 
