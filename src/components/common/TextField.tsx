@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { css, SerializedStyles } from '@emotion/react';
 
@@ -12,16 +12,10 @@ export interface TextFieldProps extends InputProps {
   required?: boolean;
   labelStyle?: SerializedStyles;
   containerStyle?: SerializedStyles;
-  labelPosition?: 'top' | 'left'; // 레이아웃 방향
-  labelWidth?: number | string; // left일 때 label 너비
+  labelPosition?: 'top' | 'left';
+  labelWidth?: number | string;
 }
 
-/**
- * TextField - 완전한 Form Field 컴포넌트
- * - Input 컴포넌트를 래핑
- * - label, helper text, error message 포함
- * - 세로/가로 레이아웃 지원
- */
 const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   (
     {
@@ -39,7 +33,6 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   ) => {
     const hasError = Boolean(errorMessage);
     const hasSuccess = Boolean(helperText && !hasError);
-    // status prop이 전달되면 그것을 사용, 없으면 자동 결정
     const computedStatus = inputProps.status
       ? inputProps.status
       : hasError
